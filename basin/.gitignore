@@ -1,0 +1,6 @@
+*.[do]
+*.exe
+*.dll
+
+/Debug/basin
+/Debug/src/
