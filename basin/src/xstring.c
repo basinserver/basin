@@ -91,8 +91,8 @@ int endsWith(const char* str, const char* with) {
 	size_t l1 = strlen(str);
 	size_t l2 = strlen(with);
 	if (l1 < l2) return 0;
-	for (int i = 0; i < l2; i++) {
-		if (str[l1 - 1 - (l2 - 1 - i)] != with[i]) {
+	for (int i = l2 - 1; i >= 0; i--) {
+		if (str[i] != with[i]) {
 			return 0;
 		}
 	}
@@ -105,8 +105,8 @@ int endsWith_nocase(const char* str, const char* with) {
 	size_t l1 = strlen(str);
 	size_t l2 = strlen(with);
 	if (l1 < l2) return 0;
-	for (int i = 0; i < l2; i++) {
-		char s1 = str[l1 - 1 - (l2 - 1 - i)];
+	for (int i = l2 - 1; i >= 0; i--) {
+		char s1 = str[i];
 		if (s1 >= 'A' && s1 <= 'Z') s1 += ' ';
 		char s2 = with[i];
 		if (s2 >= 'A' && s2 <= 'Z') s2 += ' ';
