@@ -17,6 +17,7 @@
 #include <poll.h>
 #include "work.h"
 #include <unistd.h>
+#include "queue.h"
 
 void run_accept(struct accept_param* param) {
 	static int one = 1;
@@ -37,6 +38,10 @@ void run_accept(struct accept_param* param) {
 		c->readBuffer_checked = 0;
 		c->writeBuffer = NULL;
 		c->writeBuffer_size = 0;
+		c->comp = -1;
+		c->state = 0;
+		c->outgoingPacket = new_queue(0, sizeof(struct packet*));
+		c->incomingPacket = new_queue(0, sizeof(struct packet*));
 		if (poll(&spfd, 1, -1) < 0) {
 			printf("Error while polling server: %s\n", strerror(errno));
 			xfree(c);

@@ -24,6 +24,8 @@ void closeConn(struct work_param* param, struct conn* conn) {
 	if (rem_collection(param->conns, conn)) {
 		errlog(param->logsess, "Failed to delete connection properly! This is bad!");
 	}
+	xfree(conn->incomingPacket);
+	xfree(conn->outgoingPacket);
 	if (conn->readBuffer != NULL) xfree(conn->readBuffer);
 	if (conn->writeBuffer != NULL) xfree(conn->writeBuffer);
 	xfree(conn);
@@ -31,6 +33,12 @@ void closeConn(struct work_param* param, struct conn* conn) {
 
 int handleRead(struct conn* conn, struct work_param* param, int fd) {
 	if (conn->readBuffer != NULL && conn->readBuffer_size > 0) {
+		if (!conn->comp) {
+			int32_t length = 0;
+			if (!readVarInt(&length, conn->readBuffer, conn->readBuffer_size)) return 0;
+			if (conn->readBuffer_size - getVarIntSize(length) < length) return 0;
+
+		}
 		if (conn->writeBuffer == NULL) {
 			conn->writeBuffer = xmalloc(conn->readBuffer_size);
 			conn->writeBuffer_size = 0;
@@ -60,8 +68,8 @@ void run_work(struct work_param* param) {
 		struct conn* conns[cc];
 		int fdi = 0;
 		for (int i = 0; i < param->conns->size; i++) {
-			if (param->conns->data[i * param->conns->dsize] != NULL) {
-				conns[fdi] = (param->conns->data[i * param->conns->dsize]);
+			if (param->conns->data[i] != NULL) {
+				conns[fdi] = (param->conns->data[i]);
 				struct conn* conn = conns[fdi];
 				fds[fdi].fd = conns[fdi]->fd;
 				fds[fdi].events = POLLIN | (conn->writeBuffer_size > 0 ? POLLOUT : 0);

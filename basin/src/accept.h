@@ -25,6 +25,7 @@ struct accept_param {
 
 struct conn {
 		int fd;
+		int state;
 		struct sockaddr_in6 addr;
 		socklen_t addrlen;
 		unsigned char* readBuffer;
@@ -32,6 +33,9 @@ struct conn {
 		size_t readBuffer_checked;
 		unsigned char* writeBuffer;
 		size_t writeBuffer_size;
+		int comp;
+		struct queue* outgoingPacket;
+		struct queue* incomingPacket;
 };
 
 void run_accept(struct accept_param* param);

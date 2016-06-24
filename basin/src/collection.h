@@ -14,13 +14,12 @@ struct collection {
 		size_t size;
 		size_t count;
 		size_t capacity;
-		size_t dsize;
 		size_t rc;
 		void** data;
 		pthread_rwlock_t data_mutex;
 };
 
-struct collection* new_collection(size_t capacity, size_t data_size);
+struct collection* new_collection(size_t capacity);
 
 int del_collection(struct collection* coll);
 

@@ -255,7 +255,7 @@ int main(int argc, char* argv[]) {
 		ap->logsess = slog;
 		for (int x = 0; x < tc; x++) {
 			struct work_param* wp = xmalloc(sizeof(struct work_param));
-			wp->conns = new_collection(mc < 1 ? 0 : mc / tc, sizeof(struct conn*));
+			wp->conns = new_collection(mc < 1 ? 0 : mc / tc);
 			wp->logsess = slog;
 			wp->i = x;
 			wp->sport = port;

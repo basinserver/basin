@@ -12,12 +12,11 @@
 #include "xstring.h"
 #include "util.h"
 
-struct collection* new_collection(size_t capacity, size_t data_size) {
+struct collection* new_collection(size_t capacity) {
 	struct collection* coll = xmalloc(sizeof(struct collection));
 	coll->capacity = capacity;
-	coll->data = xmalloc((capacity == 0 ? 1 : capacity) * data_size);
+	coll->data = xmalloc((capacity == 0 ? 1 : capacity) * sizeof(void*));
 	coll->rc = capacity == 0 ? 1 : 0;
-	coll->dsize = data_size;
 	coll->size = 0;
 	coll->count = 0;
 	if (pthread_rwlock_init(&coll->data_mutex, NULL)) {
