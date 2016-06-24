@@ -969,9 +969,9 @@ union pkt_state_play_client {
 		struct pkt_play_client_chatmessage chatmessage;
 		struct pkt_play_client_useentity useentity;
 		struct pkt_play_client_player player;
-		struct pkt_play_client_playerpos playerpos;
+		struct pkt_play_client_playerpos playerposition;
 		struct pkt_play_client_playerlook playerlook;
-		struct pkt_play_client_playerposlook playerposlook;
+		struct pkt_play_client_playerposlook playerpositionandlook;
 		struct pkt_play_client_playerdig playerdig;
 		struct pkt_play_client_playerplace playerplace;
 		struct pkt_play_client_helditemchange helditemchange;
