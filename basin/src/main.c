@@ -141,13 +141,19 @@ int main(int argc, char* argv[]) {
 			else errlog(delog, "Invalid threads for server, must be greater than 1.");
 			continue;
 		}
-		const char* mcc = getConfigValue(serv, "max-conn");
+		const char* mcc = getConfigValue(serv, "max-players");
 		if (!strisunum(mcc)) {
 			if (serv->id != NULL) errlog(delog, "Invalid max-conn for server: %s", serv->id);
 			else errlog(delog, "Invalid max-conn for server.");
 			continue;
 		}
 		int mc = atoi(mcc);
+		const char* motd = getConfigValue(serv, "motd");
+		if (motd == NULL) {
+			if (serv->id != NULL) errlog(delog, "Invalid motd for server: %s, assuming default.", serv->id);
+			else errlog(delog, "Invalid motd for server, assuming default.");
+			motd = "A Minecraft Server";
+		}
 		sock: ;
 		int sfd = socket(namespace, SOCK_STREAM, 0);
 		if (sfd < 0) {
@@ -246,6 +252,9 @@ int main(int argc, char* argv[]) {
 		slog->error_fd = lel == NULL ? NULL : fopen(lel, "a");
 		if (serv->id != NULL) acclog(slog, "Server %s listening for connections!", serv->id);
 		else acclog(slog, "Server listening for connections!");
+		struct mcs* mcs = xmalloc(sizeof(struct mcs));
+		mcs->max_players = mc;
+		mcs->motd = xstrdup(motd, 0);
 		struct accept_param* ap = xmalloc(sizeof(struct accept_param));
 		ap->port = port;
 		ap->server_fd = sfd;
@@ -253,6 +262,7 @@ int main(int argc, char* argv[]) {
 		ap->works_count = tc;
 		ap->works = xmalloc(sizeof(struct work_param*) * tc);
 		ap->logsess = slog;
+		ap->mcs = mcs;
 		for (int x = 0; x < tc; x++) {
 			struct work_param* wp = xmalloc(sizeof(struct work_param));
 			wp->conns = new_collection(mc < 1 ? 0 : mc / tc);

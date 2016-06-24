@@ -1126,8 +1126,8 @@ struct packet {
 		union pkts data;
 };
 
-int readPacket(struct conn* conn, struct packet* packet);
+ssize_t readPacket(struct conn* conn, unsigned char* buf, size_t buflen, struct packet* packet);
 
-int writePacket(struct conn* conn, struct packet* packet);
+ssize_t writePacket(struct conn* conn, struct packet* packet);
 
 #endif /* PACKET1_9_H_ */

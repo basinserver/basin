@@ -7,6 +7,8 @@
 
 #include "globals.h"
 
+//TODO: this file is 1. for a client, not a server and 2. not modified for this architecture.
+
 #ifdef MC_VERSION_1_9_4
 
 #include "network.h"

@@ -27,111 +27,53 @@
 #include <pthread.h>
 #include <time.h>
 #include "accept.h"
+#include "util.h"
 
-int readPacket(struct conn* conn, struct packet* packet) {
-	void* pktbuf = NULL;
-	int32_t pktlen = 0;
+ssize_t readPacket(struct conn* conn, unsigned char* buf, size_t buflen, struct packet* packet) {
+	void* pktbuf = buf;
+	int32_t pktlen = buflen;
+	int tf = 0;
 	if (conn->comp >= 0) {
-		int32_t pl = 0;
 		int32_t dl = 0;
 		//printf("reading pl\n");
-		readVarInt_stream(&pl, conn->fd);
 		//printf("pl = %i\n", pl);
-		pl -= readVarInt_stream(&dl, conn->fd);
+		int rx = readVarInt(&dl, pktbuf, pktlen);
+		if(rx == 0) return -1;
+		pktlen -= rx;
+		pktbuf += rx;
 		//printf("dl = %i\n", dl);
-		if (dl == 0) {
-			pktlen = pl;
-			if (pktlen > 0) {
-				pktbuf = malloc(pktlen);
-				size_t r = 0;
-				while (r < pktlen) {
-#ifdef __MINGW32__
-					ssize_t x = recv(conn->fd, pktbuf + r, pktlen - r, 0);
-#else
-					ssize_t x = read(conn->fd, pktbuf + r, pktlen - r);
-#endif
-					if (x <= 0) {
-						printf("read error: %s\n", strerror(errno));
-						free(pktbuf);
-						return -1;
-					}
-					r += x;
-				}
-			}
-		} else {
-			if (pl > 0) {
-				void* cmppkt = malloc(pl);
-				size_t r = 0;
-				while (r < pl) {
-#ifdef __MINGW32__
-					ssize_t x = recv(conn->fd, cmppkt + r, pl - r, 0);
-#else
-					ssize_t x = read(conn->fd, cmppkt + r, pl - r);
-#endif
-					if (x <= 0) {
-						printf("read error: %s\n", strerror(errno));
-						free(cmppkt);
-						return -1;
-					}
-					r += x;
-				}
-				pktlen = dl;
-				pktbuf = malloc(dl);
-				//
-				z_stream strm;
-				strm.zalloc = Z_NULL;
-				strm.zfree = Z_NULL;
-				strm.opaque = Z_NULL;
-				int dr = 0;
-				if ((dr = inflateInit(&strm)) != Z_OK) {
-					free(pktbuf);
-					free(cmppkt);
-					printf("Compression initialization error!\n");
-					return -1;
-				}
-				strm.avail_in = pl;
-				strm.next_in = cmppkt;
-				strm.avail_out = pktlen;
-				strm.next_out = pktbuf;
-				do {
-					dr = inflate(&strm, Z_FINISH);
-					if (dr == Z_STREAM_ERROR) {
-						free(pktbuf);
-						free(cmppkt);
-						printf("Compression Read Error\n");
-						return -1;
-					}
-					strm.avail_out = pktlen - strm.total_out;
-					strm.next_out = pktbuf + strm.total_out;
-				}while (strm.avail_in > 0 || strm.total_out < pktlen);
-				inflateEnd(&strm);
-				free(cmppkt);
-			} else {
-				printf("Incoherent Compression Data!\n");
+		if(dl > 0 && pktlen > 0) {
+			pktlen = dl;
+			void* decmpbuf = malloc(dl);
+			//
+			z_stream strm;
+			strm.zalloc = Z_NULL;
+			strm.zfree = Z_NULL;
+			strm.opaque = Z_NULL;
+			int dr = 0;
+			if ((dr = inflateInit(&strm)) != Z_OK) {
+				free(decmpbuf);
+				printf("Compression initialization error!\n");
 				return -1;
 			}
-		}
-	} else {
-		//printf("reading pktlen\n");
-		readVarInt_stream(&pktlen, conn->fd);
-		//printf("pktlen = %i\n", pktlen);
-		if (pktlen > 0) {
-			pktbuf = malloc(pktlen);
-			size_t r = 0;
-			while (r < pktlen) {
-#ifdef __MINGW32__
-				ssize_t x = recv(conn->fd, pktbuf + r, pktlen - r, 0);
-#else
-				ssize_t x = read(conn->fd, pktbuf + r, pktlen - r);
-#endif
-				//printf("read = %i\n", x);
-				if (x <= 0) {
-					printf("read error: %s\n", strerror(errno));
-					free(pktbuf);
+			strm.avail_in = pktlen;
+			strm.next_in = pktbuf;
+			strm.avail_out = dl;
+			strm.next_out = decmpbuf;
+			do {
+				dr = inflate(&strm, Z_FINISH);
+				if (dr == Z_STREAM_ERROR) {
+					free(decmpbuf);
+					printf("Compression Read Error\n");
 					return -1;
 				}
-				r += x;
-			}
+				strm.avail_out = pktlen - strm.total_out;
+				strm.next_out = decmpbuf + strm.total_out;
+			}while (strm.avail_in > 0 || strm.total_out < pktlen);
+			inflateEnd(&strm);
+			pktbuf = decmpbuf;
+			pktlen = dl;
+			tf = 1;
 		}
 	}
 	if (pktbuf == NULL) return 0;
@@ -168,10 +110,9 @@ int readPacket(struct conn* conn, struct packet* packet) {
 			ps -= rx;
 		}
 	} else if (conn->state == STATE_LOGIN) {
-
-		if (packet->id == PKT_LOGIN_CLIENT_LOGINSTART) {
+		if (id == PKT_LOGIN_CLIENT_LOGINSTART) {
 			//pi += writeString(packet->data.login_client.loginstart.name, pktbuf + pi, ps - pi);
-		} else if (packet->id == PKT_LOGIN_CLIENT_ENCRYPTIONRESPONSE) {
+		} else if (id == PKT_LOGIN_CLIENT_ENCRYPTIONRESPONSE) {
 			//ps = packet->data.login_client.encryptionresponse.sharedSecret_size + packet->data.login_client.encryptionresponse.verifyToken_size + 64;
 			//pktbuf = xrealloc(pktbuf, ps);
 			//pi += writeVarInt(packet->data.login_client.encryptionresponse.sharedSecret_size, pktbuf + pi);
@@ -181,16 +122,23 @@ int readPacket(struct conn* conn, struct packet* packet) {
 			//memcpy(pktbuf + pi, packet->data.login_client.encryptionresponse.verifyToken, packet->data.login_client.encryptionresponse.verifyToken_size);
 			//pi += packet->data.login_client.encryptionresponse.verifyToken_size;
 		}
+	} else if (conn->state == STATE_STATUS) {
+		if(id == PKT_STATUS_CLIENT_PING) {
+			if(ps < 8) goto rer;
+			memcpy(&packet->data.status_client.ping.payload, pbuf, 8);
+			pbuf += 8;
+			ps -= 8;
+		}
 	}
 	goto rx;
 	rer:;
 	return -1;
 	rx:;
-	free(pktbuf);
-	return 0;
+	if(tf) xfree(pktbuf);
+	return buflen;
 }
 
-int writePacket(struct conn* conn, struct packet* packet) {
+ssize_t writePacket(struct conn* conn, struct packet* packet) {
 	unsigned char* pktbuf = xmalloc(1024); // TODO free
 	unsigned char* pbuf = pktbuf;
 	size_t ps = 1024;
@@ -243,11 +191,20 @@ int writePacket(struct conn* conn, struct packet* packet) {
 //			pbuf += rx;
 //			ps -= rx;
 		}
+	} else if (conn->state == STATE_STATUS) {
+		if (id == PKT_STATUS_SERVER_RESPONSE) {
+			pi += writeString(packet->data.status_server.response.json, pktbuf + pi, ps - pi);
+		} else if (id == PKT_STATUS_SERVER_PONG) {
+			memcpy(&packet->data.status_server.pong.payload, pktbuf + pi, 8);
+			pi += 8;
+		}
 	}
 	int fpll = getVarIntSize(pi);
 	void* wrt = NULL;
 	size_t wrt_s = 0;
 	int frp = 0;
+	unsigned char prep[10];
+	uint8_t preps = 0;
 	if (conn->comp >= 0 && (pi + fpll > conn->comp + 1) && (pi + fpll) <= 2097152) {
 		frp = 1;
 		z_stream strm;
@@ -281,38 +238,37 @@ int writePacket(struct conn* conn, struct packet* packet) {
 		}while (strm.avail_out == 0);
 		deflateEnd(&strm);
 		cdata = xrealloc(cdata, ts); // shrink
+		preps += writeVarInt(ts + getVarIntSize(pi), prep + preps);
+		preps += writeVarInt(pi, prep + preps);
 		wrt = cdata;
 		wrt_s = ts;
 	} else if (conn->comp >= 0) {
-		writeVarInt_stream(pi + getVarIntSize(0), conn->fd);
-		writeVarInt_stream(0, conn->fd);
+		preps += writeVarInt(pi + getVarIntSize(0), prep + preps);
+		preps += writeVarInt(0, prep + preps);
 		wrt = pktbuf;
 		wrt_s = pi;
 	} else {
-		writeVarInt_stream(pi, conn->fd);
+		preps += writeVarInt(pi, prep + preps);
 		wrt = pktbuf;
 		wrt_s = pi;
 	}
 //TODO: encrypt
-	size_t wi = 0;
-	while (wi < wrt_s) {
-#ifdef __MINGW32__
-		ssize_t v = send(conn->fd, wrt + wi, wrt_s - wi, 0);
-#else
-		ssize_t v = write(conn->fd, wrt + wi, wrt_s - wi);
-#endif
-		if (v < 1) {
-			if (frp) free(wrt);
-			if (v == 0) errno = ECONNRESET;
-			printf("err: %s\n", strerror(errno));
-			return -1;
-		}
-		wi += v;
+	if(conn->writeBuffer == NULL) {
+		conn->writeBuffer = xmalloc(preps);
+		memcpy(conn->writeBuffer, prep, preps);
+		conn->writeBuffer_size = preps;
+	} else {
+		conn->writeBuffer = xrealloc(conn->writeBuffer, conn->writeBuffer_size + preps);
+		memcpy(conn->writeBuffer + conn->writeBuffer_size, prep, preps);
+		conn->writeBuffer_size += preps;
 	}
+	conn->writeBuffer = xrealloc(conn->writeBuffer, conn->writeBuffer_size + wrt_s);
+	memcpy(conn->writeBuffer + conn->writeBuffer_size, wrt, wrt_s);
+	conn->writeBuffer_size += wrt_s;
 	if (frp) xfree(wrt);
 	xfree(pktbuf);
 	//printf("write success\n");
-	return 0;
+	return wrt_s;
 }
 
 #endif

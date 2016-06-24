@@ -64,9 +64,9 @@ int writeString(char* input, unsigned char* buffer, size_t buflen);
 
 int readString(char** output, unsigned char* buffer, size_t buflen);
 
-int readPacket(struct conn* conn, struct packet* packet);
+ssize_t readPacket(struct conn* conn, unsigned char* buf, size_t buflen, struct packet* packet);
 
-int writePacket(struct conn* conn, struct packet* packet);
+ssize_t writePacket(struct conn* conn, struct packet* packet);
 
 int writeVarInt_stream(int32_t input,
 #ifdef __MINGW32__

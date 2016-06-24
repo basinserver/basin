@@ -18,6 +18,8 @@
 #include "util.h"
 #include "streams.h"
 #include <sys/ioctl.h>
+#include "network.h"
+#include "globals.h"
 
 void closeConn(struct work_param* param, struct conn* conn) {
 	close(conn->fd);
@@ -26,6 +28,7 @@ void closeConn(struct work_param* param, struct conn* conn) {
 	}
 	xfree(conn->incomingPacket);
 	xfree(conn->outgoingPacket);
+	if (conn->host_ip != NULL) xfree(conn->host_ip);
 	if (conn->readBuffer != NULL) xfree(conn->readBuffer);
 	if (conn->writeBuffer != NULL) xfree(conn->writeBuffer);
 	xfree(conn);
@@ -33,23 +36,38 @@ void closeConn(struct work_param* param, struct conn* conn) {
 
 int handleRead(struct conn* conn, struct work_param* param, int fd) {
 	if (conn->readBuffer != NULL && conn->readBuffer_size > 0) {
-		if (!conn->comp) {
-			int32_t length = 0;
-			if (!readVarInt(&length, conn->readBuffer, conn->readBuffer_size)) return 0;
-			if (conn->readBuffer_size - getVarIntSize(length) < length) return 0;
-
+		int32_t length = 0;
+		if (!readVarInt(&length, conn->readBuffer, conn->readBuffer_size)) return 0;
+		int ls = getVarIntSize(length);
+		if (conn->readBuffer_size - ls < length) return 0;
+		struct packet* inp = xmalloc(sizeof(struct packet));
+		ssize_t rx = readPacket(conn, conn->readBuffer + ls, length, inp);
+		if (rx == -1) return -1;
+		if (conn->state == STATE_HANDSHAKE && inp->id == PKT_HANDSHAKE_CLIENT_HANDSHAKE) {
+			conn->host_ip = inp->data.handshake_client.handshake.ip;
+			conn->host_port = inp->data.handshake_client.handshake.port;
+			if (inp->data.handshake_client.handshake.protocol_version != MC_PROTOCOL_VERSION) return -2;
+			if (inp->data.handshake_client.handshake.state == STATE_STATUS) {
+				conn->state = STATE_STATUS;
+			} else if (inp->data.handshake_client.handshake.protocol_version == STATE_LOGIN) {
+				conn->state = STATE_LOGIN;
+			} else return -1;
+		} else if (conn->state == STATE_STATUS) {
+			if (inp->id == PKT_STATUS_CLIENT_REQUEST) {
+				inp->id = PKT_STATUS_SERVER_RESPONSE;
+				inp->data.status_server.response.json = xmalloc(1000);
+				inp->data.status_server.response.json[999] = 0;
+				snprintf(inp->data.status_server.response.json, 999, "{\"version\":{\"name\":\"1.8.9\",\"protocol\":%i},\"players\":{\"max\":%i,\"online\":%i},\"description\":{\"text\":\"%s\"}}", MC_PROTOCOL_VERSION, conn->mcs->max_players, 0, conn->mcs->motd);
+				if (writePacket(conn, inp) < 0) return -1;
+				xfree(inp->data.status_server.response.json);
+			} else if (inp->id == PKT_STATUS_CLIENT_PING) {
+				inp->id = PKT_STATUS_SERVER_PONG;
+				if (writePacket(conn, inp) < 0) return -1;
+				conn->state = -1;
+			} else return -1;
 		}
-		if (conn->writeBuffer == NULL) {
-			conn->writeBuffer = xmalloc(conn->readBuffer_size);
-			conn->writeBuffer_size = 0;
-		} else {
-			conn->writeBuffer = xrealloc(conn->writeBuffer, conn->writeBuffer_size + conn->readBuffer_size);
-		}
-		memcpy(conn->writeBuffer + conn->writeBuffer_size, conn->readBuffer, conn->readBuffer_size);
-		conn->writeBuffer_size += conn->readBuffer_size;
-		xfree(conn->readBuffer);
-		conn->readBuffer = NULL;
-		conn->readBuffer_size = 0;
+		memmove(conn->readBuffer, conn->readBuffer + length + ls, conn->readBuffer_size - length - ls);
+		conn->readBuffer_size -= length + ls;
 	}
 	return 0;
 }
@@ -160,6 +178,10 @@ void run_work(struct work_param* param) {
 					xfree(conn->writeBuffer);
 					conn->writeBuffer = NULL;
 				}
+			}
+			if (conn->state == -1 && conn->writeBuffer_size == 0) {
+				closeConn(param, conn);
+				conn = NULL;
 			}
 			cont: ;
 			if (--cp == 0) break;

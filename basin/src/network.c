@@ -31,8 +31,9 @@ void swapEndian(void* dou, size_t ss) {
 }
 
 int getVarIntSize(int32_t input) {
-	for (unsigned char x = 1; x < 5; ++x)
-		if (((input & -1) << (x * 7)) == 0) return x;
+	for (int32_t x = 1; x < 5; x++) {
+		if ((input & -1 << x * 7) == 0) return x;
+	}
 	return 5;
 }
 

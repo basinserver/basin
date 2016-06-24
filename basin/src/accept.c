@@ -40,8 +40,11 @@ void run_accept(struct accept_param* param) {
 		c->writeBuffer_size = 0;
 		c->comp = -1;
 		c->state = 0;
+		c->host_ip = NULL;
+		c->host_port = 0;
 		c->outgoingPacket = new_queue(0, sizeof(struct packet*));
 		c->incomingPacket = new_queue(0, sizeof(struct packet*));
+		c->mcs = param->mcs;
 		if (poll(&spfd, 1, -1) < 0) {
 			printf("Error while polling server: %s\n", strerror(errno));
 			xfree(c);

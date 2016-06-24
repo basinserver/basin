@@ -14,6 +14,11 @@
 #include "work.h"
 #include <netinet/ip6.h>
 
+struct mcs {
+		char* motd;
+		size_t max_players;
+};
+
 struct accept_param {
 		int server_fd;
 		int port;
@@ -21,6 +26,7 @@ struct accept_param {
 		int works_count;
 		struct work_param** works;
 		struct logsess* logsess;
+		struct mcs* mcs;
 };
 
 struct conn {
@@ -36,6 +42,9 @@ struct conn {
 		int comp;
 		struct queue* outgoingPacket;
 		struct queue* incomingPacket;
+		char* host_ip;
+		uint16_t host_port;
+		struct mcs* mcs;
 };
 
 void run_accept(struct accept_param* param);

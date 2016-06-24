@@ -922,6 +922,22 @@ struct pkt_play_server_updateentitynbt {
 		struct nbt_tag* nbt;
 };
 
+struct pkt_status_client_request {
+
+};
+
+struct pkt_status_client_ping {
+		uint64_t payload;
+};
+
+struct pkt_status_server_pong {
+		uint64_t payload;
+};
+
+struct pkt_status_server_response {
+		char* json;
+};
+
 union pkt_state_handshake_client {
 		struct pkt_handshake_client_handshake handshake;
 };
@@ -938,8 +954,14 @@ union pkt_state_login_server {
 		struct pkt_login_server_setcompression setcompression;
 };
 
-struct pkt_state_status {
+union pkt_state_status_client {
+		struct pkt_status_client_request request;
+		struct pkt_status_client_ping ping;
+};
 
+union pkt_state_status_server {
+		struct pkt_status_server_response response;
+		struct pkt_status_server_pong pong;
 };
 
 union pkt_state_play_client {
@@ -1054,7 +1076,8 @@ union pkts {
 		union pkt_state_login_server login_server;
 		union pkt_state_play_client play_client;
 		union pkt_state_play_server play_server;
-		struct pkt_state_status status;
+		union pkt_state_status_client status_client;
+		union pkt_state_status_server status_server;
 };
 
 struct packet {
@@ -1062,8 +1085,8 @@ struct packet {
 		union pkts data;
 };
 
-int readPacket(struct conn* conn, struct packet* packet);
+ssize_t readPacket(struct conn* conn, unsigned char* buf, size_t buflen, struct packet* packet);
 
-int writePacket(struct conn* conn, struct packet* packet);
+ssize_t writePacket(struct conn* conn, struct packet* packet);
 
 #endif /* PACKET1_9_H_ */
