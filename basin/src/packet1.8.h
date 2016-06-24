@@ -357,7 +357,7 @@ struct pkt_play_server_respawn {
 		char* levelType;
 };
 
-struct pkt_play_server_playerposlook {
+struct pkt_play_server_playerpositionandlook {
 		double x;
 		double y;
 		double z;
@@ -552,16 +552,18 @@ struct pkt_play_server_entityproperties {
 		struct entity_properties* properties;
 };
 
+struct netchunk {
+		int32_t chunkX;
+		int32_t chunkZ;
+		uint16_t bitMask;
+		int32_t data_size;
+		void* data;
+};
+
 struct pkt_play_server_chunkdata {
-		int32_t x;
-		int32_t z;
 		mcbool continuous;
-		int32_t bitMask;
-		int32_t size;
-		unsigned char* data;
 		unsigned char biomes[256];
-		int32_t nbtc;
-		struct nbt_tag** nbts;
+		struct netchunk netchunk;
 };
 
 struct pkt_play_server_multiblockchange {
@@ -595,15 +597,9 @@ struct pkt_play_server_blockbreakanimation {
 };
 
 struct pkt_play_server_mapchunkbulk {
-		int32_t x;
-		int32_t z;
-		mcbool continuous;
-		int32_t bitMask;
-		int32_t size;
-		unsigned char* data;
-		unsigned char biomes[256];
-		int32_t nbtc;
-		struct nbt_tag** nbts;
+		mcbool skyLight;
+		struct netchunk* netchunks;
+		int32_t netchunk_count;
 };
 
 struct pkt_play_server_explosion {
@@ -1002,7 +998,7 @@ union pkt_state_play_server {
 		struct pkt_play_server_spawnposition spawnposition;
 		struct pkt_play_server_updatehealth updatehealth;
 		struct pkt_play_server_respawn respawn;
-		struct pkt_play_server_playerposlook playerposlook;
+		struct pkt_play_server_playerpositionandlook playerpositionandlook;
 		struct pkt_play_server_helditemchange helditemchange;
 		struct pkt_play_server_usebed usebed;
 		struct pkt_play_server_animation animation;

@@ -357,6 +357,235 @@ ssize_t writePacket(struct conn* conn, struct packet* packet) {
 	pi += writeVarInt(id, pktbuf + pi);
 	if (conn->state == STATE_PLAY) {
 		if (packet->id == PKT_PLAY_SERVER_KEEPALIVE) {
+			pi += writeVarInt(packet->data.play_server.keepalive.key, pktbuf + pi);
+		} else if (packet->id == PKT_PLAY_SERVER_JOINGAME) {
+			memcpy(pktbuf + pi, &packet->data.play_server.joingame.eid, 4);
+			swapEndian(pktbuf + pi, 4);
+			pi += 4;
+			pktbuf[pi++] = packet->data.play_server.joingame.gamemode;
+			pktbuf[pi++] = packet->data.play_server.joingame.dimension;
+			pktbuf[pi++] = packet->data.play_server.joingame.difficulty;
+			pktbuf[pi++] = packet->data.play_server.joingame.maxPlayers;
+			pi += writeString(packet->data.play_server.joingame.levelType, pktbuf + pi, ps - pi);
+			pktbuf[pi++] = packet->data.play_server.joingame.reducedDebugInfo;
+		} else if (packet->id == PKT_PLAY_SERVER_CHATMESSAGE) {
+			if(strlen(packet->data.play_server.chatmessage.json) > 1000) {
+				ps = strlen(packet->data.play_server.chatmessage.json) + 32;
+				pktbuf = xrealloc(pktbuf, ps);
+			}
+			pi += writeString(packet->data.play_server.chatmessage.json, pktbuf + pi, ps - pi);
+			pktbuf[pi++] = packet->data.play_server.chatmessage.pos;
+		} else if (packet->id == PKT_PLAY_SERVER_TIMEUPDATE) {
+			memcpy(pktbuf + pi, &packet->data.play_server.timeupdate.worldAge, 8);
+			swapEndian(pktbuf + pi, 8);
+			pi += 8;
+			memcpy(pktbuf + pi, &packet->data.play_server.timeupdate.time, 8);
+			swapEndian(pktbuf + pi, 8);
+			pi += 8;
+		} else if (packet->id == PKT_PLAY_SERVER_ENTITYEQUIPMENT) {
+			//TODO
+		} else if (packet->id == PKT_PLAY_SERVER_SPAWNPOSITION) {
+			memcpy(pktbuf + pi, &packet->data.play_server.spawnposition.pos, sizeof(struct encpos));
+			pi += sizeof(struct encpos);
+		} else if (packet->id == PKT_PLAY_SERVER_UPDATEHEALTH) {
+			memcpy(pktbuf + pi, &packet->data.play_server.updatehealth.health, 4);
+			pi += 4;
+			pi += writeVarInt(packet->data.play_server.updatehealth.food, pktbuf + pi);
+			memcpy(pktbuf + pi, &packet->data.play_server.updatehealth.saturation, 4);
+			pi += 4;
+		} else if (packet->id == PKT_PLAY_SERVER_RESPAWN) {
+			memcpy(pktbuf + pi, &packet->data.play_server.respawn.dimension, 4);
+			swapEndian(pktbuf + pi, 4);
+			pi += 4;
+			pktbuf[pi++] = packet->data.play_server.respawn.difficulty;
+			pktbuf[pi++] = packet->data.play_server.respawn.gamemode;
+			pi += writeString(packet->data.play_server.respawn.levelType, pktbuf + pi, ps - pi);
+		} else if (packet->id == PKT_PLAY_SERVER_PLAYERPOSITIONANDLOOK) {
+			memcpy(pktbuf + pi, &packet->data.play_server.playerpositionandlook.x, 8);
+			pi += 8;
+			memcpy(pktbuf + pi, &packet->data.play_server.playerpositionandlook.y, 8);
+			pi += 8;
+			memcpy(pktbuf + pi, &packet->data.play_server.playerpositionandlook.z, 8);
+			pi += 8;
+			memcpy(pktbuf + pi, &packet->data.play_server.playerpositionandlook.yaw, 4);
+			pi += 4;
+			memcpy(pktbuf + pi, &packet->data.play_server.playerpositionandlook.pitch, 4);
+			pi += 4;
+			pktbuf[pi++] = packet->data.play_server.playerpositionandlook.flags;
+		} else if (packet->id == PKT_PLAY_SERVER_HELDITEMCHANGE) {
+			pktbuf[pi++] = packet->data.play_server.helditemchange.slot;
+		} else if (packet->id == PKT_PLAY_SERVER_USEBED) {
+			//TODO
+		} else if (packet->id == PKT_PLAY_SERVER_ANIMATION) {
+			pi += writeVarInt(packet->data.play_server.animation.entityID, pktbuf + pi);
+			pktbuf[pi++] = packet->data.play_server.animation.anim;
+		} else if (packet->id == PKT_PLAY_SERVER_SPAWNPLAYER) {
+			pi += writeVarInt(packet->data.play_server.spawnplayer.entityID, pktbuf + pi);
+			memcpy(pktbuf + pi, &packet->data.play_server.spawnplayer.uuid, sizeof(struct uuid));
+			pi += sizeof(struct uuid);
+			int32_t fp = (int32_t)(packet->data.play_server.spawnplayer.x * 5.);
+			memcpy(pktbuf + pi, &fp, 4);
+			pi += 4;
+			fp = (int32_t)(packet->data.play_server.spawnplayer.y * 5.);
+			memcpy(pktbuf + pi, &fp, 4);
+			pi += 4;
+			fp = (int32_t)(packet->data.play_server.spawnplayer.z * 5.);
+			memcpy(pktbuf + pi, &fp, 4);
+			pi += 4;
+			pktbuf[pi++] = (unsigned char)(packet->data.play_server.spawnplayer.yaw / 360. * 256.);
+			pktbuf[pi++] = (unsigned char)(packet->data.play_server.spawnplayer.pitch / 360. * 256.);
+			if(packet->data.play_server.spawnplayer.metadata != NULL) {
+				memcpy(pktbuf + pi, packet->data.play_server.spawnplayer.metadata, packet->data.play_server.spawnplayer.metadata_size);
+				pi += packet->data.play_server.spawnplayer.metadata_size;
+			}
+		} else if (packet->id == PKT_PLAY_SERVER_COLLECTITEM) {
+
+		} else if (packet->id == PKT_PLAY_SERVER_SPAWNOBJECT) {
+
+		} else if (packet->id == PKT_PLAY_SERVER_SPAWNMOB) {
+
+		} else if (packet->id == PKT_PLAY_SERVER_SPAWNPAINTING) {
+
+		} else if (packet->id == PKT_PLAY_SERVER_SPAWNEXPERIENCEORB) {
+
+		} else if (packet->id == PKT_PLAY_SERVER_ENTITYVELOCITY) {
+
+		} else if (packet->id == PKT_PLAY_SERVER_DESTROYENTITIES) {
+
+		} else if (packet->id == PKT_PLAY_SERVER_ENTITY) {
+
+		} else if (packet->id == PKT_PLAY_SERVER_ENTITYRELMOVE) {
+
+		} else if (packet->id == PKT_PLAY_SERVER_ENTITYLOOK) {
+
+		} else if (packet->id == PKT_PLAY_SERVER_ENTITYLOOKANDRELMOVE) {
+
+		} else if (packet->id == PKT_PLAY_SERVER_ENTITYTELEPORT) {
+
+		} else if (packet->id == PKT_PLAY_SERVER_ENTITYHEADLOOK) {
+
+		} else if (packet->id == PKT_PLAY_SERVER_ENTITYSTATUS) {
+
+		} else if (packet->id == PKT_PLAY_SERVER_ATTACHENTITY) {
+
+		} else if (packet->id == PKT_PLAY_SERVER_ENTITYMETADATA) {
+
+		} else if (packet->id == PKT_PLAY_SERVER_ENTITYEFFECT) {
+
+		} else if (packet->id == PKT_PLAY_SERVER_REMOVEENTITYEFFECT) {
+
+		} else if (packet->id == PKT_PLAY_SERVER_SETEXPERIENCE) {
+
+		} else if (packet->id == PKT_PLAY_SERVER_ENTITYPROPERTIES) {
+
+		} else if (packet->id == PKT_PLAY_SERVER_CHUNKDATA) {
+
+		} else if (packet->id == PKT_PLAY_SERVER_MULTIBLOCKCHANGE) {
+
+		} else if (packet->id == PKT_PLAY_SERVER_BLOCKCHANGE) {
+
+		} else if (packet->id == PKT_PLAY_SERVER_BLOCKACTION) {
+
+		} else if (packet->id == PKT_PLAY_SERVER_BLOCKBREAKANIMATION) {
+
+		} else if (packet->id == PKT_PLAY_SERVER_MAPCHUNKBULK) {
+			pktbuf[pi++] = packet->data.play_server.mapchunkbulk.skyLight;
+			pi += writeVarInt(packet->data.play_server.mapchunkbulk.netchunk_count, pktbuf + pi);
+			size_t ns = pi + 4 * packet->data.play_server.mapchunkbulk.netchunk_count;
+			for (int32_t i = 0;i<packet->data.play_server.mapchunkbulk.netchunk_count;i++) {
+				memcpy(pktbuf + pi, packet->data.play_server.mapchunkbulk.netchunks[i].chunkX, 4);
+				swapEndian(pktbuf + pi, 4);
+				pi += 4;
+				memcpy(pktbuf + pi, packet->data.play_server.mapchunkbulk.netchunks[i].chunkZ, 4);
+				swapEndian(pktbuf + pi, 4);
+				pi += 4;
+				memcpy(pktbuf + pi, packet->data.play_server.mapchunkbulk.netchunks[i].bitMask, 2);
+				swapEndian(pktbuf + pi, 2);
+				pi += 2;
+				ns += packet->data.play_server.mapchunkbulk.netchunks[i].data_size + 128;
+			}
+			pktbuf = xrealloc(pktbuf, ns);
+			for (int32_t i = 0;i<packet->data.play_server.mapchunkbulk.netchunk_count;i++) {
+				memcpy(pktbuf + pi, packet->data.play_server.mapchunkbulk.netchunks[i].data, packet->data.play_server.mapchunkbulk.netchunks[i].data_size);
+				pi += packet->data.play_server.mapchunkbulk.netchunks[i].data_size;
+			}
+		} else if (packet->id == PKT_PLAY_SERVER_EXPLOSION) {
+
+		} else if (packet->id == PKT_PLAY_SERVER_EFFECT) {
+
+		} else if (packet->id == PKT_PLAY_SERVER_SOUNDEFFECT) {
+
+		} else if (packet->id == PKT_PLAY_SERVER_PARTICLE) {
+
+		} else if (packet->id == PKT_PLAY_SERVER_CHANGEGAMESTATE) {
+
+		} else if (packet->id == PKT_PLAY_SERVER_SPAWNGLOBALENTITY) {
+
+		} else if (packet->id == PKT_PLAY_SERVER_OPENWINDOW) {
+
+		} else if (packet->id == PKT_PLAY_SERVER_CLOSEWINDOW) {
+
+		} else if (packet->id == PKT_PLAY_SERVER_SETSLOT) {
+
+		} else if (packet->id == PKT_PLAY_SERVER_WINDOWITEMS) {
+
+		} else if (packet->id == PKT_PLAY_SERVER_WINDOWPROPERTY) {
+
+		} else if (packet->id == PKT_PLAY_SERVER_CONFIRMTRANSACTION) {
+
+		} else if (packet->id == PKT_PLAY_SERVER_UPDATESIGN) {
+
+		} else if (packet->id == PKT_PLAY_SERVER_MAP) {
+
+		} else if (packet->id == PKT_PLAY_SERVER_UPDATEBLOCKENTITY) {
+
+		} else if (packet->id == PKT_PLAY_SERVER_OPENSIGNEDITOR) {
+
+		} else if (packet->id == PKT_PLAY_SERVER_STATISTICS) {
+
+		} else if (packet->id == PKT_PLAY_SERVER_PLAYERLISTITEM) {
+
+		} else if (packet->id == PKT_PLAY_SERVER_PLAYERABILITIES) {
+			pktbuf[pi++] = packet->data.play_server.playerabilities.flags;
+			memcpy(pktbuf + pi, &packet->data.play_server.playerabilities.flyingSpeed, 4);
+			pi += 4;
+			memcpy(pktbuf + pi, &packet->data.play_server.playerabilities.fov, 4);
+			pi += 4;
+		} else if (packet->id == PKT_PLAY_SERVER_TABCOMPLETE) {
+
+		} else if (packet->id == PKT_PLAY_SERVER_SCOREBOARDOBJECTIVE) {
+
+		} else if (packet->id == PKT_PLAY_SERVER_UPDATESCORE) {
+
+		} else if (packet->id == PKT_PLAY_SERVER_DISPLAYSCOREBOARD) {
+
+		} else if (packet->id == PKT_PLAY_SERVER_TEAMS) {
+
+		} else if (packet->id == PKT_PLAY_SERVER_PLUGINMESSAGE) {
+			pi += writeString(packet->data.play_server.pluginmessage.channel, pktbuf + pi, ps - pi);
+			ps = packet->data.play_server.pluginmessage.data_size + pi + 16;
+			pktbuf = xrealloc(pktbuf, ps);
+			memcpy(pktbuf + pi, packet->data.play_server.pluginmessage.data);
+			pi += packet->data.play_server.pluginmessage.data_size;
+		} else if (packet->id == PKT_PLAY_SERVER_DISCONNECT) {
+			pi += writeString(packet->data.play_server.disconnect.reason, pktbuf + pi, ps - pi);
+		} else if (packet->id == PKT_PLAY_SERVER_SERVERDIFFICULTY) {
+			pktbuf[pi++] = packet->data.play_server.serverdifficulty.difficulty;
+		} else if (packet->id == PKT_PLAY_SERVER_COMBATEVENT) {
+
+		} else if (packet->id == PKT_PLAY_SERVER_CAMERA) {
+
+		} else if (packet->id == PKT_PLAY_SERVER_WORLDBORDER) {
+
+		} else if (packet->id == PKT_PLAY_SERVER_TITLE) {
+
+		} else if (packet->id == PKT_PLAY_SERVER_SETCOMPRESSION) {
+
+		} else if (packet->id == PKT_PLAY_SERVER_PLAYERLISTHEADERFOOTER) {
+
+		} else if (packet->id == PKT_PLAY_SERVER_RESOURCEPACKSEND) {
+
+		} else if (packet->id == PKT_PLAY_SERVER_UPDATEENTITYNBT) {
 
 		}
 	} else if (conn->state == STATE_LOGIN) {
