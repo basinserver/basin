@@ -20,6 +20,7 @@
 #include <sys/ioctl.h>
 #include "network.h"
 #include "globals.h"
+#include <openssl/md5.h>
 
 void closeConn(struct work_param* param, struct conn* conn) {
 	close(conn->fd);
@@ -65,6 +66,26 @@ int handleRead(struct conn* conn, struct work_param* param, int fd) {
 				if (writePacket(conn, inp) < 0) return -1;
 				conn->state = -1;
 			} else return -1;
+		} else if (conn->state == STATE_LOGIN) {
+			if (inp->id == PKT_LOGIN_CLIENT_LOGINSTART) {
+				if (conn->mcs->online_mode) {
+					//TODO
+					return -1;
+				} else {
+					inp->id = PKT_LOGIN_SERVER_LOGINSUCCESS;
+					struct uuid uuid;
+					unsigned char* uuidx = (unsigned char*) &uuid;
+					MD5_CTX context;
+					MD5_Init(&context);
+					MD5_Update(&context, inp->data.login_server.loginsuccess.username, strlen(inp->data.login_server.loginsuccess.username));
+					MD5_Final(uuidx, &context);
+					inp->data.login_server.loginsuccess.username = inp->data.login_client.loginstart.name;
+					memcpy(&inp->data.login_server.loginsuccess.UUID, &uuid, sizeof(struct uuid));
+					if (writePacket(conn, inp) < 0) return -1;
+					conn->state = STATE_PLAY;
+					struct player* player = new_player();
+				}
+			}
 		}
 		memmove(conn->readBuffer, conn->readBuffer + length + ls, conn->readBuffer_size - length - ls);
 		conn->readBuffer_size -= length + ls;

@@ -11,6 +11,11 @@
 #include <string.h>
 #include "collection.h"
 #include <pthread.h>
+#include "player.h"
+#include "nbt.h"
+#include <linux/limits.h>
+#include <fcntl.h>
+#include <stdio.h>
 
 struct chunk* getChunk(struct world* world, int16_t x, int16_t z) {
 	pthread_rwlock_rdlock(&world->chunks->data_mutex);
@@ -49,23 +54,25 @@ block getBlockWorld(struct world* world, int32_t x, uint8_t y, int32_t z) {
 }
 
 struct chunk* newChunk(int16_t x, int16_t z) {
-	struct chunk* chunk = malloc(sizeof(struct chunk));
+	struct chunk* chunk = xmalloc(sizeof(struct chunk));
 	memset(chunk, 0, sizeof(struct chunk));
 	chunk->x = x;
 	chunk->z = z;
-	chunk->empty = 0;
+	for (int i = 0; i < 16; i++)
+		chunk->empty[i] = 1;
 	chunk->kill = 0;
 	return chunk;
 }
 
 void freeChunk(struct chunk* chunk) {
-	if (chunk->skyLight != NULL) free(chunk->skyLight);
-	free(chunk);
+	if (chunk->skyLight != NULL) xfree(chunk->skyLight);
+	xfree(chunk);
 }
 
 void setBlockChunk(struct chunk* chunk, block blk, uint8_t x, uint8_t y, uint8_t z) {
 	if (x > 15 || z > 15 || y > 255 || x < 0 || z < 0 || y < 0) return;
 	chunk->blocks[x][z][y] = blk;
+	if (blk != 0) chunk->empty[y >> 4] = 0;
 }
 
 void setBlockWorld(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
@@ -78,11 +85,39 @@ void setBlockWorld(struct world* world, block blk, int32_t x, int32_t y, int32_t
 }
 
 struct world* newWorld() {
-	struct world* world = malloc(sizeof(struct world));
+	struct world* world = xmalloc(sizeof(struct world));
 	memset(world, 0, sizeof(struct world));
 	world->chunks = new_collection(0);
 	world->entities = new_collection(0);
+	world->players = new_collection(0);
 	return world;
+}
+
+int loadWorld(struct world* world, char* path) {
+	char lp[PATH_MAX];
+	snprintf(lp, PATH_MAX, "%s/level.dat", path); // could have a double slash, but its okay
+	int fd = open(lp, O_RDONLY);
+	if (fd < 0) return -1;
+	unsigned char* ld = xmalloc(1024);
+	size_t ldc = 1024;
+	size_t ldi = 0;
+	ssize_t i = 0;
+	while ((i = read(fd, ld + ldi, ldc - ldi)) > 0) {
+		if (ldc - ldi < 512) {
+			ldc += 1024;
+			ld = xrealloc(ld, ldc);
+		}
+	}
+	close(fd);
+	if (readNBT(&world->level, ld, ldi) < 0) return -1;
+	xfree(ld);
+	world->lpa = xstrdup(path);
+	return 0;
+}
+
+int saveWorld(struct world* world, char* path) {
+
+	return 0;
 }
 
 void freeWorld(struct world* world) {
@@ -93,6 +128,7 @@ void freeWorld(struct world* world) {
 		}
 	}
 	pthread_rwlock_unlock(&world->chunks->data_mutex);
+	del_collection(world->chunks);
 	pthread_rwlock_wrlock(&world->entities->data_mutex);
 	for (size_t i = 0; i < world->entities->size; i++) {
 		if (world->entities->data[i] != NULL) {
@@ -100,24 +136,40 @@ void freeWorld(struct world* world) {
 		}
 	}
 	pthread_rwlock_unlock(&world->entities->data_mutex);
-	free(world);
+	del_collection(world->entities);
+	pthread_rwlock_wrlock(&world->players->data_mutex);
+	for (size_t i = 0; i < world->players->size; i++) {
+		if (world->players->data[i] != NULL) {
+			freePlayer(world->players->data[i]);
+		}
+	}
+	pthread_rwlock_unlock(&world->players->data_mutex);
+	del_collection(world->players);
+	if (world->level != NULL) {
+		freeNBT(world->level);
+		xfree(world->level);
+	}
+	if (world->lpa != NULL) xfree(world->lpa);
+	xfree(world);
 }
 
 void spawnEntity(struct world* world, struct entity* entity) {
 	add_collection(world->entities, entity);
 }
 
-struct entity* despawnEntity(struct world* world, int32_t id) {
-	pthread_rwlock_rdlock(&world->entities->data_mutex);
-	for (size_t i = 0; i < world->entities->size; i++) {
-		if (world->entities->data[i] != NULL && ((struct entity*) world->entities->data[i])->id == id) {
-			struct entity* ent = world->entities->data[i];
-			world->entities->data[i] = NULL;
-			return ent;
-		}
-	}
-	pthread_rwlock_unlock(&world->entities->data_mutex);
-	return NULL;
+void spawnPlayer(struct world* world, struct player* player) {
+	add_collection(world->players, player);
+	add_collection(world->entities, player->entity);
+}
+
+void despawnPlayer(struct world* world, struct player* player) {
+	rem_collection(world->entities, player->entity);
+	rem_collection(world->players, player);
+}
+
+void despawnEntity(struct world* world, struct entity* entity) {
+	if (entity->type == ENT_PLAYER) despawnPlayer(world, entity->player);
+	else rem_collection(world->entities, entity);
 }
 
 struct entity* getEntity(struct world* world, int32_t id) {

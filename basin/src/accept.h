@@ -17,6 +17,8 @@
 struct mcs {
 		char* motd;
 		size_t max_players;
+		int online_mode;
+		struct world* worlds[3]; // 0 = nether 1 = overworld 2 = end (dimid + 1)
 };
 
 struct accept_param {

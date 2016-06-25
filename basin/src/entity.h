@@ -11,9 +11,10 @@
 #include <stdint.h>
 #include "world.h"
 #include <stdlib.h>
+#include "player.h"
 
-#define ENT_OURPLAYER 1
-#define ENT_MPPLAYER 2
+#define ENT_UNDEFINED 1
+#define ENT_PLAYER 2
 #define ENT_CREEPER 3
 #define ENT_SKELETON 4
 #define ENT_SPIDER 5
@@ -113,7 +114,7 @@ struct entity {
 		int sprinting;
 		size_t ticksExisted;
 		int32_t subtype;
-		char* name;
+		struct player* player;
 };
 
 void readMetadata(struct entity* ent, unsigned char* meta, size_t size);

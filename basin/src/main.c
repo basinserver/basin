@@ -29,6 +29,7 @@
 #include "collection.h"
 #include "work.h"
 #include <sys/types.h>
+#include "world.h"
 
 int main(int argc, char* argv[]) {
 	if (getuid() != 0 || getgid() != 0) {
@@ -154,6 +155,13 @@ int main(int argc, char* argv[]) {
 			else errlog(delog, "Invalid motd for server, assuming default.");
 			motd = "A Minecraft Server";
 		}
+		const char* onl = getConfigValue(serv, "online-mode");
+		if (onl == NULL) {
+			if (serv->id != NULL) errlog(delog, "Invalid online-mode for server: %s, assuming true.", serv->id);
+			else errlog(delog, "Invalid online-mode for server, assuming true.");
+			onl = "true";
+		}
+		int ionl = streq_nocase(onl, "true");
 		sock: ;
 		int sfd = socket(namespace, SOCK_STREAM, 0);
 		if (sfd < 0) {
@@ -255,6 +263,8 @@ int main(int argc, char* argv[]) {
 		struct mcs* mcs = xmalloc(sizeof(struct mcs));
 		mcs->max_players = mc;
 		mcs->motd = xstrdup(motd, 0);
+		mcs->online_mode = ionl;
+		mcs->worlds[1] = newWorld();
 		struct accept_param* ap = xmalloc(sizeof(struct accept_param));
 		ap->port = port;
 		ap->server_fd = sfd;

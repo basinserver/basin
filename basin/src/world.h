@@ -12,6 +12,7 @@
 #include <stdlib.h>
 #include "network.h"
 #include "collection.h"
+#include "player.h"
 
 struct boundingbox {
 		double minX;
@@ -31,19 +32,26 @@ struct chunk {
 		unsigned char biomes[16][16]; // x, z
 		unsigned char blockLight[16][16][128]; // x, z, y(4-bit)
 		unsigned char* skyLight; // if non-NULL, points to a 2048-byte nibble-array.
-		int empty;
+		int empty[16];
 		int kill;
 };
 
 struct world {
 		struct collection* entities;
+		struct collection* players;
 		struct collection* chunks;
 		char* levelType;
 		struct encpos spawnpos;
 		int32_t dimension;
 		uint64_t time;
 		uint64_t age;
+		struct nbt_tag* level;
+		char* lpa;
 };
+
+int loadWorld(struct world* world, char* path);
+
+int saveWorld(struct world* world, char* path);
 
 struct chunk* getChunk(struct world* world, int16_t x, int16_t z);
 
@@ -71,7 +79,11 @@ void freeWorld(struct world* world);
 
 void spawnEntity(struct world* world, struct entity* entity);
 
-struct entity* despawnEntity(struct world* world, int32_t id);
+void spawnPlayer(struct world* world, struct player* player);
+
+void despawnEntity(struct world* world, struct entity* entity);
+
+void despawnPlayer(struct world* world, struct player* player);
 
 struct entity* getEntity(struct world* world, int32_t id);
 

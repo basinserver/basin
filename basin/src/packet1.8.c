@@ -565,7 +565,7 @@ ssize_t writePacket(struct conn* conn, struct packet* packet) {
 			pi += writeString(packet->data.play_server.pluginmessage.channel, pktbuf + pi, ps - pi);
 			ps = packet->data.play_server.pluginmessage.data_size + pi + 16;
 			pktbuf = xrealloc(pktbuf, ps);
-			memcpy(pktbuf + pi, packet->data.play_server.pluginmessage.data);
+			memcpy(pktbuf + pi, packet->data.play_server.pluginmessage.data, packet->data.play_server.pluginmessage.data_size);
 			pi += packet->data.play_server.pluginmessage.data_size;
 		} else if (packet->id == PKT_PLAY_SERVER_DISCONNECT) {
 			pi += writeString(packet->data.play_server.disconnect.reason, pktbuf + pi, ps - pi);

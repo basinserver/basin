@@ -102,6 +102,7 @@ struct entity* newEntity(int32_t id, float x, float y, float z, uint8_t type, fl
 	e->usingItem = 0;
 	e->ticksExisted = 0;
 	e->subtype = 0;
+	e->player = NULL;
 	return e;
 }
 
@@ -279,7 +280,7 @@ void load_entities() {
 }
 
 struct boundingbox* getEntityCollision(struct entity* ent) {
-	if (ent->type == ENT_OURPLAYER || ent->type == ENT_MPPLAYER || ent->type == ENT_CREEPER || ent->type == ENT_ZOMBIE || ent->type == ENT_ZPIGMAN || ent->type == ENT_BLAZE || ent->type == ENT_WITCH || ent->type == ENT_VILLAGER) return &bb_player;
+	if (ent->type == ENT_PLAYER || ent->type == ENT_CREEPER || ent->type == ENT_ZOMBIE || ent->type == ENT_ZPIGMAN || ent->type == ENT_BLAZE || ent->type == ENT_WITCH || ent->type == ENT_VILLAGER) return &bb_player;
 	else if (ent->type == ENT_SKELETON) return &bb_skeleton;
 	return &no_bb;
 }
