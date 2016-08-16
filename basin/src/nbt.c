@@ -27,6 +27,13 @@ void freeNBT(struct nbt_tag* nbt) {
 	}
 }
 
+struct nbt_tag* getNBTChild(struct nbt_tag* nbt, char* name) {
+	for (size_t i = 0; i < nbt->children_count; i++) {
+		if (streq_nocase(nbt->children[i]->name, name)) return nbt->children[i];
+	}
+	return NULL;
+}
+
 struct nbt_tag* cloneNBT(struct nbt_tag* nbt) {
 	struct nbt_tag* nt = malloc(sizeof(struct nbt_tag));
 	nt->name = nbt->name == NULL ? NULL : strdup(nbt->name);

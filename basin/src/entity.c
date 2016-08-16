@@ -100,9 +100,12 @@ struct entity* newEntity(int32_t id, float x, float y, float z, uint8_t type, fl
 	e->sneaking = 0;
 	e->sprinting = 0;
 	e->usingItem = 0;
+	e->portalCooldown = 0;
 	e->ticksExisted = 0;
 	e->subtype = 0;
 	e->player = NULL;
+	e->fallDistance = 0.;
+	e->maxHealth = 20;
 	return e;
 }
 

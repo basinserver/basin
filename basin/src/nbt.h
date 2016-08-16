@@ -58,6 +58,8 @@ void freeNBT(struct nbt_tag* nbt);
 
 struct nbt_tag* cloneNBT(struct nbt_tag* nbt);
 
+struct nbt_tag* getNBTChild(struct nbt_tag* nbt, char* name);
+
 int readNBT(struct nbt_tag** root, unsigned char* buffer, size_t buflen);
 
 int writeNBT(struct nbt_tag* root, unsigned char* buffer, size_t buflen);

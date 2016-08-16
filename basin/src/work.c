@@ -83,7 +83,7 @@ int handleRead(struct conn* conn, struct work_param* param, int fd) {
 					memcpy(&inp->data.login_server.loginsuccess.UUID, &uuid, sizeof(struct uuid));
 					if (writePacket(conn, inp) < 0) return -1;
 					conn->state = STATE_PLAY;
-					struct player* player = new_player();
+					struct player* player = newPlayer(NULL, inp->data.login_server.loginsuccess.username, uuid, conn, 0);
 				}
 			}
 		}

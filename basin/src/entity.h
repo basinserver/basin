@@ -105,6 +105,7 @@ struct entity {
 		double motZ;
 		union entity_data data;
 		float health;
+		float maxHealth;
 		int32_t objectData;
 		int markedKill;
 		struct potioneffect* effects;
@@ -112,9 +113,11 @@ struct entity {
 		int sneaking;
 		int usingItem;
 		int sprinting;
+		int portalCooldown;
 		size_t ticksExisted;
 		int32_t subtype;
 		struct player* player;
+		float fallDistance;
 };
 
 void readMetadata(struct entity* ent, unsigned char* meta, size_t size);

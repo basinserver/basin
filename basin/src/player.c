@@ -20,6 +20,24 @@ struct player* newPlayer(struct entity* entity, char* name, struct uuid uuid, st
 	player->currentItem = 0;
 	player->ping = 0;
 	player->stage = 0;
+	player->invulnerable = 0;
+	player->mayfly = 0;
+	player->instabuild = 0;
+	player->walkSpeed = 0;
+	player->flySpeed = 0;
+	player->maybuild = 0;
+	player->flying = 0;
+	player->xpseed = 0;
+	player->xptotal = 0;
+	player->xplevel = 0;
+	player->score = 0;
+	player->saturation = 0.;
+	player->sleeping = 0;
+	player->fire = 0;
+	//TODO: enderitems & inventory
+	player->food = 0;
+	player->foodexhaustion = 0.;
+	player->foodTick = 0;
 	return player;
 }
 

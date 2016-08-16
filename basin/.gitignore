@@ -1,8 +1,0 @@
-*.[do]
-*.exe
-*.dll
-
-/Debug/basin
-/Debug/src/
-/Debug/
-/Debug/world

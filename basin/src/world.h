@@ -28,18 +28,34 @@ typedef uint16_t block;
 struct chunk {
 		int16_t x;
 		int16_t z;
-		block blocks[16][16][256]; // x, z, y
-		unsigned char biomes[16][16]; // x, z
-		unsigned char blockLight[16][16][128]; // x, z, y(4-bit)
+		block blocks[256][16][16]; // y, z, x
+		unsigned char biomes[16][16]; // z, x
+		unsigned char blockLight[256][16][8]; // y, z, x(4-bit)
 		unsigned char* skyLight; // if non-NULL, points to a 2048-byte nibble-array.
 		int empty[16];
-		int kill;
+		int unload;
+		int lightpopulated;
+		int terrainpopulated;
+		uint64_t inhabitedticks;
+		uint16_t heightMap[16][16]; // z, x
+		struct nbt** tileEntities;
+		//TODO: tileTicks
+};
+
+struct region {
+		uint16_t x;
+		uint16_t z;
+		struct chunk* chunks[32][32];
+		uint8_t loaded[32][32];
+		int fd; // -1 if not loaded, >= 0 is the FD.
+		void* mapping; // NULL if not loaded
+		char* file;
 };
 
 struct world {
 		struct collection* entities;
 		struct collection* players;
-		struct collection* chunks;
+		struct collection* regions;
 		char* levelType;
 		struct encpos spawnpos;
 		int32_t dimension;
@@ -55,11 +71,9 @@ int saveWorld(struct world* world, char* path);
 
 struct chunk* getChunk(struct world* world, int16_t x, int16_t z);
 
-void removeChunk(struct world* world, struct chunk* chunk);
+void unloadChunk(struct world* world, struct chunk* chunk);
 
 int getBiome(struct world* world, int32_t x, int32_t z);
-
-void addChunk(struct world* world, struct chunk* chunk);
 
 block getBlockChunk(struct chunk* chunk, uint8_t x, uint8_t y, uint8_t z);
 
@@ -68,6 +82,10 @@ block getBlockWorld(struct world* world, int32_t x, uint8_t y, int32_t z);
 struct chunk* newChunk(int16_t x, int16_t z);
 
 void freeChunk(struct chunk* chunk);
+
+struct region* newRegion(char* path, int16_t x, int16_t z);
+
+void freeRegion(struct region* region);
 
 void setBlockChunk(struct chunk* chunk, block blk, uint8_t x, uint8_t y, uint8_t z);
 
