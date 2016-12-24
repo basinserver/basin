@@ -79,9 +79,33 @@
 
 int entNetworkConvert(int type, int id);
 
-union entity_data {
-
-};
+#define POT_SPEED 1
+#define POT_SLOWNESS 2
+#define POT_HASTE 3
+#define POT_MINING_FATIGUE 4
+#define POT_STRENGTH 5
+#define POT_INSTANT_HEALTH 6
+#define POT_INSTANT_DAMAGE 7
+#define POT_JUMP_BOOST 8
+#define POT_NAUSEA 9
+#define POT_REGENERATION 10
+#define POT_RESISTANCE 11
+#define POT_FIRE_RESISTANCE 12
+#define POT_WATER_BREATHING 13
+#define POT_INVISIBILITY 14
+#define POT_BLINDNESS 15
+#define POT_NIGHT_VISION 16
+#define POT_HUNGER 17
+#define POT_WEAKNESS 18
+#define POT_POISON 19
+#define POT_WITHER 20
+#define POT_HEALTH_BOOST 21
+#define POT_ABSORPTION 22
+#define POT_SATURATION 23
+#define POT_GLOWING 24
+#define POT_LEVITATION 25
+#define POT_LUCK 26
+#define POT_UNLUCK 27
 
 struct potioneffect {
 		char effectID;
@@ -90,20 +114,215 @@ struct potioneffect {
 		char particles;
 };
 
+int isLiving(int type);
+
+union entity_data {
+		struct entity_player {
+				struct player* player;
+		} player;
+		struct entity_creeper {
+
+		} creeper;
+		struct entity_skeleton {
+
+		} skeleton;
+		struct entity_spider {
+
+		} spider;
+		struct entity_giant {
+
+		} giant;
+		struct entity_zombie {
+
+		} zombie;
+		struct entity_slime {
+
+		} slime;
+		struct entity_ghast {
+
+		} ghast;
+		struct entity_zpigman {
+
+		} zpigman;
+		struct entity_enderman {
+
+		} enderman;
+		struct entity_cavespider {
+
+		} cavespider;
+		struct entity_silverfish {
+
+		} silverfish;
+		struct entity_blaze {
+
+		} blaze;
+		struct entity_magmacube {
+
+		} magmacube;
+		struct entity_enderdragon {
+
+		} enderdragon;
+		struct entity_wither {
+
+		} wither;
+		struct entity_bat {
+
+		} bat;
+		struct entity_witch {
+
+		} witch;
+		struct entity_endermite {
+
+		} endermite;
+		struct entity_guardian {
+
+		} guardian;
+		struct entity_shulker {
+
+		} shulker;
+		struct entity_pig {
+
+		} pig;
+		struct entity_sheep {
+
+		} sheep;
+		struct entity_cow {
+
+		} cow;
+		struct entity_chicken {
+
+		} chicken;
+		struct entity_squid {
+
+		} squid;
+		struct entity_wolf {
+
+		} wolf;
+		struct entity_mooshroom {
+
+		} mooshroom;
+		struct entity_snowman {
+
+		} snowman;
+		struct entity_ocelot {
+
+		} ocelot;
+		struct entity_irongolem {
+
+		} irongolem;
+		struct entity_horse {
+
+		} horse;
+		struct entity_rabbit {
+
+		} rabbit;
+		struct entity_villager {
+
+		} villager;
+		struct entity_boat {
+
+		} boat;
+		struct entity_itemstack {
+
+		} itemstack;
+		struct entity_areaeffect {
+
+		} areaeffect;
+		struct entity_minecart {
+
+		} minecart;
+		struct entity_tnt {
+
+		} tnt;
+		struct entity_endercrystal {
+
+		} endercrystal;
+		struct entity_arrow {
+
+		} arrow;
+		struct entity_snowball {
+
+		} snowball;
+		struct entity_egg {
+
+		} egg;
+		struct entity_fireball {
+
+		} fireball;
+		struct entity_firecharge {
+
+		} firecharge;
+		struct entity_enderpearl {
+
+		} enderpearl;
+		struct entity_witherskull {
+
+		} witherskull;
+		struct entity_shulkerbullet {
+
+		} shulkerbullet;
+		struct entity_fallingblock {
+
+		} fallingblock;
+		struct entity_itemframe {
+
+		} itemframe;
+		struct entity_eyeender {
+
+		} eyeender;
+		struct entity_thrownpotion {
+
+		} thrownpotion;
+		struct entity_fallingegg {
+
+		} fallingegg;
+		struct entity_expbottle {
+
+		} expbottle;
+		struct entity_firework {
+
+		} firework;
+		struct entity_leashknot {
+
+		} leashknot;
+		struct entity_armorstand {
+
+		} armorstand;
+		struct entity_fishingfloat {
+
+		} fishingfloat;
+		struct entity_spectralarrow {
+
+		} spectralarrow;
+		struct entity_tippedarrow {
+
+		} tippedarrow;
+		struct entity_dragonfireball {
+
+		} dragonfireball;
+		struct entity_experienceorb {
+
+		} experienceorb;
+};
+
 struct entity {
 		int32_t id;
 		double x;
 		double y;
 		double z;
+		double lx;
+		double ly;
+		double lz;
 		uint8_t type;
 		float yaw;
 		float pitch;
+		float lyaw;
+		float lpitch;
 		float headpitch;
 		int onGround;
 		double motX;
 		double motY;
 		double motZ;
-		union entity_data data;
 		float health;
 		float maxHealth;
 		int32_t objectData;
@@ -116,15 +335,22 @@ struct entity {
 		int portalCooldown;
 		size_t ticksExisted;
 		int32_t subtype;
-		struct player* player;
 		float fallDistance;
+		union entity_data data;
+		struct world* world;
 };
 
 void readMetadata(struct entity* ent, unsigned char* meta, size_t size);
 
+void writeMetadata(struct entity* ent, unsigned char** data, size_t* size);
+
 void load_entities();
 
-void drawEntity(float partialTick, struct entity* ent);
+double entity_dist(struct entity* ent1, struct entity* ent2);
+
+double entity_distsq(struct entity* ent1, struct entity* ent2);
+
+double entity_distsq_block(struct entity* ent1, double x, double y, double z);
 
 struct entity* newEntity(int32_t id, float x, float y, float z, uint8_t type, float yaw, float pitch);
 

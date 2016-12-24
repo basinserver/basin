@@ -14,6 +14,8 @@
 #include "collection.h"
 #include "player.h"
 
+uint32_t nextEntityID;
+
 struct boundingbox {
 		double minX;
 		double maxX;
@@ -43,8 +45,8 @@ struct chunk {
 };
 
 struct region {
-		uint16_t x;
-		uint16_t z;
+		int16_t x;
+		int16_t z;
 		struct chunk* chunks[32][32];
 		uint8_t loaded[32][32];
 		int fd; // -1 if not loaded, >= 0 is the FD.

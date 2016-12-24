@@ -30,6 +30,17 @@
 #include "work.h"
 #include <sys/types.h>
 #include "world.h"
+#include "worldmanager.h"
+#include "server.h"
+#include "game.h"
+#include "block.h"
+
+void main_tick() {
+	for (size_t i = 0; i < worlds->size; i++) {
+		tick_world((struct world*) worlds->data[i]);
+	}
+	tick_counter++;
+}
 
 int main(int argc, char* argv[]) {
 	if (getuid() != 0 || getgid() != 0) {
@@ -99,6 +110,12 @@ int main(int argc, char* argv[]) {
 	struct cnode** servs = getCatsByCat(cfg, CAT_SERVER, &servsl);
 	int sr = 0;
 	struct accept_param* aps[servsl];
+	if (servsl != 1) {
+		errlog(delog, "Only one server block is supported at this time.");
+		return -1;
+	}
+	players = new_collection(0);
+	init_blocks();
 	for (int i = 0; i < servsl; i++) {
 		struct cnode* serv = servs[i];
 		const char* bind_mode = getConfigValue(serv, "bind-mode");
@@ -144,16 +161,23 @@ int main(int argc, char* argv[]) {
 		}
 		const char* mcc = getConfigValue(serv, "max-players");
 		if (!strisunum(mcc)) {
-			if (serv->id != NULL) errlog(delog, "Invalid max-conn for server: %s", serv->id);
-			else errlog(delog, "Invalid max-conn for server.");
+			if (serv->id != NULL) errlog(delog, "Invalid max-players for server: %s", serv->id);
+			else errlog(delog, "Invalid max-players for server.");
 			continue;
 		}
 		int mc = atoi(mcc);
-		const char* motd = getConfigValue(serv, "motd");
-		if (motd == NULL) {
+		const char* mcc2 = getConfigValue(serv, "difficulty");
+		if (!strisunum(mcc2)) {
+			if (serv->id != NULL) errlog(delog, "Invalid difficulty for server: %s", serv->id);
+			else errlog(delog, "Invalid difficulty for server.");
+			continue;
+		}
+		int mc2 = atoi(mcc2);
+		const char* dmotd = getConfigValue(serv, "motd");
+		if (dmotd == NULL) {
 			if (serv->id != NULL) errlog(delog, "Invalid motd for server: %s, assuming default.", serv->id);
 			else errlog(delog, "Invalid motd for server, assuming default.");
-			motd = "A Minecraft Server";
+			dmotd = "A Minecraft Server";
 		}
 		const char* onl = getConfigValue(serv, "online-mode");
 		if (onl == NULL) {
@@ -260,11 +284,41 @@ int main(int argc, char* argv[]) {
 		slog->error_fd = lel == NULL ? NULL : fopen(lel, "a");
 		if (serv->id != NULL) acclog(slog, "Server %s listening for connections!", serv->id);
 		else acclog(slog, "Server listening for connections!");
-		struct mcs* mcs = xmalloc(sizeof(struct mcs));
-		mcs->max_players = mc;
-		mcs->motd = xstrdup(motd, 0);
-		mcs->online_mode = ionl;
-		mcs->worlds[1] = newWorld();
+		max_players = mc;
+		motd = xstrdup(dmotd, 0);
+		online_mode = ionl;
+		difficulty = mc2;
+		const char* ovr = getConfigValue(serv, "world");
+		if (ovr == NULL) {
+			if (serv->id != NULL) errlog(delog, "No world defined for server: %s", serv->id);
+			else errlog(delog, "No world defined for server");
+			close (sfd);
+			continue;
+		}
+		const char* neth = getConfigValue(serv, "world-nether");
+		if (ovr == NULL) {
+			if (serv->id != NULL) errlog(delog, "No world-nether defined for server: %s", serv->id);
+			else errlog(delog, "No world-nether defined for server");
+			close (sfd);
+			continue;
+		}
+		const char* ed = getConfigValue(serv, "world-the-end");
+		if (ovr == NULL) {
+			if (serv->id != NULL) errlog(delog, "No world-the-end defined for server: %s", serv->id);
+			else errlog(delog, "No world-the-end defined for server");
+			close (sfd);
+			continue;
+		}
+		overworld = newWorld();
+		loadWorld(overworld, ovr);
+		nether = newWorld();
+		loadWorld(nether, neth);
+		endworld = newWorld();
+		loadWorld(endworld, ed);
+		worlds = new_collection(0);
+		add_collection(worlds, overworld);
+		add_collection(worlds, nether);
+		add_collection(worlds, endworld);
 		struct accept_param* ap = xmalloc(sizeof(struct accept_param));
 		ap->port = port;
 		ap->server_fd = sfd;
@@ -272,7 +326,6 @@ int main(int argc, char* argv[]) {
 		ap->works_count = tc;
 		ap->works = xmalloc(sizeof(struct work_param*) * tc);
 		ap->logsess = slog;
-		ap->mcs = mcs;
 		for (int x = 0; x < tc; x++) {
 			struct work_param* wp = xmalloc(sizeof(struct work_param));
 			wp->conns = new_collection(mc < 1 ? 0 : mc / tc);
@@ -315,7 +368,17 @@ int main(int argc, char* argv[]) {
 			close(aps[i]->server_fd);
 		}
 	}
-	while (sr > 0)
-		sleep(1);
+	struct timespec ts;
+	clock_gettime(CLOCK_MONOTONIC, &ts);
+	double lastRun = (double) ts.tv_nsec / 1000000. + (double) ts.tv_sec * 1000.;
+	while (sr > 0) {
+		clock_gettime(CLOCK_MONOTONIC, &ts);
+		double ct = (double) ts.tv_nsec / 1000000. + (double) ts.tv_sec * 1000.;
+		while (lastRun <= ct - 50.) {
+			lastRun += 50.;
+			main_tick();
+		}
+		usleep((lastRun - (ct - 50.)) * 1000.);
+	}
 	return 0;
 }

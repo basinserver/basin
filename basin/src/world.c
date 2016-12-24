@@ -21,6 +21,9 @@
 #include <sys/mman.h>
 #include <zlib.h>
 #include <dirent.h>
+#include "worldmanager.h"
+#include "network.h"
+#include "game.h"
 
 struct chunk* loadRegionChunk(struct region* region, int8_t lchx, int8_t lchz) {
 	if (region->fd < 0) {
@@ -28,12 +31,15 @@ struct chunk* loadRegionChunk(struct region* region, int8_t lchx, int8_t lchz) {
 		if (region->fd < 0) return NULL;
 		region->mapping = mmap(NULL, 67108864, PROT_READ | PROT_WRITE, MAP_SHARED, region->fd, 0); // 64 MB is the theoretical limit of an uncompressed region file
 	}
-	uint32_t* hf = region->mapping + (lchz << 5 | lchx);
-	uint32_t off = (*hf & 0xFFFFFF00) >> 8;
-	uint8_t size = (*hf & 0xFF) * 4096;
+	uint32_t* hf = region->mapping + 4 * ((lchx & 31) + (lchz & 31) * 32);
+	uint32_t rhf = *hf;
+	swapEndian(&rhf, 4);
+	uint32_t off = ((rhf & 0xFFFFFF00) >> 8) * 4096;
+	uint32_t size = ((rhf & 0x000000FF)) * 4096;
 	if (off == 0 || size == 0) return NULL;
-	void* chk = region->mapping + (off * 4096);
+	void* chk = region->mapping + (off);
 	uint32_t rsize = ((uint32_t*) chk)[0];
+	swapEndian(&rsize, 4);
 	uint8_t comptype = ((uint8_t*) chk)[4];
 	chk += 5;
 	void* rtbuf = xmalloc(4096);
@@ -108,9 +114,12 @@ struct chunk* loadRegionChunk(struct region* region, int8_t lchx, int8_t lchz) {
 		uint8_t y = tmp->data.nbt_byte;
 		tmp = getNBTChild(section, "Blocks");
 		if (tmp == NULL || tmp->id != NBT_TAG_BYTEARRAY || tmp->data.nbt_bytearray.len != 4096) continue;
+		int hna = 0;
 		for (int i = 0; i < 4096; i++) {
 			rch->blocks[(i >> 8) + (y * 16)][(i & 0xf0) >> 4][i & 0x0f] = ((block) tmp->data.nbt_bytearray.data[i]) << 4;
+			if (((block) tmp->data.nbt_bytearray.data[i]) != 0) hna = 1;
 		}
+		if (hna) rch->empty[y] = 0;
 		tmp = getNBTChild(section, "Add");
 		if (tmp != NULL) {
 			if (tmp->id != NBT_TAG_BYTEARRAY || tmp->data.nbt_bytearray.len != 2048) continue;
@@ -128,7 +137,7 @@ struct chunk* loadRegionChunk(struct region* region, int8_t lchx, int8_t lchz) {
 		if (tmp == NULL || tmp->id != NBT_TAG_BYTEARRAY || tmp->data.nbt_bytearray.len != 2048) continue;
 		for (int i = 0; i < 4096; i++) {
 			block sx = tmp->data.nbt_bytearray.data[i / 2];
-			if (i % 2 == 0) {
+			if (i % 2 == 1) {
 				sx &= 0xf0;
 				sx >>= 4;
 			} else sx &= 0x0f;
@@ -156,6 +165,18 @@ struct chunk* loadRegionChunk(struct region* region, int8_t lchx, int8_t lchz) {
 	return NULL;
 }
 
+void generateChunk(struct world* world, struct chunk* chunk) {
+	if (world->dimension == OVERWORLD) {
+		chunk->skyLight = xmalloc(2048);
+		memset(chunk->skyLight, 0xFF, 2048);
+	}
+	for (int x = 0; x < 16; x++) {
+		for (int z = 0; z < 16; z++) {
+			setBlockChunk(chunk, 1 << 4, x, 0, z);
+		}
+	}
+}
+
 struct chunk* getChunk(struct world* world, int16_t x, int16_t z) {
 	int16_t rx = x >> 5;
 	int16_t rz = z >> 5;
@@ -177,7 +198,9 @@ struct chunk* getChunk(struct world* world, int16_t x, int16_t z) {
 		}
 	}
 	gen: ;
+	pthread_rwlock_unlock(&world->regions->data_mutex);
 	struct chunk* gc = newChunk(x, z);
+	generateChunk(world, gc);
 	if (!ar) {
 		char lp[PATH_MAX];
 		snprintf(lp, PATH_MAX, "%s/region/r.%i.%i.mca", world->lpa, rx, rz);
@@ -186,13 +209,6 @@ struct chunk* getChunk(struct world* world, int16_t x, int16_t z) {
 	}
 	ar->chunks[z & 0x1F][x & 0x1F] = gc;
 	ar->loaded[z & 0x1F][x & 0x1F] = 1;
-	//TODO chunk gen based on seed
-	for (int x = 0; x < 16; x++) {
-		for (int z = 0; z < 16; z++) {
-			gc->blocks[0][z][x] = 1 << 4;
-		}
-	}
-	pthread_rwlock_unlock(&world->regions->data_mutex);
 	return gc;
 }
 
@@ -259,6 +275,17 @@ void setBlockWorld(struct world* world, block blk, int32_t x, int32_t y, int32_t
 		return;
 	}
 	setBlockChunk(chunk, blk, x & 0x0f, y, z & 0x0f);
+	BEGIN_BROADCAST_DISTXYZ((double) x + .5, (double) y + .5, (double) z + .5, world->players, 128.)
+	struct packet* pkt = xmalloc(sizeof(struct packet));
+	pkt->id = PKT_PLAY_CLIENT_BLOCKCHANGE;
+	pkt->data.play_client.blockchange.location.x = x;
+	pkt->data.play_client.blockchange.location.y = y;
+	pkt->data.play_client.blockchange.location.z = z;
+	pkt->data.play_client.blockchange.block_id = blk;
+	add_queue(bc_player->conn->outgoingPacket, pkt);
+	flush_outgoing (bc_player);
+	END_BROADCAST
+
 }
 
 struct world* newWorld() {
@@ -284,24 +311,43 @@ int loadWorld(struct world* world, char* path) {
 			ldc += 1024;
 			ld = xrealloc(ld, ldc);
 		}
+		ldi += i;
 	}
 	close(fd);
-	if (readNBT(&world->level, ld, ldi) < 0) return -1;
+	if (i < 0) {
+		xfree(ld);
+		return -1;
+	}
+	unsigned char* nld = NULL;
+	ssize_t ds = decompressNBT(ld, ldi, (void**) &nld);
 	xfree(ld);
+	if (ds < 0) {
+		return -1;
+	}
+	if (readNBT(&world->level, nld, ds) < 0) return -1;
+	xfree(nld);
+	struct nbt_tag* data = world->level->children[0];
+	world->levelType = getNBTChild(data, "generatorName")->data.nbt_string;
+	world->spawnpos.x = getNBTChild(data, "SpawnX")->data.nbt_int;
+	world->spawnpos.y = getNBTChild(data, "SpawnY")->data.nbt_int;
+	world->spawnpos.z = getNBTChild(data, "SpawnZ")->data.nbt_int;
 	world->lpa = xstrdup(path, 0);
+	printf("spawn: %i, %i, %i\n", world->spawnpos.x, world->spawnpos.y, world->spawnpos.z);
 	snprintf(lp, PATH_MAX, "%s/region/", path);
 	DIR* dir = opendir(lp);
-	struct dirent* de = NULL;
-	while ((de = readdir(dir)) != NULL) {
-		if (!endsWith_nocase(de->d_name, ".mca")) continue;
-		snprintf(lp, PATH_MAX, "%s/region/%s", path, de->d_name);
-		char* xs = lp + 2;
-		char* zs = strchr(xs, '.');
-		if (zs == NULL) continue;
-		struct region* reg = newRegion(lp, strtol(xs, NULL, 10), strtol(zs, NULL, 10));
-		add_collection(world->regions, reg);
+	if (dir != NULL) {
+		struct dirent* de = NULL;
+		while ((de = readdir(dir)) != NULL) {
+			if (!endsWith_nocase(de->d_name, ".mca")) continue;
+			snprintf(lp, PATH_MAX, "%s/region/%s", path, de->d_name);
+			char* xs = strstr(lp, "/r.") + 3;
+			char* zs = strchr(xs, '.') + 1;
+			if (zs == NULL) continue;
+			struct region* reg = newRegion(lp, strtol(xs, NULL, 10), strtol(zs, NULL, 10));
+			add_collection(world->regions, reg);
+		}
+		closedir(dir);
 	}
-	closedir(dir);
 	return 0;
 }
 
@@ -344,12 +390,14 @@ void freeWorld(struct world* world) { // assumes all chunks are unloaded
 }
 
 void spawnEntity(struct world* world, struct entity* entity) {
+	entity->world = world;
 	add_collection(world->entities, entity);
 }
 
 void spawnPlayer(struct world* world, struct player* player) {
+	player->world = world;
 	add_collection(world->players, player);
-	add_collection(world->entities, player->entity);
+	spawnEntity(world, player->entity);
 }
 
 void despawnPlayer(struct world* world, struct player* player) {
@@ -358,7 +406,7 @@ void despawnPlayer(struct world* world, struct player* player) {
 }
 
 void despawnEntity(struct world* world, struct entity* entity) {
-	if (entity->type == ENT_PLAYER) despawnPlayer(world, entity->player);
+	if (entity->type == ENT_PLAYER) despawnPlayer(world, entity->data.player.player);
 	else rem_collection(world->entities, entity);
 }
 

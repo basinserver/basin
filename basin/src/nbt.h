@@ -54,6 +54,8 @@ struct nbt_tag {
 		union nbt_data data;
 };
 
+ssize_t decompressNBT(void* data, size_t size, void** dest);
+
 void freeNBT(struct nbt_tag* nbt);
 
 struct nbt_tag* cloneNBT(struct nbt_tag* nbt);

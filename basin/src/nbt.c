@@ -8,6 +8,7 @@
 #include "nbt.h"
 #include <stdlib.h>
 #include <string.h>
+#include <zlib.h>
 
 void freeNBT(struct nbt_tag* nbt) {
 	if (nbt->name != NULL) free(nbt->name);
@@ -277,6 +278,43 @@ int __recurReadNBT(struct nbt_tag** root, unsigned char* buffer, size_t buflen, 
 	}
 	*root = cur;
 	return r;
+}
+
+ssize_t decompressNBT(void* data, size_t size, void** dest) {
+	void* rtbuf = xmalloc(16384);
+	size_t rtc = 16384;
+	z_stream strm;
+	strm.zalloc = Z_NULL;
+	strm.zfree = Z_NULL;
+	strm.opaque = Z_NULL;
+	int dr = 0;
+	if ((dr = inflateInit2(&strm, (32 + MAX_WBITS))) != Z_OK) { //
+		//printf("Compression initialization error!\n");
+		xfree(rtbuf);
+		return -1;
+	}
+	strm.avail_in = size;
+	strm.next_in = data;
+	strm.avail_out = rtc;
+	strm.next_out = rtbuf;
+	do {
+		if (rtc - strm.total_out < 8192) {
+			rtc += 16384;
+			rtbuf = realloc(rtbuf, rtc);
+		}
+		strm.avail_out = rtc - strm.total_out;
+		strm.next_out = rtbuf + strm.total_out;
+		dr = inflate(&strm, Z_FINISH);
+		if (dr == Z_STREAM_ERROR) {
+			//printf("Compression Read Error!\n");
+			inflateEnd(&strm);
+			xfree(rtbuf);
+			return -1;
+		}
+	} while (strm.avail_out == 0);
+	inflateEnd(&strm);
+	*dest = rtbuf;
+	return strm.total_out;
 }
 
 int readNBT(struct nbt_tag** root, unsigned char* buffer, size_t buflen) {

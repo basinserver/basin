@@ -1,3 +1,7 @@
 basin
 src/*.o
+src/*.d
 world
+world_nether
+world_the_end
+

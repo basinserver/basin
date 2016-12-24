@@ -14,13 +14,6 @@
 #include "work.h"
 #include <netinet/ip6.h>
 
-struct mcs {
-		char* motd;
-		size_t max_players;
-		int online_mode;
-		struct world* worlds[3]; // 0 = nether 1 = overworld 2 = end (dimid + 1)
-};
-
 struct accept_param {
 		int server_fd;
 		int port;
@@ -28,7 +21,6 @@ struct accept_param {
 		int works_count;
 		struct work_param** works;
 		struct logsess* logsess;
-		struct mcs* mcs;
 };
 
 struct conn {
@@ -41,12 +33,14 @@ struct conn {
 		size_t readBuffer_checked;
 		unsigned char* writeBuffer;
 		size_t writeBuffer_size;
+		size_t writeBuffer_capacity;
 		int comp;
+		struct work_param* work;
 		struct queue* outgoingPacket;
-		struct queue* incomingPacket;
 		char* host_ip;
 		uint16_t host_port;
-		struct mcs* mcs;
+		struct player* player;
+		int disconnect;
 };
 
 void run_accept(struct accept_param* param);

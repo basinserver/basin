@@ -8,11 +8,13 @@
 #ifndef GLOBALS_H_
 #define GLOBALS_H_
 
-#define MC_VERSION_1_8_9
-//#define MC_VERSION_1_9_4
-//#define MC_VERSION_1_10
-#define MC_PROTOCOL_VERSION 47
+#define MC_PROTOCOL_VERSION 315
 
+#include <stdlib.h>
+
+size_t tick_counter;
 struct config* cfg;
 struct logsess* delog;
+struct collection* players;
+
 #endif /* GLOBALS_H_ */

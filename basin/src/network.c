@@ -19,7 +19,7 @@
 #include <pthread.h>
 #include <time.h>
 #include "accept.h"
-#include "packet1.8.h"
+#include "packet.h"
 
 void swapEndian(void* dou, size_t ss) {
 	uint8_t* pxs = (uint8_t*) dou;
@@ -229,4 +229,3 @@ int writeSlot(struct slot* slot, unsigned char* buffer, size_t buflen) {
 	buflen -= 2;
 	return 5 + writeNBT(slot->nbt, buffer, buflen);
 }
-

@@ -38,13 +38,14 @@ void run_accept(struct accept_param* param) {
 		c->readBuffer_checked = 0;
 		c->writeBuffer = NULL;
 		c->writeBuffer_size = 0;
+		c->writeBuffer_capacity = 0;
 		c->comp = -1;
 		c->state = 0;
+		c->disconnect = 0;
 		c->host_ip = NULL;
+		c->player = NULL;
 		c->host_port = 0;
 		c->outgoingPacket = new_queue(0, sizeof(struct packet*));
-		c->incomingPacket = new_queue(0, sizeof(struct packet*));
-		c->mcs = param->mcs;
 		if (poll(&spfd, 1, -1) < 0) {
 			printf("Error while polling server: %s\n", strerror(errno));
 			xfree(c);
@@ -74,6 +75,7 @@ void run_accept(struct accept_param* param) {
 			continue;
 		}
 		struct work_param* work = param->works[rand() % param->works_count];
+		c->work = work;
 		if (add_collection(work->conns, c)) { // TODO: send to lowest load, not random
 			if (errno == EINVAL) {
 				printf("Too many open connections! Closing client.\n");

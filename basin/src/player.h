@@ -13,6 +13,7 @@
 
 struct player {
 		struct entity* entity;
+		struct world* world;
 		char* name;
 		struct uuid uuid;
 		struct conn* conn;
@@ -38,6 +39,10 @@ struct player {
 		int32_t food;
 		float foodexhaustion;
 		int32_t foodTick;
+		int32_t nextKeepAlive;
+		struct encpos digging_position;
+		float digging;
+		float digspeed;
 };
 
 struct player* newPlayer(struct entity* entity, char* name, struct uuid, struct conn* conn, uint8_t gamemode);

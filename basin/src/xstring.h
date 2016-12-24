@@ -32,6 +32,12 @@ char* toLowerCase(char* str);
 
 char* toUpperCase(char* str);
 
+char* urlencode(char* str); // must be freed and str must be on heap
+
+char* replace(char* str, char* from, char* to); // when strlen(to) > strlen(from), str MUST be heap allocated!
+
+char* replace_nocase(char* str, char* from, char* to);
+
 int strisunum(const char* str);
 
 #endif /* XSTRING_H_ */

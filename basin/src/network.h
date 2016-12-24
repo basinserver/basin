@@ -33,13 +33,12 @@ struct __attribute__((__packed__)) uuid {
 		uint64_t uuid2;
 };
 
-#ifdef MC_VERSION_1_8_9
-#include "packet1.8.h"
-#elif MV_VERSION_1_9_4
-#include "packet1.9.h"
-#elif MV_VERSION_1_10
-#include "packet1.10.h"
-#endif
+struct entity_metadata {
+		uint8_t* metadata;
+		size_t metadata_size;
+};
+
+#include "packet.h"
 
 #define STATE_HANDSHAKE 0
 #define STATE_STATUS 1
@@ -63,6 +62,8 @@ int readVarLong(int64_t* output, unsigned char* buffer, size_t buflen);
 int writeString(char* input, unsigned char* buffer, size_t buflen);
 
 int readString(char** output, unsigned char* buffer, size_t buflen);
+
+int readSlot(struct slot* slot, unsigned char* buffer, size_t buflen);
 
 ssize_t readPacket(struct conn* conn, unsigned char* buf, size_t buflen, struct packet* packet);
 

@@ -11,6 +11,9 @@
 #include <GL/gl.h>
 #include "globals.h"
 #include <math.h>
+#include "network.h"
+#include "util.h"
+#include "xstring.h"
 
 int entNetworkConvert(int type, int id) {
 	if (type == 0) {
@@ -85,9 +88,14 @@ struct entity* newEntity(int32_t id, float x, float y, float z, uint8_t type, fl
 	e->x = x;
 	e->y = y;
 	e->z = z;
+	e->lx = x;
+	e->ly = y;
+	e->lz = z;
 	e->type = type;
 	e->yaw = yaw;
 	e->pitch = pitch;
+	e->lyaw = yaw;
+	e->lpitch = pitch;
 	e->headpitch = 0.;
 	e->onGround = 1;
 	e->motX = 0.;
@@ -103,10 +111,23 @@ struct entity* newEntity(int32_t id, float x, float y, float z, uint8_t type, fl
 	e->portalCooldown = 0;
 	e->ticksExisted = 0;
 	e->subtype = 0;
-	e->player = NULL;
 	e->fallDistance = 0.;
 	e->maxHealth = 20;
+	e->world = NULL;
+	memset(&e->data, 0, sizeof(union entity_data));
 	return e;
+}
+
+double entity_dist(struct entity* ent1, struct entity* ent2) {
+	return sqrt((ent1->x - ent2->x) * (ent1->x - ent2->x) + (ent1->y - ent2->y) * (ent1->y - ent2->y) + (ent1->z - ent2->z) * (ent1->z - ent2->z));
+}
+
+double entity_distsq(struct entity* ent1, struct entity* ent2) {
+	return (ent1->x - ent2->x) * (ent1->x - ent2->x) + (ent1->y - ent2->y) * (ent1->y - ent2->y) + (ent1->z - ent2->z) * (ent1->z - ent2->z);
+}
+
+double entity_distsq_block(struct entity* ent1, double x, double y, double z) {
+	return (ent1->x - x) * (ent1->x - x) + (ent1->y - y) * (ent1->y - y) + (ent1->z - z) * (ent1->z - z);
 }
 
 void handleMetaByte(struct entity* ent, int index, signed char b) {
@@ -129,7 +150,7 @@ void handleMetaFloat(struct entity* ent, int index, float f) {
 
 void handleMetaString(struct entity* ent, int index, char* str) {
 
-	free(str);
+	xfree(str);
 }
 
 void handleMetaSlot(struct entity* ent, int index, struct slot* slot) {
@@ -145,6 +166,58 @@ void handleMetaPosition(struct entity* ent, int index, struct encpos* pos) {
 }
 
 void handleMetaUUID(struct entity* ent, int index, struct uuid* pos) {
+
+}
+
+int isLiving(int type) {
+	return type == ENT_SKELETON || type == ENT_SPIDER || type == ENT_GIANT || type == ENT_ZOMBIE || type == ENT_SLIME || type == ENT_GHAST || type == ENT_ZPIGMAN || type == ENT_ENDERMAN || type == ENT_CAVESPIDER || type == ENT_SILVERFISH || type == ENT_BLAZE || type == ENT_MAGMACUBE || type == ENT_ENDERDRAGON || type == ENT_WITHER || type == ENT_BAT || type == ENT_WITCH || type == ENT_ENDERMITE || type == ENT_GUARDIAN || type == ENT_SHULKER || type == ENT_PIG || type == ENT_SHEEP || type == ENT_COW || type == ENT_CHICKEN || type == ENT_SQUID || type == ENT_WOLF || type == ENT_MOOSHROOM || type == ENT_SNOWMAN || type == ENT_OCELOT || type == ENT_IRONGOLEM || type == ENT_HORSE || type == ENT_RABBIT || type == ENT_VILLAGER || type == ENT_BOAT;
+}
+
+void outputMetaByte(struct entity* ent, unsigned char** loc, size_t* size) {
+	*loc = xrealloc(*loc, *size + 3);
+	(*loc)[(*size)++] = 0;
+	(*loc)[(*size)++] = 0;
+	(*loc)[*size] = ent->sneaking ? 0x02 : 0;
+	(*loc)[*size] |= ent->sprinting ? 0x08 : 0;
+	(*loc)[(*size)++] |= ent->usingItem ? 0x08 : 0;
+}
+
+void outputMetaVarInt(struct entity* ent, unsigned char** loc, size_t* size) {
+	if ((ent->type == ENT_SKELETON || ent->type == ENT_SLIME || ent->type == ENT_MAGMACUBE || ent->type == ENT_GUARDIAN)) {
+		*loc = xrealloc(*loc, *size + 2 + getVarIntSize(ent->subtype));
+		(*loc)[(*size)++] = 11;
+		(*loc)[(*size)++] = 1;
+		*size += writeVarInt(ent->subtype, *loc + *size);
+	}
+}
+
+void outputMetaFloat(struct entity* ent, unsigned char** loc, size_t* size) {
+	if (isLiving(ent->type)) {
+		*loc = xrealloc(*loc, *size + 6);
+		(*loc)[(*size)++] = 7;
+		(*loc)[(*size)++] = 2;
+		memcpy(*loc + *size, &ent->health, 4); // TODO: swap endian maybe?
+		*size += 4;
+	}
+}
+
+void outputMetaString(struct entity* ent, unsigned char** loc, size_t* size) {
+
+}
+
+void outputMetaSlot(struct entity* ent, unsigned char** loc, size_t* size) {
+
+}
+
+void outputMetaVector(struct entity* ent, unsigned char** loc, size_t* size) {
+
+}
+
+void outputMetaPosition(struct entity* ent, unsigned char** loc, size_t* size) {
+
+}
+
+void outputMetaUUID(struct entity* ent, unsigned char** loc, size_t* size) {
 
 }
 
@@ -164,6 +237,7 @@ void readMetadata(struct entity* ent, unsigned char* meta, size_t size) {
 			size--;
 			handleMetaByte(ent, index, b);
 		} else if (type == 1 || type == 10 || type == 12) {
+			if ((type == 10 || type == 12) && size == 0) break;
 			int32_t vi = 0;
 			int r = readVarInt(&vi, meta, size);
 			meta += r;
@@ -244,6 +318,21 @@ void readMetadata(struct entity* ent, unsigned char* meta, size_t size) {
 	}
 }
 
+void writeMetadata(struct entity* ent, unsigned char** data, size_t* size) {
+	*data = NULL;
+	*size = 0;
+	outputMetaByte(ent, data, size);
+	outputMetaVarInt(ent, data, size);
+	outputMetaFloat(ent, data, size);
+	outputMetaString(ent, data, size);
+	outputMetaSlot(ent, data, size);
+	outputMetaVector(ent, data, size);
+	outputMetaPosition(ent, data, size);
+	outputMetaUUID(ent, data, size);
+	*data = xrealloc(*data, *size + 1);
+	(*data)[(*size)++] = 0xFF;
+}
+
 int getSwingTime(struct entity* ent) {
 	for (size_t i = 0; i < ent->effect_count; i++) {
 		if (ent->effects[i].effectID == 3) {
@@ -272,14 +361,14 @@ void load_entities() {
 	bb_player.maxX = .3;
 	bb_player.maxY = 1.8;
 	bb_player.maxZ = .3;
-	//
+//
 	bb_skeleton.minX = -.3;
 	bb_skeleton.minY = 0.;
 	bb_skeleton.minZ = -.3;
 	bb_skeleton.maxX = .3;
 	bb_skeleton.maxY = 1.95;
 	bb_skeleton.maxZ = .3;
-	//
+//
 }
 
 struct boundingbox* getEntityCollision(struct entity* ent) {

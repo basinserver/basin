@@ -9,9 +9,11 @@
 #include "entity.h"
 #include "accept.h"
 #include "util.h"
+#include "network.h"
 
 struct player* newPlayer(struct entity* entity, char* name, struct uuid uuid, struct conn* conn, uint8_t gamemode) {
 	struct player* player = xmalloc(sizeof(struct player));
+	entity->data.player.player = player;
 	player->entity = entity;
 	player->conn = conn;
 	player->name = name;
@@ -38,6 +40,10 @@ struct player* newPlayer(struct entity* entity, char* name, struct uuid uuid, st
 	player->food = 0;
 	player->foodexhaustion = 0.;
 	player->foodTick = 0;
+	player->nextKeepAlive = 0;
+	memset(&player->digging_position, 0, sizeof(struct encpos));
+	player->digging = -1.;
+	player->digspeed = 0.;
 	return player;
 }
 
