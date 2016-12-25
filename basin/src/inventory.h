@@ -47,9 +47,10 @@ struct inventory {
 		int16_t** props;
 		size_t prop_count;
 		int windowID;
+		struct player* player; // only for player inventories
 };
 
-void newInventory(struct inventory* inv, int type, int id);
+void newInventory(struct inventory* inv, int type, int id, int slots);
 
 void freeInventory(struct inventory* inv);
 

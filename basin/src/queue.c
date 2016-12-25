@@ -71,10 +71,12 @@ int add_queue(struct queue* queue, void* data) {
 			memcpy(ndata, queue->data + queue->start, (queue->end - queue->start) * sizeof(void*));
 		} else {
 			memcpy(ndata, queue->data + queue->start, (orc - queue->start) * sizeof(void*));
-			memcpy(ndata + (orc - queue->start), queue->data + queue->end, (queue->start - queue->end) * sizeof(void*));
+			memcpy(ndata + (orc - queue->start), queue->data, (queue->end) * sizeof(void*));
 		}
 		xfree(queue->data);
 		queue->data = ndata;
+		queue->start = 0;
+		queue->end = orc;
 	} else if (queue->capacity == 0) {
 	} else {
 		while (queue->size == queue->capacity) {
@@ -93,10 +95,12 @@ int add_queue(struct queue* queue, void* data) {
 				memcpy(ndata, queue->data + queue->start, (queue->end - queue->start) * sizeof(void*));
 			} else {
 				memcpy(ndata, queue->data + queue->start, (orc - queue->start) * sizeof(void*));
-				memcpy(ndata + (orc - queue->start), queue->data + queue->end, (queue->start - queue->end) * sizeof(void*));
+				memcpy(ndata + (orc - queue->start), queue->data, (queue->end) * sizeof(void*));
 			}
 			xfree(queue->data);
 			queue->data = ndata;
+			queue->start = 0;
+			queue->end = orc;
 		} else queue->end -= rp;
 	}
 	queue->size++;
@@ -133,8 +137,8 @@ void* pop_nowait_queue(struct queue* queue) {
 	if (queue->mt) {
 		pthread_mutex_lock(&queue->data_mutex);
 	}
-	if (queue->size == 0) {
-		pthread_mutex_unlock(&queue->data_mutex);
+	if (queue->size <= 0) {
+		if (queue->mt) pthread_mutex_unlock(&queue->data_mutex);
 		return NULL;
 	}
 	void* data = queue->data[queue->start++];

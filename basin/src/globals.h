@@ -9,6 +9,7 @@
 #define GLOBALS_H_
 
 #define MC_PROTOCOL_VERSION 315
+#define CHUNK_VIEW_DISTANCE 10
 
 #include <stdlib.h>
 

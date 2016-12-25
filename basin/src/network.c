@@ -20,6 +20,7 @@
 #include <time.h>
 #include "accept.h"
 #include "packet.h"
+#include "util.h"
 
 void swapEndian(void* dou, size_t ss) {
 	uint8_t* pxs = (uint8_t*) dou;
@@ -210,6 +211,50 @@ int readSlot(struct slot* slot, unsigned char* buffer, size_t buflen) {
 	buffer += 2;
 	buflen -= 2;
 	return 5 + readNBT(&slot->nbt, buffer, buflen);
+}
+
+void duplicateSlot(struct slot* slot, struct slot* dup) {
+	if (slot == NULL) {
+		memset(dup, 0, sizeof(struct slot));
+		dup->item = -1;
+		return;
+	}
+	dup->item = slot->item;
+	dup->damage = slot->damage;
+	dup->itemCount = slot->itemCount;
+	dup->nbt = xmalloc(sizeof(struct nbt_tag));
+	duplicateNBT(slot->nbt, dup->nbt);
+}
+
+void duplicateNBT(struct nbt_tag* nbt, struct nbt_tag* dup) {
+	if (nbt == NULL) {
+		memset(dup, 0, sizeof(struct nbt_tag));
+		return;
+	}
+	dup->name = nbt->name == NULL ? NULL : xstrdup(nbt->name, 0);
+	dup->id = nbt->id;
+	dup->children_count = nbt->children_count;
+	if (dup->id == NBT_TAG_BYTE || dup->id == NBT_TAG_SHORT || dup->id == NBT_TAG_INT || dup->id == NBT_TAG_LONG || dup->id == NBT_TAG_FLOAT || dup->id == NBT_TAG_DOUBLE) {
+		memcpy(&dup->data, &nbt->data, sizeof(union nbt_data));
+	} else if (dup->id == NBT_TAG_BYTEARRAY) {
+		dup->data.nbt_bytearray.len = nbt->data.nbt_bytearray.len;
+		dup->data.nbt_bytearray.data = xmalloc(dup->data.nbt_bytearray.len);
+		memcpy(dup->data.nbt_bytearray.data, nbt->data.nbt_bytearray.data, dup->data.nbt_bytearray.len);
+	} else if (dup->id == NBT_TAG_STRING) {
+		dup->data.nbt_string = xstrdup(nbt->data.nbt_string, 0);
+	} else if (dup->id == NBT_TAG_LIST) {
+		dup->data.nbt_list.type = nbt->data.nbt_list.type;
+		dup->data.nbt_list.count = nbt->data.nbt_list.count;
+	} else if (dup->id == NBT_TAG_INTARRAY) {
+		dup->data.nbt_intarray.count = nbt->data.nbt_intarray.count;
+		dup->data.nbt_intarray.ints = xmalloc(4 * dup->data.nbt_intarray.count);
+		memcpy(dup->data.nbt_intarray.ints, nbt->data.nbt_intarray.ints, dup->data.nbt_bytearray.len);
+	}
+	dup->children = xmalloc(sizeof(struct nbt_tag*) * dup->children_count);
+	for (size_t i = 0; i < dup->children_count; i++) {
+		dup->children[i] = xmalloc(sizeof(struct nbt_tag));
+		duplicateNBT(nbt->children[i], dup->children[i]);
+	}
 }
 
 int writeSlot(struct slot* slot, unsigned char* buffer, size_t buflen) {

@@ -43,6 +43,8 @@ struct player {
 		struct encpos digging_position;
 		float digging;
 		float digspeed;
+		struct inventory inventory;
+		struct collection* loadedChunks;
 };
 
 struct player* newPlayer(struct entity* entity, char* name, struct uuid, struct conn* conn, uint8_t gamemode);

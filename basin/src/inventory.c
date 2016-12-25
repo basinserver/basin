@@ -7,20 +7,21 @@
 
 #include "inventory.h"
 #include "globals.h"
-#include <GL/gl.h>
 #include "item.h"
 #include "network.h"
 #include <string.h>
 #include <math.h>
+#include "util.h"
 
-void newInventory(struct inventory* inv, int type, int id) {
+void newInventory(struct inventory* inv, int type, int id, int slots) {
 	inv->title = NULL;
 	inv->slots = NULL;
-	inv->slot_count = 0;
+	inv->slot_count = slots;
 	inv->props = NULL;
 	inv->prop_count = 0;
 	inv->type = type;
 	inv->windowID = id;
+	inv->player = NULL;
 }
 
 void _freeInventorySlots(struct inventory* inv) {
@@ -29,22 +30,22 @@ void _freeInventorySlots(struct inventory* inv) {
 			if (inv->slots[i] == NULL) continue;
 			if (inv->slots[i]->nbt != NULL) {
 				freeNBT(inv->slots[i]->nbt);
-				free(inv->slots[i]->nbt);
+				xfree(inv->slots[i]->nbt);
 			}
-			free(inv->slots[i]);
+			xfree(inv->slots[i]);
 		}
-		free(inv->slots);
+		xfree(inv->slots);
 		inv->slots = NULL;
 	}
 }
 
 void freeInventory(struct inventory* inv) {
-	if (inv->title != NULL) free(inv->title);
+	if (inv->title != NULL) xfree(inv->title);
 	if (inv->props != NULL) {
 		for (size_t i = 0; i < inv->prop_count; i++) {
-			free(inv->props[i]);
+			xfree(inv->props[i]);
 		}
-		free(inv->props);
+		xfree(inv->props);
 	}
 	_freeInventorySlots(inv);
 }
@@ -73,7 +74,8 @@ void setInventoryItems(struct inventory* inv, struct slot** slots, size_t slot_c
 	for (size_t i = 0; i < slot_count; i++) {
 		if (slots[i]->item < 0) {
 			if (slots[i]->nbt != NULL) freeNBT(slots[i]->nbt);
-			free(slots[i]);
+			xfree(slots[i]->nbt);
+			xfree(slots[i]);
 			slots[i] = NULL;
 		}
 	}
@@ -85,27 +87,21 @@ void setInventorySlot(struct inventory* inv, struct slot* slot, int index) {
 	if (index < 0 || index >= inv->slot_count) return;
 	if (inv->slots == NULL) {
 		if (inv->slot_count < 1) return;
-		inv->slots = malloc(sizeof(struct slot*) * inv->slot_count);
+		inv->slots = xmalloc(sizeof(struct slot*) * inv->slot_count);
 		for (int i = 0; i < inv->slot_count; i++) {
 			inv->slots[i] = NULL;
 		}
 	}
-	if (slot != NULL && slot->item < 0) {
-		if (slot->nbt != NULL) {
-			freeNBT(slot->nbt);
-			free(slot->nbt);
-		}
-		free(slot);
-		slot = NULL;
-	}
 	if (inv->slots[index] != NULL) {
 		if (inv->slots[index]->nbt != NULL) {
 			freeNBT(inv->slots[index]->nbt);
-			free(inv->slots[index]->nbt);
+			xfree(inv->slots[index]->nbt);
 		}
-		free(inv->slots[index]);
+		xfree(inv->slots[index]);
 	}
-	inv->slots[index] = slot;
+	if (slot != NULL && slot->item == -1) slot = NULL;
+	inv->slots[index] = xmalloc(sizeof(struct slot));
+	duplicateSlot(slot, inv->slots[index]);
 }
 
 void setInventoryProperty(struct inventory* inv, int16_t name, int16_t value) {
@@ -116,12 +112,12 @@ void setInventoryProperty(struct inventory* inv, int16_t name, int16_t value) {
 				return;
 			}
 		}
-		inv->props = realloc(inv->props, sizeof(int16_t*) * (inv->prop_count + 1));
+		inv->props = xrealloc(inv->props, sizeof(int16_t*) * (inv->prop_count + 1));
 	} else {
-		inv->props = malloc(sizeof(int16_t*));
+		inv->props = xmalloc(sizeof(int16_t*));
 		inv->prop_count = 0;
 	}
-	int16_t* dm = malloc(sizeof(int16_t) * 2);
+	int16_t* dm = xmalloc(sizeof(int16_t) * 2);
 	dm[0] = name;
 	dm[1] = value;
 	inv->props[inv->prop_count++] = dm;

@@ -13,6 +13,10 @@
 
 void flush_outgoing(struct player* player);
 
+void loadPlayer(struct player* to, struct player* from);
+
+void onInventoryUpdate(struct inventory* inventory, int slot);
+
 void tick_world(struct world* world);
 
 void broadcast(char* text);

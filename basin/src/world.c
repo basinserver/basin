@@ -213,7 +213,22 @@ struct chunk* getChunk(struct world* world, int16_t x, int16_t z) {
 }
 
 void unloadChunk(struct world* world, struct chunk* chunk) {
-	chunk->unload = 1;
+	//TODO: save chunk
+	int16_t rx = chunk->x >> 5;
+	int16_t rz = chunk->z >> 5;
+	pthread_rwlock_rdlock(&world->regions->data_mutex);
+	for (size_t i = 0; i < world->regions->size; i++) {
+		if (world->regions->data[i] != NULL && ((struct region*) world->regions->data[i])->x == rx && ((struct region*) world->regions->data[i])->z == rz) {
+			struct region* r = ((struct region*) world->regions->data[i]);
+			r->loaded[chunk->z & 0x1F][chunk->x & 0x1F] = 0;
+			r->chunks[chunk->z & 0x1F][chunk->x & 0x1F] = 0;
+			freeChunk(chunk);
+			pthread_rwlock_unlock(&world->regions->data_mutex);
+			return;
+		}
+	}
+	pthread_rwlock_unlock(&world->regions->data_mutex);
+
 }
 
 int getBiome(struct world* world, int32_t x, int32_t z) {
@@ -240,12 +255,19 @@ struct chunk* newChunk(int16_t x, int16_t z) {
 	chunk->z = z;
 	for (int i = 0; i < 16; i++)
 		chunk->empty[i] = 1;
-	chunk->unload = 0;
+	chunk->playersLoaded = 0;
 	return chunk;
 }
 
 void freeChunk(struct chunk* chunk) {
 	if (chunk->skyLight != NULL) xfree(chunk->skyLight);
+	if (chunk->tileEntities != NULL) {
+		for (size_t i = 0; i < chunk->tileEntity_count; i++) {
+			freeNBT(chunk->tileEntities[i]);
+			xfree(chunk->tileEntities[i]);
+		}
+		xfree(chunk->tileEntities);
+	}
 	xfree(chunk);
 }
 struct region* newRegion(char* path, int16_t x, int16_t z) {

@@ -74,3 +74,15 @@ int rem_collection(struct collection* coll, void* data) {
 	return -1;
 }
 
+int contains_collection(struct collection* coll, void* data) {
+	pthread_rwlock_rdlock(&coll->data_mutex);
+	for (int i = 0; i < coll->size; i++) {
+		if (coll->data[i] == data) {
+			pthread_rwlock_unlock(&coll->data_mutex);
+			return 1;
+		}
+	}
+	pthread_rwlock_unlock(&coll->data_mutex);
+	return 0;
+}
+

@@ -26,6 +26,96 @@ void flush_outgoing(struct player* player) {
 	}
 }
 
+void loadPlayer(struct player* to, struct player* from) {
+	struct packet* pkt = xmalloc(sizeof(struct packet));
+	pkt->id = PKT_PLAY_CLIENT_SPAWNPLAYER;
+	pkt->data.play_client.spawnplayer.entity_id = from->entity->id;
+	memcpy(&pkt->data.play_client.spawnplayer.player_uuid, &from->entity->data.player.player->uuid, sizeof(struct uuid));
+	pkt->data.play_client.spawnplayer.x = from->entity->x;
+	pkt->data.play_client.spawnplayer.y = from->entity->y;
+	pkt->data.play_client.spawnplayer.z = from->entity->z;
+	pkt->data.play_client.spawnplayer.yaw = (from->entity->yaw / 360.) * 256.;
+	pkt->data.play_client.spawnplayer.pitch = (from->entity->pitch / 360.) * 256.;
+	writeMetadata(from->entity, &pkt->data.play_client.spawnplayer.metadata.metadata, &pkt->data.play_client.spawnplayer.metadata.metadata_size);
+	add_queue(to->conn->outgoingPacket, pkt);
+	pkt = xmalloc(sizeof(struct packet));
+	pkt->id = PKT_PLAY_CLIENT_ENTITYEQUIPMENT;
+	pkt->data.play_client.entityequipment.entity_id = from->entity->id;
+	pkt->data.play_client.entityequipment.slot = 0;
+	duplicateSlot(from->inventory.slots == NULL ? NULL : from->inventory.slots[from->currentItem + 36], &pkt->data.play_client.entityequipment.item);
+	add_queue(to->conn->outgoingPacket, pkt);
+	pkt = xmalloc(sizeof(struct packet));
+	pkt->id = PKT_PLAY_CLIENT_ENTITYEQUIPMENT;
+	pkt->data.play_client.entityequipment.entity_id = from->entity->id;
+	pkt->data.play_client.entityequipment.slot = 5;
+	duplicateSlot(from->inventory.slots == NULL ? NULL : from->inventory.slots[5], &pkt->data.play_client.entityequipment.item);
+	add_queue(to->conn->outgoingPacket, pkt);
+	pkt = xmalloc(sizeof(struct packet));
+	pkt->id = PKT_PLAY_CLIENT_ENTITYEQUIPMENT;
+	pkt->data.play_client.entityequipment.entity_id = from->entity->id;
+	pkt->data.play_client.entityequipment.slot = 4;
+	duplicateSlot(from->inventory.slots == NULL ? NULL : from->inventory.slots[6], &pkt->data.play_client.entityequipment.item);
+	add_queue(to->conn->outgoingPacket, pkt);
+	pkt = xmalloc(sizeof(struct packet));
+	pkt->id = PKT_PLAY_CLIENT_ENTITYEQUIPMENT;
+	pkt->data.play_client.entityequipment.entity_id = from->entity->id;
+	pkt->data.play_client.entityequipment.slot = 3;
+	duplicateSlot(from->inventory.slots == NULL ? NULL : from->inventory.slots[7], &pkt->data.play_client.entityequipment.item);
+	add_queue(to->conn->outgoingPacket, pkt);
+	pkt = xmalloc(sizeof(struct packet));
+	pkt->id = PKT_PLAY_CLIENT_ENTITYEQUIPMENT;
+	pkt->data.play_client.entityequipment.entity_id = from->entity->id;
+	pkt->data.play_client.entityequipment.slot = 2;
+	duplicateSlot(from->inventory.slots == NULL ? NULL : from->inventory.slots[8], &pkt->data.play_client.entityequipment.item);
+	add_queue(to->conn->outgoingPacket, pkt);
+	pkt = xmalloc(sizeof(struct packet));
+	pkt->id = PKT_PLAY_CLIENT_ENTITYEQUIPMENT;
+	pkt->data.play_client.entityequipment.entity_id = from->entity->id;
+	pkt->data.play_client.entityequipment.slot = 1;
+	duplicateSlot(from->inventory.slots == NULL ? NULL : from->inventory.slots[45], &pkt->data.play_client.entityequipment.item);
+	add_queue(to->conn->outgoingPacket, pkt);
+	flush_outgoing(to);
+}
+
+void onInventoryUpdate(struct inventory* inventory, int slot) {
+	if (inventory->type == INVTYPE_PLAYERINVENTORY) {
+		if (slot == inventory->player->currentItem + 36) {
+			BEGIN_BROADCAST_EXCEPT_DIST(inventory->player, inventory->player->entity, 128.)
+			struct packet* pkt = xmalloc(sizeof(struct packet));
+			pkt->id = PKT_PLAY_CLIENT_ENTITYEQUIPMENT;
+			pkt->data.play_client.entityequipment.entity_id = inventory->player->entity->id;
+			pkt->data.play_client.entityequipment.slot = 0;
+			duplicateSlot(inventory->slots == NULL ? NULL : inventory->slots[inventory->player->currentItem + 36], &pkt->data.play_client.entityequipment.item);
+			add_queue(bc_player->conn->outgoingPacket, pkt);
+			flush_outgoing (bc_player);
+			END_BROADCAST
+		} else if (slot >= 5 && slot <= 8) {
+			BEGIN_BROADCAST_EXCEPT_DIST(inventory->player, inventory->player->entity, 128.)
+			struct packet* pkt = xmalloc(sizeof(struct packet));
+			pkt->id = PKT_PLAY_CLIENT_ENTITYEQUIPMENT;
+			pkt->data.play_client.entityequipment.entity_id = inventory->player->entity->id;
+			if (slot == 5) pkt->data.play_client.entityequipment.slot = 5;
+			else if (slot == 6) pkt->data.play_client.entityequipment.slot = 4;
+			else if (slot == 7) pkt->data.play_client.entityequipment.slot = 3;
+			else if (slot == 8) pkt->data.play_client.entityequipment.slot = 2;
+			duplicateSlot(inventory->slots == NULL ? NULL : inventory->slots[slot], &pkt->data.play_client.entityequipment.item);
+			add_queue(bc_player->conn->outgoingPacket, pkt);
+			flush_outgoing (bc_player);
+			END_BROADCAST
+		} else if (slot == 45) {
+			BEGIN_BROADCAST_EXCEPT_DIST(inventory->player, inventory->player->entity, 128.)
+			struct packet* pkt = xmalloc(sizeof(struct packet));
+			pkt->id = PKT_PLAY_CLIENT_ENTITYEQUIPMENT;
+			pkt->data.play_client.entityequipment.entity_id = inventory->player->entity->id;
+			pkt->data.play_client.entityequipment.slot = 1;
+			duplicateSlot(inventory->slots == NULL ? NULL : inventory->slots[45], &pkt->data.play_client.entityequipment.item);
+			add_queue(bc_player->conn->outgoingPacket, pkt);
+			flush_outgoing (bc_player);
+			END_BROADCAST
+		}
+	}
+}
+
 void tick_player(struct world* world, struct player* player) {
 	if (tick_counter % 200 == 0) {
 		if (player->nextKeepAlive != 0) {
@@ -38,6 +128,53 @@ void tick_player(struct world* world, struct player* player) {
 		pkt->data.play_client.keepalive.keep_alive_id = rand();
 		add_queue(player->conn->outgoingPacket, pkt);
 		flush_outgoing(player);
+	}
+	int32_t pcx = ((int32_t) player->entity->x >> 4);
+	int32_t pcz = ((int32_t) player->entity->z >> 4);
+	if (((int32_t) player->entity->lx >> 4) != pcx || ((int32_t) player->entity->lz >> 4) != pcz || player->loadedChunks->count == 0) {
+		for (int x = -CHUNK_VIEW_DISTANCE + pcx; x <= CHUNK_VIEW_DISTANCE + pcx; x++) {
+			for (int z = -CHUNK_VIEW_DISTANCE + pcz; z <= CHUNK_VIEW_DISTANCE + pcz; z++) {
+				struct chunk* ch = getChunk(player->world, x, z);
+				if (ch != NULL && !contains_collection(player->loadedChunks, ch)) {
+					ch->playersLoaded++;
+					add_collection(player->loadedChunks, ch);
+					struct packet* pkt = xmalloc(sizeof(struct packet));
+					pkt->id = PKT_PLAY_CLIENT_CHUNKDATA;
+					pkt->data.play_client.chunkdata.data = ch;
+					pkt->data.play_client.chunkdata.ground_up_continuous = 1;
+					pkt->data.play_client.chunkdata.number_of_block_entities = 0;
+					pkt->data.play_client.chunkdata.block_entities = NULL;
+					add_queue(player->conn->outgoingPacket, pkt);
+					flush_outgoing(player);
+					//printf("client load %i, %i\n", ch->x, ch->z);
+				}
+			}
+		}
+		pthread_rwlock_wrlock(&player->loadedChunks->data_mutex);
+		for (int i = 0; i < player->loadedChunks->size; i++) {
+			struct chunk* ch = player->loadedChunks->data[i];
+			if (ch == NULL) continue;
+			int dx = (ch->x - pcx);
+			if (dx < 0) dx = -dx;
+			int dz = (ch->z - pcz);
+			if (dz < 0) dz = -dz;
+			if (dx > CHUNK_VIEW_DISTANCE || dz > CHUNK_VIEW_DISTANCE) {
+				//printf("client unload %i, %i\n", ch->x, ch->z);
+				struct packet* pkt = xmalloc(sizeof(struct packet));
+				pkt->id = PKT_PLAY_CLIENT_UNLOADCHUNK;
+				pkt->data.play_client.unloadchunk.chunk_x = ch->x;
+				pkt->data.play_client.unloadchunk.chunk_z = ch->z;
+				add_queue(player->conn->outgoingPacket, pkt);
+				flush_outgoing(player);
+				player->loadedChunks->data[i] = NULL;
+				player->loadedChunks->count--;
+				if (--ch->playersLoaded <= 0) {
+					//printf("server unload %i, %i\n", ch->x, ch->z);
+					unloadChunk(player->world, ch);
+				}
+			}
+		}
+		pthread_rwlock_unlock(&player->loadedChunks->data_mutex);
 	}
 	if (player->digging >= 0.) {
 		struct block_info* bi = &block_infos[getBlockWorld(world, player->digging_position.x, player->digging_position.y, player->digging_position.z)];

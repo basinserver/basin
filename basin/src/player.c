@@ -10,6 +10,8 @@
 #include "accept.h"
 #include "util.h"
 #include "network.h"
+#include "inventory.h"
+#include "xstring.h"
 
 struct player* newPlayer(struct entity* entity, char* name, struct uuid uuid, struct conn* conn, uint8_t gamemode) {
 	struct player* player = xmalloc(sizeof(struct player));
@@ -44,10 +46,15 @@ struct player* newPlayer(struct entity* entity, char* name, struct uuid uuid, st
 	memset(&player->digging_position, 0, sizeof(struct encpos));
 	player->digging = -1.;
 	player->digspeed = 0.;
+	newInventory(&player->inventory, INVTYPE_PLAYERINVENTORY, 0, 46);
+	player->inventory.player = player;
+	player->loadedChunks = new_collection(0);
 	return player;
 }
 
 void freePlayer(struct player* player) {
+	del_collection(player->loadedChunks);
+	freeInventory(&player->inventory);
 	xfree(player->name);
 	xfree(player);
 }

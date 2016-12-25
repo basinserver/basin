@@ -40,11 +40,6 @@ struct entity_metadata {
 
 #include "packet.h"
 
-#define STATE_HANDSHAKE 0
-#define STATE_STATUS 1
-#define STATE_LOGIN 2
-#define STATE_PLAY 3
-
 void swapEndian(void* dou, size_t ss);
 
 int getVarIntSize(int32_t input);
@@ -64,6 +59,12 @@ int writeString(char* input, unsigned char* buffer, size_t buflen);
 int readString(char** output, unsigned char* buffer, size_t buflen);
 
 int readSlot(struct slot* slot, unsigned char* buffer, size_t buflen);
+
+int writeSlot(struct slot* slot, unsigned char* buffer, size_t buflen);
+
+void duplicateSlot(struct slot* slot, struct slot* dup);
+
+void duplicateNBT(struct nbt_tag* nbt, struct nbt_tag* dup);
 
 ssize_t readPacket(struct conn* conn, unsigned char* buf, size_t buflen, struct packet* packet);
 

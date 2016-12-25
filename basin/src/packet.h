@@ -8,9 +8,9 @@
 #include "nbt.h"
 
 #define STATE_HANDSHAKE 0
-#define STATE_PLAY 1
-#define STATE_STATUS 2
-#define STATE_LOGIN 3
+#define STATE_PLAY 3
+#define STATE_STATUS 1
+#define STATE_LOGIN 2
 
 #define PKT_HANDSHAKE_SERVER_HANDSHAKE 0
 

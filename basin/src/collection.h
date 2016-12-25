@@ -27,4 +27,6 @@ int add_collection(struct collection* coll, void* data);
 
 int rem_collection(struct collection* coll, void* data);
 
+int contains_collection(struct collection* coll, void* data);
+
 #endif /* COLLECTION_H_ */

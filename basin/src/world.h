@@ -35,12 +35,13 @@ struct chunk {
 		unsigned char blockLight[256][16][8]; // y, z, x(4-bit)
 		unsigned char* skyLight; // if non-NULL, points to a 2048-byte nibble-array.
 		int empty[16];
-		int unload;
 		int lightpopulated;
 		int terrainpopulated;
 		uint64_t inhabitedticks;
 		uint16_t heightMap[16][16]; // z, x
-		struct nbt** tileEntities;
+		size_t tileEntity_count;
+		struct nbt_tag** tileEntities;
+		uint32_t playersLoaded;
 		//TODO: tileTicks
 };
 
