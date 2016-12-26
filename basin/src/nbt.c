@@ -70,7 +70,7 @@ int __recurReadNBT(struct nbt_tag** root, unsigned char* buffer, size_t buflen, 
 		cur->id = list;
 	} else {
 		if (buflen < 1) {
-			free(cur);
+			xfree(cur);
 			return 0;
 		}
 		cur->id = buffer[0];
@@ -89,10 +89,10 @@ int __recurReadNBT(struct nbt_tag** root, unsigned char* buffer, size_t buflen, 
 			r += 2;
 			buflen -= 2;
 			if (buflen < sl) {
-				free(cur);
+				xfree(cur);
 				return 0;
 			}
-			cur->name = malloc(sl + 1);
+			cur->name = xmalloc(sl + 1);
 			cur->name[sl] = 0;
 			memcpy(cur->name, buffer, sl);
 			buffer += sl;
@@ -102,8 +102,8 @@ int __recurReadNBT(struct nbt_tag** root, unsigned char* buffer, size_t buflen, 
 	}
 	if (cur->id == NBT_TAG_BYTE) {
 		if (buflen < 1) {
-			free(cur->name);
-			free(cur);
+			xfree(cur->name);
+			xfree(cur);
 			return 0;
 		}
 		memcpy(&cur->data.nbt_byte, buffer, 1);
@@ -112,8 +112,8 @@ int __recurReadNBT(struct nbt_tag** root, unsigned char* buffer, size_t buflen, 
 		r++;
 	} else if (cur->id == NBT_TAG_SHORT) {
 		if (buflen < 2) {
-			free(cur->name);
-			free(cur);
+			xfree(cur->name);
+			xfree(cur);
 			return 0;
 		}
 		memcpy(&cur->data.nbt_short, buffer, 2);
@@ -123,8 +123,8 @@ int __recurReadNBT(struct nbt_tag** root, unsigned char* buffer, size_t buflen, 
 		r += 2;
 	} else if (cur->id == NBT_TAG_INT) {
 		if (buflen < 4) {
-			free(cur->name);
-			free(cur);
+			xfree(cur->name);
+			xfree(cur);
 			return 0;
 		}
 		memcpy(&cur->data.nbt_int, buffer, 4);
@@ -134,8 +134,8 @@ int __recurReadNBT(struct nbt_tag** root, unsigned char* buffer, size_t buflen, 
 		r += 4;
 	} else if (cur->id == NBT_TAG_LONG) {
 		if (buflen < 8) {
-			free(cur->name);
-			free(cur);
+			xfree(cur->name);
+			xfree(cur);
 			return 0;
 		}
 		memcpy(&cur->data.nbt_long, buffer, 8);
@@ -145,8 +145,8 @@ int __recurReadNBT(struct nbt_tag** root, unsigned char* buffer, size_t buflen, 
 		r += 8;
 	} else if (cur->id == NBT_TAG_FLOAT) {
 		if (buflen < 4) {
-			free(cur->name);
-			free(cur);
+			xfree(cur->name);
+			xfree(cur);
 			return 0;
 		}
 		memcpy(&cur->data.nbt_float, buffer, 4);
@@ -156,8 +156,8 @@ int __recurReadNBT(struct nbt_tag** root, unsigned char* buffer, size_t buflen, 
 		r += 4;
 	} else if (cur->id == NBT_TAG_DOUBLE) {
 		if (buflen < 8) {
-			free(cur->name);
-			free(cur);
+			xfree(cur->name);
+			xfree(cur);
 			return 0;
 		}
 		memcpy(&cur->data.nbt_double, buffer, 8);
@@ -167,8 +167,8 @@ int __recurReadNBT(struct nbt_tag** root, unsigned char* buffer, size_t buflen, 
 		r += 8;
 	} else if (cur->id == NBT_TAG_BYTEARRAY) {
 		if (buflen < 4) {
-			free(cur->name);
-			free(cur);
+			xfree(cur->name);
+			xfree(cur);
 			return 0;
 		}
 		memcpy(&cur->data.nbt_bytearray.len, buffer, 4);
@@ -177,8 +177,8 @@ int __recurReadNBT(struct nbt_tag** root, unsigned char* buffer, size_t buflen, 
 		buflen -= 4;
 		r += 4;
 		if (buflen < cur->data.nbt_bytearray.len || cur->data.nbt_bytearray.len <= 0) {
-			free(cur->name);
-			free(cur);
+			xfree(cur->name);
+			xfree(cur);
 			return 0;
 		}
 		cur->data.nbt_bytearray.data = malloc(cur->data.nbt_bytearray.len);
@@ -189,8 +189,8 @@ int __recurReadNBT(struct nbt_tag** root, unsigned char* buffer, size_t buflen, 
 	} else if (cur->id == NBT_TAG_STRING) {
 		uint16_t sl;
 		if (buflen < 2) {
-			free(cur->name);
-			free(cur);
+			xfree(cur->name);
+			xfree(cur);
 			return 0;
 		}
 		memcpy(&sl, buffer, 2);
@@ -199,11 +199,11 @@ int __recurReadNBT(struct nbt_tag** root, unsigned char* buffer, size_t buflen, 
 		r += 2;
 		buflen -= 2;
 		if (buflen < sl) {
-			free(cur->name);
-			free(cur);
+			xfree(cur->name);
+			xfree(cur);
 			return 0;
 		}
-		cur->data.nbt_string = malloc(sl + 1);
+		cur->data.nbt_string = xmalloc(sl + 1);
 		cur->data.nbt_string[sl] = 0;
 		memcpy(cur->data.nbt_string, buffer, sl);
 		buffer += sl;
@@ -231,12 +231,17 @@ int __recurReadNBT(struct nbt_tag** root, unsigned char* buffer, size_t buflen, 
 			buffer += nr;
 			buflen -= nr;
 			r += nr;
-			if (!(st != NULL && st->id != NBT_TAG_END && buflen > 0)) continue;
+			if (!(st != NULL && st->id != NBT_TAG_END && buflen > 0)) {
+				if (st != NULL) freeNBT(st);
+				xfree(st);
+				st = NULL;
+				continue;
+			}
 			if (cur->children == NULL) {
-				cur->children = malloc(sizeof(struct nbt_tag*));
+				cur->children = xmalloc(sizeof(struct nbt_tag*));
 				cur->children_count = 0;
 			} else {
-				cur->children = realloc(cur->children, sizeof(struct nbt_tag*) * (cur->children_count + 1));
+				cur->children = xrealloc(cur->children, sizeof(struct nbt_tag*) * (cur->children_count + 1));
 			}
 			cur->children[cur->children_count++] = st;
 		}
@@ -248,7 +253,12 @@ int __recurReadNBT(struct nbt_tag** root, unsigned char* buffer, size_t buflen, 
 			buffer += nr;
 			buflen -= nr;
 			r += nr;
-			if (!(st != NULL && st->id != NBT_TAG_END && buflen > 0)) continue;
+			if (!(st != NULL && st->id != NBT_TAG_END && buflen > 0)) {
+				if (st != NULL) freeNBT(st);
+				xfree(st);
+				st = NULL;
+				continue;
+			}
 			if (cur->children == NULL) {
 				cur->children = xmalloc(sizeof(struct nbt_tag*));
 				cur->children_count = 0;

@@ -186,7 +186,7 @@ struct chunk* loadRegionChunk(struct region* region, int8_t lchx, int8_t lchz) {
 				cs->palette = xrealloc(cs->palette, cs->palette_count * sizeof(block));
 			}
 			int32_t bi = 0;
-			cs->blocks = xmalloc(512 * cs->bpb);
+			cs->blocks = xmalloc(512 * cs->bpb + 4);
 			cs->block_size = 512 * cs->bpb;
 			cs->mvs = 0;
 			for (int i = 0; i < cs->bpb; i++)
@@ -212,6 +212,7 @@ struct chunk* loadRegionChunk(struct region* region, int8_t lchx, int8_t lchz) {
 			}
 			rch->sections[y] = cs;
 		}
+		xfree(rbl);
 	}
 	//TODO: entities, tileentities, and tileticks.
 	region->chunks[lchz][lchx] = rch;
@@ -230,16 +231,15 @@ void generateChunk(struct world* world, struct chunk* chunk) {
 	chunk->sections[0]->block_size = 512 * 13;
 	chunk->sections[0]->blocks = xcalloc(512 * 13);
 	if (world->dimension == OVERWORLD) {
-
 		chunk->sections[0]->skyLight = xmalloc(2048);
 		memset(chunk->sections[0]->skyLight, 0xFF, 2048);
 	}
-	//TODO
-	/*for (int x = 0; x < 16; x++) {
-	 for (int z = 0; z < 16; z++) {
-	 setBlockChunk(chunk, 1 << 4, x, 0, z);
-	 }
-	 }*/
+	memset(chunk->sections[0]->blockLight, 0xFF, 2048);
+	for (int x = 0; x < 16; x++) {
+		for (int z = 0; z < 16; z++) {
+			setBlockChunk(chunk, 1 << 4, x, 0, z);
+		}
+	}
 }
 
 struct chunk* getChunk(struct world* world, int16_t x, int16_t z) {
@@ -372,7 +372,7 @@ void setBlockChunk(struct chunk* chunk, block blk, uint8_t x, uint8_t y, uint8_t
 		cs = chunk->sections[y >> 4];
 		cs->bpb = 13;
 		cs->block_size = 512 * 13;
-		cs->blocks = xcalloc(512 * 13);
+		cs->blocks = xcalloc(512 * 13 + 4);
 	} else if (cs == NULL) return;
 	block ts = blk;
 	if (cs->bpb < 9) {
@@ -386,7 +386,7 @@ void setBlockChunk(struct chunk* chunk, block blk, uint8_t x, uint8_t y, uint8_t
 		if (room < 1) {
 			uint8_t nbpb = cs->bpb + 1;
 			if (nbpb >= 9) nbpb = 13;
-			uint8_t* ndata = xcalloc(nbpb * 512);
+			uint8_t* ndata = xcalloc(nbpb * 512 + 4);
 			uint32_t bir = 0;
 			uint32_t biw = 0;
 			int32_t nmvs = cs->mvs | (1 << (nbpb - 1));

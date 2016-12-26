@@ -18,6 +18,7 @@
 #include "work.h"
 #include <unistd.h>
 #include "queue.h"
+#include <pthread.h>
 
 void run_accept(struct accept_param* param) {
 	static int one = 1;
@@ -88,4 +89,4 @@ void run_accept(struct accept_param* param) {
 			printf("Failed to write to wakeup pipe! Things may slow down. %s\n", strerror(errno));
 		}
 	}
-}
+	pthread_cancel (pthread_self());}

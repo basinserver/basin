@@ -1139,12 +1139,13 @@ ssize_t writePacket(struct conn* conn, struct packet* packet) {
 				}
 				pi += bpb * 512;
 				ENS(2048);
-				memset(pktbuf + pi, 0xFF, 2048);
+				memcpy(pktbuf + pi, packet->data.play_client.chunkdata.data->sections[ymj]->blockLight, 2048);
+				//memset(pktbuf + pi, 0xFF, 2048);
 				pi += 2048;
 				if (packet->data.play_client.chunkdata.data->sections[ymj]->skyLight != NULL) {
 					ENS(2048);
-					//memcpy(pktbuf + pi, packet->data.play_client.chunkdata.data->skyLight, 2048);
-					memset(pktbuf + pi, 0xFF, 2048);
+					memcpy(pktbuf + pi, packet->data.play_client.chunkdata.data->sections[ymj]->skyLight, 2048);
+					//memset(pktbuf + pi, 0xFF, 2048);
 					pi += 2048;
 				}
 			}

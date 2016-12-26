@@ -402,4 +402,4 @@ void run_work(struct work_param* param) {
 		}
 	}
 	xfree(mbuf);
-}
+	pthread_cancel (pthread_self());}
