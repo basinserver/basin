@@ -27,13 +27,14 @@
 #include "queue.h"
 #include "game.h"
 #include "block.h"
+#include <math.h>
+#include "item.h"
 
 void closeConn(struct work_param* param, struct conn* conn) {
 	close(conn->fd);
 	if (rem_collection(param->conns, conn)) {
 		errlog(param->logsess, "Failed to delete connection properly! This is bad!");
 	}
-	xfree(conn->outgoingPacket);
 	if (conn->player != NULL) {
 		rem_collection(players, conn->player);
 		char bct[256];
@@ -48,7 +49,7 @@ void closeConn(struct work_param* param, struct conn* conn) {
 				pkt->data.play_client.playerlistitem.number_of_players = 1;
 				pkt->data.play_client.playerlistitem.players = xmalloc(sizeof(struct listitem_player));
 				memcpy(&pkt->data.play_client.playerlistitem.players->uuid, &conn->player->uuid, sizeof(struct uuid));
-				add_queue(plx->conn->outgoingPacket, pkt);
+				add_queue(plx->outgoingPacket, pkt);
 				flush_outgoing(plx);
 			}
 		}
@@ -77,6 +78,7 @@ int handleRead(struct conn* conn, struct work_param* param, int fd) {
 		if (rx == -1) goto rete;
 		int os = conn->state;
 		struct packet rep;
+		int df = 0;
 		if (conn->state == STATE_HANDSHAKE && inp->id == PKT_HANDSHAKE_SERVER_HANDSHAKE) {
 			conn->host_ip = xstrdup(inp->data.handshake_server.handshake.server_address, 0);
 			conn->host_port = inp->data.handshake_server.handshake.server_port;
@@ -124,7 +126,7 @@ int handleRead(struct conn* conn, struct work_param* param, int fd) {
 					xfree(rep.data.login_client.loginsuccess.uuid);
 					conn->state = STATE_PLAY;
 					struct entity* ep = newEntity(nextEntityID++, (float) overworld->spawnpos.x + .5, (float) overworld->spawnpos.y, (float) overworld->spawnpos.z + .5, ENT_PLAYER, 0., 0.);
-					struct player* player = newPlayer(ep, xstrdup(rep.data.login_client.loginsuccess.username, 0), uuid, conn, 1); // TODO default gamemode
+					struct player* player = newPlayer(ep, xstrdup(rep.data.login_client.loginsuccess.username, 1), uuid, conn, 1); // TODO default gamemode
 					conn->player = player;
 					add_collection(players, player);
 					rep.id = PKT_PLAY_CLIENT_JOINGAME;
@@ -197,7 +199,7 @@ int handleRead(struct conn* conn, struct work_param* param, int fd) {
 							pkt->data.play_client.playerlistitem.players->action.addplayer.ping = 0; // TODO
 							pkt->data.play_client.playerlistitem.players->action.addplayer.has_display_name = 0;
 							pkt->data.play_client.playerlistitem.players->action.addplayer.display_name = NULL;
-							add_queue(plx->conn->outgoingPacket, pkt);
+							add_queue(plx->outgoingPacket, pkt);
 							flush_outgoing(plx);
 						}
 					}
@@ -235,127 +237,25 @@ int handleRead(struct conn* conn, struct work_param* param, int fd) {
 				}
 			}
 		} else if (conn->state == STATE_PLAY) {
-			if (inp->id == PKT_PLAY_SERVER_KEEPALIVE) {
-				if (inp->data.play_server.keepalive.keep_alive_id == conn->player->nextKeepAlive) {
-					conn->player->nextKeepAlive = 0;
-				}
-			} else if (inp->id == PKT_PLAY_SERVER_CHATMESSAGE) {
-				char* msg = inp->data.play_server.chatmessage.message;
-				size_t s = strlen(msg) + 512;
-				char* rs = xmalloc(s);
-				snprintf(rs, s, "{\"text\": \"<%s>: %s\"}", conn->player->name, replace(replace(msg, "\\", "\\\\"), "\"", "\\\""));
-				printf("<CHAT> <%s>: %s\n", conn->player->name, msg);
-				BEGIN_BROADCAST (players)
-				struct packet* pkt = xmalloc(sizeof(struct packet));
-				pkt->id = PKT_PLAY_CLIENT_CHATMESSAGE;
-				pkt->data.play_client.chatmessage.position = 0;
-				pkt->data.play_client.chatmessage.json_data = xstrdup(rs, 0);
-				add_queue(bc_player->conn->outgoingPacket, pkt);
-				flush_outgoing (bc_player);
-				END_BROADCAST xfree(rs);
-			} else if (inp->id == PKT_PLAY_SERVER_PLAYER) {
-				conn->player->entity->onGround = inp->data.play_server.player.on_ground;
-			} else if (inp->id == PKT_PLAY_SERVER_PLAYERPOSITION) {
-				conn->player->entity->onGround = inp->data.play_server.playerposition.on_ground;
-				conn->player->entity->x = inp->data.play_server.playerposition.x;
-				conn->player->entity->y = inp->data.play_server.playerposition.feet_y;
-				conn->player->entity->z = inp->data.play_server.playerposition.z;
-			} else if (inp->id == PKT_PLAY_SERVER_PLAYERLOOK) {
-				conn->player->entity->onGround = inp->data.play_server.playerlook.on_ground;
-				conn->player->entity->yaw = inp->data.play_server.playerlook.yaw;
-				conn->player->entity->pitch = inp->data.play_server.playerlook.pitch;
-			} else if (inp->id == PKT_PLAY_SERVER_PLAYERPOSITIONANDLOOK) {
-				conn->player->entity->onGround = inp->data.play_server.playerpositionandlook.on_ground;
-				conn->player->entity->x = inp->data.play_server.playerpositionandlook.x;
-				conn->player->entity->y = inp->data.play_server.playerpositionandlook.feet_y;
-				conn->player->entity->z = inp->data.play_server.playerpositionandlook.z;
-				conn->player->entity->yaw = inp->data.play_server.playerpositionandlook.yaw;
-				conn->player->entity->pitch = inp->data.play_server.playerpositionandlook.pitch;
-			} else if (inp->id == PKT_PLAY_SERVER_ANIMATION) {
-				BEGIN_BROADCAST_EXCEPT_DIST(conn->player, conn->player->entity, 128.)
-				struct packet* pkt = xmalloc(sizeof(struct packet));
-				pkt->id = PKT_PLAY_CLIENT_ANIMATION;
-				pkt->data.play_client.animation.entity_id = conn->player->entity->id;
-				pkt->data.play_client.animation.animation = inp->data.play_server.animation.hand == 0 ? 0 : 3;
-				add_queue(bc_player->conn->outgoingPacket, pkt);
-				flush_outgoing (bc_player);
-				END_BROADCAST
-			} else if (inp->id == PKT_PLAY_SERVER_PLAYERDIGGING) {
-				if (inp->data.play_server.playerdigging.status == 0) {
-					float hard = block_infos[getBlockWorld(conn->player->world, inp->data.play_server.playerdigging.location.x, inp->data.play_server.playerdigging.location.y, inp->data.play_server.playerdigging.location.z)].hardness;
-					if (hard > 0. && conn->player->gamemode == 0) {
-						conn->player->digging = 0.;
-						memcpy(&conn->player->digging_position, &inp->data.play_server.playerdigging.location, sizeof(struct encpos));
-						BEGIN_BROADCAST_EXCEPT_DIST(conn->player, conn->player->entity, 128.)
-						struct packet* pkt = xmalloc(sizeof(struct packet));
-						pkt->id = PKT_PLAY_CLIENT_BLOCKBREAKANIMATION;
-						pkt->data.play_client.blockbreakanimation.entity_id = conn->player->entity->id;
-						memcpy(&pkt->data.play_server.playerdigging.location, &conn->player->digging_position, sizeof(struct encpos));
-						pkt->data.play_client.blockbreakanimation.destroy_stage = 0;
-						add_queue(bc_player->conn->outgoingPacket, pkt);
-						flush_outgoing (bc_player);
-						END_BROADCAST
-					} else if (hard == 0. || conn->player->gamemode == 1) {
-						setBlockWorld(conn->player->world, 0, inp->data.play_server.playerdigging.location.x, inp->data.play_server.playerdigging.location.y, inp->data.play_server.playerdigging.location.z);
-						conn->player->digging = -1.;
-						memset(&conn->player->digging_position, 0, sizeof(struct encpos));
-					}
-				} else if ((inp->data.play_server.playerdigging.status == 1 || inp->data.play_server.playerdigging.status == 2) && conn->player->digging > 0.) {
-					if (inp->data.play_server.playerdigging.status == 2 && (conn->player->digging + conn->player->digspeed) >= 1.) {
-						setBlockWorld(conn->player->world, 0, conn->player->digging_position.x, conn->player->digging_position.y, conn->player->digging_position.z);
-					}
-					conn->player->digging = -1.;
-					BEGIN_BROADCAST_EXCEPT_DIST(conn->player, conn->player->entity, 128.)
-					struct packet* pkt = xmalloc(sizeof(struct packet));
-					pkt->id = PKT_PLAY_CLIENT_BLOCKBREAKANIMATION;
-					pkt->data.play_client.blockbreakanimation.entity_id = conn->player->entity->id;
-					memcpy(&pkt->data.play_server.playerdigging.location, &conn->player->digging_position, sizeof(struct encpos));
-					memset(&conn->player->digging_position, 0, sizeof(struct encpos));
-					pkt->data.play_client.blockbreakanimation.destroy_stage = -1;
-					add_queue(bc_player->conn->outgoingPacket, pkt);
-					flush_outgoing (bc_player);
-					END_BROADCAST
-				}
-			} else if (inp->id == PKT_PLAY_SERVER_CREATIVEINVENTORYACTION) {
-				if (inp->data.play_server.creativeinventoryaction.clicked_item.item >= 0 && inp->data.play_server.creativeinventoryaction.slot == -1) {
-					//drop item
-				} else {
-					int16_t sl = inp->data.play_server.creativeinventoryaction.slot;
-					setInventorySlot(&conn->player->inventory, &inp->data.play_server.creativeinventoryaction.clicked_item, sl);
-					onInventoryUpdate(&conn->player->inventory, sl);
-				}
-			} else if (inp->id == PKT_PLAY_SERVER_HELDITEMCHANGE) {
-				if (inp->data.play_server.helditemchange.slot >= 0 && inp->data.play_server.helditemchange.slot < 9) {
-					conn->player->currentItem = inp->data.play_server.helditemchange.slot;
-					onInventoryUpdate(&conn->player->inventory, conn->player->currentItem + 36);
-				}
-			} else if (inp->id == PKT_PLAY_SERVER_ENTITYACTION) {
-				if (inp->data.play_server.entityaction.action_id == 0) conn->player->entity->sneaking = 1;
-				else if (inp->data.play_server.entityaction.action_id == 1) conn->player->entity->sneaking = 0;
-				else if (inp->data.play_server.entityaction.action_id == 3) conn->player->entity->sprinting = 1;
-				else if (inp->data.play_server.entityaction.action_id == 4) conn->player->entity->sprinting = 0;
-				BEGIN_BROADCAST_EXCEPT_DIST(conn->player, conn->player->entity, 128.)
-				struct packet* pkt = xmalloc(sizeof(struct packet));
-				pkt->id = PKT_PLAY_CLIENT_ENTITYMETADATA;
-				pkt->data.play_client.entitymetadata.entity_id = conn->player->entity->id;
-				writeMetadata(conn->player->entity, &pkt->data.play_client.entitymetadata.metadata.metadata, &pkt->data.play_client.entitymetadata.metadata.metadata_size);
-				add_queue(bc_player->conn->outgoingPacket, pkt);
-				flush_outgoing (bc_player);
-				END_BROADCAST
-			}
-			//printf("recv: %i\n", inp->id);
+			add_queue(conn->player->incomingPacket, inp);
+			df = 1;
 		}
 		memmove(conn->readBuffer, conn->readBuffer + length + ls, conn->readBuffer_size - length - ls);
 		conn->readBuffer_size -= length + ls;
 		goto ret;
 		rete: ;
-		freePacket(os, 0, inp);
-		xfree(inp);
+		if (!df) {
+			freePacket(os, 0, inp);
+			xfree(inp);
+		}
 		return -1;
 		ret: ;
-		freePacket(os, 0, inp);
-		xfree(inp);
+		if (!df) {
+			freePacket(os, 0, inp);
+			xfree(inp);
+		}
 	}
+
 	return 0;
 }
 
@@ -377,7 +277,7 @@ void run_work(struct work_param* param) {
 				conns[fdi] = (param->conns->data[i]);
 				struct conn* conn = conns[fdi];
 				fds[fdi].fd = conns[fdi]->fd;
-				fds[fdi].events = POLLIN | ((conn->writeBuffer_size > 0 || conn->outgoingPacket->size > 0) ? POLLOUT : 0);
+				fds[fdi].events = POLLIN | ((conn->writeBuffer_size > 0 || (conn->player != NULL && conn->player->outgoingPacket->size > 0)) ? POLLOUT : 0);
 				fds[fdi++].revents = 0;
 				if (fdi == cc) break;
 			}
@@ -458,9 +358,9 @@ void run_work(struct work_param* param) {
 				}
 			}
 			if ((re & POLLOUT) == POLLOUT && conn != NULL) {
-				for (size_t i = 0; i < conn->outgoingPacket->size; i++) {
-					struct packet* wp = pop_nowait_queue(conn->outgoingPacket);
-					if (wp != NULL) {
+				if (conn->player != NULL) {
+					struct packet* wp = pop_nowait_queue(conn->player->outgoingPacket);
+					while (wp != NULL) {
 						int wr = writePacket(conn, wp);
 						if (wr == -1) {
 							closeConn(param, conn);
@@ -469,6 +369,7 @@ void run_work(struct work_param* param) {
 						}
 						freePacket(conn->state, 1, wp);
 						xfree(wp);
+						wp = pop_nowait_queue(conn->player->outgoingPacket);
 					}
 				}
 				ssize_t mtr = write(fds[i].fd, conn->writeBuffer, conn->writeBuffer_size);

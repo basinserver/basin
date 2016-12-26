@@ -92,8 +92,8 @@ int readVarLong(int64_t* output, unsigned char* buffer, size_t buflen) {
 
 int writeString(char* input, unsigned char* buffer, size_t buflen) {
 	if (buflen < 4) return 0;
-	size_t sl = strlen(input);
-	if (sl - 4 > buflen) {
+	ssize_t sl = strlen(input);
+	if (sl - 4 > (ssize_t) buflen) {
 		sl = buflen - 4;
 	}
 	int x = writeVarInt(sl, buffer);
@@ -250,7 +250,7 @@ void duplicateNBT(struct nbt_tag* nbt, struct nbt_tag* dup) {
 		dup->data.nbt_intarray.ints = xmalloc(4 * dup->data.nbt_intarray.count);
 		memcpy(dup->data.nbt_intarray.ints, nbt->data.nbt_intarray.ints, dup->data.nbt_bytearray.len);
 	}
-	dup->children = xmalloc(sizeof(struct nbt_tag*) * dup->children_count);
+	dup->children = dup->children_count == 0 ? NULL : xmalloc(sizeof(struct nbt_tag*) * dup->children_count);
 	for (size_t i = 0; i < dup->children_count; i++) {
 		dup->children[i] = xmalloc(sizeof(struct nbt_tag));
 		duplicateNBT(nbt->children[i], dup->children[i]);

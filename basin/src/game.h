@@ -13,7 +13,17 @@
 
 void flush_outgoing(struct player* player);
 
+float randFloat();
+
+void dropPlayerItem(struct player* player, struct slot* drop);
+
+void dropBlockDrop(struct world* world, struct slot* slot, int32_t x, int32_t y, int32_t z);
+
+void dropBlockDrops(struct world* world, block blk, struct player* breaker, int32_t x, int32_t y, int32_t z);
+
 void loadPlayer(struct player* to, struct player* from);
+
+void loadEntity(struct player* to, struct entity* from);
 
 void onInventoryUpdate(struct inventory* inventory, int slot);
 

@@ -66,18 +66,29 @@
 #define ENT_ITEMFRAME 51
 #define ENT_EYEENDER 52
 #define ENT_THROWNPOTION 53
-#define ENT_FALLINGEGG 54
+#define ENT_HUSK 54
 #define ENT_EXPBOTTLE 55
 #define ENT_FIREWORK 56
 #define ENT_LEASHKNOT 57
 #define ENT_ARMORSTAND 58
 #define ENT_FISHINGFLOAT 59
-#define ENT_SPECTRALARROW 60
-#define ENT_TIPPEDARROW 61
+#define ENT_EVOCATIONFANGS 60
+#define ENT_ELDERGUARDIAN 61
 #define ENT_DRAGONFIREBALL 62
 #define ENT_EXPERIENCEORB 63
+#define ENT_POLARBEAR 64
+#define ENT_LLAMA 65
+#define ENT_LLAMASPIT 66
+#define ENT_STRAY 67
+#define ENT_PAINTING 68
+#define ENT_EVOCATIONILLAGER 69
+#define ENT_VEX 70
+#define ENT_VINDICATIONILLAGER 71
 
 int entNetworkConvert(int type, int id);
+int networkEntConvert(int type, int id);
+
+int shouldSendAsObject(int id);
 
 #define POT_SPEED 1
 #define POT_SLOWNESS 2
@@ -136,7 +147,7 @@ union entity_data {
 
 		} zombie;
 		struct entity_slime {
-
+				uint8_t size;
 		} slime;
 		struct entity_ghast {
 
@@ -157,7 +168,7 @@ union entity_data {
 
 		} blaze;
 		struct entity_magmacube {
-
+				uint8_t size;
 		} magmacube;
 		struct entity_enderdragon {
 
@@ -223,7 +234,8 @@ union entity_data {
 
 		} boat;
 		struct entity_itemstack {
-
+				struct slot* slot;
+				int16_t delayBeforeCanPickup;
 		} itemstack;
 		struct entity_areaeffect {
 
@@ -273,6 +285,9 @@ union entity_data {
 		struct entity_thrownpotion {
 
 		} thrownpotion;
+		struct entity_husk {
+
+		} husk;
 		struct entity_fallingegg {
 
 		} fallingegg;
@@ -291,18 +306,43 @@ union entity_data {
 		struct entity_fishingfloat {
 
 		} fishingfloat;
-		struct entity_spectralarrow {
+		struct entity_evocationfangs {
 
-		} spectralarrow;
-		struct entity_tippedarrow {
+		} evocationfangs;
+		struct entity_elderguardian {
 
-		} tippedarrow;
+		} elderguardian;
 		struct entity_dragonfireball {
 
 		} dragonfireball;
 		struct entity_experienceorb {
-
+				uint16_t count;
 		} experienceorb;
+		struct entity_polarbear {
+
+		} polarbear;
+		struct entity_llama {
+
+		} llama;
+		struct entity_llamaspit {
+
+		} llamaspit;
+		struct entity_stray {
+
+		} stray;
+		struct entity_painting {
+				char* title;
+				uint8_t direction;
+		} painting;
+		struct entity_evocationillager {
+
+		} evocationillager;
+		struct entity_vex {
+
+		} vex;
+		struct entity_vindicationillager {
+
+		} vindicationillager;
 };
 
 struct entity {
@@ -320,6 +360,8 @@ struct entity {
 		float lpitch;
 		float headpitch;
 		int onGround;
+		int collidedVertically;
+		int collidedHorizontally;
 		double motX;
 		double motY;
 		double motZ;
@@ -338,6 +380,7 @@ struct entity {
 		float fallDistance;
 		union entity_data data;
 		struct world* world;
+		uint64_t age;
 };
 
 void readMetadata(struct entity* ent, unsigned char* meta, size_t size);
@@ -354,7 +397,9 @@ double entity_distsq_block(struct entity* ent1, double x, double y, double z);
 
 struct entity* newEntity(int32_t id, float x, float y, float z, uint8_t type, float yaw, float pitch);
 
-struct boundingbox* getEntityCollision(struct entity* ent);
+void getEntityCollision(struct entity* ent, struct boundingbox* bb);
+
+void moveEntity(struct entity* entity);
 
 void freeEntity(struct entity* entity);
 

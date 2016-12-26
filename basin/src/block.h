@@ -1461,6 +1461,9 @@
 #define BLK_STRUCTUREBLOCK_2 4082
 #define BLK_STRUCTUREBLOCK_3 4083
 
+#define BLOCK_LIMIT 4084
+#define MATERIAL_LIMIT 36
+
 #include "world.h"
 
 struct block_material {
@@ -1473,21 +1476,24 @@ struct block_material {
 		uint8_t solid;
 		uint8_t blocksLight;
 		uint8_t blocksMovement;
-
 };
 
 struct block_info {
 		float hardness;
-		float (*onBlockDestroyed)(struct world* world, block info, struct encpos position);
-		float (*onBlockPlaced)(struct world* world, block info, struct encpos position);
-		float (*onBlockInteract)(struct world* world, block info, struct encpos position, struct player* player);
-		float (*onBlockCollide)(struct world* world, block info, struct encpos position, struct player* player);
+		void (*onBlockDestroyed)(struct world* world, block blk, int32_t x, int32_t y, int32_t z);
+		void (*onBlockPlaced)(struct world* world, block blk, int32_t x, int32_t y, int32_t z);
+		void (*onBlockInteract)(struct world* world, block blk, int32_t x, int32_t y, int32_t z, struct player* player);
+		void (*onBlockCollide)(struct world* world, block blk, int32_t x, int32_t y, int32_t z, struct entity* entity);
+		void (*onBlockUpdate)(struct world* world, block blk, int32_t x, int32_t y, int32_t z);
+		struct boundingbox (*getBlockCollision)(struct world* world, block blk, int32_t x, int32_t y, int32_t z, struct entity* entity);
 		uint8_t requiresUpdates;
 		uint8_t material;
+		float slipperiness;
+		void (*getDrop)(struct world* world, block blk, int32_t x, int32_t y, int32_t z, int fortune);
 };
 
-struct block_material block_materials[36];
-struct block_info block_infos[4084];
+struct block_material block_materials[MATERIAL_LIMIT];
+struct block_info block_infos[BLOCK_LIMIT];
 
 void init_blocks();
 

@@ -12,6 +12,7 @@
 #include "network.h"
 #include "inventory.h"
 #include "xstring.h"
+#include "queue.h"
 
 struct player* newPlayer(struct entity* entity, char* name, struct uuid uuid, struct conn* conn, uint8_t gamemode) {
 	struct player* player = xmalloc(sizeof(struct player));
@@ -47,12 +48,17 @@ struct player* newPlayer(struct entity* entity, char* name, struct uuid uuid, st
 	player->digging = -1.;
 	player->digspeed = 0.;
 	newInventory(&player->inventory, INVTYPE_PLAYERINVENTORY, 0, 46);
-	player->inventory.player = player;
+	player->openInv = NULL;
+	add_collection(player->inventory.players, player);
 	player->loadedChunks = new_collection(0);
+	player->incomingPacket = new_queue(0, 1);
+	player->outgoingPacket = new_queue(0, 1);
 	return player;
 }
 
 void freePlayer(struct player* player) {
+	del_queue(player->incomingPacket);
+	del_queue(player->outgoingPacket);
 	del_collection(player->loadedChunks);
 	freeInventory(&player->inventory);
 	xfree(player->name);

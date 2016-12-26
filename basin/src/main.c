@@ -37,12 +37,17 @@
 
 void main_tick() {
 	for (size_t i = 0; i < worlds->size; i++) {
+		if (worlds->data[i] == NULL) continue;
 		tick_world((struct world*) worlds->data[i]);
 	}
 	tick_counter++;
 }
 
 int main(int argc, char* argv[]) {
+	signal(SIGPIPE, SIG_IGN);
+	struct timespec ts;
+	clock_gettime(CLOCK_MONOTONIC, &ts);
+	srand(ts.tv_sec * 1000000 + ts.tv_nsec / 1000);
 	if (getuid() != 0 || getgid() != 0) {
 		printf("Must run as root!\n");
 		return 1;
@@ -368,7 +373,6 @@ int main(int argc, char* argv[]) {
 			close(aps[i]->server_fd);
 		}
 	}
-	struct timespec ts;
 	clock_gettime(CLOCK_MONOTONIC, &ts);
 	double lastRun = (double) ts.tv_nsec / 1000000. + (double) ts.tv_sec * 1000.;
 	while (sr > 0) {
@@ -376,7 +380,13 @@ int main(int argc, char* argv[]) {
 		double ct = (double) ts.tv_nsec / 1000000. + (double) ts.tv_sec * 1000.;
 		while (lastRun <= ct - 50.) {
 			lastRun += 50.;
+			clock_gettime(CLOCK_MONOTONIC, &ts);
+			double tks = (double) ts.tv_nsec / 1000000. + (double) ts.tv_sec * 1000.;
 			main_tick();
+			clock_gettime(CLOCK_MONOTONIC, &ts);
+			double tkf = (double) ts.tv_nsec / 1000000. + (double) ts.tv_sec * 1000.;
+			tkf -= tks;
+			if (tkf > 40.) printf("[WARNING] Tick took %f ms!\n", tkf);
 		}
 		usleep((lastRun - (ct - 50.)) * 1000.);
 	}

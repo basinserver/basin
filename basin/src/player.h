@@ -44,7 +44,10 @@ struct player {
 		float digging;
 		float digspeed;
 		struct inventory inventory;
+		struct inventory* openInv;
 		struct collection* loadedChunks;
+		struct queue* outgoingPacket;
+		struct queue* incomingPacket;
 };
 
 struct player* newPlayer(struct entity* entity, char* name, struct uuid, struct conn* conn, uint8_t gamemode);

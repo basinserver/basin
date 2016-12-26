@@ -24,6 +24,17 @@
 #include "worldmanager.h"
 #include "network.h"
 #include "game.h"
+#include "block.h"
+#include <math.h>
+#include "queue.h"
+
+int __boundingbox_intersects(struct boundingbox* bb1, struct boundingbox* bb2, int inv) {
+	return (((bb1->minX >= bb2->minX && bb1->minX <= bb2->maxX) || (bb1->maxX >= bb2->minX && bb1->maxX <= bb2->maxX)) && ((bb1->minY >= bb2->minY && bb1->minY <= bb2->maxY) || (bb1->maxY >= bb2->minY && bb1->maxY <= bb2->maxY)) && ((bb1->minZ >= bb2->minZ && bb1->minZ <= bb2->maxZ) || (bb1->maxZ >= bb2->minZ && bb1->maxZ <= bb2->maxZ))) || (inv ? 0 : __boundingbox_intersects(bb2, bb1, 1)); // the second intersects handles if bb2 is contained within bb1
+}
+
+int boundingbox_intersects(struct boundingbox* bb1, struct boundingbox* bb2) {
+	return __boundingbox_intersects(bb1, bb2, 0);
+}
 
 struct chunk* loadRegionChunk(struct region* region, int8_t lchx, int8_t lchz) {
 	if (region->fd < 0) {
@@ -115,11 +126,12 @@ struct chunk* loadRegionChunk(struct region* region, int8_t lchx, int8_t lchz) {
 		tmp = getNBTChild(section, "Blocks");
 		if (tmp == NULL || tmp->id != NBT_TAG_BYTEARRAY || tmp->data.nbt_bytearray.len != 4096) continue;
 		int hna = 0;
+		block* rbl = xmalloc(sizeof(block) * 4096);
 		for (int i = 0; i < 4096; i++) {
-			rch->blocks[(i >> 8) + (y * 16)][(i & 0xf0) >> 4][i & 0x0f] = ((block) tmp->data.nbt_bytearray.data[i]) << 4;
+			rbl[i] = ((block) tmp->data.nbt_bytearray.data[i]) << 4; // [i >> 8][(i & 0xf0) >> 4][i & 0x0f]
 			if (((block) tmp->data.nbt_bytearray.data[i]) != 0) hna = 1;
 		}
-		if (hna) rch->empty[y] = 0;
+		//if (hna) rch->empty[y] = 0;
 		tmp = getNBTChild(section, "Add");
 		if (tmp != NULL) {
 			if (tmp->id != NBT_TAG_BYTEARRAY || tmp->data.nbt_bytearray.len != 2048) continue;
@@ -130,29 +142,75 @@ struct chunk* loadRegionChunk(struct region* region, int8_t lchx, int8_t lchz) {
 					sx >>= 4;
 				} else sx &= 0x0f;
 				sx <<= 8;
-				rch->blocks[(i >> 8) + (y * 16)][(i & 0xf0) >> 4][i & 0x0f] |= sx;
+				rbl[i] |= sx;
+				if (rbl[i] != 0) hna = 1;
 			}
 		}
-		tmp = getNBTChild(section, "Data");
-		if (tmp == NULL || tmp->id != NBT_TAG_BYTEARRAY || tmp->data.nbt_bytearray.len != 2048) continue;
-		for (int i = 0; i < 4096; i++) {
-			block sx = tmp->data.nbt_bytearray.data[i / 2];
-			if (i % 2 == 1) {
-				sx &= 0xf0;
-				sx >>= 4;
-			} else sx &= 0x0f;
-			rch->blocks[(i >> 8) + (y * 16)][(i & 0xf0) >> 4][i & 0x0f] |= sx;
-		}
-		tmp = getNBTChild(section, "BlockLight");
-		if (tmp != NULL) {
-			if (tmp->id != NBT_TAG_BYTEARRAY || tmp->data.nbt_bytearray.len != 2048) continue;
-			memcpy(rch->blockLight, tmp->data.nbt_bytearray.data, 2048);
-		}
-		tmp = getNBTChild(section, "SkyLight");
-		if (tmp != NULL) {
-			if (tmp->id != NBT_TAG_BYTEARRAY || tmp->data.nbt_bytearray.len != 2048) continue;
-			rch->skyLight = xmalloc(2048);
-			memcpy(rch->skyLight, tmp->data.nbt_bytearray.data, 2048);
+		if (hna) {
+			tmp = getNBTChild(section, "Data");
+			if (tmp == NULL || tmp->id != NBT_TAG_BYTEARRAY || tmp->data.nbt_bytearray.len != 2048) continue;
+			for (int i = 0; i < 4096; i++) {
+				block sx = tmp->data.nbt_bytearray.data[i / 2];
+				if (i % 2 == 1) {
+					sx &= 0xf0;
+					sx >>= 4;
+				} else sx &= 0x0f;
+				rbl[i] |= sx;
+			}
+			struct chunk_section* cs = xmalloc(sizeof(struct chunk_section));
+			cs->palette = xmalloc(256 * sizeof(block));
+			cs->palette_count = 0;
+			block ipalette[BLOCK_LIMIT];
+			block l = 0;
+			for (int i = 0; i < 4096; i++) {
+				if (rbl[i] != l) {
+					for (int x = cs->palette_count - 1; x >= 0; x--) {
+						if (cs->palette[x] == rbl[i]) goto cx;
+					}
+					ipalette[rbl[i]] = cs->palette_count;
+					cs->palette[cs->palette_count++] = rbl[i]; // TODO: if only a few blocks of a certain type and on a palette boundary, use a MBC to reduce size?
+					if (cs->palette_count >= 256) {
+						xfree(cs->palette);
+						cs->palette = NULL;
+						cs->bpb = 13;
+						cs->palette_count = 0;
+						break;
+					}
+					l = rbl[i];
+				}
+				cx: ;
+			}
+			if (cs->palette != NULL) {
+				cs->bpb = (uint8_t) ceil(log2(cs->palette_count));
+				if (cs->bpb < 4) cs->bpb = 4;
+				cs->palette = xrealloc(cs->palette, cs->palette_count * sizeof(block));
+			}
+			int32_t bi = 0;
+			cs->blocks = xmalloc(512 * cs->bpb);
+			cs->block_size = 512 * cs->bpb;
+			cs->mvs = 0;
+			for (int i = 0; i < cs->bpb; i++)
+				cs->mvs |= 1 << i;
+			for (int i = 0; i < 4096; i++) { // [i >> 8][(i & 0xf0) >> 4][i & 0x0f]
+				int32_t b = (int32_t)((cs->bpb == 13 ? rbl[i] : ipalette[rbl[i]]) & cs->mvs);
+				int32_t cv = *((int32_t*) (&cs->blocks[bi / 8]));
+				int32_t sbi = bi % 8;
+				cv = (cv & ~(cs->mvs << sbi)) | (b << sbi);
+				*((int32_t*) &cs->blocks[bi / 8]) = cv;
+				bi += cs->bpb;
+			}
+			tmp = getNBTChild(section, "BlockLight");
+			if (tmp != NULL) {
+				if (tmp->id != NBT_TAG_BYTEARRAY || tmp->data.nbt_bytearray.len != 2048) continue;
+				memcpy(cs->blockLight, tmp->data.nbt_bytearray.data, 2048);
+			}
+			tmp = getNBTChild(section, "SkyLight");
+			if (tmp != NULL) {
+				if (tmp->id != NBT_TAG_BYTEARRAY || tmp->data.nbt_bytearray.len != 2048) continue;
+				cs->skyLight = xmalloc(2048);
+				memcpy(cs->skyLight, tmp->data.nbt_bytearray.data, 2048);
+			}
+			rch->sections[y] = cs;
 		}
 	}
 	//TODO: entities, tileentities, and tileticks.
@@ -166,18 +224,26 @@ struct chunk* loadRegionChunk(struct region* region, int8_t lchx, int8_t lchz) {
 }
 
 void generateChunk(struct world* world, struct chunk* chunk) {
+	memset(chunk->sections, 0, sizeof(struct chunk_section*) * 16);
+	chunk->sections[0] = xcalloc(sizeof(struct chunk_section));
+	chunk->sections[0]->bpb = 13;
+	chunk->sections[0]->block_size = 512 * 13;
+	chunk->sections[0]->blocks = xcalloc(512 * 13);
 	if (world->dimension == OVERWORLD) {
-		chunk->skyLight = xmalloc(2048);
-		memset(chunk->skyLight, 0xFF, 2048);
+
+		chunk->sections[0]->skyLight = xmalloc(2048);
+		memset(chunk->sections[0]->skyLight, 0xFF, 2048);
 	}
-	for (int x = 0; x < 16; x++) {
-		for (int z = 0; z < 16; z++) {
-			setBlockChunk(chunk, 1 << 4, x, 0, z);
-		}
-	}
+	//TODO
+	/*for (int x = 0; x < 16; x++) {
+	 for (int z = 0; z < 16; z++) {
+	 setBlockChunk(chunk, 1 << 4, x, 0, z);
+	 }
+	 }*/
 }
 
 struct chunk* getChunk(struct world* world, int16_t x, int16_t z) {
+
 	int16_t rx = x >> 5;
 	int16_t rz = z >> 5;
 	pthread_rwlock_rdlock(&world->regions->data_mutex);
@@ -213,7 +279,7 @@ struct chunk* getChunk(struct world* world, int16_t x, int16_t z) {
 }
 
 void unloadChunk(struct world* world, struct chunk* chunk) {
-	//TODO: save chunk
+//TODO: save chunk
 	int16_t rx = chunk->x >> 5;
 	int16_t rz = chunk->z >> 5;
 	pthread_rwlock_rdlock(&world->regions->data_mutex);
@@ -239,7 +305,15 @@ int getBiome(struct world* world, int32_t x, int32_t z) {
 
 block getBlockChunk(struct chunk* chunk, uint8_t x, uint8_t y, uint8_t z) {
 	if (x > 15 || z > 15 || y > 255 || x < 0 || z < 0 || y < 0) return 0;
-	return chunk->blocks[y][z][x];
+	struct chunk_section* cs = chunk->sections[y >> 4];
+	if (cs == NULL) return 0;
+	uint32_t i = ((y & 0x0f) << 8) | (z << 4) | x;
+	uint32_t bi = cs->bpb * i;
+	int32_t rcv = *((int32_t*) (&cs->blocks[bi / 8]));
+	int32_t rsbi = bi % 8;
+	block b = (rcv >> rsbi) & cs->mvs;
+	if (cs->palette != NULL && b < cs->palette_count) b = cs->palette[b];
+	return b;
 }
 
 block getBlockWorld(struct world* world, int32_t x, uint8_t y, int32_t z) {
@@ -253,14 +327,19 @@ struct chunk* newChunk(int16_t x, int16_t z) {
 	memset(chunk, 0, sizeof(struct chunk));
 	chunk->x = x;
 	chunk->z = z;
-	for (int i = 0; i < 16; i++)
-		chunk->empty[i] = 1;
+	memset(chunk->sections, 0, sizeof(struct chunk_section*) * 16);
 	chunk->playersLoaded = 0;
 	return chunk;
 }
 
 void freeChunk(struct chunk* chunk) {
-	if (chunk->skyLight != NULL) xfree(chunk->skyLight);
+	for (int i = 0; i < 16; i++) {
+		struct chunk_section* cs = chunk->sections[i];
+		if (cs == NULL) continue;
+		if (cs->blocks != NULL) xfree(cs->blocks);
+		if (cs->palette != NULL) xfree(cs->palette);
+		if (cs->skyLight != NULL) xfree(cs->skyLight);
+	}
 	if (chunk->tileEntities != NULL) {
 		for (size_t i = 0; i < chunk->tileEntity_count; i++) {
 			freeNBT(chunk->tileEntities[i]);
@@ -287,8 +366,62 @@ void freeRegion(struct region* region) {
 
 void setBlockChunk(struct chunk* chunk, block blk, uint8_t x, uint8_t y, uint8_t z) {
 	if (x > 15 || z > 15 || y > 255 || x < 0 || z < 0 || y < 0) return;
-	chunk->blocks[y][z][x] = blk;
-	if (blk != 0) chunk->empty[y >> 4] = 0;
+	struct chunk_section* cs = chunk->sections[y >> 4];
+	if (cs == NULL && blk != 0) {
+		chunk->sections[y >> 4] = xcalloc(sizeof(struct chunk_section));
+		cs = chunk->sections[y >> 4];
+		cs->bpb = 13;
+		cs->block_size = 512 * 13;
+		cs->blocks = xcalloc(512 * 13);
+	} else if (cs == NULL) return;
+	block ts = blk;
+	if (cs->bpb < 9) {
+		for (int i = 0; i < cs->palette_count; i++) {
+			if (cs->palette[i] == blk) {
+				ts = i;
+				goto pp;
+			}
+		}
+		uint32_t room = pow(2, ceil(log2(cs->palette_count))) - cs->palette_count;
+		if (room < 1) {
+			uint8_t nbpb = cs->bpb + 1;
+			if (nbpb >= 9) nbpb = 13;
+			uint8_t* ndata = xcalloc(nbpb * 512);
+			uint32_t bir = 0;
+			uint32_t biw = 0;
+			int32_t nmvs = cs->mvs | (1 << (nbpb - 1));
+			if (nbpb == 13) nmvs = 0x1FFF;
+			for (int i = 0; i < 4096; i++) {
+				int32_t rcv = *((int32_t*) (&cs->blocks[bir / 8]));
+				int32_t rsbi = bir % 8;
+				int32_t b = (rcv >> rsbi) & cs->mvs;
+				if (nbpb == 13) b = cs->palette[b];
+				int32_t wcv = *((int32_t*) (&ndata[biw / 8]));
+				int32_t wsbi = biw % 8;
+				wcv = (wcv & ~(nmvs << wsbi)) | (b << wsbi);
+				*((int32_t*) &ndata[biw / 8]) = wcv;
+				bir += cs->bpb;
+				biw += nbpb;
+			}
+			uint8_t* odata = cs->blocks;
+			cs->blocks = ndata;
+			cs->block_size = nbpb * 512;
+			xfree(odata);
+			cs->mvs = nmvs;
+			cs->bpb = nbpb;
+		}
+		ts = cs->palette_count;
+		cs->palette = xrealloc(cs->palette, sizeof(block) * (cs->palette_count + 1));
+		cs->palette[cs->palette_count++] = blk;
+		pp: ;
+	}
+	uint32_t i = ((y & 0x0f) << 8) | (z << 4) | x;
+	uint32_t bi = cs->bpb * i;
+	int32_t b = ((int32_t) ts) & cs->mvs;
+	int32_t cv = *((int32_t*) (&cs->blocks[bi / 8]));
+	int32_t sbi = bi % 8;
+	cv = (cv & ~(cs->mvs << sbi)) | (b << sbi);
+	*((int32_t*) &cs->blocks[bi / 8]) = cv;
 }
 
 void setBlockWorld(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
@@ -304,7 +437,7 @@ void setBlockWorld(struct world* world, block blk, int32_t x, int32_t y, int32_t
 	pkt->data.play_client.blockchange.location.y = y;
 	pkt->data.play_client.blockchange.location.z = z;
 	pkt->data.play_client.blockchange.block_id = blk;
-	add_queue(bc_player->conn->outgoingPacket, pkt);
+	add_queue(bc_player->outgoingPacket, pkt);
 	flush_outgoing (bc_player);
 	END_BROADCAST
 
@@ -423,13 +556,20 @@ void spawnPlayer(struct world* world, struct player* player) {
 }
 
 void despawnPlayer(struct world* world, struct player* player) {
-	rem_collection(world->entities, player->entity);
+	despawnEntity(world, player->entity);
 	rem_collection(world->players, player);
 }
 
 void despawnEntity(struct world* world, struct entity* entity) {
-	if (entity->type == ENT_PLAYER) despawnPlayer(world, entity->data.player.player);
-	else rem_collection(world->entities, entity);
+	BEGIN_BROADCAST_DIST(entity, 128.)
+	struct packet* pkt = xmalloc(sizeof(struct packet));
+	pkt->id = PKT_PLAY_CLIENT_DESTROYENTITIES;
+	pkt->data.play_client.destroyentities.count = 1;
+	pkt->data.play_client.destroyentities.entity_ids = xmalloc(sizeof(int32_t));
+	pkt->data.play_client.destroyentities.entity_ids[0] = entity->id;
+	add_queue(bc_player->outgoingPacket, pkt);
+	flush_outgoing (bc_player);
+	END_BROADCAST rem_collection(world->entities, entity);
 }
 
 struct entity* getEntity(struct world* world, int32_t id) {
@@ -441,4 +581,49 @@ struct entity* getEntity(struct world* world, int32_t id) {
 	}
 	pthread_rwlock_unlock(&world->entities->data_mutex);
 	return NULL;
+}
+
+void onBlockDestroyed(struct world* world, int32_t x, int32_t y, int32_t z) {
+
+}
+
+void onBlockPlaced(struct world* world, int32_t x, int32_t y, int32_t z) {
+
+}
+
+void onBlockInteract(struct world* world, int32_t x, int32_t y, int32_t z, struct player* player) {
+
+}
+
+void onBlockCollide(struct world* world, int32_t x, int32_t y, int32_t z, struct entity* entity) {
+
+}
+
+void onBlockUpdate(struct world* world, int32_t x, int32_t y, int32_t z) {
+
+}
+
+struct boundingbox getBlockCollision(struct world* world, int32_t x, int32_t y, int32_t z, struct entity* entity) {
+	block b = getBlockWorld(world, x, y, z); // TODO: unload if out of range
+	if (block_infos[b].getBlockCollision != NULL) {
+		return (*block_infos[b].getBlockCollision)(world, b, x, y, z, entity);
+	}
+//generic
+	struct boundingbox bb;
+	if (block_materials[block_infos[b].material].solid && !block_materials[block_infos[b].material].liquid && block_materials[block_infos[b].material].blocksMovement) {
+		bb.minX = 0.;
+		bb.maxX = 1.;
+		bb.minY = 0.;
+		bb.maxY = 1.;
+		bb.minZ = 0.;
+		bb.maxZ = 1.;
+	} else {
+		bb.minX = 0.;
+		bb.maxX = 0.;
+		bb.minY = 0.;
+		bb.maxY = 0.;
+		bb.minZ = 0.;
+		bb.maxZ = 0.;
+	}
+	return bb;
 }

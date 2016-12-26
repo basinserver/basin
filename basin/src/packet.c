@@ -1101,62 +1101,47 @@ ssize_t writePacket(struct conn* conn, struct packet* packet) {
 			pi += 1;
 			//primary_bit_mask
 			uint16_t primary_bit_mask = 0;
-			uint8_t ccs = 0;
+			int32_t ccs = 0;
 			for (int ymj = 0; ymj < 16; ymj++) {
-				if (packet->data.play_client.chunkdata.data->empty[ymj]) continue;
+				if (packet->data.play_client.chunkdata.data->sections[ymj] == NULL) continue;
 				primary_bit_mask |= (uint16_t) pow(2, ymj);
-				ccs++;
-				/*int32_t palette[256];
-				 for (int ymi = 0; ymi < 16; ymi++) {
-				 for (int z = 0; z < 16; z++) {
-				 for (int x = 0; x < 16; x++) {
-
-				 }
-				 }
-				 }*/
+				ccs += packet->data.play_client.chunkdata.data->sections[ymj]->bpb * 512 + 4 + 2048;
+				if (packet->data.play_client.chunkdata.data->sections[ymj]->skyLight != NULL) ccs += 2048;
+				for (int i = 0; i < packet->data.play_client.chunkdata.data->sections[ymj]->palette_count; i++) {
+					ccs += getVarIntSize(packet->data.play_client.chunkdata.data->sections[ymj]->palette[i]);
+				}
 			}
 			ENS(4)
 			pi += writeVarInt(primary_bit_mask, pktbuf + pi);
 			//size
 			ENS(4)
-			pi += writeVarInt(ccs * (6660 + 4096) + (packet->data.play_client.chunkdata.ground_up_continuous ? 256 : 0), pktbuf + pi); //TODO: hardcoded for overworld
+			pi += writeVarInt(ccs + (packet->data.play_client.chunkdata.ground_up_continuous ? 256 : 0), pktbuf + pi);
 			//data
-			for (int ymj = 0; ymj < 16; ymj++) {			//13 going in
-				if (packet->data.play_client.chunkdata.data->empty[ymj]) continue; // same as bitmask
-				uint8_t bits_per_block = 13; // TODO: compression more
+			for (int ymj = 0; ymj < 16; ymj++) {
+				if (packet->data.play_client.chunkdata.data->sections[ymj] == NULL) continue;
+				uint8_t bpb = packet->data.play_client.chunkdata.data->sections[ymj]->bpb;
 				ENS(1)
-				memcpy(pktbuf + pi, &bits_per_block, 1);
+				memcpy(pktbuf + pi, &bpb, 1);
 				pi += 1;
 				ENS(4)
-				pi += writeVarInt(0, pktbuf + pi);
-				ENS(4)
-				pi += writeVarInt(832, pktbuf + pi);
-				ENS(6656)
-				int32_t bi = 0;
-				uint8_t data[6656];
-				memset(data, 0, 6656);
-				for (int ymi = 0; ymi < 16; ymi++) {
-					for (int z = 0; z < 16; z++) {
-						for (int x = 0; x < 16; x++) {
-							int32_t b = (int32_t)(packet->data.play_client.chunkdata.data->blocks[ymj * 16 + ymi][z][x] & 0x1FFF);
-							int32_t cv = *((int32_t*) (&data[bi / 8]));
-							int32_t sbi = bi % 8;
-							cv = (cv & ~(0x1FF << sbi)) | (b << sbi);
-							*((int32_t*) &data[bi / 8]) = cv;
-							bi += 13;
-						}
-					}
+				pi += writeVarInt(bpb < 9 ? packet->data.play_client.chunkdata.data->sections[ymj]->palette_count : 0, pktbuf + pi);
+				for (int i = 0; i < packet->data.play_client.chunkdata.data->sections[ymj]->palette_count; i++) {
+					ENS(4)
+					pi += writeVarInt(packet->data.play_client.chunkdata.data->sections[ymj]->palette[i], pktbuf + pi);
 				}
-				int64_t* es = (int64_t*) data;
-				for (int i = 0; i < 832; i++) {
+				ENS(4)
+				pi += writeVarInt(bpb * 64, pktbuf + pi);
+				ENS(bpb * 512)
+				memcpy(pktbuf + pi, packet->data.play_client.chunkdata.data->sections[ymj]->blocks, bpb * 512);
+				int64_t* es = (int64_t*) (pktbuf + pi);
+				for (int i = 0; i < bpb * 64; i++) {
 					swapEndian(&es[i], 8);
 				}
-				memcpy(pktbuf + pi, data, 6656);
-				pi += 6656;
+				pi += bpb * 512;
 				ENS(2048);
 				memset(pktbuf + pi, 0xFF, 2048);
 				pi += 2048;
-				if (packet->data.play_client.chunkdata.data->skyLight != NULL) {
+				if (packet->data.play_client.chunkdata.data->sections[ymj]->skyLight != NULL) {
 					ENS(2048);
 					//memcpy(pktbuf + pi, packet->data.play_client.chunkdata.data->skyLight, 2048);
 					memset(pktbuf + pi, 0xFF, 2048);
@@ -1472,6 +1457,7 @@ ssize_t writePacket(struct conn* conn, struct packet* packet) {
 				} else if (packet->data.play_client.playerlistitem.action_id == 4) {
 					//none
 				}
+				printf("5 %i\n", pi);
 			}
 		} else if (id == PKT_PLAY_CLIENT_PLAYERPOSITIONANDLOOK) {
 			//x
@@ -1520,10 +1506,9 @@ ssize_t writePacket(struct conn* conn, struct packet* packet) {
 			ENS(4)
 			pi += writeVarInt(packet->data.play_client.destroyentities.count, pktbuf + pi);
 			//entity_ids
-			/* TODO: Array
-			 ENS(4)
-			 pi += writeVarInt(packet->data.play_client.destroyentities.entity_ids, pktbuf + pi);
-			 */
+			ENS(4 * packet->data.play_client.destroyentities.count)
+			for (size_t i = 0; i < packet->data.play_client.destroyentities.count; i++)
+				pi += writeVarInt(packet->data.play_client.destroyentities.entity_ids[i], pktbuf + pi);
 		} else if (id == PKT_PLAY_CLIENT_REMOVEENTITYEFFECT) {
 			//entity_id
 			ENS(4)
@@ -2079,6 +2064,7 @@ void freePacket(int state, int dir, struct packet* packet) {
 			} else if (packet->id == PKT_PLAY_CLIENT_PLAYERPOSITIONANDLOOK) {
 			} else if (packet->id == PKT_PLAY_CLIENT_USEBED) {
 			} else if (packet->id == PKT_PLAY_CLIENT_DESTROYENTITIES) {
+				if (packet->data.play_client.destroyentities.entity_ids != NULL) xfree(packet->data.play_client.destroyentities.entity_ids);
 			} else if (packet->id == PKT_PLAY_CLIENT_REMOVEENTITYEFFECT) {
 			} else if (packet->id == PKT_PLAY_CLIENT_RESOURCEPACKSEND) {
 				if (packet->data.play_client.resourcepacksend.url != NULL) xfree(packet->data.play_client.resourcepacksend.url);

@@ -25,16 +25,26 @@ struct boundingbox {
 		double maxZ;
 };
 
+int boundingbox_intersects(struct boundingbox* bb1, struct boundingbox* bb2);
+
 typedef uint16_t block;
+
+struct chunk_section {
+		uint8_t* blocks; // y, z, x
+		size_t block_size;
+		size_t palette_count;
+		block* palette;
+		uint8_t bpb;
+		unsigned char blockLight[16][16][8]; // y, z, x(4-bit)
+		unsigned char* skyLight; // if non-NULL, points to a 2048-byte nibble-array.
+		int32_t mvs;
+};
 
 struct chunk {
 		int16_t x;
 		int16_t z;
-		block blocks[256][16][16]; // y, z, x
+		struct chunk_section* sections[16];
 		unsigned char biomes[16][16]; // z, x
-		unsigned char blockLight[256][16][8]; // y, z, x(4-bit)
-		unsigned char* skyLight; // if non-NULL, points to a 2048-byte nibble-array.
-		int empty[16];
 		int lightpopulated;
 		int terrainpopulated;
 		uint64_t inhabitedticks;
@@ -107,5 +117,17 @@ void despawnEntity(struct world* world, struct entity* entity);
 void despawnPlayer(struct world* world, struct player* player);
 
 struct entity* getEntity(struct world* world, int32_t id);
+
+void onBlockDestroyed(struct world* world, int32_t x, int32_t y, int32_t z);
+
+void onBlockPlaced(struct world* world, int32_t x, int32_t y, int32_t z);
+
+void onBlockInteract(struct world* world, int32_t x, int32_t y, int32_t z, struct player* player);
+
+void onBlockCollide(struct world* world, int32_t x, int32_t y, int32_t z, struct entity* entity);
+
+void onBlockUpdate(struct world* world, int32_t x, int32_t y, int32_t z);
+
+struct boundingbox getBlockCollision(struct world* world, int32_t x, int32_t y, int32_t z, struct entity* entity);
 
 #endif /* WORLD_H_ */

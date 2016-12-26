@@ -36,7 +36,6 @@ struct conn {
 		size_t writeBuffer_capacity;
 		int comp;
 		struct work_param* work;
-		struct queue* outgoingPacket;
 		char* host_ip;
 		uint16_t host_port;
 		struct player* player;
