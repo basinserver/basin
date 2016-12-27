@@ -526,6 +526,13 @@ ssize_t readPacket(struct conn* conn, unsigned char* buf, size_t buflen, struct 
 }
 
 ssize_t writePacket(struct conn* conn, struct packet* packet) {
+	if (conn->state == STATE_PLAY && packet->id == PKT_PLAY_CLIENT_CHUNKDATA) {
+		pthread_rwlock_rdlock(&conn->player->world->chl);
+		if (!isChunkLoaded(conn->player->world, packet->data.play_client.chunkdata.cx, packet->data.play_client.chunkdata.cz)) {
+			pthread_rwlock_unlock(&conn->player->world->chl);
+			return 0;
+		}
+	}
 	unsigned char* pktbuf = xmalloc(1024);
 	size_t ps = 1024;
 	size_t pi = 0;
@@ -1163,6 +1170,7 @@ ssize_t writePacket(struct conn* conn, struct packet* packet) {
 				ENS(512)
 				pi += writeNBT(packet->data.play_client.chunkdata.block_entities[i], pktbuf + pi, ps - pi);
 			}
+			pthread_rwlock_unlock(&conn->player->world->chl);
 		} else if (id == PKT_PLAY_CLIENT_EFFECT) {
 			//effect_id
 			ENS(4)

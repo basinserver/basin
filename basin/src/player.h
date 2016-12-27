@@ -46,6 +46,7 @@ struct player {
 		struct inventory inventory;
 		struct inventory* openInv;
 		struct collection* loadedChunks;
+		struct collection* loadedEntities;
 		struct queue* outgoingPacket;
 		struct queue* incomingPacket;
 };

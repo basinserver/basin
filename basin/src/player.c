@@ -50,7 +50,8 @@ struct player* newPlayer(struct entity* entity, char* name, struct uuid uuid, st
 	newInventory(&player->inventory, INVTYPE_PLAYERINVENTORY, 0, 46);
 	player->openInv = NULL;
 	add_collection(player->inventory.players, player);
-	player->loadedChunks = new_collection(0);
+	player->loadedChunks = new_collection(0, 0);
+	player->loadedEntities = new_collection(0, 0);
 	player->incomingPacket = new_queue(0, 1);
 	player->outgoingPacket = new_queue(0, 1);
 	return player;
@@ -60,6 +61,7 @@ void freePlayer(struct player* player) {
 	del_queue(player->incomingPacket);
 	del_queue(player->outgoingPacket);
 	del_collection(player->loadedChunks);
+	del_collection(player->loadedEntities);
 	freeInventory(&player->inventory);
 	xfree(player->name);
 	xfree(player);

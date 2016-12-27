@@ -55,9 +55,13 @@ struct inventory {
 
 int maxStackSize(struct slot* slot);
 
+void copyInventory(struct slot** from, struct slot** to, int size);
+
 void swapSlots(struct inventory* inv, int i1, int i2);
 
 int itemsStackable(struct slot* s1, struct slot* s2);
+
+int itemsStackable2(struct slot* s1, struct slot* s2);
 
 void newInventory(struct inventory* inv, int type, int id, int slots);
 

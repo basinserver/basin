@@ -341,6 +341,8 @@ struct pkt_play_client_keepalive {
 
 struct pkt_play_client_chunkdata {
 		uint8_t ground_up_continuous;
+		int16_t cx;
+		int16_t cz;
 		struct chunk* data;
 		int32_t number_of_block_entities;
 		struct nbt_tag** block_entities;

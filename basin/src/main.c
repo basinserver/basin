@@ -34,6 +34,7 @@
 #include "server.h"
 #include "game.h"
 #include "block.h"
+#include "craft.h"
 
 void main_tick() {
 	for (size_t i = 0; i < worlds->size; i++) {
@@ -119,8 +120,9 @@ int main(int argc, char* argv[]) {
 		errlog(delog, "Only one server block is supported at this time.");
 		return -1;
 	}
-	players = new_collection(0);
+	players = new_collection(0, 1);
 	init_blocks();
+	load_crafting_recipies();
 	for (int i = 0; i < servsl; i++) {
 		struct cnode* serv = servs[i];
 		const char* bind_mode = getConfigValue(serv, "bind-mode");
@@ -320,7 +322,7 @@ int main(int argc, char* argv[]) {
 		loadWorld(nether, neth);
 		endworld = newWorld();
 		loadWorld(endworld, ed);
-		worlds = new_collection(0);
+		worlds = new_collection(0, 1);
 		add_collection(worlds, overworld);
 		add_collection(worlds, nether);
 		add_collection(worlds, endworld);
@@ -333,7 +335,7 @@ int main(int argc, char* argv[]) {
 		ap->logsess = slog;
 		for (int x = 0; x < tc; x++) {
 			struct work_param* wp = xmalloc(sizeof(struct work_param));
-			wp->conns = new_collection(mc < 1 ? 0 : mc / tc);
+			wp->conns = new_collection(mc < 1 ? 0 : mc / tc, 1);
 			wp->logsess = slog;
 			wp->i = x;
 			wp->sport = port;

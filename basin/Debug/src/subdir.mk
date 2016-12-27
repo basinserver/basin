@@ -8,9 +8,11 @@ C_SRCS += \
 ../src/block.c \
 ../src/collection.c \
 ../src/config.c \
+../src/craft.c \
 ../src/entity.c \
 ../src/game.c \
 ../src/inventory.c \
+../src/json.c \
 ../src/log.c \
 ../src/main.c \
 ../src/nbt.c \
@@ -19,7 +21,6 @@ C_SRCS += \
 ../src/player.c \
 ../src/queue.c \
 ../src/streams.c \
-../src/tick.c \
 ../src/util.c \
 ../src/work.c \
 ../src/world.c \
@@ -31,9 +32,11 @@ OBJS += \
 ./src/block.o \
 ./src/collection.o \
 ./src/config.o \
+./src/craft.o \
 ./src/entity.o \
 ./src/game.o \
 ./src/inventory.o \
+./src/json.o \
 ./src/log.o \
 ./src/main.o \
 ./src/nbt.o \
@@ -42,7 +45,6 @@ OBJS += \
 ./src/player.o \
 ./src/queue.o \
 ./src/streams.o \
-./src/tick.o \
 ./src/util.o \
 ./src/work.o \
 ./src/world.o \
@@ -54,9 +56,11 @@ C_DEPS += \
 ./src/block.d \
 ./src/collection.d \
 ./src/config.d \
+./src/craft.d \
 ./src/entity.d \
 ./src/game.d \
 ./src/inventory.d \
+./src/json.d \
 ./src/log.d \
 ./src/main.d \
 ./src/nbt.d \
@@ -65,7 +69,6 @@ C_DEPS += \
 ./src/player.d \
 ./src/queue.d \
 ./src/streams.d \
-./src/tick.d \
 ./src/util.d \
 ./src/work.d \
 ./src/world.d \

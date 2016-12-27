@@ -9,6 +9,8 @@
 #define COLLECTION_H_
 
 #include <pthread.h>
+#include <stdlib.h>
+#include <stdint.h>
 
 struct collection {
 		size_t size;
@@ -16,10 +18,11 @@ struct collection {
 		size_t capacity;
 		size_t rc;
 		void** data;
+		int8_t mc;
 		pthread_rwlock_t data_mutex;
 };
 
-struct collection* new_collection(size_t capacity);
+struct collection* new_collection(size_t capacity, uint8_t mc);
 
 int del_collection(struct collection* coll);
 

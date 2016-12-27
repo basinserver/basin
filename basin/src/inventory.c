@@ -23,11 +23,25 @@ void newInventory(struct inventory* inv, int type, int id, int slots) {
 	inv->prop_count = 0;
 	inv->type = type;
 	inv->windowID = id;
-	inv->players = new_collection(0);
+	inv->players = new_collection(0, 0);
 	inv->slots = xcalloc(sizeof(struct slot*) * inv->slot_count);
 	inv->inHand = NULL;
 	inv->dragSlot = xcalloc(2 * inv->slot_count);
 	inv->dragSlot_count = 0;
+}
+
+void copyInventory(struct slot** from, struct slot** to, int size) {
+	for (int i = 0; i < size; i++) {
+		if (to[i] != NULL) {
+			freeSlot(to[i]);
+			xfree(to[i]);
+			to[i] = NULL;
+		}
+		if (from[i] != NULL) {
+			to[i] = xmalloc(sizeof(struct slot*));
+			duplicateSlot(from[i], to[i]);
+		}
+	}
 }
 
 void _freeInventorySlots(struct inventory* inv) {
@@ -66,7 +80,7 @@ void freeSlot(struct slot* slot) {
 	}
 }
 
-int validItemForSlot(int invtype, int si, struct slot* slot) {
+int validItemForSlot(int invtype, int si, struct slot* slot) { // TODO
 	if (invtype == INVTYPE_PLAYERINVENTORY) {
 		if (si == 0) return 0;
 		if (si >= 5 && si <= 8) {
@@ -80,6 +94,10 @@ int validItemForSlot(int invtype, int si, struct slot* slot) {
 
 int itemsStackable(struct slot* s1, struct slot* s2) {
 	return s1 != NULL && s2 != NULL && s1->item != -1 && s2->item != -1 && s1->item == s2->item && s1->damage == s2->damage && (s1->nbt == NULL || s1->nbt->id == 0) && (s2->nbt == NULL || s2->nbt->id == 0);
+}
+
+int itemsStackable2(struct slot* s1, struct slot* s2) {
+	return s1 != NULL && s2 != NULL && s1->item != -1 && s2->item != -1 && s1->item == s2->item && (s1->damage == s2->damage || s1->damage == -1 || s2->damage == -1) && (s1->nbt == NULL || s1->nbt->id == 0) && (s2->nbt == NULL || s2->nbt->id == 0);
 }
 
 void broadcast_setslot(struct inventory* inv, int index) {
@@ -98,6 +116,8 @@ void swapSlots(struct inventory* inv, int i1, int i2) {
 	struct slot* s1 = inv->slots[i1];
 	inv->slots[i1] = inv->slots[i2];
 	inv->slots[i2] = s1;
+	onInventoryUpdate(inv, i1);
+	onInventoryUpdate(inv, i2);
 }
 
 int maxStackSize(struct slot* slot) {
@@ -137,6 +157,7 @@ void setInventorySlot(struct inventory* inv, struct slot* slot, int index) {
 		duplicateSlot(slot, inv->slots[index]);
 	}
 	broadcast_setslot(inv, index);
+	onInventoryUpdate(inv, index);
 }
 
 int addInventoryItem_PI(struct inventory* inv, struct slot* slot) {
@@ -146,9 +167,9 @@ int addInventoryItem_PI(struct inventory* inv, struct slot* slot) {
 }
 
 int addInventoryItem(struct inventory* inv, struct slot* slot, int start, int end) {
-	if (start < 0 || start >= inv->slot_count || end <= start || end > inv->slot_count || slot == NULL) return -1;
+	if (start < 0 || end < 0 || start > inv->slot_count || end > inv->slot_count || slot == NULL) return -1;
 	int mss = maxStackSize(slot);
-	if (mss > 1) for (size_t i = start; i < end; i++) {
+	if (mss > 1) for (size_t i = start; start < end ? (i < end) : (i > end); start < end ? i++ : i--) {
 		if (itemsStackable(inv->slots[i], slot) && inv->slots[i]->itemCount < mss) {
 			int t = (inv->slots[i]->itemCount + slot->itemCount);
 			inv->slots[i]->itemCount = t <= mss ? t : mss;
@@ -158,13 +179,15 @@ int addInventoryItem(struct inventory* inv, struct slot* slot, int start, int en
 				slot = NULL;
 				return 0;
 			} else slot->itemCount -= s;
+			onInventoryUpdate(inv, i);
 		}
 	}
-	for (size_t i = start; i < end; i++) {
+	for (size_t i = start; start < end ? (i < end) : (i > end); start < end ? i++ : i--) {
 		if (inv->slots[i] == NULL) {
 			inv->slots[i] = xmalloc(sizeof(struct slot));
 			duplicateSlot(slot, inv->slots[i]);
 			broadcast_setslot(inv, i);
+			onInventoryUpdate(inv, i);
 			return 0;
 		}
 	}

@@ -445,6 +445,7 @@ struct entity* newEntity(int32_t id, float x, float y, float z, uint8_t type, fl
 	e->fallDistance = 0.;
 	e->maxHealth = 20;
 	e->world = NULL;
+	e->loadingPlayers = new_collection(0, 0);
 	memset(&e->data, 0, sizeof(union entity_data));
 	return e;
 }
@@ -826,6 +827,7 @@ void moveEntity(struct entity* entity) {
 }
 
 void freeEntity(struct entity* entity) {
+	del_collection(entity->loadingPlayers);
 	if (entity->type == ENT_ITEMSTACK) {
 		if (entity->data.itemstack.slot != NULL) {
 			freeSlot(entity->data.itemstack.slot);

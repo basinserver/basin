@@ -1482,7 +1482,7 @@ struct block_info {
 		float hardness;
 		void (*onBlockDestroyed)(struct world* world, block blk, int32_t x, int32_t y, int32_t z);
 		void (*onBlockPlaced)(struct world* world, block blk, int32_t x, int32_t y, int32_t z);
-		void (*onBlockInteract)(struct world* world, block blk, int32_t x, int32_t y, int32_t z, struct player* player);
+		void (*onBlockInteract)(struct world* world, block blk, int32_t x, int32_t y, int32_t z, struct player* player, uint8_t face, float curPosX, float curPosY, float curPosZ);
 		void (*onBlockCollide)(struct world* world, block blk, int32_t x, int32_t y, int32_t z, struct entity* entity);
 		void (*onBlockUpdate)(struct world* world, block blk, int32_t x, int32_t y, int32_t z);
 		struct boundingbox (*getBlockCollision)(struct world* world, block blk, int32_t x, int32_t y, int32_t z, struct entity* entity);

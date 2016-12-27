@@ -380,6 +380,7 @@ struct entity {
 		float fallDistance;
 		union entity_data data;
 		struct world* world;
+		struct collection* loadingPlayers;
 		uint64_t age;
 };
 

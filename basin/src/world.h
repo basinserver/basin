@@ -13,6 +13,7 @@
 #include "network.h"
 #include "collection.h"
 #include "player.h"
+#include <pthread.h>
 
 uint32_t nextEntityID;
 
@@ -76,7 +77,10 @@ struct world {
 		uint64_t age;
 		struct nbt_tag* level;
 		char* lpa;
+		pthread_rwlock_t chl;
 };
+
+int isChunkLoaded(struct world* world, int16_t x, int16_t z);
 
 int loadWorld(struct world* world, char* path);
 

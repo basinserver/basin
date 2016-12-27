@@ -1,0 +1,10865 @@
+{
+	"pickaxewood": {
+		"output": {
+			"item_id": 270,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 5,
+			"item_damage": -1
+		},
+		"slot_1": {
+			"item_id": 5,
+			"item_damage": -1
+		},
+		"slot_4": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_7": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 5,
+			"item_damage": -1
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"shovelwood": {
+		"output": {
+			"item_id": 269,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 5,
+			"item_damage": -1
+		},
+		"slot_3": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_6": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 1
+	},
+	"hatchetwood": {
+		"output": {
+			"item_id": 271,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 5,
+			"item_damage": -1
+		},
+		"slot_3": {
+			"item_id": 5,
+			"item_damage": -1
+		},
+		"slot_1": {
+			"item_id": 5,
+			"item_damage": -1
+		},
+		"slot_4": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_7": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 2
+	},
+	"hoewood": {
+		"output": {
+			"item_id": 290,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 5,
+			"item_damage": -1
+		},
+		"slot_1": {
+			"item_id": 5,
+			"item_damage": -1
+		},
+		"slot_4": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_7": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 2
+	},
+	"pickaxestone": {
+		"output": {
+			"item_id": 274,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 4,
+			"item_damage": -1
+		},
+		"slot_1": {
+			"item_id": 4,
+			"item_damage": -1
+		},
+		"slot_4": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_7": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 4,
+			"item_damage": -1
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"shovelstone": {
+		"output": {
+			"item_id": 273,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 4,
+			"item_damage": -1
+		},
+		"slot_3": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_6": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 1
+	},
+	"hatchetstone": {
+		"output": {
+			"item_id": 275,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 4,
+			"item_damage": -1
+		},
+		"slot_3": {
+			"item_id": 4,
+			"item_damage": -1
+		},
+		"slot_1": {
+			"item_id": 4,
+			"item_damage": -1
+		},
+		"slot_4": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_7": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 2
+	},
+	"hoestone": {
+		"output": {
+			"item_id": 291,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 4,
+			"item_damage": -1
+		},
+		"slot_1": {
+			"item_id": 4,
+			"item_damage": -1
+		},
+		"slot_4": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_7": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 2
+	},
+	"pickaxeiron": {
+		"output": {
+			"item_id": 257,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_7": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"shoveliron": {
+		"output": {
+			"item_id": 256,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_6": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 1
+	},
+	"hatchetiron": {
+		"output": {
+			"item_id": 258,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_7": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 2
+	},
+	"hoeiron": {
+		"output": {
+			"item_id": 292,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_7": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 2
+	},
+	"pickaxediamond": {
+		"output": {
+			"item_id": 278,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 264,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 264,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_7": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 264,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"shoveldiamond": {
+		"output": {
+			"item_id": 277,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 264,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_6": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 1
+	},
+	"hatchetdiamond": {
+		"output": {
+			"item_id": 279,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 264,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 264,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 264,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_7": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 2
+	},
+	"hoediamond": {
+		"output": {
+			"item_id": 293,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 264,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 264,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_7": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 2
+	},
+	"pickaxegold": {
+		"output": {
+			"item_id": 285,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 266,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 266,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_7": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 266,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"shovelgold": {
+		"output": {
+			"item_id": 284,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 266,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_6": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 1
+	},
+	"hatchetgold": {
+		"output": {
+			"item_id": 286,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 266,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 266,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 266,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_7": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 2
+	},
+	"hoegold": {
+		"output": {
+			"item_id": 294,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 266,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 266,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_7": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 2
+	},
+	"shears": {
+		"output": {
+			"item_id": 359,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_3": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 2
+	},
+	"swordwood": {
+		"output": {
+			"item_id": 268,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 5,
+			"item_damage": -1
+		},
+		"slot_3": {
+			"item_id": 5,
+			"item_damage": -1
+		},
+		"slot_6": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 1
+	},
+	"swordstone": {
+		"output": {
+			"item_id": 272,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 4,
+			"item_damage": -1
+		},
+		"slot_3": {
+			"item_id": 4,
+			"item_damage": -1
+		},
+		"slot_6": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 1
+	},
+	"swordiron": {
+		"output": {
+			"item_id": 267,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"slot_6": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 1
+	},
+	"sworddiamond": {
+		"output": {
+			"item_id": 276,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 264,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 264,
+			"item_damage": 0
+		},
+		"slot_6": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 1
+	},
+	"swordgold": {
+		"output": {
+			"item_id": 283,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 266,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 266,
+			"item_damage": 0
+		},
+		"slot_6": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 1
+	},
+	"bow": {
+		"output": {
+			"item_id": 261,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_3": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_7": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 287,
+			"item_damage": 0
+		},
+		"slot_5": {
+			"item_id": 287,
+			"item_damage": 0
+		},
+		"slot_8": {
+			"item_id": 287,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"arrow": {
+		"output": {
+			"item_id": 262,
+			"item_damage": 0,
+			"item_count": 4
+		},
+		"slot_0": {
+			"item_id": 318,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_6": {
+			"item_id": 288,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 1
+	},
+	"spectral_arrow": {
+		"output": {
+			"item_id": 439,
+			"item_damage": 0,
+			"item_count": 2
+		},
+		"slot_3": {
+			"item_id": 348,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 348,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 262,
+			"item_damage": 0
+		},
+		"slot_7": {
+			"item_id": 348,
+			"item_damage": 0
+		},
+		"slot_5": {
+			"item_id": 348,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"blockgold": {
+		"output": {
+			"item_id": 41,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 266,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 266,
+			"item_damage": 0
+		},
+		"slot_6": {
+			"item_id": 266,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 266,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 266,
+			"item_damage": 0
+		},
+		"slot_7": {
+			"item_id": 266,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 266,
+			"item_damage": 0
+		},
+		"slot_5": {
+			"item_id": 266,
+			"item_damage": 0
+		},
+		"slot_8": {
+			"item_id": 266,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"ingotgold": {
+		"output": {
+			"item_id": 266,
+			"item_damage": 0,
+			"item_count": 9
+		},
+		"slot_0": {
+			"item_id": 41,
+			"item_damage": -1
+		},
+		"shapeless": false,
+		"width": 1
+	},
+	"blockiron": {
+		"output": {
+			"item_id": 42,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"slot_6": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"slot_7": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"slot_5": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"slot_8": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"ingotiron": {
+		"output": {
+			"item_id": 265,
+			"item_damage": 0,
+			"item_count": 9
+		},
+		"slot_0": {
+			"item_id": 42,
+			"item_damage": -1
+		},
+		"shapeless": false,
+		"width": 1
+	},
+	"blockdiamond": {
+		"output": {
+			"item_id": 57,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 264,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 264,
+			"item_damage": 0
+		},
+		"slot_6": {
+			"item_id": 264,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 264,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 264,
+			"item_damage": 0
+		},
+		"slot_7": {
+			"item_id": 264,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 264,
+			"item_damage": 0
+		},
+		"slot_5": {
+			"item_id": 264,
+			"item_damage": 0
+		},
+		"slot_8": {
+			"item_id": 264,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"diamond": {
+		"output": {
+			"item_id": 264,
+			"item_damage": 0,
+			"item_count": 9
+		},
+		"slot_0": {
+			"item_id": 57,
+			"item_damage": -1
+		},
+		"shapeless": false,
+		"width": 1
+	},
+	"blockemerald": {
+		"output": {
+			"item_id": 133,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 388,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 388,
+			"item_damage": 0
+		},
+		"slot_6": {
+			"item_id": 388,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 388,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 388,
+			"item_damage": 0
+		},
+		"slot_7": {
+			"item_id": 388,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 388,
+			"item_damage": 0
+		},
+		"slot_5": {
+			"item_id": 388,
+			"item_damage": 0
+		},
+		"slot_8": {
+			"item_id": 388,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"emerald": {
+		"output": {
+			"item_id": 388,
+			"item_damage": 0,
+			"item_count": 9
+		},
+		"slot_0": {
+			"item_id": 133,
+			"item_damage": -1
+		},
+		"shapeless": false,
+		"width": 1
+	},
+	"blocklapis": {
+		"output": {
+			"item_id": 22,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 351,
+			"item_damage": 4
+		},
+		"slot_3": {
+			"item_id": 351,
+			"item_damage": 4
+		},
+		"slot_6": {
+			"item_id": 351,
+			"item_damage": 4
+		},
+		"slot_1": {
+			"item_id": 351,
+			"item_damage": 4
+		},
+		"slot_4": {
+			"item_id": 351,
+			"item_damage": 4
+		},
+		"slot_7": {
+			"item_id": 351,
+			"item_damage": 4
+		},
+		"slot_2": {
+			"item_id": 351,
+			"item_damage": 4
+		},
+		"slot_5": {
+			"item_id": 351,
+			"item_damage": 4
+		},
+		"slot_8": {
+			"item_id": 351,
+			"item_damage": 4
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"dyepowder_blue": {
+		"output": {
+			"item_id": 351,
+			"item_damage": 4,
+			"item_count": 9
+		},
+		"slot_0": {
+			"item_id": 22,
+			"item_damage": -1
+		},
+		"shapeless": false,
+		"width": 1
+	},
+	"blockredstone": {
+		"output": {
+			"item_id": 152,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 331,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 331,
+			"item_damage": 0
+		},
+		"slot_6": {
+			"item_id": 331,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 331,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 331,
+			"item_damage": 0
+		},
+		"slot_7": {
+			"item_id": 331,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 331,
+			"item_damage": 0
+		},
+		"slot_5": {
+			"item_id": 331,
+			"item_damage": 0
+		},
+		"slot_8": {
+			"item_id": 331,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"redstone": {
+		"output": {
+			"item_id": 331,
+			"item_damage": 0,
+			"item_count": 9
+		},
+		"slot_0": {
+			"item_id": 152,
+			"item_damage": -1
+		},
+		"shapeless": false,
+		"width": 1
+	},
+	"blockcoal": {
+		"output": {
+			"item_id": 173,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 263,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 263,
+			"item_damage": 0
+		},
+		"slot_6": {
+			"item_id": 263,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 263,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 263,
+			"item_damage": 0
+		},
+		"slot_7": {
+			"item_id": 263,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 263,
+			"item_damage": 0
+		},
+		"slot_5": {
+			"item_id": 263,
+			"item_damage": 0
+		},
+		"slot_8": {
+			"item_id": 263,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"coal": {
+		"output": {
+			"item_id": 263,
+			"item_damage": 0,
+			"item_count": 9
+		},
+		"slot_0": {
+			"item_id": 173,
+			"item_damage": -1
+		},
+		"shapeless": false,
+		"width": 1
+	},
+	"hayblock": {
+		"output": {
+			"item_id": 170,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 296,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 296,
+			"item_damage": 0
+		},
+		"slot_6": {
+			"item_id": 296,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 296,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 296,
+			"item_damage": 0
+		},
+		"slot_7": {
+			"item_id": 296,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 296,
+			"item_damage": 0
+		},
+		"slot_5": {
+			"item_id": 296,
+			"item_damage": 0
+		},
+		"slot_8": {
+			"item_id": 296,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"wheat": {
+		"output": {
+			"item_id": 296,
+			"item_damage": 0,
+			"item_count": 9
+		},
+		"slot_0": {
+			"item_id": 170,
+			"item_damage": -1
+		},
+		"shapeless": false,
+		"width": 1
+	},
+	"slime": {
+		"output": {
+			"item_id": 165,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 341,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 341,
+			"item_damage": 0
+		},
+		"slot_6": {
+			"item_id": 341,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 341,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 341,
+			"item_damage": 0
+		},
+		"slot_7": {
+			"item_id": 341,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 341,
+			"item_damage": 0
+		},
+		"slot_5": {
+			"item_id": 341,
+			"item_damage": 0
+		},
+		"slot_8": {
+			"item_id": 341,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"slimeball": {
+		"output": {
+			"item_id": 341,
+			"item_damage": 0,
+			"item_count": 9
+		},
+		"slot_0": {
+			"item_id": 165,
+			"item_damage": -1
+		},
+		"shapeless": false,
+		"width": 1
+	},
+	"ingotgold_2": {
+		"output": {
+			"item_id": 266,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 371,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 371,
+			"item_damage": 0
+		},
+		"slot_6": {
+			"item_id": 371,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 371,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 371,
+			"item_damage": 0
+		},
+		"slot_7": {
+			"item_id": 371,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 371,
+			"item_damage": 0
+		},
+		"slot_5": {
+			"item_id": 371,
+			"item_damage": 0
+		},
+		"slot_8": {
+			"item_id": 371,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"goldnugget": {
+		"output": {
+			"item_id": 371,
+			"item_damage": 0,
+			"item_count": 9
+		},
+		"slot_0": {
+			"item_id": 266,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 1
+	},
+	"mushroomstew": {
+		"output": {
+			"item_id": 282,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 39,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 40,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 281,
+			"item_damage": 0
+		},
+		"shapeless": true
+	},
+	"cookie": {
+		"output": {
+			"item_id": 357,
+			"item_damage": 0,
+			"item_count": 8
+		},
+		"slot_0": {
+			"item_id": 296,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 351,
+			"item_damage": 3
+		},
+		"slot_2": {
+			"item_id": 296,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"rabbitstew": {
+		"output": {
+			"item_id": 413,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_3": {
+			"item_id": 391,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 412,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 393,
+			"item_damage": 0
+		},
+		"slot_7": {
+			"item_id": 281,
+			"item_damage": 0
+		},
+		"slot_5": {
+			"item_id": 39,
+			"item_damage": -1
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"rabbitstew_2": {
+		"output": {
+			"item_id": 413,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_3": {
+			"item_id": 391,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 412,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 393,
+			"item_damage": 0
+		},
+		"slot_7": {
+			"item_id": 281,
+			"item_damage": 0
+		},
+		"slot_5": {
+			"item_id": 40,
+			"item_damage": -1
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"melon": {
+		"output": {
+			"item_id": 103,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 360,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 360,
+			"item_damage": 0
+		},
+		"slot_6": {
+			"item_id": 360,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 360,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 360,
+			"item_damage": 0
+		},
+		"slot_7": {
+			"item_id": 360,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 360,
+			"item_damage": 0
+		},
+		"slot_5": {
+			"item_id": 360,
+			"item_damage": 0
+		},
+		"slot_8": {
+			"item_id": 360,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"beetroot_soup": {
+		"output": {
+			"item_id": 436,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 434,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 434,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 434,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 434,
+			"item_damage": 0
+		},
+		"slot_7": {
+			"item_id": 281,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 434,
+			"item_damage": 0
+		},
+		"slot_5": {
+			"item_id": 434,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"seeds_melon": {
+		"output": {
+			"item_id": 362,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 360,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 1
+	},
+	"seeds_pumpkin": {
+		"output": {
+			"item_id": 361,
+			"item_damage": 0,
+			"item_count": 4
+		},
+		"slot_0": {
+			"item_id": 86,
+			"item_damage": -1
+		},
+		"shapeless": false,
+		"width": 1
+	},
+	"pumpkinpie": {
+		"output": {
+			"item_id": 400,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 86,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 353,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 344,
+			"item_damage": 0
+		},
+		"shapeless": true
+	},
+	"fermentedspidereye": {
+		"output": {
+			"item_id": 376,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 375,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 39,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 353,
+			"item_damage": 0
+		},
+		"shapeless": true
+	},
+	"blazepowder": {
+		"output": {
+			"item_id": 377,
+			"item_damage": 0,
+			"item_count": 2
+		},
+		"slot_0": {
+			"item_id": 369,
+			"item_damage": 0
+		},
+		"shapeless": true
+	},
+	"magmacream": {
+		"output": {
+			"item_id": 378,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 377,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 341,
+			"item_damage": 0
+		},
+		"shapeless": true
+	},
+	"chest": {
+		"output": {
+			"item_id": 54,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 5,
+			"item_damage": -1
+		},
+		"slot_3": {
+			"item_id": 5,
+			"item_damage": -1
+		},
+		"slot_6": {
+			"item_id": 5,
+			"item_damage": -1
+		},
+		"slot_1": {
+			"item_id": 5,
+			"item_damage": -1
+		},
+		"slot_7": {
+			"item_id": 5,
+			"item_damage": -1
+		},
+		"slot_2": {
+			"item_id": 5,
+			"item_damage": -1
+		},
+		"slot_5": {
+			"item_id": 5,
+			"item_damage": -1
+		},
+		"slot_8": {
+			"item_id": 5,
+			"item_damage": -1
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"chesttrap": {
+		"output": {
+			"item_id": 146,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 54,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 131,
+			"item_damage": 0
+		},
+		"shapeless": true
+	},
+	"enderchest": {
+		"output": {
+			"item_id": 130,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 49,
+			"item_damage": -1
+		},
+		"slot_3": {
+			"item_id": 49,
+			"item_damage": -1
+		},
+		"slot_6": {
+			"item_id": 49,
+			"item_damage": -1
+		},
+		"slot_1": {
+			"item_id": 49,
+			"item_damage": -1
+		},
+		"slot_4": {
+			"item_id": 381,
+			"item_damage": 0
+		},
+		"slot_7": {
+			"item_id": 49,
+			"item_damage": -1
+		},
+		"slot_2": {
+			"item_id": 49,
+			"item_damage": -1
+		},
+		"slot_5": {
+			"item_id": 49,
+			"item_damage": -1
+		},
+		"slot_8": {
+			"item_id": 49,
+			"item_damage": -1
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"furnace": {
+		"output": {
+			"item_id": 61,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 4,
+			"item_damage": -1
+		},
+		"slot_3": {
+			"item_id": 4,
+			"item_damage": -1
+		},
+		"slot_6": {
+			"item_id": 4,
+			"item_damage": -1
+		},
+		"slot_1": {
+			"item_id": 4,
+			"item_damage": -1
+		},
+		"slot_7": {
+			"item_id": 4,
+			"item_damage": -1
+		},
+		"slot_2": {
+			"item_id": 4,
+			"item_damage": -1
+		},
+		"slot_5": {
+			"item_id": 4,
+			"item_damage": -1
+		},
+		"slot_8": {
+			"item_id": 4,
+			"item_damage": -1
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"workbench": {
+		"output": {
+			"item_id": 58,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 5,
+			"item_damage": -1
+		},
+		"slot_3": {
+			"item_id": 5,
+			"item_damage": -1
+		},
+		"slot_1": {
+			"item_id": 5,
+			"item_damage": -1
+		},
+		"slot_4": {
+			"item_id": 5,
+			"item_damage": -1
+		},
+		"shapeless": false,
+		"width": 2
+	},
+	"sandstone": {
+		"output": {
+			"item_id": 24,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 12,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 12,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 12,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 12,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 2
+	},
+	"redsandstone": {
+		"output": {
+			"item_id": 179,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 12,
+			"item_damage": 1
+		},
+		"slot_3": {
+			"item_id": 12,
+			"item_damage": 1
+		},
+		"slot_1": {
+			"item_id": 12,
+			"item_damage": 1
+		},
+		"slot_4": {
+			"item_id": 12,
+			"item_damage": 1
+		},
+		"shapeless": false,
+		"width": 2
+	},
+	"sandstone_smooth": {
+		"output": {
+			"item_id": 24,
+			"item_damage": 2,
+			"item_count": 4
+		},
+		"slot_0": {
+			"item_id": 24,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 24,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 24,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 24,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 2
+	},
+	"redsandstone_smooth": {
+		"output": {
+			"item_id": 179,
+			"item_damage": 2,
+			"item_count": 4
+		},
+		"slot_0": {
+			"item_id": 179,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 179,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 179,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 179,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 2
+	},
+	"sandstone_chiseled": {
+		"output": {
+			"item_id": 24,
+			"item_damage": 1,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 44,
+			"item_damage": 1
+		},
+		"slot_3": {
+			"item_id": 44,
+			"item_damage": 1
+		},
+		"shapeless": false,
+		"width": 1
+	},
+	"redsandstone_chiseled": {
+		"output": {
+			"item_id": 179,
+			"item_damage": 1,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 182,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 182,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 1
+	},
+	"quartzblock_chiseled": {
+		"output": {
+			"item_id": 155,
+			"item_damage": 1,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 44,
+			"item_damage": 7
+		},
+		"slot_3": {
+			"item_id": 44,
+			"item_damage": 7
+		},
+		"shapeless": false,
+		"width": 1
+	},
+	"quartzblock_lines": {
+		"output": {
+			"item_id": 155,
+			"item_damage": 2,
+			"item_count": 2
+		},
+		"slot_0": {
+			"item_id": 155,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 155,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 1
+	},
+	"stonebricksmooth": {
+		"output": {
+			"item_id": 98,
+			"item_damage": 0,
+			"item_count": 4
+		},
+		"slot_0": {
+			"item_id": 1,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 1,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 1,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 1,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 2
+	},
+	"stonebricksmooth_chiseled": {
+		"output": {
+			"item_id": 98,
+			"item_damage": 3,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 44,
+			"item_damage": 5
+		},
+		"slot_3": {
+			"item_id": 44,
+			"item_damage": 5
+		},
+		"shapeless": false,
+		"width": 1
+	},
+	"stonebricksmooth_mossy": {
+		"output": {
+			"item_id": 98,
+			"item_damage": 1,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 98,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 106,
+			"item_damage": 0
+		},
+		"shapeless": true
+	},
+	"stonemoss": {
+		"output": {
+			"item_id": 48,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 4,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 106,
+			"item_damage": 0
+		},
+		"shapeless": true
+	},
+	"fenceiron": {
+		"output": {
+			"item_id": 101,
+			"item_damage": 0,
+			"item_count": 16
+		},
+		"slot_0": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"slot_5": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"thinglass": {
+		"output": {
+			"item_id": 102,
+			"item_damage": 0,
+			"item_count": 16
+		},
+		"slot_0": {
+			"item_id": 20,
+			"item_damage": -1
+		},
+		"slot_3": {
+			"item_id": 20,
+			"item_damage": -1
+		},
+		"slot_1": {
+			"item_id": 20,
+			"item_damage": -1
+		},
+		"slot_4": {
+			"item_id": 20,
+			"item_damage": -1
+		},
+		"slot_2": {
+			"item_id": 20,
+			"item_damage": -1
+		},
+		"slot_5": {
+			"item_id": 20,
+			"item_damage": -1
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"redstonelight": {
+		"output": {
+			"item_id": 123,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_3": {
+			"item_id": 331,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 331,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 89,
+			"item_damage": -1
+		},
+		"slot_7": {
+			"item_id": 331,
+			"item_damage": 0
+		},
+		"slot_5": {
+			"item_id": 331,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"beacon": {
+		"output": {
+			"item_id": 138,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 20,
+			"item_damage": -1
+		},
+		"slot_3": {
+			"item_id": 20,
+			"item_damage": -1
+		},
+		"slot_6": {
+			"item_id": 49,
+			"item_damage": -1
+		},
+		"slot_1": {
+			"item_id": 20,
+			"item_damage": -1
+		},
+		"slot_4": {
+			"item_id": 399,
+			"item_damage": 0
+		},
+		"slot_7": {
+			"item_id": 49,
+			"item_damage": -1
+		},
+		"slot_2": {
+			"item_id": 20,
+			"item_damage": -1
+		},
+		"slot_5": {
+			"item_id": 20,
+			"item_damage": -1
+		},
+		"slot_8": {
+			"item_id": 49,
+			"item_damage": -1
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"netherbrick": {
+		"output": {
+			"item_id": 112,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 405,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 405,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 405,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 405,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 2
+	},
+	"rednetherbrick": {
+		"output": {
+			"item_id": 215,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 405,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 372,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 372,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 405,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 2
+	},
+	"stone_diorite": {
+		"output": {
+			"item_id": 1,
+			"item_damage": 3,
+			"item_count": 2
+		},
+		"slot_0": {
+			"item_id": 4,
+			"item_damage": -1
+		},
+		"slot_3": {
+			"item_id": 406,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 406,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 4,
+			"item_damage": -1
+		},
+		"shapeless": false,
+		"width": 2
+	},
+	"stone_granite": {
+		"output": {
+			"item_id": 1,
+			"item_damage": 1,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 1,
+			"item_damage": 3
+		},
+		"slot_1": {
+			"item_id": 406,
+			"item_damage": 0
+		},
+		"shapeless": true
+	},
+	"stone_andesite": {
+		"output": {
+			"item_id": 1,
+			"item_damage": 5,
+			"item_count": 2
+		},
+		"slot_0": {
+			"item_id": 1,
+			"item_damage": 3
+		},
+		"slot_1": {
+			"item_id": 4,
+			"item_damage": 0
+		},
+		"shapeless": true
+	},
+	"dirt_coarse": {
+		"output": {
+			"item_id": 3,
+			"item_damage": 1,
+			"item_count": 4
+		},
+		"slot_0": {
+			"item_id": 3,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 13,
+			"item_damage": -1
+		},
+		"slot_1": {
+			"item_id": 13,
+			"item_damage": -1
+		},
+		"slot_4": {
+			"item_id": 3,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 2
+	},
+	"stone_dioritesmooth": {
+		"output": {
+			"item_id": 1,
+			"item_damage": 4,
+			"item_count": 4
+		},
+		"slot_0": {
+			"item_id": 1,
+			"item_damage": 3
+		},
+		"slot_3": {
+			"item_id": 1,
+			"item_damage": 3
+		},
+		"slot_1": {
+			"item_id": 1,
+			"item_damage": 3
+		},
+		"slot_4": {
+			"item_id": 1,
+			"item_damage": 3
+		},
+		"shapeless": false,
+		"width": 2
+	},
+	"stone_granitesmooth": {
+		"output": {
+			"item_id": 1,
+			"item_damage": 2,
+			"item_count": 4
+		},
+		"slot_0": {
+			"item_id": 1,
+			"item_damage": 1
+		},
+		"slot_3": {
+			"item_id": 1,
+			"item_damage": 1
+		},
+		"slot_1": {
+			"item_id": 1,
+			"item_damage": 1
+		},
+		"slot_4": {
+			"item_id": 1,
+			"item_damage": 1
+		},
+		"shapeless": false,
+		"width": 2
+	},
+	"stone_andesitesmooth": {
+		"output": {
+			"item_id": 1,
+			"item_damage": 6,
+			"item_count": 4
+		},
+		"slot_0": {
+			"item_id": 1,
+			"item_damage": 5
+		},
+		"slot_3": {
+			"item_id": 1,
+			"item_damage": 5
+		},
+		"slot_1": {
+			"item_id": 1,
+			"item_damage": 5
+		},
+		"slot_4": {
+			"item_id": 1,
+			"item_damage": 5
+		},
+		"shapeless": false,
+		"width": 2
+	},
+	"prismarine_rough": {
+		"output": {
+			"item_id": 168,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 409,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 409,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 409,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 409,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 2
+	},
+	"prismarine_bricks": {
+		"output": {
+			"item_id": 168,
+			"item_damage": 1,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 409,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 409,
+			"item_damage": 0
+		},
+		"slot_6": {
+			"item_id": 409,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 409,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 409,
+			"item_damage": 0
+		},
+		"slot_7": {
+			"item_id": 409,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 409,
+			"item_damage": 0
+		},
+		"slot_5": {
+			"item_id": 409,
+			"item_damage": 0
+		},
+		"slot_8": {
+			"item_id": 409,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"prismarine_dark": {
+		"output": {
+			"item_id": 168,
+			"item_damage": 2,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 409,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 409,
+			"item_damage": 0
+		},
+		"slot_6": {
+			"item_id": 409,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 409,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 351,
+			"item_damage": 0
+		},
+		"slot_7": {
+			"item_id": 409,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 409,
+			"item_damage": 0
+		},
+		"slot_5": {
+			"item_id": 409,
+			"item_damage": 0
+		},
+		"slot_8": {
+			"item_id": 409,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"sealantern": {
+		"output": {
+			"item_id": 169,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 409,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 410,
+			"item_damage": 0
+		},
+		"slot_6": {
+			"item_id": 409,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 410,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 410,
+			"item_damage": 0
+		},
+		"slot_7": {
+			"item_id": 410,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 409,
+			"item_damage": 0
+		},
+		"slot_5": {
+			"item_id": 410,
+			"item_damage": 0
+		},
+		"slot_8": {
+			"item_id": 409,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"purpurblock": {
+		"output": {
+			"item_id": 201,
+			"item_damage": 0,
+			"item_count": 4
+		},
+		"slot_0": {
+			"item_id": 433,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 433,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 433,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 433,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 2
+	},
+	"stairspurpur": {
+		"output": {
+			"item_id": 203,
+			"item_damage": 0,
+			"item_count": 4
+		},
+		"slot_0": {
+			"item_id": 201,
+			"item_damage": -1
+		},
+		"slot_3": {
+			"item_id": 201,
+			"item_damage": -1
+		},
+		"slot_6": {
+			"item_id": 201,
+			"item_damage": -1
+		},
+		"slot_4": {
+			"item_id": 201,
+			"item_damage": -1
+		},
+		"slot_7": {
+			"item_id": 201,
+			"item_damage": -1
+		},
+		"slot_8": {
+			"item_id": 201,
+			"item_damage": -1
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"purpurpillar": {
+		"output": {
+			"item_id": 202,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 205,
+			"item_damage": -1
+		},
+		"slot_3": {
+			"item_id": 205,
+			"item_damage": -1
+		},
+		"shapeless": false,
+		"width": 1
+	},
+	"endbricks": {
+		"output": {
+			"item_id": 206,
+			"item_damage": 0,
+			"item_count": 4
+		},
+		"slot_0": {
+			"item_id": 121,
+			"item_damage": -1
+		},
+		"slot_3": {
+			"item_id": 121,
+			"item_damage": -1
+		},
+		"slot_1": {
+			"item_id": 121,
+			"item_damage": -1
+		},
+		"slot_4": {
+			"item_id": 121,
+			"item_damage": -1
+		},
+		"shapeless": false,
+		"width": 2
+	},
+	"magma": {
+		"output": {
+			"item_id": 213,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 378,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 378,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 378,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 378,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 2
+	},
+	"netherwartblock": {
+		"output": {
+			"item_id": 214,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 372,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 372,
+			"item_damage": 0
+		},
+		"slot_6": {
+			"item_id": 372,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 372,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 372,
+			"item_damage": 0
+		},
+		"slot_7": {
+			"item_id": 372,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 372,
+			"item_damage": 0
+		},
+		"slot_5": {
+			"item_id": 372,
+			"item_damage": 0
+		},
+		"slot_8": {
+			"item_id": 372,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"helmetcloth": {
+		"output": {
+			"item_id": 298,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 334,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 334,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 334,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 334,
+			"item_damage": 0
+		},
+		"slot_5": {
+			"item_id": 334,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"chestplatecloth": {
+		"output": {
+			"item_id": 299,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 334,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 334,
+			"item_damage": 0
+		},
+		"slot_6": {
+			"item_id": 334,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 334,
+			"item_damage": 0
+		},
+		"slot_7": {
+			"item_id": 334,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 334,
+			"item_damage": 0
+		},
+		"slot_5": {
+			"item_id": 334,
+			"item_damage": 0
+		},
+		"slot_8": {
+			"item_id": 334,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"leggingscloth": {
+		"output": {
+			"item_id": 300,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 334,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 334,
+			"item_damage": 0
+		},
+		"slot_6": {
+			"item_id": 334,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 334,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 334,
+			"item_damage": 0
+		},
+		"slot_5": {
+			"item_id": 334,
+			"item_damage": 0
+		},
+		"slot_8": {
+			"item_id": 334,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"bootscloth": {
+		"output": {
+			"item_id": 301,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 334,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 334,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 334,
+			"item_damage": 0
+		},
+		"slot_5": {
+			"item_id": 334,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"helmetiron": {
+		"output": {
+			"item_id": 306,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"slot_5": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"chestplateiron": {
+		"output": {
+			"item_id": 307,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"slot_6": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"slot_7": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"slot_5": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"slot_8": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"leggingsiron": {
+		"output": {
+			"item_id": 308,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"slot_6": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"slot_5": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"slot_8": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"bootsiron": {
+		"output": {
+			"item_id": 309,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"slot_5": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"helmetdiamond": {
+		"output": {
+			"item_id": 310,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 264,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 264,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 264,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 264,
+			"item_damage": 0
+		},
+		"slot_5": {
+			"item_id": 264,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"chestplatediamond": {
+		"output": {
+			"item_id": 311,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 264,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 264,
+			"item_damage": 0
+		},
+		"slot_6": {
+			"item_id": 264,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 264,
+			"item_damage": 0
+		},
+		"slot_7": {
+			"item_id": 264,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 264,
+			"item_damage": 0
+		},
+		"slot_5": {
+			"item_id": 264,
+			"item_damage": 0
+		},
+		"slot_8": {
+			"item_id": 264,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"leggingsdiamond": {
+		"output": {
+			"item_id": 312,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 264,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 264,
+			"item_damage": 0
+		},
+		"slot_6": {
+			"item_id": 264,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 264,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 264,
+			"item_damage": 0
+		},
+		"slot_5": {
+			"item_id": 264,
+			"item_damage": 0
+		},
+		"slot_8": {
+			"item_id": 264,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"bootsdiamond": {
+		"output": {
+			"item_id": 313,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 264,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 264,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 264,
+			"item_damage": 0
+		},
+		"slot_5": {
+			"item_id": 264,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"helmetgold": {
+		"output": {
+			"item_id": 314,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 266,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 266,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 266,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 266,
+			"item_damage": 0
+		},
+		"slot_5": {
+			"item_id": 266,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"chestplategold": {
+		"output": {
+			"item_id": 315,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 266,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 266,
+			"item_damage": 0
+		},
+		"slot_6": {
+			"item_id": 266,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 266,
+			"item_damage": 0
+		},
+		"slot_7": {
+			"item_id": 266,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 266,
+			"item_damage": 0
+		},
+		"slot_5": {
+			"item_id": 266,
+			"item_damage": 0
+		},
+		"slot_8": {
+			"item_id": 266,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"leggingsgold": {
+		"output": {
+			"item_id": 316,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 266,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 266,
+			"item_damage": 0
+		},
+		"slot_6": {
+			"item_id": 266,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 266,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 266,
+			"item_damage": 0
+		},
+		"slot_5": {
+			"item_id": 266,
+			"item_damage": 0
+		},
+		"slot_8": {
+			"item_id": 266,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"bootsgold": {
+		"output": {
+			"item_id": 317,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 266,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 266,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 266,
+			"item_damage": 0
+		},
+		"slot_5": {
+			"item_id": 266,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"cloth_white": {
+		"output": {
+			"item_id": 35,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 351,
+			"item_damage": 15
+		},
+		"slot_1": {
+			"item_id": 35,
+			"item_damage": 0
+		},
+		"shapeless": true
+	},
+	"clayhardenedstained_black": {
+		"output": {
+			"item_id": 159,
+			"item_damage": 15,
+			"item_count": 8
+		},
+		"slot_0": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_6": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 351,
+			"item_damage": 0
+		},
+		"slot_7": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_5": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_8": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"stainedglass_black": {
+		"output": {
+			"item_id": 95,
+			"item_damage": 15,
+			"item_count": 8
+		},
+		"slot_0": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_6": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 351,
+			"item_damage": 0
+		},
+		"slot_7": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_5": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_8": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"thinstainedglass_white": {
+		"output": {
+			"item_id": 160,
+			"item_damage": 0,
+			"item_count": 16
+		},
+		"slot_0": {
+			"item_id": 95,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 95,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 95,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 95,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 95,
+			"item_damage": 0
+		},
+		"slot_5": {
+			"item_id": 95,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"cloth_orange": {
+		"output": {
+			"item_id": 35,
+			"item_damage": 1,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 351,
+			"item_damage": 14
+		},
+		"slot_1": {
+			"item_id": 35,
+			"item_damage": 0
+		},
+		"shapeless": true
+	},
+	"clayhardenedstained_red": {
+		"output": {
+			"item_id": 159,
+			"item_damage": 14,
+			"item_count": 8
+		},
+		"slot_0": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_6": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 351,
+			"item_damage": 1
+		},
+		"slot_7": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_5": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_8": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"stainedglass_red": {
+		"output": {
+			"item_id": 95,
+			"item_damage": 14,
+			"item_count": 8
+		},
+		"slot_0": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_6": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 351,
+			"item_damage": 1
+		},
+		"slot_7": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_5": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_8": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"thinstainedglass_orange": {
+		"output": {
+			"item_id": 160,
+			"item_damage": 1,
+			"item_count": 16
+		},
+		"slot_0": {
+			"item_id": 95,
+			"item_damage": 1
+		},
+		"slot_3": {
+			"item_id": 95,
+			"item_damage": 1
+		},
+		"slot_1": {
+			"item_id": 95,
+			"item_damage": 1
+		},
+		"slot_4": {
+			"item_id": 95,
+			"item_damage": 1
+		},
+		"slot_2": {
+			"item_id": 95,
+			"item_damage": 1
+		},
+		"slot_5": {
+			"item_id": 95,
+			"item_damage": 1
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"cloth_magenta": {
+		"output": {
+			"item_id": 35,
+			"item_damage": 2,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 351,
+			"item_damage": 13
+		},
+		"slot_1": {
+			"item_id": 35,
+			"item_damage": 0
+		},
+		"shapeless": true
+	},
+	"clayhardenedstained_green": {
+		"output": {
+			"item_id": 159,
+			"item_damage": 13,
+			"item_count": 8
+		},
+		"slot_0": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_6": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 351,
+			"item_damage": 2
+		},
+		"slot_7": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_5": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_8": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"stainedglass_green": {
+		"output": {
+			"item_id": 95,
+			"item_damage": 13,
+			"item_count": 8
+		},
+		"slot_0": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_6": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 351,
+			"item_damage": 2
+		},
+		"slot_7": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_5": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_8": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"thinstainedglass_magenta": {
+		"output": {
+			"item_id": 160,
+			"item_damage": 2,
+			"item_count": 16
+		},
+		"slot_0": {
+			"item_id": 95,
+			"item_damage": 2
+		},
+		"slot_3": {
+			"item_id": 95,
+			"item_damage": 2
+		},
+		"slot_1": {
+			"item_id": 95,
+			"item_damage": 2
+		},
+		"slot_4": {
+			"item_id": 95,
+			"item_damage": 2
+		},
+		"slot_2": {
+			"item_id": 95,
+			"item_damage": 2
+		},
+		"slot_5": {
+			"item_id": 95,
+			"item_damage": 2
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"cloth_lightblue": {
+		"output": {
+			"item_id": 35,
+			"item_damage": 3,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 351,
+			"item_damage": 12
+		},
+		"slot_1": {
+			"item_id": 35,
+			"item_damage": 0
+		},
+		"shapeless": true
+	},
+	"clayhardenedstained_brown": {
+		"output": {
+			"item_id": 159,
+			"item_damage": 12,
+			"item_count": 8
+		},
+		"slot_0": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_6": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 351,
+			"item_damage": 3
+		},
+		"slot_7": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_5": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_8": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"stainedglass_brown": {
+		"output": {
+			"item_id": 95,
+			"item_damage": 12,
+			"item_count": 8
+		},
+		"slot_0": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_6": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 351,
+			"item_damage": 3
+		},
+		"slot_7": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_5": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_8": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"thinstainedglass_lightblue": {
+		"output": {
+			"item_id": 160,
+			"item_damage": 3,
+			"item_count": 16
+		},
+		"slot_0": {
+			"item_id": 95,
+			"item_damage": 3
+		},
+		"slot_3": {
+			"item_id": 95,
+			"item_damage": 3
+		},
+		"slot_1": {
+			"item_id": 95,
+			"item_damage": 3
+		},
+		"slot_4": {
+			"item_id": 95,
+			"item_damage": 3
+		},
+		"slot_2": {
+			"item_id": 95,
+			"item_damage": 3
+		},
+		"slot_5": {
+			"item_id": 95,
+			"item_damage": 3
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"cloth_yellow": {
+		"output": {
+			"item_id": 35,
+			"item_damage": 4,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 351,
+			"item_damage": 11
+		},
+		"slot_1": {
+			"item_id": 35,
+			"item_damage": 0
+		},
+		"shapeless": true
+	},
+	"clayhardenedstained_blue": {
+		"output": {
+			"item_id": 159,
+			"item_damage": 11,
+			"item_count": 8
+		},
+		"slot_0": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_6": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 351,
+			"item_damage": 4
+		},
+		"slot_7": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_5": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_8": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"stainedglass_blue": {
+		"output": {
+			"item_id": 95,
+			"item_damage": 11,
+			"item_count": 8
+		},
+		"slot_0": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_6": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 351,
+			"item_damage": 4
+		},
+		"slot_7": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_5": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_8": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"thinstainedglass_yellow": {
+		"output": {
+			"item_id": 160,
+			"item_damage": 4,
+			"item_count": 16
+		},
+		"slot_0": {
+			"item_id": 95,
+			"item_damage": 4
+		},
+		"slot_3": {
+			"item_id": 95,
+			"item_damage": 4
+		},
+		"slot_1": {
+			"item_id": 95,
+			"item_damage": 4
+		},
+		"slot_4": {
+			"item_id": 95,
+			"item_damage": 4
+		},
+		"slot_2": {
+			"item_id": 95,
+			"item_damage": 4
+		},
+		"slot_5": {
+			"item_id": 95,
+			"item_damage": 4
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"cloth_lime": {
+		"output": {
+			"item_id": 35,
+			"item_damage": 5,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 351,
+			"item_damage": 10
+		},
+		"slot_1": {
+			"item_id": 35,
+			"item_damage": 0
+		},
+		"shapeless": true
+	},
+	"clayhardenedstained_purple": {
+		"output": {
+			"item_id": 159,
+			"item_damage": 10,
+			"item_count": 8
+		},
+		"slot_0": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_6": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 351,
+			"item_damage": 5
+		},
+		"slot_7": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_5": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_8": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"stainedglass_purple": {
+		"output": {
+			"item_id": 95,
+			"item_damage": 10,
+			"item_count": 8
+		},
+		"slot_0": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_6": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 351,
+			"item_damage": 5
+		},
+		"slot_7": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_5": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_8": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"thinstainedglass_lime": {
+		"output": {
+			"item_id": 160,
+			"item_damage": 5,
+			"item_count": 16
+		},
+		"slot_0": {
+			"item_id": 95,
+			"item_damage": 5
+		},
+		"slot_3": {
+			"item_id": 95,
+			"item_damage": 5
+		},
+		"slot_1": {
+			"item_id": 95,
+			"item_damage": 5
+		},
+		"slot_4": {
+			"item_id": 95,
+			"item_damage": 5
+		},
+		"slot_2": {
+			"item_id": 95,
+			"item_damage": 5
+		},
+		"slot_5": {
+			"item_id": 95,
+			"item_damage": 5
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"cloth_pink": {
+		"output": {
+			"item_id": 35,
+			"item_damage": 6,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 351,
+			"item_damage": 9
+		},
+		"slot_1": {
+			"item_id": 35,
+			"item_damage": 0
+		},
+		"shapeless": true
+	},
+	"clayhardenedstained_cyan": {
+		"output": {
+			"item_id": 159,
+			"item_damage": 9,
+			"item_count": 8
+		},
+		"slot_0": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_6": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 351,
+			"item_damage": 6
+		},
+		"slot_7": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_5": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_8": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"stainedglass_cyan": {
+		"output": {
+			"item_id": 95,
+			"item_damage": 9,
+			"item_count": 8
+		},
+		"slot_0": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_6": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 351,
+			"item_damage": 6
+		},
+		"slot_7": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_5": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_8": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"thinstainedglass_pink": {
+		"output": {
+			"item_id": 160,
+			"item_damage": 6,
+			"item_count": 16
+		},
+		"slot_0": {
+			"item_id": 95,
+			"item_damage": 6
+		},
+		"slot_3": {
+			"item_id": 95,
+			"item_damage": 6
+		},
+		"slot_1": {
+			"item_id": 95,
+			"item_damage": 6
+		},
+		"slot_4": {
+			"item_id": 95,
+			"item_damage": 6
+		},
+		"slot_2": {
+			"item_id": 95,
+			"item_damage": 6
+		},
+		"slot_5": {
+			"item_id": 95,
+			"item_damage": 6
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"cloth_gray": {
+		"output": {
+			"item_id": 35,
+			"item_damage": 7,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 351,
+			"item_damage": 8
+		},
+		"slot_1": {
+			"item_id": 35,
+			"item_damage": 0
+		},
+		"shapeless": true
+	},
+	"clayhardenedstained_silver": {
+		"output": {
+			"item_id": 159,
+			"item_damage": 8,
+			"item_count": 8
+		},
+		"slot_0": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_6": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 351,
+			"item_damage": 7
+		},
+		"slot_7": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_5": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_8": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"stainedglass_silver": {
+		"output": {
+			"item_id": 95,
+			"item_damage": 8,
+			"item_count": 8
+		},
+		"slot_0": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_6": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 351,
+			"item_damage": 7
+		},
+		"slot_7": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_5": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_8": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"thinstainedglass_gray": {
+		"output": {
+			"item_id": 160,
+			"item_damage": 7,
+			"item_count": 16
+		},
+		"slot_0": {
+			"item_id": 95,
+			"item_damage": 7
+		},
+		"slot_3": {
+			"item_id": 95,
+			"item_damage": 7
+		},
+		"slot_1": {
+			"item_id": 95,
+			"item_damage": 7
+		},
+		"slot_4": {
+			"item_id": 95,
+			"item_damage": 7
+		},
+		"slot_2": {
+			"item_id": 95,
+			"item_damage": 7
+		},
+		"slot_5": {
+			"item_id": 95,
+			"item_damage": 7
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"cloth_silver": {
+		"output": {
+			"item_id": 35,
+			"item_damage": 8,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 351,
+			"item_damage": 7
+		},
+		"slot_1": {
+			"item_id": 35,
+			"item_damage": 0
+		},
+		"shapeless": true
+	},
+	"clayhardenedstained_gray": {
+		"output": {
+			"item_id": 159,
+			"item_damage": 7,
+			"item_count": 8
+		},
+		"slot_0": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_6": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 351,
+			"item_damage": 8
+		},
+		"slot_7": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_5": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_8": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"stainedglass_gray": {
+		"output": {
+			"item_id": 95,
+			"item_damage": 7,
+			"item_count": 8
+		},
+		"slot_0": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_6": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 351,
+			"item_damage": 8
+		},
+		"slot_7": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_5": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_8": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"thinstainedglass_silver": {
+		"output": {
+			"item_id": 160,
+			"item_damage": 8,
+			"item_count": 16
+		},
+		"slot_0": {
+			"item_id": 95,
+			"item_damage": 8
+		},
+		"slot_3": {
+			"item_id": 95,
+			"item_damage": 8
+		},
+		"slot_1": {
+			"item_id": 95,
+			"item_damage": 8
+		},
+		"slot_4": {
+			"item_id": 95,
+			"item_damage": 8
+		},
+		"slot_2": {
+			"item_id": 95,
+			"item_damage": 8
+		},
+		"slot_5": {
+			"item_id": 95,
+			"item_damage": 8
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"cloth_cyan": {
+		"output": {
+			"item_id": 35,
+			"item_damage": 9,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 351,
+			"item_damage": 6
+		},
+		"slot_1": {
+			"item_id": 35,
+			"item_damage": 0
+		},
+		"shapeless": true
+	},
+	"clayhardenedstained_pink": {
+		"output": {
+			"item_id": 159,
+			"item_damage": 6,
+			"item_count": 8
+		},
+		"slot_0": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_6": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 351,
+			"item_damage": 9
+		},
+		"slot_7": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_5": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_8": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"stainedglass_pink": {
+		"output": {
+			"item_id": 95,
+			"item_damage": 6,
+			"item_count": 8
+		},
+		"slot_0": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_6": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 351,
+			"item_damage": 9
+		},
+		"slot_7": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_5": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_8": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"thinstainedglass_cyan": {
+		"output": {
+			"item_id": 160,
+			"item_damage": 9,
+			"item_count": 16
+		},
+		"slot_0": {
+			"item_id": 95,
+			"item_damage": 9
+		},
+		"slot_3": {
+			"item_id": 95,
+			"item_damage": 9
+		},
+		"slot_1": {
+			"item_id": 95,
+			"item_damage": 9
+		},
+		"slot_4": {
+			"item_id": 95,
+			"item_damage": 9
+		},
+		"slot_2": {
+			"item_id": 95,
+			"item_damage": 9
+		},
+		"slot_5": {
+			"item_id": 95,
+			"item_damage": 9
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"cloth_purple": {
+		"output": {
+			"item_id": 35,
+			"item_damage": 10,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 351,
+			"item_damage": 5
+		},
+		"slot_1": {
+			"item_id": 35,
+			"item_damage": 0
+		},
+		"shapeless": true
+	},
+	"clayhardenedstained_lime": {
+		"output": {
+			"item_id": 159,
+			"item_damage": 5,
+			"item_count": 8
+		},
+		"slot_0": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_6": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 351,
+			"item_damage": 10
+		},
+		"slot_7": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_5": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_8": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"stainedglass_lime": {
+		"output": {
+			"item_id": 95,
+			"item_damage": 5,
+			"item_count": 8
+		},
+		"slot_0": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_6": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 351,
+			"item_damage": 10
+		},
+		"slot_7": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_5": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_8": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"thinstainedglass_purple": {
+		"output": {
+			"item_id": 160,
+			"item_damage": 10,
+			"item_count": 16
+		},
+		"slot_0": {
+			"item_id": 95,
+			"item_damage": 10
+		},
+		"slot_3": {
+			"item_id": 95,
+			"item_damage": 10
+		},
+		"slot_1": {
+			"item_id": 95,
+			"item_damage": 10
+		},
+		"slot_4": {
+			"item_id": 95,
+			"item_damage": 10
+		},
+		"slot_2": {
+			"item_id": 95,
+			"item_damage": 10
+		},
+		"slot_5": {
+			"item_id": 95,
+			"item_damage": 10
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"cloth_blue": {
+		"output": {
+			"item_id": 35,
+			"item_damage": 11,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 351,
+			"item_damage": 4
+		},
+		"slot_1": {
+			"item_id": 35,
+			"item_damage": 0
+		},
+		"shapeless": true
+	},
+	"clayhardenedstained_yellow": {
+		"output": {
+			"item_id": 159,
+			"item_damage": 4,
+			"item_count": 8
+		},
+		"slot_0": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_6": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 351,
+			"item_damage": 11
+		},
+		"slot_7": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_5": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_8": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"stainedglass_yellow": {
+		"output": {
+			"item_id": 95,
+			"item_damage": 4,
+			"item_count": 8
+		},
+		"slot_0": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_6": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 351,
+			"item_damage": 11
+		},
+		"slot_7": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_5": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_8": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"thinstainedglass_blue": {
+		"output": {
+			"item_id": 160,
+			"item_damage": 11,
+			"item_count": 16
+		},
+		"slot_0": {
+			"item_id": 95,
+			"item_damage": 11
+		},
+		"slot_3": {
+			"item_id": 95,
+			"item_damage": 11
+		},
+		"slot_1": {
+			"item_id": 95,
+			"item_damage": 11
+		},
+		"slot_4": {
+			"item_id": 95,
+			"item_damage": 11
+		},
+		"slot_2": {
+			"item_id": 95,
+			"item_damage": 11
+		},
+		"slot_5": {
+			"item_id": 95,
+			"item_damage": 11
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"cloth_brown": {
+		"output": {
+			"item_id": 35,
+			"item_damage": 12,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 351,
+			"item_damage": 3
+		},
+		"slot_1": {
+			"item_id": 35,
+			"item_damage": 0
+		},
+		"shapeless": true
+	},
+	"clayhardenedstained_lightblue": {
+		"output": {
+			"item_id": 159,
+			"item_damage": 3,
+			"item_count": 8
+		},
+		"slot_0": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_6": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 351,
+			"item_damage": 12
+		},
+		"slot_7": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_5": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_8": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"stainedglass_lightblue": {
+		"output": {
+			"item_id": 95,
+			"item_damage": 3,
+			"item_count": 8
+		},
+		"slot_0": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_6": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 351,
+			"item_damage": 12
+		},
+		"slot_7": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_5": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_8": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"thinstainedglass_brown": {
+		"output": {
+			"item_id": 160,
+			"item_damage": 12,
+			"item_count": 16
+		},
+		"slot_0": {
+			"item_id": 95,
+			"item_damage": 12
+		},
+		"slot_3": {
+			"item_id": 95,
+			"item_damage": 12
+		},
+		"slot_1": {
+			"item_id": 95,
+			"item_damage": 12
+		},
+		"slot_4": {
+			"item_id": 95,
+			"item_damage": 12
+		},
+		"slot_2": {
+			"item_id": 95,
+			"item_damage": 12
+		},
+		"slot_5": {
+			"item_id": 95,
+			"item_damage": 12
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"cloth_green": {
+		"output": {
+			"item_id": 35,
+			"item_damage": 13,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 351,
+			"item_damage": 2
+		},
+		"slot_1": {
+			"item_id": 35,
+			"item_damage": 0
+		},
+		"shapeless": true
+	},
+	"clayhardenedstained_magenta": {
+		"output": {
+			"item_id": 159,
+			"item_damage": 2,
+			"item_count": 8
+		},
+		"slot_0": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_6": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 351,
+			"item_damage": 13
+		},
+		"slot_7": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_5": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_8": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"stainedglass_magenta": {
+		"output": {
+			"item_id": 95,
+			"item_damage": 2,
+			"item_count": 8
+		},
+		"slot_0": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_6": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 351,
+			"item_damage": 13
+		},
+		"slot_7": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_5": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_8": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"thinstainedglass_green": {
+		"output": {
+			"item_id": 160,
+			"item_damage": 13,
+			"item_count": 16
+		},
+		"slot_0": {
+			"item_id": 95,
+			"item_damage": 13
+		},
+		"slot_3": {
+			"item_id": 95,
+			"item_damage": 13
+		},
+		"slot_1": {
+			"item_id": 95,
+			"item_damage": 13
+		},
+		"slot_4": {
+			"item_id": 95,
+			"item_damage": 13
+		},
+		"slot_2": {
+			"item_id": 95,
+			"item_damage": 13
+		},
+		"slot_5": {
+			"item_id": 95,
+			"item_damage": 13
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"cloth_red": {
+		"output": {
+			"item_id": 35,
+			"item_damage": 14,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 351,
+			"item_damage": 1
+		},
+		"slot_1": {
+			"item_id": 35,
+			"item_damage": 0
+		},
+		"shapeless": true
+	},
+	"clayhardenedstained_orange": {
+		"output": {
+			"item_id": 159,
+			"item_damage": 1,
+			"item_count": 8
+		},
+		"slot_0": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_6": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 351,
+			"item_damage": 14
+		},
+		"slot_7": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_5": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_8": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"stainedglass_orange": {
+		"output": {
+			"item_id": 95,
+			"item_damage": 1,
+			"item_count": 8
+		},
+		"slot_0": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_6": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 351,
+			"item_damage": 14
+		},
+		"slot_7": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_5": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_8": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"thinstainedglass_red": {
+		"output": {
+			"item_id": 160,
+			"item_damage": 14,
+			"item_count": 16
+		},
+		"slot_0": {
+			"item_id": 95,
+			"item_damage": 14
+		},
+		"slot_3": {
+			"item_id": 95,
+			"item_damage": 14
+		},
+		"slot_1": {
+			"item_id": 95,
+			"item_damage": 14
+		},
+		"slot_4": {
+			"item_id": 95,
+			"item_damage": 14
+		},
+		"slot_2": {
+			"item_id": 95,
+			"item_damage": 14
+		},
+		"slot_5": {
+			"item_id": 95,
+			"item_damage": 14
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"cloth_black": {
+		"output": {
+			"item_id": 35,
+			"item_damage": 15,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 351,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 35,
+			"item_damage": 0
+		},
+		"shapeless": true
+	},
+	"clayhardenedstained_white": {
+		"output": {
+			"item_id": 159,
+			"item_damage": 0,
+			"item_count": 8
+		},
+		"slot_0": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_6": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 351,
+			"item_damage": 15
+		},
+		"slot_7": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_5": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"slot_8": {
+			"item_id": 172,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"stainedglass_white": {
+		"output": {
+			"item_id": 95,
+			"item_damage": 0,
+			"item_count": 8
+		},
+		"slot_0": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_6": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 351,
+			"item_damage": 15
+		},
+		"slot_7": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_5": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"slot_8": {
+			"item_id": 20,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"thinstainedglass_black": {
+		"output": {
+			"item_id": 160,
+			"item_damage": 15,
+			"item_count": 16
+		},
+		"slot_0": {
+			"item_id": 95,
+			"item_damage": 15
+		},
+		"slot_3": {
+			"item_id": 95,
+			"item_damage": 15
+		},
+		"slot_1": {
+			"item_id": 95,
+			"item_damage": 15
+		},
+		"slot_4": {
+			"item_id": 95,
+			"item_damage": 15
+		},
+		"slot_2": {
+			"item_id": 95,
+			"item_damage": 15
+		},
+		"slot_5": {
+			"item_id": 95,
+			"item_damage": 15
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"dyepowder_yellow": {
+		"output": {
+			"item_id": 351,
+			"item_damage": 11,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 37,
+			"item_damage": 0
+		},
+		"shapeless": true
+	},
+	"dyepowder_red": {
+		"output": {
+			"item_id": 351,
+			"item_damage": 1,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 38,
+			"item_damage": 0
+		},
+		"shapeless": true
+	},
+	"dyepowder_white": {
+		"output": {
+			"item_id": 351,
+			"item_damage": 15,
+			"item_count": 3
+		},
+		"slot_0": {
+			"item_id": 352,
+			"item_damage": 0
+		},
+		"shapeless": true
+	},
+	"dyepowder_white_2": {
+		"output": {
+			"item_id": 351,
+			"item_damage": 15,
+			"item_count": 9
+		},
+		"slot_0": {
+			"item_id": 216,
+			"item_damage": 0
+		},
+		"shapeless": true
+	},
+	"dyepowder_pink": {
+		"output": {
+			"item_id": 351,
+			"item_damage": 9,
+			"item_count": 2
+		},
+		"slot_0": {
+			"item_id": 351,
+			"item_damage": 1
+		},
+		"slot_1": {
+			"item_id": 351,
+			"item_damage": 15
+		},
+		"shapeless": true
+	},
+	"dyepowder_orange": {
+		"output": {
+			"item_id": 351,
+			"item_damage": 14,
+			"item_count": 2
+		},
+		"slot_0": {
+			"item_id": 351,
+			"item_damage": 1
+		},
+		"slot_1": {
+			"item_id": 351,
+			"item_damage": 11
+		},
+		"shapeless": true
+	},
+	"dyepowder_lime": {
+		"output": {
+			"item_id": 351,
+			"item_damage": 10,
+			"item_count": 2
+		},
+		"slot_0": {
+			"item_id": 351,
+			"item_damage": 2
+		},
+		"slot_1": {
+			"item_id": 351,
+			"item_damage": 15
+		},
+		"shapeless": true
+	},
+	"dyepowder_gray": {
+		"output": {
+			"item_id": 351,
+			"item_damage": 8,
+			"item_count": 2
+		},
+		"slot_0": {
+			"item_id": 351,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 351,
+			"item_damage": 15
+		},
+		"shapeless": true
+	},
+	"dyepowder_silver": {
+		"output": {
+			"item_id": 351,
+			"item_damage": 7,
+			"item_count": 2
+		},
+		"slot_0": {
+			"item_id": 351,
+			"item_damage": 8
+		},
+		"slot_1": {
+			"item_id": 351,
+			"item_damage": 15
+		},
+		"shapeless": true
+	},
+	"dyepowder_silver_2": {
+		"output": {
+			"item_id": 351,
+			"item_damage": 7,
+			"item_count": 3
+		},
+		"slot_0": {
+			"item_id": 351,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 351,
+			"item_damage": 15
+		},
+		"slot_2": {
+			"item_id": 351,
+			"item_damage": 15
+		},
+		"shapeless": true
+	},
+	"dyepowder_lightblue": {
+		"output": {
+			"item_id": 351,
+			"item_damage": 12,
+			"item_count": 2
+		},
+		"slot_0": {
+			"item_id": 351,
+			"item_damage": 4
+		},
+		"slot_1": {
+			"item_id": 351,
+			"item_damage": 15
+		},
+		"shapeless": true
+	},
+	"dyepowder_cyan": {
+		"output": {
+			"item_id": 351,
+			"item_damage": 6,
+			"item_count": 2
+		},
+		"slot_0": {
+			"item_id": 351,
+			"item_damage": 4
+		},
+		"slot_1": {
+			"item_id": 351,
+			"item_damage": 2
+		},
+		"shapeless": true
+	},
+	"dyepowder_purple": {
+		"output": {
+			"item_id": 351,
+			"item_damage": 5,
+			"item_count": 2
+		},
+		"slot_0": {
+			"item_id": 351,
+			"item_damage": 4
+		},
+		"slot_1": {
+			"item_id": 351,
+			"item_damage": 1
+		},
+		"shapeless": true
+	},
+	"dyepowder_magenta": {
+		"output": {
+			"item_id": 351,
+			"item_damage": 13,
+			"item_count": 2
+		},
+		"slot_0": {
+			"item_id": 351,
+			"item_damage": 5
+		},
+		"slot_1": {
+			"item_id": 351,
+			"item_damage": 9
+		},
+		"shapeless": true
+	},
+	"dyepowder_magenta_2": {
+		"output": {
+			"item_id": 351,
+			"item_damage": 13,
+			"item_count": 3
+		},
+		"slot_0": {
+			"item_id": 351,
+			"item_damage": 4
+		},
+		"slot_1": {
+			"item_id": 351,
+			"item_damage": 1
+		},
+		"slot_2": {
+			"item_id": 351,
+			"item_damage": 9
+		},
+		"shapeless": true
+	},
+	"dyepowder_magenta_3": {
+		"output": {
+			"item_id": 351,
+			"item_damage": 13,
+			"item_count": 4
+		},
+		"slot_0": {
+			"item_id": 351,
+			"item_damage": 4
+		},
+		"slot_1": {
+			"item_id": 351,
+			"item_damage": 1
+		},
+		"slot_2": {
+			"item_id": 351,
+			"item_damage": 1
+		},
+		"slot_3": {
+			"item_id": 351,
+			"item_damage": 15
+		},
+		"shapeless": true
+	},
+	"dyepowder_lightblue_2": {
+		"output": {
+			"item_id": 351,
+			"item_damage": 12,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 38,
+			"item_damage": 1
+		},
+		"shapeless": true
+	},
+	"dyepowder_magenta_4": {
+		"output": {
+			"item_id": 351,
+			"item_damage": 13,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 38,
+			"item_damage": 2
+		},
+		"shapeless": true
+	},
+	"dyepowder_silver_3": {
+		"output": {
+			"item_id": 351,
+			"item_damage": 7,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 38,
+			"item_damage": 3
+		},
+		"shapeless": true
+	},
+	"dyepowder_red_2": {
+		"output": {
+			"item_id": 351,
+			"item_damage": 1,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 38,
+			"item_damage": 4
+		},
+		"shapeless": true
+	},
+	"dyepowder_orange_2": {
+		"output": {
+			"item_id": 351,
+			"item_damage": 14,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 38,
+			"item_damage": 5
+		},
+		"shapeless": true
+	},
+	"dyepowder_silver_4": {
+		"output": {
+			"item_id": 351,
+			"item_damage": 7,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 38,
+			"item_damage": 6
+		},
+		"shapeless": true
+	},
+	"dyepowder_pink_2": {
+		"output": {
+			"item_id": 351,
+			"item_damage": 9,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 38,
+			"item_damage": 7
+		},
+		"shapeless": true
+	},
+	"dyepowder_silver_5": {
+		"output": {
+			"item_id": 351,
+			"item_damage": 7,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 38,
+			"item_damage": 8
+		},
+		"shapeless": true
+	},
+	"dyepowder_yellow_2": {
+		"output": {
+			"item_id": 351,
+			"item_damage": 11,
+			"item_count": 2
+		},
+		"slot_0": {
+			"item_id": 175,
+			"item_damage": 0
+		},
+		"shapeless": true
+	},
+	"dyepowder_magenta_5": {
+		"output": {
+			"item_id": 351,
+			"item_damage": 13,
+			"item_count": 2
+		},
+		"slot_0": {
+			"item_id": 175,
+			"item_damage": 1
+		},
+		"shapeless": true
+	},
+	"dyepowder_red_3": {
+		"output": {
+			"item_id": 351,
+			"item_damage": 1,
+			"item_count": 2
+		},
+		"slot_0": {
+			"item_id": 175,
+			"item_damage": 4
+		},
+		"shapeless": true
+	},
+	"dyepowder_pink_3": {
+		"output": {
+			"item_id": 351,
+			"item_damage": 9,
+			"item_count": 2
+		},
+		"slot_0": {
+			"item_id": 175,
+			"item_damage": 5
+		},
+		"shapeless": true
+	},
+	"dyepowder_red_4": {
+		"output": {
+			"item_id": 351,
+			"item_damage": 1,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 434,
+			"item_damage": 0
+		},
+		"shapeless": true
+	},
+	"woolcarpet_white": {
+		"output": {
+			"item_id": 171,
+			"item_damage": 0,
+			"item_count": 3
+		},
+		"slot_0": {
+			"item_id": 35,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 35,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 2
+	},
+	"woolcarpet_orange": {
+		"output": {
+			"item_id": 171,
+			"item_damage": 1,
+			"item_count": 3
+		},
+		"slot_0": {
+			"item_id": 35,
+			"item_damage": 1
+		},
+		"slot_1": {
+			"item_id": 35,
+			"item_damage": 1
+		},
+		"shapeless": false,
+		"width": 2
+	},
+	"woolcarpet_magenta": {
+		"output": {
+			"item_id": 171,
+			"item_damage": 2,
+			"item_count": 3
+		},
+		"slot_0": {
+			"item_id": 35,
+			"item_damage": 2
+		},
+		"slot_1": {
+			"item_id": 35,
+			"item_damage": 2
+		},
+		"shapeless": false,
+		"width": 2
+	},
+	"woolcarpet_lightblue": {
+		"output": {
+			"item_id": 171,
+			"item_damage": 3,
+			"item_count": 3
+		},
+		"slot_0": {
+			"item_id": 35,
+			"item_damage": 3
+		},
+		"slot_1": {
+			"item_id": 35,
+			"item_damage": 3
+		},
+		"shapeless": false,
+		"width": 2
+	},
+	"woolcarpet_yellow": {
+		"output": {
+			"item_id": 171,
+			"item_damage": 4,
+			"item_count": 3
+		},
+		"slot_0": {
+			"item_id": 35,
+			"item_damage": 4
+		},
+		"slot_1": {
+			"item_id": 35,
+			"item_damage": 4
+		},
+		"shapeless": false,
+		"width": 2
+	},
+	"woolcarpet_lime": {
+		"output": {
+			"item_id": 171,
+			"item_damage": 5,
+			"item_count": 3
+		},
+		"slot_0": {
+			"item_id": 35,
+			"item_damage": 5
+		},
+		"slot_1": {
+			"item_id": 35,
+			"item_damage": 5
+		},
+		"shapeless": false,
+		"width": 2
+	},
+	"woolcarpet_pink": {
+		"output": {
+			"item_id": 171,
+			"item_damage": 6,
+			"item_count": 3
+		},
+		"slot_0": {
+			"item_id": 35,
+			"item_damage": 6
+		},
+		"slot_1": {
+			"item_id": 35,
+			"item_damage": 6
+		},
+		"shapeless": false,
+		"width": 2
+	},
+	"woolcarpet_gray": {
+		"output": {
+			"item_id": 171,
+			"item_damage": 7,
+			"item_count": 3
+		},
+		"slot_0": {
+			"item_id": 35,
+			"item_damage": 7
+		},
+		"slot_1": {
+			"item_id": 35,
+			"item_damage": 7
+		},
+		"shapeless": false,
+		"width": 2
+	},
+	"woolcarpet_silver": {
+		"output": {
+			"item_id": 171,
+			"item_damage": 8,
+			"item_count": 3
+		},
+		"slot_0": {
+			"item_id": 35,
+			"item_damage": 8
+		},
+		"slot_1": {
+			"item_id": 35,
+			"item_damage": 8
+		},
+		"shapeless": false,
+		"width": 2
+	},
+	"woolcarpet_cyan": {
+		"output": {
+			"item_id": 171,
+			"item_damage": 9,
+			"item_count": 3
+		},
+		"slot_0": {
+			"item_id": 35,
+			"item_damage": 9
+		},
+		"slot_1": {
+			"item_id": 35,
+			"item_damage": 9
+		},
+		"shapeless": false,
+		"width": 2
+	},
+	"woolcarpet_purple": {
+		"output": {
+			"item_id": 171,
+			"item_damage": 10,
+			"item_count": 3
+		},
+		"slot_0": {
+			"item_id": 35,
+			"item_damage": 10
+		},
+		"slot_1": {
+			"item_id": 35,
+			"item_damage": 10
+		},
+		"shapeless": false,
+		"width": 2
+	},
+	"woolcarpet_blue": {
+		"output": {
+			"item_id": 171,
+			"item_damage": 11,
+			"item_count": 3
+		},
+		"slot_0": {
+			"item_id": 35,
+			"item_damage": 11
+		},
+		"slot_1": {
+			"item_id": 35,
+			"item_damage": 11
+		},
+		"shapeless": false,
+		"width": 2
+	},
+	"woolcarpet_brown": {
+		"output": {
+			"item_id": 171,
+			"item_damage": 12,
+			"item_count": 3
+		},
+		"slot_0": {
+			"item_id": 35,
+			"item_damage": 12
+		},
+		"slot_1": {
+			"item_id": 35,
+			"item_damage": 12
+		},
+		"shapeless": false,
+		"width": 2
+	},
+	"woolcarpet_green": {
+		"output": {
+			"item_id": 171,
+			"item_damage": 13,
+			"item_count": 3
+		},
+		"slot_0": {
+			"item_id": 35,
+			"item_damage": 13
+		},
+		"slot_1": {
+			"item_id": 35,
+			"item_damage": 13
+		},
+		"shapeless": false,
+		"width": 2
+	},
+	"woolcarpet_red": {
+		"output": {
+			"item_id": 171,
+			"item_damage": 14,
+			"item_count": 3
+		},
+		"slot_0": {
+			"item_id": 35,
+			"item_damage": 14
+		},
+		"slot_1": {
+			"item_id": 35,
+			"item_damage": 14
+		},
+		"shapeless": false,
+		"width": 2
+	},
+	"woolcarpet_black": {
+		"output": {
+			"item_id": 171,
+			"item_damage": 15,
+			"item_count": 3
+		},
+		"slot_0": {
+			"item_id": 35,
+			"item_damage": 15
+		},
+		"slot_1": {
+			"item_id": 35,
+			"item_damage": 15
+		},
+		"shapeless": false,
+		"width": 2
+	},
+	"emptymap": {
+		"output": {
+			"item_id": 395,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 339,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 339,
+			"item_damage": 0
+		},
+		"slot_6": {
+			"item_id": 339,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 339,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 358,
+			"item_damage": -1
+		},
+		"slot_7": {
+			"item_id": 339,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 339,
+			"item_damage": 0
+		},
+		"slot_5": {
+			"item_id": 339,
+			"item_damage": 0
+		},
+		"slot_8": {
+			"item_id": 339,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"banner": {
+		"output": {
+			"item_id": 425,
+			"item_damage": 15,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 35,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 35,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 35,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 35,
+			"item_damage": 0
+		},
+		"slot_7": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 35,
+			"item_damage": 0
+		},
+		"slot_5": {
+			"item_id": 35,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"banner_2": {
+		"output": {
+			"item_id": 425,
+			"item_damage": 14,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 35,
+			"item_damage": 1
+		},
+		"slot_3": {
+			"item_id": 35,
+			"item_damage": 1
+		},
+		"slot_1": {
+			"item_id": 35,
+			"item_damage": 1
+		},
+		"slot_4": {
+			"item_id": 35,
+			"item_damage": 1
+		},
+		"slot_7": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 35,
+			"item_damage": 1
+		},
+		"slot_5": {
+			"item_id": 35,
+			"item_damage": 1
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"banner_3": {
+		"output": {
+			"item_id": 425,
+			"item_damage": 13,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 35,
+			"item_damage": 2
+		},
+		"slot_3": {
+			"item_id": 35,
+			"item_damage": 2
+		},
+		"slot_1": {
+			"item_id": 35,
+			"item_damage": 2
+		},
+		"slot_4": {
+			"item_id": 35,
+			"item_damage": 2
+		},
+		"slot_7": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 35,
+			"item_damage": 2
+		},
+		"slot_5": {
+			"item_id": 35,
+			"item_damage": 2
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"banner_4": {
+		"output": {
+			"item_id": 425,
+			"item_damage": 12,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 35,
+			"item_damage": 3
+		},
+		"slot_3": {
+			"item_id": 35,
+			"item_damage": 3
+		},
+		"slot_1": {
+			"item_id": 35,
+			"item_damage": 3
+		},
+		"slot_4": {
+			"item_id": 35,
+			"item_damage": 3
+		},
+		"slot_7": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 35,
+			"item_damage": 3
+		},
+		"slot_5": {
+			"item_id": 35,
+			"item_damage": 3
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"banner_5": {
+		"output": {
+			"item_id": 425,
+			"item_damage": 11,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 35,
+			"item_damage": 4
+		},
+		"slot_3": {
+			"item_id": 35,
+			"item_damage": 4
+		},
+		"slot_1": {
+			"item_id": 35,
+			"item_damage": 4
+		},
+		"slot_4": {
+			"item_id": 35,
+			"item_damage": 4
+		},
+		"slot_7": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 35,
+			"item_damage": 4
+		},
+		"slot_5": {
+			"item_id": 35,
+			"item_damage": 4
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"banner_6": {
+		"output": {
+			"item_id": 425,
+			"item_damage": 10,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 35,
+			"item_damage": 5
+		},
+		"slot_3": {
+			"item_id": 35,
+			"item_damage": 5
+		},
+		"slot_1": {
+			"item_id": 35,
+			"item_damage": 5
+		},
+		"slot_4": {
+			"item_id": 35,
+			"item_damage": 5
+		},
+		"slot_7": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 35,
+			"item_damage": 5
+		},
+		"slot_5": {
+			"item_id": 35,
+			"item_damage": 5
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"banner_7": {
+		"output": {
+			"item_id": 425,
+			"item_damage": 9,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 35,
+			"item_damage": 6
+		},
+		"slot_3": {
+			"item_id": 35,
+			"item_damage": 6
+		},
+		"slot_1": {
+			"item_id": 35,
+			"item_damage": 6
+		},
+		"slot_4": {
+			"item_id": 35,
+			"item_damage": 6
+		},
+		"slot_7": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 35,
+			"item_damage": 6
+		},
+		"slot_5": {
+			"item_id": 35,
+			"item_damage": 6
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"banner_8": {
+		"output": {
+			"item_id": 425,
+			"item_damage": 8,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 35,
+			"item_damage": 7
+		},
+		"slot_3": {
+			"item_id": 35,
+			"item_damage": 7
+		},
+		"slot_1": {
+			"item_id": 35,
+			"item_damage": 7
+		},
+		"slot_4": {
+			"item_id": 35,
+			"item_damage": 7
+		},
+		"slot_7": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 35,
+			"item_damage": 7
+		},
+		"slot_5": {
+			"item_id": 35,
+			"item_damage": 7
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"banner_9": {
+		"output": {
+			"item_id": 425,
+			"item_damage": 7,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 35,
+			"item_damage": 8
+		},
+		"slot_3": {
+			"item_id": 35,
+			"item_damage": 8
+		},
+		"slot_1": {
+			"item_id": 35,
+			"item_damage": 8
+		},
+		"slot_4": {
+			"item_id": 35,
+			"item_damage": 8
+		},
+		"slot_7": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 35,
+			"item_damage": 8
+		},
+		"slot_5": {
+			"item_id": 35,
+			"item_damage": 8
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"banner_10": {
+		"output": {
+			"item_id": 425,
+			"item_damage": 6,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 35,
+			"item_damage": 9
+		},
+		"slot_3": {
+			"item_id": 35,
+			"item_damage": 9
+		},
+		"slot_1": {
+			"item_id": 35,
+			"item_damage": 9
+		},
+		"slot_4": {
+			"item_id": 35,
+			"item_damage": 9
+		},
+		"slot_7": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 35,
+			"item_damage": 9
+		},
+		"slot_5": {
+			"item_id": 35,
+			"item_damage": 9
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"banner_11": {
+		"output": {
+			"item_id": 425,
+			"item_damage": 5,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 35,
+			"item_damage": 10
+		},
+		"slot_3": {
+			"item_id": 35,
+			"item_damage": 10
+		},
+		"slot_1": {
+			"item_id": 35,
+			"item_damage": 10
+		},
+		"slot_4": {
+			"item_id": 35,
+			"item_damage": 10
+		},
+		"slot_7": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 35,
+			"item_damage": 10
+		},
+		"slot_5": {
+			"item_id": 35,
+			"item_damage": 10
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"banner_12": {
+		"output": {
+			"item_id": 425,
+			"item_damage": 4,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 35,
+			"item_damage": 11
+		},
+		"slot_3": {
+			"item_id": 35,
+			"item_damage": 11
+		},
+		"slot_1": {
+			"item_id": 35,
+			"item_damage": 11
+		},
+		"slot_4": {
+			"item_id": 35,
+			"item_damage": 11
+		},
+		"slot_7": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 35,
+			"item_damage": 11
+		},
+		"slot_5": {
+			"item_id": 35,
+			"item_damage": 11
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"banner_13": {
+		"output": {
+			"item_id": 425,
+			"item_damage": 3,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 35,
+			"item_damage": 12
+		},
+		"slot_3": {
+			"item_id": 35,
+			"item_damage": 12
+		},
+		"slot_1": {
+			"item_id": 35,
+			"item_damage": 12
+		},
+		"slot_4": {
+			"item_id": 35,
+			"item_damage": 12
+		},
+		"slot_7": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 35,
+			"item_damage": 12
+		},
+		"slot_5": {
+			"item_id": 35,
+			"item_damage": 12
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"banner_14": {
+		"output": {
+			"item_id": 425,
+			"item_damage": 2,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 35,
+			"item_damage": 13
+		},
+		"slot_3": {
+			"item_id": 35,
+			"item_damage": 13
+		},
+		"slot_1": {
+			"item_id": 35,
+			"item_damage": 13
+		},
+		"slot_4": {
+			"item_id": 35,
+			"item_damage": 13
+		},
+		"slot_7": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 35,
+			"item_damage": 13
+		},
+		"slot_5": {
+			"item_id": 35,
+			"item_damage": 13
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"banner_15": {
+		"output": {
+			"item_id": 425,
+			"item_damage": 1,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 35,
+			"item_damage": 14
+		},
+		"slot_3": {
+			"item_id": 35,
+			"item_damage": 14
+		},
+		"slot_1": {
+			"item_id": 35,
+			"item_damage": 14
+		},
+		"slot_4": {
+			"item_id": 35,
+			"item_damage": 14
+		},
+		"slot_7": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 35,
+			"item_damage": 14
+		},
+		"slot_5": {
+			"item_id": 35,
+			"item_damage": 14
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"banner_16": {
+		"output": {
+			"item_id": 425,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 35,
+			"item_damage": 15
+		},
+		"slot_3": {
+			"item_id": 35,
+			"item_damage": 15
+		},
+		"slot_1": {
+			"item_id": 35,
+			"item_damage": 15
+		},
+		"slot_4": {
+			"item_id": 35,
+			"item_damage": 15
+		},
+		"slot_7": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 35,
+			"item_damage": 15
+		},
+		"slot_5": {
+			"item_id": 35,
+			"item_damage": 15
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"shield": {
+		"output": {
+			"item_id": 442,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 5,
+			"item_damage": -1
+		},
+		"slot_3": {
+			"item_id": 5,
+			"item_damage": -1
+		},
+		"slot_1": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 5,
+			"item_damage": -1
+		},
+		"slot_7": {
+			"item_id": 5,
+			"item_damage": -1
+		},
+		"slot_2": {
+			"item_id": 5,
+			"item_damage": -1
+		},
+		"slot_5": {
+			"item_id": 5,
+			"item_damage": -1
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"shulkerboxpurple": {
+		"output": {
+			"item_id": 229,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 450,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 54,
+			"item_damage": -1
+		},
+		"slot_6": {
+			"item_id": 450,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 1
+	},
+	"paper": {
+		"output": {
+			"item_id": 339,
+			"item_damage": 0,
+			"item_count": 3
+		},
+		"slot_0": {
+			"item_id": 338,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 338,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 338,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"book": {
+		"output": {
+			"item_id": 340,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 339,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 339,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 339,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 334,
+			"item_damage": 0
+		},
+		"shapeless": true
+	},
+	"writingbook": {
+		"output": {
+			"item_id": 386,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 340,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 351,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 288,
+			"item_damage": 0
+		},
+		"shapeless": true
+	},
+	"fence": {
+		"output": {
+			"item_id": 85,
+			"item_damage": 0,
+			"item_count": 3
+		},
+		"slot_0": {
+			"item_id": 5,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 5,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 5,
+			"item_damage": 0
+		},
+		"slot_5": {
+			"item_id": 5,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"birchfence": {
+		"output": {
+			"item_id": 189,
+			"item_damage": 0,
+			"item_count": 3
+		},
+		"slot_0": {
+			"item_id": 5,
+			"item_damage": 2
+		},
+		"slot_3": {
+			"item_id": 5,
+			"item_damage": 2
+		},
+		"slot_1": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 5,
+			"item_damage": 2
+		},
+		"slot_5": {
+			"item_id": 5,
+			"item_damage": 2
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"sprucefence": {
+		"output": {
+			"item_id": 188,
+			"item_damage": 0,
+			"item_count": 3
+		},
+		"slot_0": {
+			"item_id": 5,
+			"item_damage": 1
+		},
+		"slot_3": {
+			"item_id": 5,
+			"item_damage": 1
+		},
+		"slot_1": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 5,
+			"item_damage": 1
+		},
+		"slot_5": {
+			"item_id": 5,
+			"item_damage": 1
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"junglefence": {
+		"output": {
+			"item_id": 190,
+			"item_damage": 0,
+			"item_count": 3
+		},
+		"slot_0": {
+			"item_id": 5,
+			"item_damage": 3
+		},
+		"slot_3": {
+			"item_id": 5,
+			"item_damage": 3
+		},
+		"slot_1": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 5,
+			"item_damage": 3
+		},
+		"slot_5": {
+			"item_id": 5,
+			"item_damage": 3
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"acaciafence": {
+		"output": {
+			"item_id": 192,
+			"item_damage": 0,
+			"item_count": 3
+		},
+		"slot_0": {
+			"item_id": 5,
+			"item_damage": 4
+		},
+		"slot_3": {
+			"item_id": 5,
+			"item_damage": 4
+		},
+		"slot_1": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 5,
+			"item_damage": 4
+		},
+		"slot_5": {
+			"item_id": 5,
+			"item_damage": 4
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"darkoakfence": {
+		"output": {
+			"item_id": 191,
+			"item_damage": 0,
+			"item_count": 3
+		},
+		"slot_0": {
+			"item_id": 5,
+			"item_damage": 5
+		},
+		"slot_3": {
+			"item_id": 5,
+			"item_damage": 5
+		},
+		"slot_1": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 5,
+			"item_damage": 5
+		},
+		"slot_5": {
+			"item_id": 5,
+			"item_damage": 5
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"cobblewall_normal": {
+		"output": {
+			"item_id": 139,
+			"item_damage": 0,
+			"item_count": 6
+		},
+		"slot_0": {
+			"item_id": 4,
+			"item_damage": -1
+		},
+		"slot_3": {
+			"item_id": 4,
+			"item_damage": -1
+		},
+		"slot_1": {
+			"item_id": 4,
+			"item_damage": -1
+		},
+		"slot_4": {
+			"item_id": 4,
+			"item_damage": -1
+		},
+		"slot_2": {
+			"item_id": 4,
+			"item_damage": -1
+		},
+		"slot_5": {
+			"item_id": 4,
+			"item_damage": -1
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"cobblewall_mossy": {
+		"output": {
+			"item_id": 139,
+			"item_damage": 1,
+			"item_count": 6
+		},
+		"slot_0": {
+			"item_id": 48,
+			"item_damage": -1
+		},
+		"slot_3": {
+			"item_id": 48,
+			"item_damage": -1
+		},
+		"slot_1": {
+			"item_id": 48,
+			"item_damage": -1
+		},
+		"slot_4": {
+			"item_id": 48,
+			"item_damage": -1
+		},
+		"slot_2": {
+			"item_id": 48,
+			"item_damage": -1
+		},
+		"slot_5": {
+			"item_id": 48,
+			"item_damage": -1
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"netherfence": {
+		"output": {
+			"item_id": 113,
+			"item_damage": 0,
+			"item_count": 6
+		},
+		"slot_0": {
+			"item_id": 112,
+			"item_damage": -1
+		},
+		"slot_3": {
+			"item_id": 112,
+			"item_damage": -1
+		},
+		"slot_1": {
+			"item_id": 112,
+			"item_damage": -1
+		},
+		"slot_4": {
+			"item_id": 112,
+			"item_damage": -1
+		},
+		"slot_2": {
+			"item_id": 112,
+			"item_damage": -1
+		},
+		"slot_5": {
+			"item_id": 112,
+			"item_damage": -1
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"fencegate": {
+		"output": {
+			"item_id": 107,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 5,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 5,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_5": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"birchfencegate": {
+		"output": {
+			"item_id": 184,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 5,
+			"item_damage": 2
+		},
+		"slot_4": {
+			"item_id": 5,
+			"item_damage": 2
+		},
+		"slot_2": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_5": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"sprucefencegate": {
+		"output": {
+			"item_id": 183,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 5,
+			"item_damage": 1
+		},
+		"slot_4": {
+			"item_id": 5,
+			"item_damage": 1
+		},
+		"slot_2": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_5": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"junglefencegate": {
+		"output": {
+			"item_id": 185,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 5,
+			"item_damage": 3
+		},
+		"slot_4": {
+			"item_id": 5,
+			"item_damage": 3
+		},
+		"slot_2": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_5": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"acaciafencegate": {
+		"output": {
+			"item_id": 187,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 5,
+			"item_damage": 4
+		},
+		"slot_4": {
+			"item_id": 5,
+			"item_damage": 4
+		},
+		"slot_2": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_5": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"darkoakfencegate": {
+		"output": {
+			"item_id": 186,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 5,
+			"item_damage": 5
+		},
+		"slot_4": {
+			"item_id": 5,
+			"item_damage": 5
+		},
+		"slot_2": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_5": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"jukebox": {
+		"output": {
+			"item_id": 84,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 5,
+			"item_damage": -1
+		},
+		"slot_3": {
+			"item_id": 5,
+			"item_damage": -1
+		},
+		"slot_6": {
+			"item_id": 5,
+			"item_damage": -1
+		},
+		"slot_1": {
+			"item_id": 5,
+			"item_damage": -1
+		},
+		"slot_4": {
+			"item_id": 264,
+			"item_damage": 0
+		},
+		"slot_7": {
+			"item_id": 5,
+			"item_damage": -1
+		},
+		"slot_2": {
+			"item_id": 5,
+			"item_damage": -1
+		},
+		"slot_5": {
+			"item_id": 5,
+			"item_damage": -1
+		},
+		"slot_8": {
+			"item_id": 5,
+			"item_damage": -1
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"leash": {
+		"output": {
+			"item_id": 420,
+			"item_damage": 0,
+			"item_count": 2
+		},
+		"slot_0": {
+			"item_id": 287,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 287,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 287,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 341,
+			"item_damage": 0
+		},
+		"slot_8": {
+			"item_id": 287,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"musicblock": {
+		"output": {
+			"item_id": 25,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 5,
+			"item_damage": -1
+		},
+		"slot_3": {
+			"item_id": 5,
+			"item_damage": -1
+		},
+		"slot_6": {
+			"item_id": 5,
+			"item_damage": -1
+		},
+		"slot_1": {
+			"item_id": 5,
+			"item_damage": -1
+		},
+		"slot_4": {
+			"item_id": 331,
+			"item_damage": 0
+		},
+		"slot_7": {
+			"item_id": 5,
+			"item_damage": -1
+		},
+		"slot_2": {
+			"item_id": 5,
+			"item_damage": -1
+		},
+		"slot_5": {
+			"item_id": 5,
+			"item_damage": -1
+		},
+		"slot_8": {
+			"item_id": 5,
+			"item_damage": -1
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"bookshelf": {
+		"output": {
+			"item_id": 47,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 5,
+			"item_damage": -1
+		},
+		"slot_3": {
+			"item_id": 340,
+			"item_damage": 0
+		},
+		"slot_6": {
+			"item_id": 5,
+			"item_damage": -1
+		},
+		"slot_1": {
+			"item_id": 5,
+			"item_damage": -1
+		},
+		"slot_4": {
+			"item_id": 340,
+			"item_damage": 0
+		},
+		"slot_7": {
+			"item_id": 5,
+			"item_damage": -1
+		},
+		"slot_2": {
+			"item_id": 5,
+			"item_damage": -1
+		},
+		"slot_5": {
+			"item_id": 340,
+			"item_damage": 0
+		},
+		"slot_8": {
+			"item_id": 5,
+			"item_damage": -1
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"snow": {
+		"output": {
+			"item_id": 80,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 332,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 332,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 332,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 332,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 2
+	},
+	"snow_2": {
+		"output": {
+			"item_id": 78,
+			"item_damage": 0,
+			"item_count": 6
+		},
+		"slot_0": {
+			"item_id": 80,
+			"item_damage": -1
+		},
+		"slot_1": {
+			"item_id": 80,
+			"item_damage": -1
+		},
+		"slot_2": {
+			"item_id": 80,
+			"item_damage": -1
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"clay": {
+		"output": {
+			"item_id": 82,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 337,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 337,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 337,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 337,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 2
+	},
+	"brick": {
+		"output": {
+			"item_id": 45,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 336,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 336,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 336,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 336,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 2
+	},
+	"lightgem": {
+		"output": {
+			"item_id": 89,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 348,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 348,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 348,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 348,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 2
+	},
+	"quartzblock": {
+		"output": {
+			"item_id": 155,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 406,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 406,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 406,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 406,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 2
+	},
+	"cloth_white_2": {
+		"output": {
+			"item_id": 35,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 287,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 287,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 287,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 287,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 2
+	},
+	"tnt": {
+		"output": {
+			"item_id": 46,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 289,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 12,
+			"item_damage": -1
+		},
+		"slot_6": {
+			"item_id": 289,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 12,
+			"item_damage": -1
+		},
+		"slot_4": {
+			"item_id": 289,
+			"item_damage": 0
+		},
+		"slot_7": {
+			"item_id": 12,
+			"item_damage": -1
+		},
+		"slot_2": {
+			"item_id": 289,
+			"item_damage": 0
+		},
+		"slot_5": {
+			"item_id": 12,
+			"item_damage": -1
+		},
+		"slot_8": {
+			"item_id": 289,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"stoneslab_cobble": {
+		"output": {
+			"item_id": 44,
+			"item_damage": 3,
+			"item_count": 6
+		},
+		"slot_0": {
+			"item_id": 4,
+			"item_damage": -1
+		},
+		"slot_1": {
+			"item_id": 4,
+			"item_damage": -1
+		},
+		"slot_2": {
+			"item_id": 4,
+			"item_damage": -1
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"stoneslab_stone": {
+		"output": {
+			"item_id": 44,
+			"item_damage": 0,
+			"item_count": 6
+		},
+		"slot_0": {
+			"item_id": 1,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 1,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 1,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"stoneslab_sand": {
+		"output": {
+			"item_id": 44,
+			"item_damage": 1,
+			"item_count": 6
+		},
+		"slot_0": {
+			"item_id": 24,
+			"item_damage": -1
+		},
+		"slot_1": {
+			"item_id": 24,
+			"item_damage": -1
+		},
+		"slot_2": {
+			"item_id": 24,
+			"item_damage": -1
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"stoneslab_brick": {
+		"output": {
+			"item_id": 44,
+			"item_damage": 4,
+			"item_count": 6
+		},
+		"slot_0": {
+			"item_id": 45,
+			"item_damage": -1
+		},
+		"slot_1": {
+			"item_id": 45,
+			"item_damage": -1
+		},
+		"slot_2": {
+			"item_id": 45,
+			"item_damage": -1
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"stoneslab_smoothstonebrick": {
+		"output": {
+			"item_id": 44,
+			"item_damage": 5,
+			"item_count": 6
+		},
+		"slot_0": {
+			"item_id": 98,
+			"item_damage": -1
+		},
+		"slot_1": {
+			"item_id": 98,
+			"item_damage": -1
+		},
+		"slot_2": {
+			"item_id": 98,
+			"item_damage": -1
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"stoneslab_netherbrick": {
+		"output": {
+			"item_id": 44,
+			"item_damage": 6,
+			"item_count": 6
+		},
+		"slot_0": {
+			"item_id": 112,
+			"item_damage": -1
+		},
+		"slot_1": {
+			"item_id": 112,
+			"item_damage": -1
+		},
+		"slot_2": {
+			"item_id": 112,
+			"item_damage": -1
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"stoneslab_quartz": {
+		"output": {
+			"item_id": 44,
+			"item_damage": 7,
+			"item_count": 6
+		},
+		"slot_0": {
+			"item_id": 155,
+			"item_damage": -1
+		},
+		"slot_1": {
+			"item_id": 155,
+			"item_damage": -1
+		},
+		"slot_2": {
+			"item_id": 155,
+			"item_damage": -1
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"stoneslab2_red_sandstone": {
+		"output": {
+			"item_id": 182,
+			"item_damage": 0,
+			"item_count": 6
+		},
+		"slot_0": {
+			"item_id": 179,
+			"item_damage": -1
+		},
+		"slot_1": {
+			"item_id": 179,
+			"item_damage": -1
+		},
+		"slot_2": {
+			"item_id": 179,
+			"item_damage": -1
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"purpurslab": {
+		"output": {
+			"item_id": 205,
+			"item_damage": 0,
+			"item_count": 6
+		},
+		"slot_0": {
+			"item_id": 201,
+			"item_damage": -1
+		},
+		"slot_1": {
+			"item_id": 201,
+			"item_damage": -1
+		},
+		"slot_2": {
+			"item_id": 201,
+			"item_damage": -1
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"woodslab_oak": {
+		"output": {
+			"item_id": 126,
+			"item_damage": 0,
+			"item_count": 6
+		},
+		"slot_0": {
+			"item_id": 5,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 5,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 5,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"woodslab_birch": {
+		"output": {
+			"item_id": 126,
+			"item_damage": 2,
+			"item_count": 6
+		},
+		"slot_0": {
+			"item_id": 5,
+			"item_damage": 2
+		},
+		"slot_1": {
+			"item_id": 5,
+			"item_damage": 2
+		},
+		"slot_2": {
+			"item_id": 5,
+			"item_damage": 2
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"woodslab_spruce": {
+		"output": {
+			"item_id": 126,
+			"item_damage": 1,
+			"item_count": 6
+		},
+		"slot_0": {
+			"item_id": 5,
+			"item_damage": 1
+		},
+		"slot_1": {
+			"item_id": 5,
+			"item_damage": 1
+		},
+		"slot_2": {
+			"item_id": 5,
+			"item_damage": 1
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"woodslab_jungle": {
+		"output": {
+			"item_id": 126,
+			"item_damage": 3,
+			"item_count": 6
+		},
+		"slot_0": {
+			"item_id": 5,
+			"item_damage": 3
+		},
+		"slot_1": {
+			"item_id": 5,
+			"item_damage": 3
+		},
+		"slot_2": {
+			"item_id": 5,
+			"item_damage": 3
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"woodslab_acacia": {
+		"output": {
+			"item_id": 126,
+			"item_damage": 4,
+			"item_count": 6
+		},
+		"slot_0": {
+			"item_id": 5,
+			"item_damage": 4
+		},
+		"slot_1": {
+			"item_id": 5,
+			"item_damage": 4
+		},
+		"slot_2": {
+			"item_id": 5,
+			"item_damage": 4
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"woodslab_big_oak": {
+		"output": {
+			"item_id": 126,
+			"item_damage": 5,
+			"item_count": 6
+		},
+		"slot_0": {
+			"item_id": 5,
+			"item_damage": 5
+		},
+		"slot_1": {
+			"item_id": 5,
+			"item_damage": 5
+		},
+		"slot_2": {
+			"item_id": 5,
+			"item_damage": 5
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"ladder": {
+		"output": {
+			"item_id": 65,
+			"item_damage": 0,
+			"item_count": 3
+		},
+		"slot_0": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_6": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_5": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_8": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"dooroak": {
+		"output": {
+			"item_id": 324,
+			"item_damage": 0,
+			"item_count": 3
+		},
+		"slot_0": {
+			"item_id": 5,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 5,
+			"item_damage": 0
+		},
+		"slot_6": {
+			"item_id": 5,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 5,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 5,
+			"item_damage": 0
+		},
+		"slot_7": {
+			"item_id": 5,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 2
+	},
+	"doorspruce": {
+		"output": {
+			"item_id": 427,
+			"item_damage": 0,
+			"item_count": 3
+		},
+		"slot_0": {
+			"item_id": 5,
+			"item_damage": 1
+		},
+		"slot_3": {
+			"item_id": 5,
+			"item_damage": 1
+		},
+		"slot_6": {
+			"item_id": 5,
+			"item_damage": 1
+		},
+		"slot_1": {
+			"item_id": 5,
+			"item_damage": 1
+		},
+		"slot_4": {
+			"item_id": 5,
+			"item_damage": 1
+		},
+		"slot_7": {
+			"item_id": 5,
+			"item_damage": 1
+		},
+		"shapeless": false,
+		"width": 2
+	},
+	"doorbirch": {
+		"output": {
+			"item_id": 428,
+			"item_damage": 0,
+			"item_count": 3
+		},
+		"slot_0": {
+			"item_id": 5,
+			"item_damage": 2
+		},
+		"slot_3": {
+			"item_id": 5,
+			"item_damage": 2
+		},
+		"slot_6": {
+			"item_id": 5,
+			"item_damage": 2
+		},
+		"slot_1": {
+			"item_id": 5,
+			"item_damage": 2
+		},
+		"slot_4": {
+			"item_id": 5,
+			"item_damage": 2
+		},
+		"slot_7": {
+			"item_id": 5,
+			"item_damage": 2
+		},
+		"shapeless": false,
+		"width": 2
+	},
+	"doorjungle": {
+		"output": {
+			"item_id": 429,
+			"item_damage": 0,
+			"item_count": 3
+		},
+		"slot_0": {
+			"item_id": 5,
+			"item_damage": 3
+		},
+		"slot_3": {
+			"item_id": 5,
+			"item_damage": 3
+		},
+		"slot_6": {
+			"item_id": 5,
+			"item_damage": 3
+		},
+		"slot_1": {
+			"item_id": 5,
+			"item_damage": 3
+		},
+		"slot_4": {
+			"item_id": 5,
+			"item_damage": 3
+		},
+		"slot_7": {
+			"item_id": 5,
+			"item_damage": 3
+		},
+		"shapeless": false,
+		"width": 2
+	},
+	"dooracacia": {
+		"output": {
+			"item_id": 430,
+			"item_damage": 0,
+			"item_count": 3
+		},
+		"slot_0": {
+			"item_id": 5,
+			"item_damage": 4
+		},
+		"slot_3": {
+			"item_id": 5,
+			"item_damage": 4
+		},
+		"slot_6": {
+			"item_id": 5,
+			"item_damage": 4
+		},
+		"slot_1": {
+			"item_id": 5,
+			"item_damage": 4
+		},
+		"slot_4": {
+			"item_id": 5,
+			"item_damage": 4
+		},
+		"slot_7": {
+			"item_id": 5,
+			"item_damage": 4
+		},
+		"shapeless": false,
+		"width": 2
+	},
+	"doordarkoak": {
+		"output": {
+			"item_id": 431,
+			"item_damage": 0,
+			"item_count": 3
+		},
+		"slot_0": {
+			"item_id": 5,
+			"item_damage": 5
+		},
+		"slot_3": {
+			"item_id": 5,
+			"item_damage": 5
+		},
+		"slot_6": {
+			"item_id": 5,
+			"item_damage": 5
+		},
+		"slot_1": {
+			"item_id": 5,
+			"item_damage": 5
+		},
+		"slot_4": {
+			"item_id": 5,
+			"item_damage": 5
+		},
+		"slot_7": {
+			"item_id": 5,
+			"item_damage": 5
+		},
+		"shapeless": false,
+		"width": 2
+	},
+	"trapdoor": {
+		"output": {
+			"item_id": 96,
+			"item_damage": 0,
+			"item_count": 2
+		},
+		"slot_0": {
+			"item_id": 5,
+			"item_damage": -1
+		},
+		"slot_3": {
+			"item_id": 5,
+			"item_damage": -1
+		},
+		"slot_1": {
+			"item_id": 5,
+			"item_damage": -1
+		},
+		"slot_4": {
+			"item_id": 5,
+			"item_damage": -1
+		},
+		"slot_2": {
+			"item_id": 5,
+			"item_damage": -1
+		},
+		"slot_5": {
+			"item_id": 5,
+			"item_damage": -1
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"dooriron": {
+		"output": {
+			"item_id": 330,
+			"item_damage": 0,
+			"item_count": 3
+		},
+		"slot_0": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"slot_6": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"slot_7": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 2
+	},
+	"irontrapdoor": {
+		"output": {
+			"item_id": 167,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 2
+	},
+	"sign": {
+		"output": {
+			"item_id": 323,
+			"item_damage": 0,
+			"item_count": 3
+		},
+		"slot_0": {
+			"item_id": 5,
+			"item_damage": -1
+		},
+		"slot_3": {
+			"item_id": 5,
+			"item_damage": -1
+		},
+		"slot_1": {
+			"item_id": 5,
+			"item_damage": -1
+		},
+		"slot_4": {
+			"item_id": 5,
+			"item_damage": -1
+		},
+		"slot_7": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 5,
+			"item_damage": -1
+		},
+		"slot_5": {
+			"item_id": 5,
+			"item_damage": -1
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"cake": {
+		"output": {
+			"item_id": 354,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 335,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 353,
+			"item_damage": 0
+		},
+		"slot_6": {
+			"item_id": 296,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 335,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 344,
+			"item_damage": 0
+		},
+		"slot_7": {
+			"item_id": 296,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 335,
+			"item_damage": 0
+		},
+		"slot_5": {
+			"item_id": 353,
+			"item_damage": 0
+		},
+		"slot_8": {
+			"item_id": 296,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"sugar": {
+		"output": {
+			"item_id": 353,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 338,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 1
+	},
+	"wood_oak": {
+		"output": {
+			"item_id": 5,
+			"item_damage": 0,
+			"item_count": 4
+		},
+		"slot_0": {
+			"item_id": 17,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 1
+	},
+	"wood_spruce": {
+		"output": {
+			"item_id": 5,
+			"item_damage": 1,
+			"item_count": 4
+		},
+		"slot_0": {
+			"item_id": 17,
+			"item_damage": 1
+		},
+		"shapeless": false,
+		"width": 1
+	},
+	"wood_birch": {
+		"output": {
+			"item_id": 5,
+			"item_damage": 2,
+			"item_count": 4
+		},
+		"slot_0": {
+			"item_id": 17,
+			"item_damage": 2
+		},
+		"shapeless": false,
+		"width": 1
+	},
+	"wood_jungle": {
+		"output": {
+			"item_id": 5,
+			"item_damage": 3,
+			"item_count": 4
+		},
+		"slot_0": {
+			"item_id": 17,
+			"item_damage": 3
+		},
+		"shapeless": false,
+		"width": 1
+	},
+	"wood_acacia": {
+		"output": {
+			"item_id": 5,
+			"item_damage": 4,
+			"item_count": 4
+		},
+		"slot_0": {
+			"item_id": 162,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 1
+	},
+	"wood_big_oak": {
+		"output": {
+			"item_id": 5,
+			"item_damage": 5,
+			"item_count": 4
+		},
+		"slot_0": {
+			"item_id": 162,
+			"item_damage": 1
+		},
+		"shapeless": false,
+		"width": 1
+	},
+	"stick": {
+		"output": {
+			"item_id": 280,
+			"item_damage": 0,
+			"item_count": 4
+		},
+		"slot_0": {
+			"item_id": 5,
+			"item_damage": -1
+		},
+		"slot_3": {
+			"item_id": 5,
+			"item_damage": -1
+		},
+		"shapeless": false,
+		"width": 1
+	},
+	"torch": {
+		"output": {
+			"item_id": 50,
+			"item_damage": 0,
+			"item_count": 4
+		},
+		"slot_0": {
+			"item_id": 263,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 1
+	},
+	"torch_2": {
+		"output": {
+			"item_id": 50,
+			"item_damage": 0,
+			"item_count": 4
+		},
+		"slot_0": {
+			"item_id": 263,
+			"item_damage": 1
+		},
+		"slot_3": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 1
+	},
+	"bowl": {
+		"output": {
+			"item_id": 281,
+			"item_damage": 0,
+			"item_count": 4
+		},
+		"slot_0": {
+			"item_id": 5,
+			"item_damage": -1
+		},
+		"slot_4": {
+			"item_id": 5,
+			"item_damage": -1
+		},
+		"slot_2": {
+			"item_id": 5,
+			"item_damage": -1
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"glassbottle": {
+		"output": {
+			"item_id": 374,
+			"item_damage": 0,
+			"item_count": 3
+		},
+		"slot_0": {
+			"item_id": 20,
+			"item_damage": -1
+		},
+		"slot_4": {
+			"item_id": 20,
+			"item_damage": -1
+		},
+		"slot_2": {
+			"item_id": 20,
+			"item_damage": -1
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"rail": {
+		"output": {
+			"item_id": 66,
+			"item_damage": 0,
+			"item_count": 16
+		},
+		"slot_0": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"slot_6": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"slot_5": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"slot_8": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"goldenrail": {
+		"output": {
+			"item_id": 27,
+			"item_damage": 0,
+			"item_count": 6
+		},
+		"slot_0": {
+			"item_id": 266,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 266,
+			"item_damage": 0
+		},
+		"slot_6": {
+			"item_id": 266,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_7": {
+			"item_id": 331,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 266,
+			"item_damage": 0
+		},
+		"slot_5": {
+			"item_id": 266,
+			"item_damage": 0
+		},
+		"slot_8": {
+			"item_id": 266,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"activatorrail": {
+		"output": {
+			"item_id": 157,
+			"item_damage": 0,
+			"item_count": 6
+		},
+		"slot_0": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"slot_6": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 76,
+			"item_damage": -1
+		},
+		"slot_7": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"slot_5": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"slot_8": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"detectorrail": {
+		"output": {
+			"item_id": 28,
+			"item_damage": 0,
+			"item_count": 6
+		},
+		"slot_0": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"slot_6": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 70,
+			"item_damage": -1
+		},
+		"slot_7": {
+			"item_id": 331,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"slot_5": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"slot_8": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"minecart": {
+		"output": {
+			"item_id": 328,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"slot_5": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"cauldron": {
+		"output": {
+			"item_id": 380,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"slot_6": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"slot_7": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"slot_5": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"slot_8": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"brewingstand": {
+		"output": {
+			"item_id": 379,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_3": {
+			"item_id": 4,
+			"item_damage": -1
+		},
+		"slot_1": {
+			"item_id": 369,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 4,
+			"item_damage": -1
+		},
+		"slot_5": {
+			"item_id": 4,
+			"item_damage": -1
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"litpumpkin": {
+		"output": {
+			"item_id": 91,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 86,
+			"item_damage": -1
+		},
+		"slot_3": {
+			"item_id": 50,
+			"item_damage": -1
+		},
+		"shapeless": false,
+		"width": 1
+	},
+	"minecartchest": {
+		"output": {
+			"item_id": 342,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 54,
+			"item_damage": -1
+		},
+		"slot_3": {
+			"item_id": 328,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 1
+	},
+	"minecartfurnace": {
+		"output": {
+			"item_id": 343,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 61,
+			"item_damage": -1
+		},
+		"slot_3": {
+			"item_id": 328,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 1
+	},
+	"minecarttnt": {
+		"output": {
+			"item_id": 407,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 46,
+			"item_damage": -1
+		},
+		"slot_3": {
+			"item_id": 328,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 1
+	},
+	"minecarthopper": {
+		"output": {
+			"item_id": 408,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 154,
+			"item_damage": -1
+		},
+		"slot_3": {
+			"item_id": 328,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 1
+	},
+	"boat_oak": {
+		"output": {
+			"item_id": 333,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 5,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 5,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 5,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 5,
+			"item_damage": 0
+		},
+		"slot_5": {
+			"item_id": 5,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"boat_spruce": {
+		"output": {
+			"item_id": 444,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 5,
+			"item_damage": 1
+		},
+		"slot_3": {
+			"item_id": 5,
+			"item_damage": 1
+		},
+		"slot_4": {
+			"item_id": 5,
+			"item_damage": 1
+		},
+		"slot_2": {
+			"item_id": 5,
+			"item_damage": 1
+		},
+		"slot_5": {
+			"item_id": 5,
+			"item_damage": 1
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"boat_birch": {
+		"output": {
+			"item_id": 445,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 5,
+			"item_damage": 2
+		},
+		"slot_3": {
+			"item_id": 5,
+			"item_damage": 2
+		},
+		"slot_4": {
+			"item_id": 5,
+			"item_damage": 2
+		},
+		"slot_2": {
+			"item_id": 5,
+			"item_damage": 2
+		},
+		"slot_5": {
+			"item_id": 5,
+			"item_damage": 2
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"boat_jungle": {
+		"output": {
+			"item_id": 446,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 5,
+			"item_damage": 3
+		},
+		"slot_3": {
+			"item_id": 5,
+			"item_damage": 3
+		},
+		"slot_4": {
+			"item_id": 5,
+			"item_damage": 3
+		},
+		"slot_2": {
+			"item_id": 5,
+			"item_damage": 3
+		},
+		"slot_5": {
+			"item_id": 5,
+			"item_damage": 3
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"boat_acacia": {
+		"output": {
+			"item_id": 447,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 5,
+			"item_damage": 4
+		},
+		"slot_3": {
+			"item_id": 5,
+			"item_damage": 4
+		},
+		"slot_4": {
+			"item_id": 5,
+			"item_damage": 4
+		},
+		"slot_2": {
+			"item_id": 5,
+			"item_damage": 4
+		},
+		"slot_5": {
+			"item_id": 5,
+			"item_damage": 4
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"boat_dark_oak": {
+		"output": {
+			"item_id": 448,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 5,
+			"item_damage": 5
+		},
+		"slot_3": {
+			"item_id": 5,
+			"item_damage": 5
+		},
+		"slot_4": {
+			"item_id": 5,
+			"item_damage": 5
+		},
+		"slot_2": {
+			"item_id": 5,
+			"item_damage": 5
+		},
+		"slot_5": {
+			"item_id": 5,
+			"item_damage": 5
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"bucket": {
+		"output": {
+			"item_id": 325,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"flowerpot": {
+		"output": {
+			"item_id": 390,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 336,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 336,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 336,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"flintandsteel": {
+		"output": {
+			"item_id": 259,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 318,
+			"item_damage": 0
+		},
+		"shapeless": true
+	},
+	"bread": {
+		"output": {
+			"item_id": 297,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 296,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 296,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 296,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"stairswood": {
+		"output": {
+			"item_id": 53,
+			"item_damage": 0,
+			"item_count": 4
+		},
+		"slot_0": {
+			"item_id": 5,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 5,
+			"item_damage": 0
+		},
+		"slot_6": {
+			"item_id": 5,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 5,
+			"item_damage": 0
+		},
+		"slot_7": {
+			"item_id": 5,
+			"item_damage": 0
+		},
+		"slot_8": {
+			"item_id": 5,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"stairswoodbirch": {
+		"output": {
+			"item_id": 135,
+			"item_damage": 0,
+			"item_count": 4
+		},
+		"slot_0": {
+			"item_id": 5,
+			"item_damage": 2
+		},
+		"slot_3": {
+			"item_id": 5,
+			"item_damage": 2
+		},
+		"slot_6": {
+			"item_id": 5,
+			"item_damage": 2
+		},
+		"slot_4": {
+			"item_id": 5,
+			"item_damage": 2
+		},
+		"slot_7": {
+			"item_id": 5,
+			"item_damage": 2
+		},
+		"slot_8": {
+			"item_id": 5,
+			"item_damage": 2
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"stairswoodspruce": {
+		"output": {
+			"item_id": 134,
+			"item_damage": 0,
+			"item_count": 4
+		},
+		"slot_0": {
+			"item_id": 5,
+			"item_damage": 1
+		},
+		"slot_3": {
+			"item_id": 5,
+			"item_damage": 1
+		},
+		"slot_6": {
+			"item_id": 5,
+			"item_damage": 1
+		},
+		"slot_4": {
+			"item_id": 5,
+			"item_damage": 1
+		},
+		"slot_7": {
+			"item_id": 5,
+			"item_damage": 1
+		},
+		"slot_8": {
+			"item_id": 5,
+			"item_damage": 1
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"stairswoodjungle": {
+		"output": {
+			"item_id": 136,
+			"item_damage": 0,
+			"item_count": 4
+		},
+		"slot_0": {
+			"item_id": 5,
+			"item_damage": 3
+		},
+		"slot_3": {
+			"item_id": 5,
+			"item_damage": 3
+		},
+		"slot_6": {
+			"item_id": 5,
+			"item_damage": 3
+		},
+		"slot_4": {
+			"item_id": 5,
+			"item_damage": 3
+		},
+		"slot_7": {
+			"item_id": 5,
+			"item_damage": 3
+		},
+		"slot_8": {
+			"item_id": 5,
+			"item_damage": 3
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"stairswoodacacia": {
+		"output": {
+			"item_id": 163,
+			"item_damage": 0,
+			"item_count": 4
+		},
+		"slot_0": {
+			"item_id": 5,
+			"item_damage": 4
+		},
+		"slot_3": {
+			"item_id": 5,
+			"item_damage": 4
+		},
+		"slot_6": {
+			"item_id": 5,
+			"item_damage": 4
+		},
+		"slot_4": {
+			"item_id": 5,
+			"item_damage": 4
+		},
+		"slot_7": {
+			"item_id": 5,
+			"item_damage": 4
+		},
+		"slot_8": {
+			"item_id": 5,
+			"item_damage": 4
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"stairswooddarkoak": {
+		"output": {
+			"item_id": 164,
+			"item_damage": 0,
+			"item_count": 4
+		},
+		"slot_0": {
+			"item_id": 5,
+			"item_damage": 5
+		},
+		"slot_3": {
+			"item_id": 5,
+			"item_damage": 5
+		},
+		"slot_6": {
+			"item_id": 5,
+			"item_damage": 5
+		},
+		"slot_4": {
+			"item_id": 5,
+			"item_damage": 5
+		},
+		"slot_7": {
+			"item_id": 5,
+			"item_damage": 5
+		},
+		"slot_8": {
+			"item_id": 5,
+			"item_damage": 5
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"fishingrod": {
+		"output": {
+			"item_id": 346,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_6": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_5": {
+			"item_id": 287,
+			"item_damage": 0
+		},
+		"slot_8": {
+			"item_id": 287,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"carrotonastick": {
+		"output": {
+			"item_id": 398,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 346,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 391,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 2
+	},
+	"stairsstone": {
+		"output": {
+			"item_id": 67,
+			"item_damage": 0,
+			"item_count": 4
+		},
+		"slot_0": {
+			"item_id": 4,
+			"item_damage": -1
+		},
+		"slot_3": {
+			"item_id": 4,
+			"item_damage": -1
+		},
+		"slot_6": {
+			"item_id": 4,
+			"item_damage": -1
+		},
+		"slot_4": {
+			"item_id": 4,
+			"item_damage": -1
+		},
+		"slot_7": {
+			"item_id": 4,
+			"item_damage": -1
+		},
+		"slot_8": {
+			"item_id": 4,
+			"item_damage": -1
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"stairsbrick": {
+		"output": {
+			"item_id": 108,
+			"item_damage": 0,
+			"item_count": 4
+		},
+		"slot_0": {
+			"item_id": 45,
+			"item_damage": -1
+		},
+		"slot_3": {
+			"item_id": 45,
+			"item_damage": -1
+		},
+		"slot_6": {
+			"item_id": 45,
+			"item_damage": -1
+		},
+		"slot_4": {
+			"item_id": 45,
+			"item_damage": -1
+		},
+		"slot_7": {
+			"item_id": 45,
+			"item_damage": -1
+		},
+		"slot_8": {
+			"item_id": 45,
+			"item_damage": -1
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"stairsstonebricksmooth": {
+		"output": {
+			"item_id": 109,
+			"item_damage": 0,
+			"item_count": 4
+		},
+		"slot_0": {
+			"item_id": 98,
+			"item_damage": -1
+		},
+		"slot_3": {
+			"item_id": 98,
+			"item_damage": -1
+		},
+		"slot_6": {
+			"item_id": 98,
+			"item_damage": -1
+		},
+		"slot_4": {
+			"item_id": 98,
+			"item_damage": -1
+		},
+		"slot_7": {
+			"item_id": 98,
+			"item_damage": -1
+		},
+		"slot_8": {
+			"item_id": 98,
+			"item_damage": -1
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"stairsnetherbrick": {
+		"output": {
+			"item_id": 114,
+			"item_damage": 0,
+			"item_count": 4
+		},
+		"slot_0": {
+			"item_id": 112,
+			"item_damage": -1
+		},
+		"slot_3": {
+			"item_id": 112,
+			"item_damage": -1
+		},
+		"slot_6": {
+			"item_id": 112,
+			"item_damage": -1
+		},
+		"slot_4": {
+			"item_id": 112,
+			"item_damage": -1
+		},
+		"slot_7": {
+			"item_id": 112,
+			"item_damage": -1
+		},
+		"slot_8": {
+			"item_id": 112,
+			"item_damage": -1
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"stairssandstone": {
+		"output": {
+			"item_id": 128,
+			"item_damage": 0,
+			"item_count": 4
+		},
+		"slot_0": {
+			"item_id": 24,
+			"item_damage": -1
+		},
+		"slot_3": {
+			"item_id": 24,
+			"item_damage": -1
+		},
+		"slot_6": {
+			"item_id": 24,
+			"item_damage": -1
+		},
+		"slot_4": {
+			"item_id": 24,
+			"item_damage": -1
+		},
+		"slot_7": {
+			"item_id": 24,
+			"item_damage": -1
+		},
+		"slot_8": {
+			"item_id": 24,
+			"item_damage": -1
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"stairsredsandstone": {
+		"output": {
+			"item_id": 180,
+			"item_damage": 0,
+			"item_count": 4
+		},
+		"slot_0": {
+			"item_id": 179,
+			"item_damage": -1
+		},
+		"slot_3": {
+			"item_id": 179,
+			"item_damage": -1
+		},
+		"slot_6": {
+			"item_id": 179,
+			"item_damage": -1
+		},
+		"slot_4": {
+			"item_id": 179,
+			"item_damage": -1
+		},
+		"slot_7": {
+			"item_id": 179,
+			"item_damage": -1
+		},
+		"slot_8": {
+			"item_id": 179,
+			"item_damage": -1
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"stairsquartz": {
+		"output": {
+			"item_id": 156,
+			"item_damage": 0,
+			"item_count": 4
+		},
+		"slot_0": {
+			"item_id": 155,
+			"item_damage": -1
+		},
+		"slot_3": {
+			"item_id": 155,
+			"item_damage": -1
+		},
+		"slot_6": {
+			"item_id": 155,
+			"item_damage": -1
+		},
+		"slot_4": {
+			"item_id": 155,
+			"item_damage": -1
+		},
+		"slot_7": {
+			"item_id": 155,
+			"item_damage": -1
+		},
+		"slot_8": {
+			"item_id": 155,
+			"item_damage": -1
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"painting": {
+		"output": {
+			"item_id": 321,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_6": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 35,
+			"item_damage": -1
+		},
+		"slot_7": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_5": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_8": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"frame": {
+		"output": {
+			"item_id": 389,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_6": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 334,
+			"item_damage": 0
+		},
+		"slot_7": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_5": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_8": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"applegold": {
+		"output": {
+			"item_id": 322,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 266,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 266,
+			"item_damage": 0
+		},
+		"slot_6": {
+			"item_id": 266,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 266,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 260,
+			"item_damage": 0
+		},
+		"slot_7": {
+			"item_id": 266,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 266,
+			"item_damage": 0
+		},
+		"slot_5": {
+			"item_id": 266,
+			"item_damage": 0
+		},
+		"slot_8": {
+			"item_id": 266,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"carrotgolden": {
+		"output": {
+			"item_id": 396,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 371,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 371,
+			"item_damage": 0
+		},
+		"slot_6": {
+			"item_id": 371,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 371,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 391,
+			"item_damage": 0
+		},
+		"slot_7": {
+			"item_id": 371,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 371,
+			"item_damage": 0
+		},
+		"slot_5": {
+			"item_id": 371,
+			"item_damage": 0
+		},
+		"slot_8": {
+			"item_id": 371,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"speckledmelon": {
+		"output": {
+			"item_id": 382,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 371,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 371,
+			"item_damage": 0
+		},
+		"slot_6": {
+			"item_id": 371,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 371,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 360,
+			"item_damage": 0
+		},
+		"slot_7": {
+			"item_id": 371,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 371,
+			"item_damage": 0
+		},
+		"slot_5": {
+			"item_id": 371,
+			"item_damage": 0
+		},
+		"slot_8": {
+			"item_id": 371,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"lever": {
+		"output": {
+			"item_id": 69,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 4,
+			"item_damage": -1
+		},
+		"shapeless": false,
+		"width": 1
+	},
+	"tripwiresource": {
+		"output": {
+			"item_id": 131,
+			"item_damage": 0,
+			"item_count": 2
+		},
+		"slot_0": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_6": {
+			"item_id": 5,
+			"item_damage": -1
+		},
+		"shapeless": false,
+		"width": 1
+	},
+	"notgate": {
+		"output": {
+			"item_id": 76,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 331,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 1
+	},
+	"diode": {
+		"output": {
+			"item_id": 356,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 76,
+			"item_damage": -1
+		},
+		"slot_3": {
+			"item_id": 1,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 331,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 1,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 76,
+			"item_damage": -1
+		},
+		"slot_5": {
+			"item_id": 1,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"comparator": {
+		"output": {
+			"item_id": 404,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_3": {
+			"item_id": 76,
+			"item_damage": -1
+		},
+		"slot_6": {
+			"item_id": 1,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 76,
+			"item_damage": -1
+		},
+		"slot_4": {
+			"item_id": 406,
+			"item_damage": 0
+		},
+		"slot_7": {
+			"item_id": 1,
+			"item_damage": 0
+		},
+		"slot_5": {
+			"item_id": 76,
+			"item_damage": -1
+		},
+		"slot_8": {
+			"item_id": 1,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"clock": {
+		"output": {
+			"item_id": 347,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_3": {
+			"item_id": 266,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 266,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 331,
+			"item_damage": 0
+		},
+		"slot_7": {
+			"item_id": 266,
+			"item_damage": 0
+		},
+		"slot_5": {
+			"item_id": 266,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"compass": {
+		"output": {
+			"item_id": 345,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_3": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 331,
+			"item_damage": 0
+		},
+		"slot_7": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"slot_5": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"emptymap_2": {
+		"output": {
+			"item_id": 395,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 339,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 339,
+			"item_damage": 0
+		},
+		"slot_6": {
+			"item_id": 339,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 339,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 345,
+			"item_damage": 0
+		},
+		"slot_7": {
+			"item_id": 339,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 339,
+			"item_damage": 0
+		},
+		"slot_5": {
+			"item_id": 339,
+			"item_damage": 0
+		},
+		"slot_8": {
+			"item_id": 339,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"button": {
+		"output": {
+			"item_id": 77,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 1,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 1
+	},
+	"button_2": {
+		"output": {
+			"item_id": 143,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 5,
+			"item_damage": -1
+		},
+		"shapeless": false,
+		"width": 1
+	},
+	"pressureplatestone": {
+		"output": {
+			"item_id": 70,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 1,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 1,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 2
+	},
+	"pressureplatewood": {
+		"output": {
+			"item_id": 72,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 5,
+			"item_damage": -1
+		},
+		"slot_1": {
+			"item_id": 5,
+			"item_damage": -1
+		},
+		"shapeless": false,
+		"width": 2
+	},
+	"weightedplate_heavy": {
+		"output": {
+			"item_id": 148,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 2
+	},
+	"weightedplate_light": {
+		"output": {
+			"item_id": 147,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 266,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 266,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 2
+	},
+	"dispenser": {
+		"output": {
+			"item_id": 23,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 4,
+			"item_damage": -1
+		},
+		"slot_3": {
+			"item_id": 4,
+			"item_damage": -1
+		},
+		"slot_6": {
+			"item_id": 4,
+			"item_damage": -1
+		},
+		"slot_1": {
+			"item_id": 4,
+			"item_damage": -1
+		},
+		"slot_4": {
+			"item_id": 261,
+			"item_damage": 0
+		},
+		"slot_7": {
+			"item_id": 331,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 4,
+			"item_damage": -1
+		},
+		"slot_5": {
+			"item_id": 4,
+			"item_damage": -1
+		},
+		"slot_8": {
+			"item_id": 4,
+			"item_damage": -1
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"dropper": {
+		"output": {
+			"item_id": 158,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 4,
+			"item_damage": -1
+		},
+		"slot_3": {
+			"item_id": 4,
+			"item_damage": -1
+		},
+		"slot_6": {
+			"item_id": 4,
+			"item_damage": -1
+		},
+		"slot_1": {
+			"item_id": 4,
+			"item_damage": -1
+		},
+		"slot_7": {
+			"item_id": 331,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 4,
+			"item_damage": -1
+		},
+		"slot_5": {
+			"item_id": 4,
+			"item_damage": -1
+		},
+		"slot_8": {
+			"item_id": 4,
+			"item_damage": -1
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"observer": {
+		"output": {
+			"item_id": 218,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 4,
+			"item_damage": -1
+		},
+		"slot_3": {
+			"item_id": 331,
+			"item_damage": 0
+		},
+		"slot_6": {
+			"item_id": 4,
+			"item_damage": -1
+		},
+		"slot_1": {
+			"item_id": 4,
+			"item_damage": -1
+		},
+		"slot_4": {
+			"item_id": 331,
+			"item_damage": 0
+		},
+		"slot_7": {
+			"item_id": 4,
+			"item_damage": -1
+		},
+		"slot_2": {
+			"item_id": 4,
+			"item_damage": -1
+		},
+		"slot_5": {
+			"item_id": 406,
+			"item_damage": 0
+		},
+		"slot_8": {
+			"item_id": 4,
+			"item_damage": -1
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"pistonbase": {
+		"output": {
+			"item_id": 33,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 5,
+			"item_damage": -1
+		},
+		"slot_3": {
+			"item_id": 4,
+			"item_damage": -1
+		},
+		"slot_6": {
+			"item_id": 4,
+			"item_damage": -1
+		},
+		"slot_1": {
+			"item_id": 5,
+			"item_damage": -1
+		},
+		"slot_4": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"slot_7": {
+			"item_id": 331,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 5,
+			"item_damage": -1
+		},
+		"slot_5": {
+			"item_id": 4,
+			"item_damage": -1
+		},
+		"slot_8": {
+			"item_id": 4,
+			"item_damage": -1
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"pistonstickybase": {
+		"output": {
+			"item_id": 29,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 341,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 33,
+			"item_damage": -1
+		},
+		"shapeless": false,
+		"width": 1
+	},
+	"bed": {
+		"output": {
+			"item_id": 355,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 35,
+			"item_damage": -1
+		},
+		"slot_3": {
+			"item_id": 5,
+			"item_damage": -1
+		},
+		"slot_1": {
+			"item_id": 35,
+			"item_damage": -1
+		},
+		"slot_4": {
+			"item_id": 5,
+			"item_damage": -1
+		},
+		"slot_2": {
+			"item_id": 35,
+			"item_damage": -1
+		},
+		"slot_5": {
+			"item_id": 5,
+			"item_damage": -1
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"enchantmenttable": {
+		"output": {
+			"item_id": 116,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_3": {
+			"item_id": 264,
+			"item_damage": 0
+		},
+		"slot_6": {
+			"item_id": 49,
+			"item_damage": -1
+		},
+		"slot_1": {
+			"item_id": 340,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 49,
+			"item_damage": -1
+		},
+		"slot_7": {
+			"item_id": 49,
+			"item_damage": -1
+		},
+		"slot_5": {
+			"item_id": 264,
+			"item_damage": 0
+		},
+		"slot_8": {
+			"item_id": 49,
+			"item_damage": -1
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"anvil_intact": {
+		"output": {
+			"item_id": 145,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 42,
+			"item_damage": -1
+		},
+		"slot_6": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 42,
+			"item_damage": -1
+		},
+		"slot_4": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"slot_7": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 42,
+			"item_damage": -1
+		},
+		"slot_8": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"leather": {
+		"output": {
+			"item_id": 334,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 415,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 415,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 415,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 415,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 2
+	},
+	"eyeofender": {
+		"output": {
+			"item_id": 381,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 368,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 377,
+			"item_damage": 0
+		},
+		"shapeless": true
+	},
+	"fireball": {
+		"output": {
+			"item_id": 385,
+			"item_damage": 0,
+			"item_count": 3
+		},
+		"slot_0": {
+			"item_id": 289,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 377,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 263,
+			"item_damage": 0
+		},
+		"shapeless": true
+	},
+	"fireball_2": {
+		"output": {
+			"item_id": 385,
+			"item_damage": 0,
+			"item_count": 3
+		},
+		"slot_0": {
+			"item_id": 289,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 377,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 263,
+			"item_damage": 1
+		},
+		"shapeless": true
+	},
+	"daylightdetector": {
+		"output": {
+			"item_id": 151,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 20,
+			"item_damage": -1
+		},
+		"slot_3": {
+			"item_id": 406,
+			"item_damage": 0
+		},
+		"slot_6": {
+			"item_id": 126,
+			"item_damage": -1
+		},
+		"slot_1": {
+			"item_id": 20,
+			"item_damage": -1
+		},
+		"slot_4": {
+			"item_id": 406,
+			"item_damage": 0
+		},
+		"slot_7": {
+			"item_id": 126,
+			"item_damage": -1
+		},
+		"slot_2": {
+			"item_id": 20,
+			"item_damage": -1
+		},
+		"slot_5": {
+			"item_id": 406,
+			"item_damage": 0
+		},
+		"slot_8": {
+			"item_id": 126,
+			"item_damage": -1
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"end_crystal": {
+		"output": {
+			"item_id": 426,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 20,
+			"item_damage": -1
+		},
+		"slot_3": {
+			"item_id": 20,
+			"item_damage": -1
+		},
+		"slot_6": {
+			"item_id": 20,
+			"item_damage": -1
+		},
+		"slot_1": {
+			"item_id": 20,
+			"item_damage": -1
+		},
+		"slot_4": {
+			"item_id": 381,
+			"item_damage": 0
+		},
+		"slot_7": {
+			"item_id": 370,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 20,
+			"item_damage": -1
+		},
+		"slot_5": {
+			"item_id": 20,
+			"item_damage": -1
+		},
+		"slot_8": {
+			"item_id": 20,
+			"item_damage": -1
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"hopper": {
+		"output": {
+			"item_id": 154,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 54,
+			"item_damage": -1
+		},
+		"slot_7": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"slot_5": {
+			"item_id": 265,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"armorstand": {
+		"output": {
+			"item_id": 416,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_6": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_1": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_4": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_7": {
+			"item_id": 44,
+			"item_damage": 0
+		},
+		"slot_2": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"slot_8": {
+			"item_id": 280,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 3
+	},
+	"endrod": {
+		"output": {
+			"item_id": 198,
+			"item_damage": 0,
+			"item_count": 4
+		},
+		"slot_0": {
+			"item_id": 369,
+			"item_damage": 0
+		},
+		"slot_3": {
+			"item_id": 433,
+			"item_damage": 0
+		},
+		"shapeless": false,
+		"width": 1
+	},
+	"boneblock": {
+		"output": {
+			"item_id": 216,
+			"item_damage": 0,
+			"item_count": 1
+		},
+		"slot_0": {
+			"item_id": 351,
+			"item_damage": 15
+		},
+		"slot_3": {
+			"item_id": 351,
+			"item_damage": 15
+		},
+		"slot_6": {
+			"item_id": 351,
+			"item_damage": 15
+		},
+		"slot_1": {
+			"item_id": 351,
+			"item_damage": 15
+		},
+		"slot_4": {
+			"item_id": 351,
+			"item_damage": 15
+		},
+		"slot_7": {
+			"item_id": 351,
+			"item_damage": 15
+		},
+		"slot_2": {
+			"item_id": 351,
+			"item_damage": 15
+		},
+		"slot_5": {
+			"item_id": 351,
+			"item_damage": 15
+		},
+		"slot_8": {
+			"item_id": 351,
+			"item_damage": 15
+		},
+		"shapeless": false,
+		"width": 3
+	}
+}

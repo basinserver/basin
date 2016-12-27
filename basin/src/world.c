@@ -230,6 +230,9 @@ void generateChunk(struct world* world, struct chunk* chunk) {
 	chunk->sections[0]->bpb = 13;
 	chunk->sections[0]->block_size = 512 * 13;
 	chunk->sections[0]->blocks = xcalloc(512 * 13);
+	chunk->sections[0]->palette = NULL;
+	chunk->sections[0]->palette_count = 0;
+	chunk->sections[0]->mvs = 0x1FFF;
 	if (world->dimension == OVERWORLD) {
 		chunk->sections[0]->skyLight = xmalloc(2048);
 		memset(chunk->sections[0]->skyLight, 0xFF, 2048);
@@ -243,7 +246,6 @@ void generateChunk(struct world* world, struct chunk* chunk) {
 }
 
 struct chunk* getChunk(struct world* world, int16_t x, int16_t z) {
-
 	int16_t rx = x >> 5;
 	int16_t rz = z >> 5;
 	pthread_rwlock_rdlock(&world->regions->data_mutex);
@@ -278,8 +280,25 @@ struct chunk* getChunk(struct world* world, int16_t x, int16_t z) {
 	return gc;
 }
 
+int isChunkLoaded(struct world* world, int16_t x, int16_t z) {
+	int16_t rx = x >> 5;
+	int16_t rz = z >> 5;
+	pthread_rwlock_rdlock(&world->regions->data_mutex);
+	for (size_t i = 0; i < world->regions->size; i++) {
+		if (world->regions->data[i] != NULL && ((struct region*) world->regions->data[i])->x == rx && ((struct region*) world->regions->data[i])->z == rz) {
+			struct region* r = ((struct region*) world->regions->data[i]);
+			int l = r->loaded[z & 0x1F][x & 0x1F];
+			pthread_rwlock_unlock(&world->regions->data_mutex);
+			return l;
+		}
+	}
+	pthread_rwlock_unlock(&world->regions->data_mutex);
+	return 0;
+}
+
 void unloadChunk(struct world* world, struct chunk* chunk) {
 //TODO: save chunk
+	pthread_rwlock_wrlock(&world->chl);
 	int16_t rx = chunk->x >> 5;
 	int16_t rz = chunk->z >> 5;
 	pthread_rwlock_rdlock(&world->regions->data_mutex);
@@ -290,11 +309,12 @@ void unloadChunk(struct world* world, struct chunk* chunk) {
 			r->chunks[chunk->z & 0x1F][chunk->x & 0x1F] = 0;
 			freeChunk(chunk);
 			pthread_rwlock_unlock(&world->regions->data_mutex);
+			pthread_rwlock_unlock(&world->chl);
 			return;
 		}
 	}
 	pthread_rwlock_unlock(&world->regions->data_mutex);
-
+	pthread_rwlock_unlock(&world->chl);
 }
 
 int getBiome(struct world* world, int32_t x, int32_t z) {
@@ -446,9 +466,10 @@ void setBlockWorld(struct world* world, block blk, int32_t x, int32_t y, int32_t
 struct world* newWorld() {
 	struct world* world = xmalloc(sizeof(struct world));
 	memset(world, 0, sizeof(struct world));
-	world->regions = new_collection(0);
-	world->entities = new_collection(0);
-	world->players = new_collection(0);
+	world->regions = new_collection(0, 1);
+	world->entities = new_collection(0, 1);
+	world->players = new_collection(0, 1);
+	pthread_rwlock_init(&world->chl, NULL);
 	return world;
 }
 
@@ -519,6 +540,7 @@ void freeWorld(struct world* world) { // assumes all chunks are unloaded
 		}
 	}
 	pthread_rwlock_unlock(&world->regions->data_mutex);
+	pthread_rwlock_destroy(&world->chl);
 	del_collection(world->regions);
 	pthread_rwlock_wrlock(&world->entities->data_mutex);
 	for (size_t i = 0; i < world->entities->size; i++) {
@@ -557,11 +579,18 @@ void spawnPlayer(struct world* world, struct player* player) {
 
 void despawnPlayer(struct world* world, struct player* player) {
 	despawnEntity(world, player->entity);
+	for (size_t i = 0; i < player->loadedEntities->size; i++) {
+		struct entity* pl = (struct entity*) player->loadedEntities->data[i];
+		if (pl == NULL || pl == player->entity) continue;
+		rem_collection(pl->loadingPlayers, player);
+		player->loadedEntities->data[i] = NULL;
+	}
 	rem_collection(world->players, player);
 }
 
 void despawnEntity(struct world* world, struct entity* entity) {
-	BEGIN_BROADCAST_DIST(entity, 128.)
+	rem_collection(world->entities, entity);
+	BEGIN_BROADCAST(entity->loadingPlayers)
 	struct packet* pkt = xmalloc(sizeof(struct packet));
 	pkt->id = PKT_PLAY_CLIENT_DESTROYENTITIES;
 	pkt->data.play_client.destroyentities.count = 1;
@@ -569,7 +598,13 @@ void despawnEntity(struct world* world, struct entity* entity) {
 	pkt->data.play_client.destroyentities.entity_ids[0] = entity->id;
 	add_queue(bc_player->outgoingPacket, pkt);
 	flush_outgoing (bc_player);
-	END_BROADCAST rem_collection(world->entities, entity);
+	END_BROADCAST
+	for (size_t i = 0; i < entity->loadingPlayers->size; i++) {
+		struct player* pl = (struct player*) entity->loadingPlayers->data[i];
+		if (pl == NULL) continue;
+		rem_collection(pl->loadedEntities, entity);
+		entity->loadingPlayers->data[i] = NULL;
+	}
 }
 
 struct entity* getEntity(struct world* world, int32_t id) {

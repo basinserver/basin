@@ -11,6 +11,8 @@
 #include "world.h"
 #include "entity.h"
 
+void player_openInventory(struct player* player, struct inventory* inv);
+
 void flush_outgoing(struct player* player);
 
 float randFloat();

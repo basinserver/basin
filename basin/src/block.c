@@ -6,6 +6,17 @@
  */
 
 #include "block.h"
+#include "util.h"
+#include "inventory.h"
+#include "game.h"
+
+void onBlockInteract_workbench(struct world* world, block blk, int32_t x, int32_t y, int32_t z, struct player* player, uint8_t face, float curPosX, float curPosY, float curPosZ) {
+	struct inventory* wb = xmalloc(sizeof(struct inventory));
+	newInventory(wb, INVTYPE_WORKBENCH, 1, 46);
+	wb->title = xstrdup("{\"text\": \"Crafting Table\"}", 0);
+	copyInventory(player->inventory.slots + 9, wb->slots + 10, 36);
+	player_openInventory(player, wb);
+}
 
 void init_blocks() {
 	block_materials[MAT_AIR].flammable = 0;
@@ -1275,6 +1286,9 @@ void init_blocks() {
 	block_infos[BLK_WORKBENCH].hardness = 2.5;
 	block_infos[BLK_WORKBENCH].material = MAT_WOOD;
 	block_infos[BLK_WORKBENCH].slipperiness = 0.6;
+	//end auto
+	block_infos[BLK_WORKBENCH].onBlockInteract = &onBlockInteract_workbench;
+	//begin auto
 	block_infos[BLK_FARMLAND].hardness = 0.6;
 	block_infos[BLK_FARMLAND].material = MAT_GROUND;
 	block_infos[BLK_FARMLAND].slipperiness = 0.6;
