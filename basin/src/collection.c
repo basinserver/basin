@@ -14,9 +14,9 @@
 
 struct collection* new_collection(size_t capacity, uint8_t mc) {
 	struct collection* coll = xmalloc(sizeof(struct collection));
+	if (capacity < 1) capacity = 1;
 	coll->capacity = capacity;
-	coll->data = xmalloc((capacity == 0 ? 1 : capacity) * sizeof(void*));
-	coll->rc = capacity == 0 ? 1 : 0;
+	coll->data = xcalloc((capacity == 0 ? 1 : capacity) * sizeof(void*));
 	coll->size = 0;
 	coll->count = 0;
 	coll->mc = mc;
@@ -41,20 +41,22 @@ int del_collection(struct collection* coll) {
 
 int add_collection(struct collection* coll, void* data) {
 	if (coll->mc) pthread_rwlock_wrlock(&coll->data_mutex);
-	for (int i = 0; i < coll->size; i++) {
-		if (coll->data[i] == NULL) {
-			coll->count++;
-			coll->data[i] = data;
-			if (coll->mc) pthread_rwlock_unlock(&coll->data_mutex);
-			return 0;
+	if (coll->size >= coll->capacity) {
+		for (int i = 0; i < coll->capacity; i++) {
+			if (coll->data[i] == NULL) {
+				coll->count++;
+				if (i >= coll->size) coll->size++;
+				coll->data[i] = data;
+				if (coll->mc) pthread_rwlock_unlock(&coll->data_mutex);
+				return 0;
+			}
 		}
-	}
-	if (coll->size == coll->rc && coll->capacity == 0) {
-		coll->rc++;
-		coll->data = xrealloc(coll->data, coll->rc * sizeof(void*));
-	} else if (coll->capacity > 0 && coll->size == coll->capacity) {
-		errno = EINVAL;
-		return -1;
+		if (coll->count >= coll->capacity) {
+			size_t oc = coll->capacity;
+			coll->capacity += 1024 / sizeof(void*);
+			coll->data = xrealloc(coll->data, coll->capacity * sizeof(void*));
+			memset(coll->data + oc, 0, 1024);
+		}
 	}
 	coll->data[coll->size++] = data;
 	coll->count++;
@@ -68,6 +70,7 @@ int rem_collection(struct collection* coll, void* data) {
 		if (coll->data[i] == data) {
 			coll->data[i] = NULL;
 			coll->count--;
+			if (i == coll->size - 1) coll->size--;
 			if (coll->mc) pthread_rwlock_unlock(&coll->data_mutex);
 			return 0;
 		}
@@ -88,3 +91,13 @@ int contains_collection(struct collection* coll, void* data) {
 	return 0;
 }
 
+void ensure_collection(struct collection* coll, size_t size) {
+	if (coll->mc) pthread_rwlock_rdlock(&coll->data_mutex);
+	if (coll->count + size >= coll->capacity) {
+		size_t oc = coll->capacity;
+		coll->capacity = coll->count + size;
+		coll->data = xrealloc(coll->data, coll->capacity * sizeof(void*));
+		memset(coll->data + oc, 0, (coll->capacity - oc) * sizeof(void*));
+	}
+	if (coll->mc) pthread_rwlock_unlock(&coll->data_mutex);
+}

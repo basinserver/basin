@@ -12,7 +12,6 @@
 #include <stdlib.h>
 #include "nbt.h"
 #include <pthread.h>
-#include "inventory.h"
 #ifdef __MINGW32__
 # include <winsock2.h>
 #endif

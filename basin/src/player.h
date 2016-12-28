@@ -8,8 +8,10 @@
 #ifndef PLAYER_H_
 #define PLAYER_H_
 
+#include "inventory.h"
 #include "network.h"
 #include "accept.h"
+#include "collection.h"
 
 struct player {
 		struct entity* entity;
@@ -43,12 +45,14 @@ struct player {
 		struct encpos digging_position;
 		float digging;
 		float digspeed;
-		struct inventory inventory;
+		struct inventory* inventory;
 		struct inventory* openInv;
 		struct collection* loadedChunks;
 		struct collection* loadedEntities;
 		struct queue* outgoingPacket;
 		struct queue* incomingPacket;
+		uint8_t defunct;
+		struct slot* inHand;
 };
 
 struct player* newPlayer(struct entity* entity, char* name, struct uuid, struct conn* conn, uint8_t gamemode);

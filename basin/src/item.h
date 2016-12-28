@@ -8,6 +8,12 @@
 #ifndef ITEM_H_
 #define ITEM_H_
 
+#include <stdint.h>
+#include "player.h"
+#include "world.h"
+#include "entity.h"
+#include "inventory.h"
+
 #define ITM_SHOVELIRON 256
 #define ITM_PICKAXEIRON 257
 #define ITM_HATCHETIRON 258
@@ -215,8 +221,41 @@
 #define ITM_RECORD_11 2266
 #define ITM_RECORD_12 2267
 
-struct item {
+#define TOOL_NONE 0
+#define TOOL_PICKAXE 1
+#define TOOL_SHOVEL 2
+#define TOOL_AXE 3
+#define TOOL_HOE 4
+#define TOOL_SWORD 4
+#define TOOL_SHEARS 5
 
+#define ARMOR_NONE 0
+#define ARMOR_HELMET 1
+#define ARMOR_CHESTPLATE 2
+#define ARMOR_LEGGINGS 3
+#define ARMOR_BOOTS 4
+
+typedef int16_t item;
+
+struct item_info {
+		uint8_t toolType;
+		uint8_t maxStackSize;
+		int16_t maxDamage;
+		uint8_t damage;
+		uint8_t armor;
+		uint8_t armorType;
+		float attackSpeed;
+		float toolProficiency;
+		void (*onItemUse)(struct world* world, struct player* player, struct slot* slot, uint16_t ticks); // not in-world usage
+		void (*onItemInteract)(struct world* world, struct player* player, struct slot* slot, int32_t x, uint8_t y, int32_t z, uint8_t face); // in-world usage
+		void (*onItemBreakBlock)(struct world* world, struct player* player, struct slot* slot, int32_t x, uint8_t y, int32_t z); // in-world usage
+		void (*onItemAttacked)(struct world* world, struct player* player, struct slot* slot, struct entity* entity); // entity may be NULL
 };
+
+struct item_info* getItemInfo(item id);
+
+void init_items();
+
+void add_item(item id, struct item_info* info);
 
 #endif /* ITEM_H_ */

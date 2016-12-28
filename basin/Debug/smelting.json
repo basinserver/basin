@@ -1,0 +1,520 @@
+{
+	"fuels": {
+		"wood_oak": {
+			"id": 5,
+			"damage": -1,
+			"burnTime": 300
+		},
+		"sapling_oak": {
+			"id": 6,
+			"damage": -1,
+			"burnTime": 100
+		},
+		"log_oak": {
+			"id": 17,
+			"damage": -1,
+			"burnTime": 300
+		},
+		"log_acacia": {
+			"id": 162,
+			"damage": -1,
+			"burnTime": 300
+		},
+		"musicblock": {
+			"id": 25,
+			"damage": -1,
+			"burnTime": 300
+		},
+		"cloth_white": {
+			"id": 35,
+			"damage": -1,
+			"burnTime": 100
+		},
+		"bookshelf": {
+			"id": 47,
+			"damage": -1,
+			"burnTime": 300
+		},
+		"stairswood": {
+			"id": 53,
+			"damage": -1,
+			"burnTime": 300
+		},
+		"chest": {
+			"id": 54,
+			"damage": -1,
+			"burnTime": 300
+		},
+		"workbench": {
+			"id": 58,
+			"damage": -1,
+			"burnTime": 300
+		},
+		"ladder": {
+			"id": 65,
+			"damage": -1,
+			"burnTime": 300
+		},
+		"pressureplatewood": {
+			"id": 72,
+			"damage": -1,
+			"burnTime": 300
+		},
+		"jukebox": {
+			"id": 84,
+			"damage": -1,
+			"burnTime": 300
+		},
+		"fence": {
+			"id": 85,
+			"damage": -1,
+			"burnTime": 300
+		},
+		"sprucefence": {
+			"id": 188,
+			"damage": -1,
+			"burnTime": 300
+		},
+		"birchfence": {
+			"id": 189,
+			"damage": -1,
+			"burnTime": 300
+		},
+		"junglefence": {
+			"id": 190,
+			"damage": -1,
+			"burnTime": 300
+		},
+		"darkoakfence": {
+			"id": 191,
+			"damage": -1,
+			"burnTime": 300
+		},
+		"acaciafence": {
+			"id": 192,
+			"damage": -1,
+			"burnTime": 300
+		},
+		"trapdoor": {
+			"id": 96,
+			"damage": -1,
+			"burnTime": 300
+		},
+		"mushroom": {
+			"id": 99,
+			"damage": -1,
+			"burnTime": 300
+		},
+		"mushroom_1": {
+			"id": 100,
+			"damage": -1,
+			"burnTime": 300
+		},
+		"fencegate": {
+			"id": 107,
+			"damage": -1,
+			"burnTime": 300
+		},
+		"sprucefencegate": {
+			"id": 183,
+			"damage": -1,
+			"burnTime": 300
+		},
+		"birchfencegate": {
+			"id": 184,
+			"damage": -1,
+			"burnTime": 300
+		},
+		"junglefencegate": {
+			"id": 185,
+			"damage": -1,
+			"burnTime": 300
+		},
+		"darkoakfencegate": {
+			"id": 186,
+			"damage": -1,
+			"burnTime": 300
+		},
+		"acaciafencegate": {
+			"id": 187,
+			"damage": -1,
+			"burnTime": 300
+		},
+		"woodslab_oak": {
+			"id": 126,
+			"damage": -1,
+			"burnTime": 150
+		},
+		"stairswoodspruce": {
+			"id": 134,
+			"damage": -1,
+			"burnTime": 300
+		},
+		"stairswoodbirch": {
+			"id": 135,
+			"damage": -1,
+			"burnTime": 300
+		},
+		"stairswoodjungle": {
+			"id": 136,
+			"damage": -1,
+			"burnTime": 300
+		},
+		"button": {
+			"id": 143,
+			"damage": -1,
+			"burnTime": 100
+		},
+		"chesttrap": {
+			"id": 146,
+			"damage": -1,
+			"burnTime": 300
+		},
+		"daylightdetector": {
+			"id": 151,
+			"damage": -1,
+			"burnTime": 300
+		},
+		"woolcarpet_white": {
+			"id": 171,
+			"damage": -1,
+			"burnTime": 67
+		},
+		"blockcoal": {
+			"id": 173,
+			"damage": -1,
+			"burnTime": 16000
+		},
+		"stairswoodacacia": {
+			"id": 163,
+			"damage": -1,
+			"burnTime": 300
+		},
+		"stairswooddarkoak": {
+			"id": 164,
+			"damage": -1,
+			"burnTime": 300
+		},
+		"bow": {
+			"id": 261,
+			"damage": -1,
+			"burnTime": 300
+		},
+		"coal": {
+			"id": 263,
+			"damage": -1,
+			"burnTime": 1600
+		},
+		"swordwood": {
+			"id": 268,
+			"damage": -1,
+			"burnTime": 200
+		},
+		"shovelwood": {
+			"id": 269,
+			"damage": -1,
+			"burnTime": 200
+		},
+		"pickaxewood": {
+			"id": 270,
+			"damage": -1,
+			"burnTime": 200
+		},
+		"hatchetwood": {
+			"id": 271,
+			"damage": -1,
+			"burnTime": 200
+		},
+		"stick": {
+			"id": 280,
+			"damage": -1,
+			"burnTime": 100
+		},
+		"bowl": {
+			"id": 281,
+			"damage": -1,
+			"burnTime": 100
+		},
+		"hoewood": {
+			"id": 290,
+			"damage": -1,
+			"burnTime": 200
+		},
+		"sign": {
+			"id": 323,
+			"damage": -1,
+			"burnTime": 200
+		},
+		"dooroak": {
+			"id": 324,
+			"damage": -1,
+			"burnTime": 200
+		},
+		"bucketlava": {
+			"id": 327,
+			"damage": -1,
+			"burnTime": 20000
+		},
+		"boat_oak": {
+			"id": 333,
+			"damage": -1,
+			"burnTime": 400
+		},
+		"fishingrod": {
+			"id": 346,
+			"damage": -1,
+			"burnTime": 300
+		},
+		"blazerod": {
+			"id": 369,
+			"damage": -1,
+			"burnTime": 2400
+		},
+		"banner": {
+			"id": 425,
+			"damage": -1,
+			"burnTime": 300
+		},
+		"doorspruce": {
+			"id": 427,
+			"damage": -1,
+			"burnTime": 200
+		},
+		"doorbirch": {
+			"id": 428,
+			"damage": -1,
+			"burnTime": 200
+		},
+		"doorjungle": {
+			"id": 429,
+			"damage": -1,
+			"burnTime": 200
+		},
+		"dooracacia": {
+			"id": 430,
+			"damage": -1,
+			"burnTime": 200
+		},
+		"doordarkoak": {
+			"id": 431,
+			"damage": -1,
+			"burnTime": 200
+		},
+		"boat_spruce": {
+			"id": 444,
+			"damage": -1,
+			"burnTime": 400
+		},
+		"boat_birch": {
+			"id": 445,
+			"damage": -1,
+			"burnTime": 400
+		},
+		"boat_jungle": {
+			"id": 446,
+			"damage": -1,
+			"burnTime": 400
+		},
+		"boat_acacia": {
+			"id": 447,
+			"damage": -1,
+			"burnTime": 400
+		},
+		"boat_dark_oak": {
+			"id": 448,
+			"damage": -1,
+			"burnTime": 400
+		}
+	},
+	"recipes": {
+		"oreiron": {
+			"input_item": 15,
+			"input_damage": -1,
+			"output_item": 265,
+			"output_damage": 0,
+			"output_count": 1
+		},
+		"oregold": {
+			"input_item": 14,
+			"input_damage": -1,
+			"output_item": 266,
+			"output_damage": 0,
+			"output_count": 1
+		},
+		"orediamond": {
+			"input_item": 56,
+			"input_damage": -1,
+			"output_item": 264,
+			"output_damage": 0,
+			"output_count": 1
+		},
+		"sand": {
+			"input_item": 12,
+			"input_damage": -1,
+			"output_item": 20,
+			"output_damage": 0,
+			"output_count": 1
+		},
+		"porkchopraw": {
+			"input_item": 319,
+			"input_damage": -1,
+			"output_item": 320,
+			"output_damage": 0,
+			"output_count": 1
+		},
+		"beefraw": {
+			"input_item": 363,
+			"input_damage": -1,
+			"output_item": 364,
+			"output_damage": 0,
+			"output_count": 1
+		},
+		"chickenraw": {
+			"input_item": 365,
+			"input_damage": -1,
+			"output_item": 366,
+			"output_damage": 0,
+			"output_count": 1
+		},
+		"rabbitraw": {
+			"input_item": 411,
+			"input_damage": -1,
+			"output_item": 412,
+			"output_damage": 0,
+			"output_count": 1
+		},
+		"muttonraw": {
+			"input_item": 423,
+			"input_damage": -1,
+			"output_item": 424,
+			"output_damage": 0,
+			"output_count": 1
+		},
+		"stonebrick": {
+			"input_item": 4,
+			"input_damage": -1,
+			"output_item": 1,
+			"output_damage": 0,
+			"output_count": 1
+		},
+		"stonebricksmooth": {
+			"input_item": 98,
+			"input_damage": 0,
+			"output_item": 98,
+			"output_damage": 2,
+			"output_count": 1
+		},
+		"clay": {
+			"input_item": 337,
+			"input_damage": -1,
+			"output_item": 336,
+			"output_damage": 0,
+			"output_count": 1
+		},
+		"clay_2": {
+			"input_item": 82,
+			"input_damage": -1,
+			"output_item": 172,
+			"output_damage": 0,
+			"output_count": 1
+		},
+		"cactus": {
+			"input_item": 81,
+			"input_damage": -1,
+			"output_item": 351,
+			"output_damage": 2,
+			"output_count": 1
+		},
+		"log_oak": {
+			"input_item": 17,
+			"input_damage": -1,
+			"output_item": 263,
+			"output_damage": 1,
+			"output_count": 1
+		},
+		"log_oak_2": {
+			"input_item": 162,
+			"input_damage": -1,
+			"output_item": 263,
+			"output_damage": 1,
+			"output_count": 1
+		},
+		"oreemerald": {
+			"input_item": 129,
+			"input_damage": -1,
+			"output_item": 388,
+			"output_damage": 0,
+			"output_count": 1
+		},
+		"potato": {
+			"input_item": 392,
+			"input_damage": -1,
+			"output_item": 393,
+			"output_damage": 0,
+			"output_count": 1
+		},
+		"hellrock": {
+			"input_item": 87,
+			"input_damage": -1,
+			"output_item": 405,
+			"output_damage": 0,
+			"output_count": 1
+		},
+		"sponge_wet": {
+			"input_item": 19,
+			"input_damage": 1,
+			"output_item": 19,
+			"output_damage": 0,
+			"output_count": 1
+		},
+		"chorusfruit": {
+			"input_item": 432,
+			"input_damage": -1,
+			"output_item": 433,
+			"output_damage": 0,
+			"output_count": 1
+		},
+		"fish_cod_raw": {
+			"input_item": 349,
+			"input_damage": 0,
+			"output_item": 350,
+			"output_damage": 0,
+			"output_count": 1
+		},
+		"fish_salmon_raw": {
+			"input_item": 349,
+			"input_damage": 1,
+			"output_item": 350,
+			"output_damage": 1,
+			"output_count": 1
+		},
+		"orecoal": {
+			"input_item": 16,
+			"input_damage": -1,
+			"output_item": 263,
+			"output_damage": 0,
+			"output_count": 1
+		},
+		"oreredstone": {
+			"input_item": 73,
+			"input_damage": -1,
+			"output_item": 331,
+			"output_damage": 0,
+			"output_count": 1
+		},
+		"orelapis": {
+			"input_item": 21,
+			"input_damage": -1,
+			"output_item": 351,
+			"output_damage": 4,
+			"output_count": 1
+		},
+		"netherquartz": {
+			"input_item": 153,
+			"input_damage": -1,
+			"output_item": 406,
+			"output_damage": 0,
+			"output_count": 1
+		}
+	}
+}

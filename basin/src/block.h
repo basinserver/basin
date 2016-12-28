@@ -8,42 +8,49 @@
 #ifndef BLOCK_H_
 #define BLOCK_H_
 
-#define MAT_AIR 0
-#define MAT_GRASS 1
-#define MAT_GROUND 2
-#define MAT_WOOD 3
-#define MAT_ROCK 4
-#define MAT_IRON 5
-#define MAT_ANVIL 6
-#define MAT_WATER 7
-#define MAT_LAVA 8
-#define MAT_LEAVES 9
-#define MAT_PLANTS 10
-#define MAT_VINE 11
-#define MAT_SPONGE 12
-#define MAT_CLOTH 13
-#define MAT_FIRE 14
-#define MAT_SAND 15
-#define MAT_CIRCUITS 16
-#define MAT_CARPET 17
-#define MAT_GLASS 18
-#define MAT_REDSTONE_LIGHT 19
-#define MAT_TNT 20
-#define MAT_CORAL 21
-#define MAT_ICE 22
-#define MAT_PACKED_ICE 23
-#define MAT_SNOW 24
-#define MAT_CRAFTED_SNOW 25
-#define MAT_CACTUS 26
-#define MAT_CLAY 27
-#define MAT_GOURD 28
-#define MAT_DRAGON_EGG 29
-#define MAT_PORTAL 30
-#define MAT_CAKE 31
-#define MAT_WEB 32
-#define MAT_PISTON 33
-#define MAT_BARRIER 34
-#define MAT_STRUCTURE_VOID 35
+#include "world.h"
+#include "player.h"
+
+#define MAT_AIR 1
+#define MAT_GRASS 2
+#define MAT_GROUND 3
+#define MAT_WOOD 4
+#define MAT_ROCK 5
+#define MAT_IRON 6
+#define MAT_ANVIL 7
+#define MAT_WATER 8
+#define MAT_LAVA 9
+#define MAT_LEAVES 10
+#define MAT_PLANTS 11
+#define MAT_VINE 12
+#define MAT_SPONGE 13
+#define MAT_CLOTH 14
+#define MAT_FIRE 15
+#define MAT_SAND 16
+#define MAT_CIRCUITS 17
+#define MAT_CARPET 18
+#define MAT_GLASS 19
+#define MAT_REDSTONE_LIGHT 20
+#define MAT_TNT 21
+#define MAT_CORAL 22
+#define MAT_ICE 23
+#define MAT_PACKED_ICE 24
+#define MAT_SNOW 25
+#define MAT_CRAFTED_SNOW 26
+#define MAT_CACTUS 27
+#define MAT_CLAY 28
+#define MAT_GOURD 29
+#define MAT_DRAGON_EGG 30
+#define MAT_PORTAL 31
+#define MAT_CAKE 32
+#define MAT_WEB 33
+#define MAT_PISTON 34
+#define MAT_BARRIER 35
+#define MAT_STRUCTURE_VOID 36
+
+struct block_info* getBlockInfo(block b);
+
+int16_t getItemFromName(const char* name);
 
 #define BLK_AIR 0
 #define BLK_STONE 16
@@ -1493,8 +1500,19 @@ struct block_info {
 };
 
 struct block_material block_materials[MATERIAL_LIMIT];
-struct block_info block_infos[BLOCK_LIMIT];
 
 void init_blocks();
+
+void onBlockInteract_workbench(struct world* world, block blk, int32_t x, int32_t y, int32_t z, struct player* player, uint8_t face, float curPosX, float curPosY, float curPosZ);
+
+void onBlockInteract_chest(struct world* world, block blk, int32_t x, int32_t y, int32_t z, struct player* player, uint8_t face, float curPosX, float curPosY, float curPosZ);
+
+void onBlockInteract_furnace(struct world* world, block blk, int32_t x, int32_t y, int32_t z, struct player* player, uint8_t face, float curPosX, float curPosY, float curPosZ);
+
+void update_furnace(struct world* world, struct tile_entity* te);
+
+void onBlockDestroyed_chest(struct world* world, block blk, int32_t x, int32_t y, int32_t z);
+
+void onBlockDestroyed_furnace(struct world* world, block blk, int32_t x, int32_t y, int32_t z);
 
 #endif /* BLOCK_H_ */

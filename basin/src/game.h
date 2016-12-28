@@ -27,7 +27,7 @@ void loadPlayer(struct player* to, struct player* from);
 
 void loadEntity(struct player* to, struct entity* from);
 
-void onInventoryUpdate(struct inventory* inventory, int slot);
+void onInventoryUpdate(struct player* player, struct inventory* inv, int slot);
 
 void tick_world(struct world* world);
 

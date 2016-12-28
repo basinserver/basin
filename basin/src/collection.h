@@ -16,7 +16,6 @@ struct collection {
 		size_t size;
 		size_t count;
 		size_t capacity;
-		size_t rc;
 		void** data;
 		int8_t mc;
 		pthread_rwlock_t data_mutex;
@@ -31,5 +30,7 @@ int add_collection(struct collection* coll, void* data);
 int rem_collection(struct collection* coll, void* data);
 
 int contains_collection(struct collection* coll, void* data);
+
+void ensure_collection(struct collection* coll, size_t size);
 
 #endif /* COLLECTION_H_ */

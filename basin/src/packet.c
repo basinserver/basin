@@ -543,6 +543,7 @@ ssize_t writePacket(struct conn* conn, struct packet* packet) {
 	if (conn->state == STATE_HANDSHAKE) {
 
 	} else if (conn->state == STATE_PLAY) {
+		//printf("write %i\n", id);
 		if (id == PKT_PLAY_CLIENT_SPAWNOBJECT) {
 			//entity_id
 			ENS(4)
@@ -806,11 +807,11 @@ ssize_t writePacket(struct conn* conn, struct packet* packet) {
 			pi += 8;
 			//action_id_byte_1
 			ENS(1)
-			memcpy(pktbuf + pi, &packet->data.play_client.blockaction.action_id_byte_1, 1);
+			memcpy(pktbuf + pi, &packet->data.play_client.blockaction.action_id, 1);
 			pi += 1;
 			//action_param_byte_2
 			ENS(1)
-			memcpy(pktbuf + pi, &packet->data.play_client.blockaction.action_param_byte_2, 1);
+			memcpy(pktbuf + pi, &packet->data.play_client.blockaction.action_param, 1);
 			pi += 1;
 			//block_type
 			ENS(4)

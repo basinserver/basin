@@ -5,29 +5,84 @@
  *      Author: root
  */
 
+#include "network.h"
 #include "inventory.h"
 #include "globals.h"
 #include "item.h"
-#include "network.h"
 #include <string.h>
 #include <math.h>
 #include "util.h"
 #include "game.h"
 #include "queue.h"
+#include "player.h"
+#include "smelting.h"
 
 void newInventory(struct inventory* inv, int type, int id, int slots) {
 	inv->title = NULL;
-	inv->slots = NULL;
 	inv->slot_count = slots;
+	inv->slots = xcalloc(sizeof(struct slot*) * inv->slot_count);
 	inv->props = NULL;
 	inv->prop_count = 0;
 	inv->type = type;
 	inv->windowID = id;
 	inv->players = new_collection(0, 0);
-	inv->slots = xcalloc(sizeof(struct slot*) * inv->slot_count);
-	inv->inHand = NULL;
 	inv->dragSlot = xcalloc(2 * inv->slot_count);
 	inv->dragSlot_count = 0;
+	inv->te = NULL;
+}
+
+void setSlot(struct player* player, struct inventory* inv, int index, struct slot* slot, int broadcast, int free) {
+	if (inv == NULL) return;
+	if (inv->type != INVTYPE_PLAYERINVENTORY && player != NULL && index >= inv->slot_count) {
+		index -= inv->slot_count;
+		index += 9;
+		inv = player->inventory;
+	}
+	if (index >= inv->slot_count || index < 0) return;
+	if (inv->slots[index] != slot && inv->slots[index] != NULL && free) {
+		freeSlot(inv->slots[index]);
+		xfree(inv->slots[index]);
+	}
+	if (slot == NULL || slot->item == -1) inv->slots[index] = NULL;
+	else if (slot == inv->slots[index]) ;
+	else {
+		inv->slots[index] = xmalloc(sizeof(struct slot));
+		duplicateSlot(slot, inv->slots[index]);
+	}
+	onInventoryUpdate(player, inv, index);
+	if (broadcast) {
+		BEGIN_BROADCAST(inv->players)
+		struct packet* pkt = xmalloc(sizeof(struct packet));
+		pkt->id = PKT_PLAY_CLIENT_SETSLOT;
+		pkt->data.play_client.setslot.window_id = inv->windowID;
+		pkt->data.play_client.setslot.slot = index;
+		duplicateSlot(inv->slots[index], &pkt->data.play_client.setslot.slot_data);
+		add_queue(bc_player->outgoingPacket, pkt);
+		flush_outgoing (bc_player);
+		END_BROADCAST
+	} else {
+		BEGIN_BROADCAST_EXCEPT(inv->players, player)
+		struct packet* pkt = xmalloc(sizeof(struct packet));
+		pkt->id = PKT_PLAY_CLIENT_SETSLOT;
+		pkt->data.play_client.setslot.window_id = inv->windowID;
+		pkt->data.play_client.setslot.slot = index;
+		duplicateSlot(inv->slots[index], &pkt->data.play_client.setslot.slot_data);
+		add_queue(bc_player->outgoingPacket, pkt);
+		flush_outgoing (bc_player);
+		END_BROADCAST
+	}
+	printf("set %i = %i broadcast=%i pc=%i\n", index, slot == NULL ? -1 : slot->item, broadcast, inv->players->count);
+}
+
+struct slot* getSlot(struct player* player, struct inventory* inv, int index) {
+	if (inv == NULL) return NULL;
+	if (inv->type != INVTYPE_PLAYERINVENTORY && player != NULL && index >= inv->slot_count) {
+		index -= inv->slot_count;
+		index += 9;
+		inv = player->inventory;
+	}
+	if (index >= inv->slot_count || index < 0) return NULL;
+	return inv->slots[index];
 }
 
 void copyInventory(struct slot** from, struct slot** to, int size) {
@@ -65,10 +120,7 @@ void freeInventory(struct inventory* inv) {
 		xfree(inv->props);
 	}
 	del_collection(inv->players);
-	if (inv->inHand != NULL) {
-		freeSlot(inv->inHand);
-		xfree(inv->inHand);
-	}
+
 	_freeInventorySlots(inv);
 	xfree(inv->dragSlot);
 }
@@ -80,14 +132,18 @@ void freeSlot(struct slot* slot) {
 	}
 }
 
-int validItemForSlot(int invtype, int si, struct slot* slot) { // TODO
+int validItemForSlot(int invtype, int si, struct slot* slot) {
 	if (invtype == INVTYPE_PLAYERINVENTORY) {
 		if (si == 0) return 0;
-		if (si >= 5 && si <= 8) {
-			return slot->item >= ITM_HELMETCLOTH && slot->item <= ITM_BOOTSGOLD;
-		} else if (si == 45) {
-			return slot->item == ITM_SHIELD;
-		}
+		if (si == 5) return getItemInfo(slot->item)->armorType == ARMOR_HELMET;
+		else if (si == 6) return getItemInfo(slot->item)->armorType == ARMOR_CHESTPLATE;
+		else if (si == 7) return getItemInfo(slot->item)->armorType == ARMOR_LEGGINGS;
+		else if (si == 8) return getItemInfo(slot->item)->armorType == ARMOR_BOOTS;
+	} else if (invtype == INVTYPE_WORKBENCH) {
+		if (si == 0) return 0;
+	} else if (invtype == INVTYPE_FURNACE) {
+		if (si == 2) return 0;
+		else if (si == 1) return getSmeltingFuelBurnTime(slot) > 0;
 	}
 	return 1;
 }
@@ -100,103 +156,51 @@ int itemsStackable2(struct slot* s1, struct slot* s2) {
 	return s1 != NULL && s2 != NULL && s1->item != -1 && s2->item != -1 && s1->item == s2->item && (s1->damage == s2->damage || s1->damage == -1 || s2->damage == -1) && (s1->nbt == NULL || s1->nbt->id == 0) && (s2->nbt == NULL || s2->nbt->id == 0);
 }
 
-void broadcast_setslot(struct inventory* inv, int index) {
-	BEGIN_BROADCAST(inv->players)
-	struct packet* pkt = xmalloc(sizeof(struct packet));
-	pkt->id = PKT_PLAY_CLIENT_SETSLOT;
-	pkt->data.play_client.setslot.window_id = inv->windowID;
-	pkt->data.play_client.setslot.slot = index;
-	duplicateSlot(inv->slots[index], &pkt->data.play_client.setslot.slot_data);
-	add_queue(bc_player->outgoingPacket, pkt);
-	flush_outgoing (bc_player);
-	END_BROADCAST
-}
-
-void swapSlots(struct inventory* inv, int i1, int i2) {
-	struct slot* s1 = inv->slots[i1];
-	inv->slots[i1] = inv->slots[i2];
-	inv->slots[i2] = s1;
-	onInventoryUpdate(inv, i1);
-	onInventoryUpdate(inv, i2);
+void swapSlots(struct player* player, struct inventory* inv, int i1, int i2, int broadcast) {
+	struct slot* s1 = getSlot(player, inv, i1);
+	struct slot* s2 = getSlot(player, inv, i2);
+	if (!validItemForSlot(inv->type, i2, s1) || !validItemForSlot(inv->type, i1, s2)) return;
+	setSlot(player, inv, i1, s2, broadcast, 0);
+	setSlot(player, inv, i2, s1, broadcast, 0);
 }
 
 int maxStackSize(struct slot* slot) {
-	if ((slot->item >= ITM_SHOVELIRON && slot->item <= ITM_FLINTANDSTEEL) || slot->item == ITM_BOW || (slot->item >= ITM_SWORDIRON && slot->item <= ITM_HATCHETDIAMOND) || (slot->item >= ITM_MUSHROOMSTEW && slot->item <= ITM_HATCHETGOLD) || (slot->item >= ITM_HOEWOOD && slot->item <= ITM_HOEGOLD) || (slot->item >= ITM_HELMETCLOTH && slot->item <= ITM_BOOTSGOLD) || (slot->item >= ITM_BUCKETWATER && slot->item <= ITM_SADDLE) || slot->item == ITM_BOAT_OAK || slot->item == ITM_MILK || slot->item == ITM_MINECARTCHEST || slot->item == ITM_MINECARTFURNACE || slot->item == ITM_FISHINGROD || slot->item == ITM_CAKE || slot->item == ITM_BED || slot->item == ITM_SHEARS || slot->item == ITM_POTION || slot->item == ITM_WRITINGBOOK || slot->item == ITM_CARROTONASTICK || slot->item == ITM_ENCHANTEDBOOK || slot->item == ITM_MINECARTTNT || slot->item == ITM_MINECARTHOPPER || slot->item == ITM_RABBITSTEW || slot->item == ITM_HORSEARMORMETAL || slot->item == ITM_HORSEARMORGOLD
-			|| slot->item == ITM_HORSEARMORDIAMOND || slot->item == ITM_MINECARTCOMMANDBLOCK || slot->item == ITM_BEETROOT_SOUP || slot->item == ITM_SPLASH_POTION || slot->item == ITM_LINGERING_POTION || slot->item >= ITM_SHIELD) return 1;
-	if (slot->item == ITM_SIGN || slot->item == ITM_BUCKET || slot->item == ITM_SNOWBALL || slot->item == ITM_EGG || slot->item == ITM_ENDERPEARL || slot->item == ITM_WRITTENBOOK || slot->item == ITM_ARMORSTAND || slot->item == ITM_TOTEM) return 16;
-	return 64;
+	return getItemInfo(slot->item)->maxStackSize;
 }
 
-void setInventoryItems(struct inventory* inv, struct slot** slots, size_t slot_count) {
-	_freeInventorySlots(inv);
-	for (size_t i = 0; i < slot_count; i++) {
-		if (slots[i]->item < 0) {
-			if (slots[i]->nbt != NULL) freeNBT(slots[i]->nbt);
-			xfree(slots[i]->nbt);
-			xfree(slots[i]);
-			slots[i] = NULL;
-		}
-	}
-	inv->slots = slots;
-	inv->slot_count = slot_count;
-}
-
-void setInventorySlot(struct inventory* inv, struct slot* slot, int index) {
-	if (index < 0 || index >= inv->slot_count) return;
-	if (inv->slots[index] != NULL && inv->slots[index] != slot) {
-		if (inv->slots[index]->nbt != NULL) {
-			freeNBT(inv->slots[index]->nbt);
-			xfree(inv->slots[index]->nbt);
-		}
-		xfree(inv->slots[index]);
-	}
-	if (slot != NULL && slot->item == -1) slot = NULL;
-	if (slot == NULL) inv->slots[index] = NULL;
-	else {
-		inv->slots[index] = xmalloc(sizeof(struct slot));
-		duplicateSlot(slot, inv->slots[index]);
-	}
-	broadcast_setslot(inv, index);
-	onInventoryUpdate(inv, index);
-}
-
-int addInventoryItem_PI(struct inventory* inv, struct slot* slot) {
-	int r = addInventoryItem(inv, slot, 36, 45);
-	if (r > 0) r = addInventoryItem(inv, slot, 9, 36);
+int addInventoryItem_PI(struct player* player, struct inventory* inv, struct slot* slot, int broadcast) {
+	int r = addInventoryItem(player, inv, slot, 36, 45, broadcast);
+	if (r > 0) r = addInventoryItem(player, inv, slot, 9, 36, broadcast);
 	return r;
 }
 
-int addInventoryItem(struct inventory* inv, struct slot* slot, int start, int end) {
-	if (start < 0 || end < 0 || start > inv->slot_count || end > inv->slot_count || slot == NULL) return -1;
+int addInventoryItem(struct player* player, struct inventory* inv, struct slot* slot, int start, int end, int broadcast) {
+	size_t cap = inv->slot_count;
+	if (inv->type != INVTYPE_PLAYERINVENTORY && player != NULL) cap += 36;
+	if (start < 0 || end < 0 || start > cap || end > cap || slot == NULL) return -1;
 	int mss = maxStackSize(slot);
 	if (mss > 1) for (size_t i = start; start < end ? (i < end) : (i > end); start < end ? i++ : i--) {
-		if (itemsStackable(inv->slots[i], slot) && inv->slots[i]->itemCount < mss) {
-			int t = (inv->slots[i]->itemCount + slot->itemCount);
-			inv->slots[i]->itemCount = t <= mss ? t : mss;
-			int s = t - inv->slots[i]->itemCount;
-			broadcast_setslot(inv, i);
+		struct slot* invi = getSlot(player, inv, i);
+		if (itemsStackable(invi, slot) && invi->itemCount < mss) {
+			int t = (invi->itemCount + slot->itemCount);
+			invi->itemCount = t <= mss ? t : mss;
+			int s = t - invi->itemCount;
 			if (s <= 0) {
 				slot = NULL;
-				return 0;
 			} else slot->itemCount -= s;
-			onInventoryUpdate(inv, i);
+			setSlot(player, inv, i, invi, broadcast, 1);
 		}
 	}
 	for (size_t i = start; start < end ? (i < end) : (i > end); start < end ? i++ : i--) {
-		if (inv->slots[i] == NULL) {
-			inv->slots[i] = xmalloc(sizeof(struct slot));
-			duplicateSlot(slot, inv->slots[i]);
-			broadcast_setslot(inv, i);
-			onInventoryUpdate(inv, i);
+		struct slot* invi = getSlot(player, inv, i);
+		if (invi == NULL) {
+			invi = xmalloc(sizeof(struct slot));
+			duplicateSlot(slot, invi);
+			setSlot(player, inv, i, invi, broadcast, 1);
 			return 0;
 		}
 	}
 	return slot == NULL ? 0 : slot->itemCount;
-}
-
-struct slot* getInventorySlot(struct inventory* inv, int index) {
-	if (inv->slots == NULL) return NULL;
-	return inv->slots[index];
 }
 
 void setInventoryProperty(struct inventory* inv, int16_t name, int16_t value) {

@@ -5,8 +5,8 @@
  *      Author: root
  */
 
-#ifndef CRAFT_H_
-#define CRAFT_H_
+#ifndef CRAFTING_H_
+#define CRAFTING_H_
 
 #include "collection.h"
 #include "network.h"
@@ -20,6 +20,8 @@ struct crafting_recipe {
 		uint8_t width;
 };
 
-void load_crafting_recipies();
+void init_crafting();
 
-#endif /* CRAFT_H_ */
+void add_crafting(struct crafting_recipe* recipe);
+
+#endif /* CRAFTING_H_ */

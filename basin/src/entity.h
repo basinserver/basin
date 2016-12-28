@@ -11,7 +11,6 @@
 #include <stdint.h>
 #include "world.h"
 #include <stdlib.h>
-#include "player.h"
 
 #define ENT_UNDEFINED 1
 #define ENT_PLAYER 2

@@ -64,7 +64,7 @@ void* xcopy(const void* ptr, size_t size, size_t expand) {
 }
 
 char* xstrdup(const char* str, size_t expand) {
-	return xcopy(str, strlen(str) + 1, expand);
+	return str == NULL ? NULL : xcopy(str, strlen(str) + 1, expand);
 }
 
 int recur_mkdir(const char* path, mode_t mode) {

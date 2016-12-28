@@ -347,14 +347,14 @@ int __recurWriteNBT(struct nbt_tag* root, unsigned char* buffer, size_t buflen, 
 		buffer++;
 		buflen--;
 		if (root->id > 0) {
-			int16_t sl = strlen(root->name);
+			int16_t sl = root->name == NULL ? 0 : strlen(root->name);
 			memcpy(buffer, &sl, 2);
 			swapEndian(buffer, 2);
 			r += 2;
 			buffer += 2;
 			buflen -= 2;
 			if (buflen < sl) return 0;
-			memcpy(buffer, root->name, sl);
+			if (root->name != NULL) memcpy(buffer, root->name, sl);
 			r += sl;
 			buffer += sl;
 			buflen -= sl;
@@ -428,8 +428,8 @@ int __recurWriteNBT(struct nbt_tag* root, unsigned char* buffer, size_t buflen, 
 	} else if (root->id == NBT_TAG_LIST) {
 		if (buflen < 5) return 0;
 		buffer[0] = root->data.nbt_list.type;
-		memcpy(buffer, &root->data.nbt_list.count, 4);
-		swapEndian(buffer, 4);
+		memcpy(buffer + 1, &root->data.nbt_list.count, 4);
+		swapEndian(buffer + 1, 4);
 		r += 5;
 		buffer += 5;
 		buflen -= 5;

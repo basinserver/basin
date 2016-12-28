@@ -2,6 +2,7 @@
 #define PACKET_H_
 
 #include "network.h"
+#include "inventory.h"
 #include "accept.h"
 #include <stdlib.h>
 #include <stdint.h>
@@ -138,8 +139,8 @@ struct pkt_play_client_updateblockentity {
 
 struct pkt_play_client_blockaction {
 		struct encpos location;
-		uint8_t action_id_byte_1;
-		uint8_t action_param_byte_2;
+		uint8_t action_id;
+		uint8_t action_param;
 		int32_t block_type;
 };
 

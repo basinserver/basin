@@ -14,6 +14,7 @@
 #include "collection.h"
 #include "player.h"
 #include <pthread.h>
+#include "tileentity.h"
 
 uint32_t nextEntityID;
 
@@ -50,8 +51,8 @@ struct chunk {
 		int terrainpopulated;
 		uint64_t inhabitedticks;
 		uint16_t heightMap[16][16]; // z, x
-		size_t tileEntity_count;
-		struct nbt_tag** tileEntities;
+		struct collection* tileEntities;
+		struct collection* tileEntitiesTickable;
 		uint32_t playersLoaded;
 		//TODO: tileTicks
 };
@@ -70,6 +71,7 @@ struct world {
 		struct collection* entities;
 		struct collection* players;
 		struct collection* regions;
+		struct collection* loadedChunks;
 		char* levelType;
 		struct encpos spawnpos;
 		int32_t dimension;
@@ -107,6 +109,18 @@ void freeRegion(struct region* region);
 void setBlockChunk(struct chunk* chunk, block blk, uint8_t x, uint8_t y, uint8_t z);
 
 void setBlockWorld(struct world* world, block blk, int32_t x, int32_t y, int32_t z);
+
+struct tile_entity* getTileEntityChunk(struct chunk* chunk, int32_t x, uint8_t y, int32_t z);
+
+void setTileEntityChunk(struct chunk* chunk, struct tile_entity* te);
+
+struct tile_entity* getTileEntityWorld(struct world* world, int32_t x, uint8_t y, int32_t z);
+
+void setTileEntityWorld(struct world* world, int32_t x, uint8_t y, int32_t z, struct tile_entity* te);
+
+void enableTileEntityTickable(struct world* world, struct tile_entity* te);
+
+void disableTileEntityTickable(struct world* world, struct tile_entity* te);
 
 struct world* newWorld();
 

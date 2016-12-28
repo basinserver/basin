@@ -53,9 +53,8 @@ void closeConn(struct work_param* param, struct conn* conn) {
 				flush_outgoing(plx);
 			}
 		}
-		despawnPlayer(conn->player->world, conn->player);
-		freeEntity(conn->player->entity);
-		freePlayer(conn->player);
+		conn->player->defunct = 1;
+		conn->player->conn = NULL;
 	}
 	if (conn->host_ip != NULL) xfree(conn->host_ip);
 	if (conn->readBuffer != NULL) xfree(conn->readBuffer);
@@ -93,7 +92,7 @@ int handleRead(struct conn* conn, struct work_param* param, int fd) {
 				rep.id = PKT_STATUS_CLIENT_RESPONSE;
 				rep.data.status_client.response.json_response = xmalloc(1000);
 				rep.data.status_client.response.json_response[999] = 0;
-				snprintf(rep.data.status_client.response.json_response, 999, "{\"version\":{\"name\":\"1.11\",\"protocol\":%i},\"players\":{\"max\":%i,\"online\":%i},\"description\":{\"text\":\"%s\"}}", MC_PROTOCOL_VERSION, max_players, 0, motd);
+				snprintf(rep.data.status_client.response.json_response, 999, "{\"version\":{\"name\":\"1.11.2\",\"protocol\":%i},\"players\":{\"max\":%i,\"online\":%i},\"description\":{\"text\":\"%s\"}}", MC_PROTOCOL_VERSION, max_players, players->count, motd);
 				if (writePacket(conn, &rep) < 0) goto rete;
 				xfree(rep.data.status_client.response.json_response);
 			} else if (inp->id == PKT_STATUS_SERVER_PING) {
@@ -126,7 +125,7 @@ int handleRead(struct conn* conn, struct work_param* param, int fd) {
 					xfree(rep.data.login_client.loginsuccess.uuid);
 					conn->state = STATE_PLAY;
 					struct entity* ep = newEntity(nextEntityID++, (float) overworld->spawnpos.x + .5, (float) overworld->spawnpos.y, (float) overworld->spawnpos.z + .5, ENT_PLAYER, 0., 0.);
-					struct player* player = newPlayer(ep, xstrdup(rep.data.login_client.loginsuccess.username, 1), uuid, conn, 0); // TODO default gamemode
+					struct player* player = newPlayer(ep, xstrdup(rep.data.login_client.loginsuccess.username, 1), uuid, conn, 1); // TODO default gamemode
 					conn->player = player;
 					add_collection(players, player);
 					rep.id = PKT_PLAY_CLIENT_JOINGAME;
@@ -153,7 +152,7 @@ int handleRead(struct conn* conn, struct work_param* param, int fd) {
 					memcpy(&rep.data.play_client.spawnposition.location, &overworld->spawnpos, sizeof(struct encpos));
 					if (writePacket(conn, &rep) < 0) goto rete;
 					rep.id = PKT_PLAY_CLIENT_PLAYERABILITIES;
-					rep.data.play_client.playerabilities.flags = 0x4; // TODO: allows flying, remove
+					rep.data.play_client.playerabilities.flags = 0x4 | 0x8; // TODO: allows flying, remove
 					rep.data.play_client.playerabilities.flying_speed = 0.05;
 					rep.data.play_client.playerabilities.field_of_view_modifier = .1;
 					if (writePacket(conn, &rep) < 0) goto rete;

@@ -34,7 +34,7 @@
 #include "server.h"
 #include "game.h"
 #include "block.h"
-#include "craft.h"
+#include "crafting.h"
 
 void main_tick() {
 	for (size_t i = 0; i < worlds->size; i++) {
@@ -122,7 +122,9 @@ int main(int argc, char* argv[]) {
 	}
 	players = new_collection(0, 1);
 	init_blocks();
-	load_crafting_recipies();
+	init_crafting();
+	init_items();
+	init_smelting();
 	for (int i = 0; i < servsl; i++) {
 		struct cnode* serv = servs[i];
 		const char* bind_mode = getConfigValue(serv, "bind-mode");

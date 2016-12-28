@@ -27,6 +27,8 @@
 #include "block.h"
 #include <math.h>
 #include "queue.h"
+#include "tileentity.h"
+#include "xstring.h"
 
 int __boundingbox_intersects(struct boundingbox* bb1, struct boundingbox* bb2, int inv) {
 	return (((bb1->minX >= bb2->minX && bb1->minX <= bb2->maxX) || (bb1->maxX >= bb2->minX && bb1->maxX <= bb2->maxX)) && ((bb1->minY >= bb2->minY && bb1->minY <= bb2->maxY) || (bb1->maxY >= bb2->minY && bb1->maxY <= bb2->maxY)) && ((bb1->minZ >= bb2->minZ && bb1->minZ <= bb2->maxZ) || (bb1->maxZ >= bb2->minZ && bb1->maxZ <= bb2->maxZ))) || (inv ? 0 : __boundingbox_intersects(bb2, bb1, 1)); // the second intersects handles if bb2 is contained within bb1
@@ -111,12 +113,21 @@ struct chunk* loadRegionChunk(struct region* region, int8_t lchx, int8_t lchz) {
 	if (tmp == NULL || tmp->id != NBT_TAG_LONG) goto rerx;
 	rch->inhabitedticks = tmp->data.nbt_long;
 	tmp = getNBTChild(level, "Biomes");
-	if (tmp != NULL && tmp->id != NBT_TAG_BYTEARRAY) goto rerx;
+	if (tmp == NULL || tmp->id != NBT_TAG_BYTEARRAY) goto rerx;
 	if (tmp->data.nbt_bytearray.len == 256) memcpy(rch->biomes, tmp->data.nbt_bytearray.data, 256);
 	tmp = getNBTChild(level, "HeightMap");
-	if (tmp != NULL && tmp->id != NBT_TAG_INTARRAY) goto rerx;
+	if (tmp == NULL || tmp->id != NBT_TAG_INTARRAY) goto rerx;
 	if (tmp->data.nbt_intarray.count == 256) for (int i = 0; i < 256; i++)
 		rch->heightMap[i >> 4][i & 0x0F] = (uint16_t) tmp->data.nbt_intarray.ints[i];
+	struct nbt_tag* tes = getNBTChild(level, "TileEntities");
+	if (tes == NULL || tes->id != NBT_TAG_LIST) goto rerx;
+	for (size_t i = 0; i < tes->children_count; i++) {
+		struct nbt_tag* ten = tes->children[i];
+		if (ten == NULL || ten->id != NBT_TAG_COMPOUND) continue;
+		struct tile_entity* te = parseTileEntity(ten);
+		add_collection(rch->tileEntities, te);
+	}
+	//TODO: tileticks
 	struct nbt_tag* sections = getNBTChild(level, "Sections");
 	for (size_t i = 0; i < sections->children_count; i++) {
 		struct nbt_tag* section = sections->children[i];
@@ -259,6 +270,7 @@ struct chunk* getChunk(struct world* world, int16_t x, int16_t z) {
 				chk = r->chunks[z & 0x1F][x & 0x1F];
 			} else {
 				chk = loadRegionChunk(r, x & 0x1F, z & 0x1F);
+				add_collection(world->loadedChunks, chk);
 			}
 			if (chk == NULL) goto gen;
 			pthread_rwlock_unlock(&world->regions->data_mutex);
@@ -301,6 +313,7 @@ void unloadChunk(struct world* world, struct chunk* chunk) {
 	pthread_rwlock_wrlock(&world->chl);
 	int16_t rx = chunk->x >> 5;
 	int16_t rz = chunk->z >> 5;
+	rem_collection(world->loadedChunks, chunk);
 	pthread_rwlock_rdlock(&world->regions->data_mutex);
 	for (size_t i = 0; i < world->regions->size; i++) {
 		if (world->regions->data[i] != NULL && ((struct region*) world->regions->data[i])->x == rx && ((struct region*) world->regions->data[i])->z == rz) {
@@ -342,6 +355,66 @@ block getBlockWorld(struct world* world, int32_t x, uint8_t y, int32_t z) {
 	return getBlockChunk(chunk, x & 0x0f, y, z & 0x0f);
 }
 
+struct tile_entity* getTileEntityChunk(struct chunk* chunk, int32_t x, uint8_t y, int32_t z) { // TODO: optimize
+	if (y > 255 || y < 0) return NULL;
+	for (size_t i = 0; i < chunk->tileEntities->size; i++) {
+		struct tile_entity* te = (struct tile_entity*) chunk->tileEntities->data[i];
+		if (te == NULL) continue;
+		if (te->x == x && te->y == y && te->z == z) return te;
+	}
+	return NULL;
+}
+
+void setTileEntityChunk(struct chunk* chunk, struct tile_entity* te) { // TODO: optimize
+	if (te == NULL) return;
+	int32_t x = te->x;
+	uint8_t y = te->y;
+	int32_t z = te->z;
+	if (y > 255 || y < 0) return;
+	for (size_t i = 0; i < chunk->tileEntities->size; i++) {
+		struct tile_entity* te2 = (struct tile_entity*) chunk->tileEntities->data[i];
+		if (te2 == NULL) continue;
+		if (te2->x == x && te2->y == y && te2->z == z) {
+			if (te2->tick) rem_collection(chunk->tileEntitiesTickable, te2);
+			freeTileEntity(te2);
+			chunk->tileEntities->data[i] = te;
+			if (te == NULL) {
+				chunk->tileEntities->count--;
+				if (i == chunk->tileEntities->size - 1) chunk->tileEntities->size--;
+			} else if (te->tick) add_collection(chunk->tileEntitiesTickable, te);
+			return;
+		}
+	}
+	add_collection(chunk->tileEntities, te);
+	if (te->tick) add_collection(chunk->tileEntitiesTickable, te);
+}
+
+void enableTileEntityTickable(struct world* world, struct tile_entity* te) {
+	if (te == NULL || te->y > 255 || te->y < 0) return;
+	struct chunk* chunk = getChunk(world, te->x >> 4, te->z >> 4);
+	if (chunk == NULL) return;
+	add_collection(chunk->tileEntitiesTickable, te);
+}
+
+void disableTileEntityTickable(struct world* world, struct tile_entity* te) {
+	if (te == NULL || te->y > 255 || te->y < 0) return;
+	struct chunk* chunk = getChunk(world, te->x >> 4, te->z >> 4);
+	if (chunk == NULL) return;
+	rem_collection(chunk->tileEntitiesTickable, te);
+}
+
+struct tile_entity* getTileEntityWorld(struct world* world, int32_t x, uint8_t y, int32_t z) {
+	struct chunk* chunk = getChunk(world, x >> 4, z >> 4);
+	if (chunk == NULL) return NULL;
+	return getTileEntityChunk(chunk, x, y, z);
+}
+
+void setTileEntityWorld(struct world* world, int32_t x, uint8_t y, int32_t z, struct tile_entity* te) {
+	struct chunk* chunk = getChunk(world, x >> 4, z >> 4);
+	if (chunk == NULL) return;
+	setTileEntityChunk(chunk, te);
+}
+
 struct chunk* newChunk(int16_t x, int16_t z) {
 	struct chunk* chunk = xmalloc(sizeof(struct chunk));
 	memset(chunk, 0, sizeof(struct chunk));
@@ -349,6 +422,8 @@ struct chunk* newChunk(int16_t x, int16_t z) {
 	chunk->z = z;
 	memset(chunk->sections, 0, sizeof(struct chunk_section*) * 16);
 	chunk->playersLoaded = 0;
+	chunk->tileEntities = new_collection(0, 0);
+	chunk->tileEntitiesTickable = new_collection(0, 0);
 	return chunk;
 }
 
@@ -360,15 +435,16 @@ void freeChunk(struct chunk* chunk) {
 		if (cs->palette != NULL) xfree(cs->palette);
 		if (cs->skyLight != NULL) xfree(cs->skyLight);
 	}
-	if (chunk->tileEntities != NULL) {
-		for (size_t i = 0; i < chunk->tileEntity_count; i++) {
-			freeNBT(chunk->tileEntities[i]);
-			xfree(chunk->tileEntities[i]);
+	for (size_t i = 0; i < chunk->tileEntities->size; i++) {
+		if (chunk->tileEntities->data[i] != NULL) {
+			freeTileEntity(chunk->tileEntities->data[i]);
 		}
-		xfree(chunk->tileEntities);
 	}
+	del_collection(chunk->tileEntities);
+	del_collection(chunk->tileEntitiesTickable);
 	xfree(chunk);
 }
+
 struct region* newRegion(char* path, int16_t x, int16_t z) {
 	struct region* reg = xmalloc(sizeof(struct region));
 	memset(reg, 0, sizeof(struct region));
@@ -460,7 +536,8 @@ void setBlockWorld(struct world* world, block blk, int32_t x, int32_t y, int32_t
 	add_queue(bc_player->outgoingPacket, pkt);
 	flush_outgoing (bc_player);
 	END_BROADCAST
-
+	struct block_info* bi = getBlockInfo(blk);
+	if (bi->onBlockDestroyed != NULL) (*bi->onBlockDestroyed)(world, blk, x, y, z);
 }
 
 struct world* newWorld() {
@@ -469,6 +546,7 @@ struct world* newWorld() {
 	world->regions = new_collection(0, 1);
 	world->entities = new_collection(0, 1);
 	world->players = new_collection(0, 1);
+	world->loadedChunks = new_collection(0, 1);
 	pthread_rwlock_init(&world->chl, NULL);
 	return world;
 }
@@ -584,6 +662,7 @@ void despawnPlayer(struct world* world, struct player* player) {
 		if (pl == NULL || pl == player->entity) continue;
 		rem_collection(pl->loadingPlayers, player);
 		player->loadedEntities->data[i] = NULL;
+		player->loadedEntities->count--;
 	}
 	rem_collection(world->players, player);
 }
@@ -604,6 +683,7 @@ void despawnEntity(struct world* world, struct entity* entity) {
 		if (pl == NULL) continue;
 		rem_collection(pl->loadedEntities, entity);
 		entity->loadingPlayers->data[i] = NULL;
+		entity->loadingPlayers->count--;
 	}
 }
 
@@ -640,12 +720,13 @@ void onBlockUpdate(struct world* world, int32_t x, int32_t y, int32_t z) {
 
 struct boundingbox getBlockCollision(struct world* world, int32_t x, int32_t y, int32_t z, struct entity* entity) {
 	block b = getBlockWorld(world, x, y, z); // TODO: unload if out of range
-	if (block_infos[b].getBlockCollision != NULL) {
-		return (*block_infos[b].getBlockCollision)(world, b, x, y, z, entity);
+	struct block_info* bi = getBlockInfo(b);
+	if (bi->getBlockCollision != NULL) {
+		return (*bi->getBlockCollision)(world, b, x, y, z, entity);
 	}
 //generic
 	struct boundingbox bb;
-	if (block_materials[block_infos[b].material].solid && !block_materials[block_infos[b].material].liquid && block_materials[block_infos[b].material].blocksMovement) {
+	if (block_materials[bi->material].solid && !block_materials[bi->material].liquid && block_materials[bi->material].blocksMovement) {
 		bb.minX = 0.;
 		bb.maxX = 1.;
 		bb.minY = 0.;

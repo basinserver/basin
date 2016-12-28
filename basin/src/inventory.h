@@ -10,6 +10,8 @@
 
 #include "nbt.h"
 #include <stdint.h>
+#include "tileentity.h"
+#include "item.h"
 
 #define INVTYPE_PLAYERINVENTORY 0
 #define INVTYPE_CHEST 1
@@ -48,16 +50,22 @@ struct inventory {
 		size_t prop_count;
 		int windowID;
 		struct collection* players;
-		struct slot* inHand;
 		uint16_t* dragSlot;
 		uint16_t dragSlot_count;
+		struct tile_entity* te;
 };
+
+struct player;
+
+void setSlot(struct player* player, struct inventory* inv, int index, struct slot* slot, int broadcast, int free);
+
+struct slot* getSlot(struct player* player, struct inventory* inv, int index);
 
 int maxStackSize(struct slot* slot);
 
 void copyInventory(struct slot** from, struct slot** to, int size);
 
-void swapSlots(struct inventory* inv, int i1, int i2);
+void swapSlots(struct player* player, struct inventory* inv, int i1, int i2, int broadcast);
 
 int itemsStackable(struct slot* s1, struct slot* s2);
 
@@ -69,15 +77,9 @@ void freeInventory(struct inventory* inv);
 
 void freeSlot(struct slot* slot);
 
-void setInventoryItems(struct inventory* inv, struct slot** slots, size_t slot_count);
+int addInventoryItem_PI(struct player* player, struct inventory* inv, struct slot* slot, int broadcast);
 
-void setInventorySlot(struct inventory* inv, struct slot* slot, int index);
-
-int addInventoryItem_PI(struct inventory* inv, struct slot* slot);
-
-int addInventoryItem(struct inventory* inv, struct slot* slot, int start, int end);
-
-struct slot* getInventorySlot(struct inventory* inv, int index);
+int addInventoryItem(struct player* player, struct inventory* inv, struct slot* slot, int start, int end, int broadcast);
 
 void setInventoryProperty(struct inventory* inv, int16_t name, int16_t value);
 
