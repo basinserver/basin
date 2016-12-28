@@ -9,12 +9,12 @@ A Minecraft Server written in C.
 * Players, Chat, and Tab menu
 * Item Entities from Block Drops and Player Throwing
 * Entities
+* Chests, Furnaces, Crafting
 
 # Planned Features
 * Natural Mob Spawning & AI
 * Lua & C Plugin Systems
 * Comprehensive Permissions & Commands System
-* Chests, Furnaces, Crafting
 * Ultra-low Memory Mode - Sacrifice CPU Cycles for Further Memory Use Reduction
 * Entities-by-chunk Logic - Hold Millions of Entities in a World
 * Block Physics & Updates
