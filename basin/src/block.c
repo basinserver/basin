@@ -480,6 +480,9 @@ void init_blocks() {
 		tmp = getJSONValue(ur, "dropItem");
 		if (tmp == NULL || tmp->type != JSON_NUMBER) goto cerr;
 		bi->drop = (item) tmp->data.number;
+		tmp = getJSONValue(ur, "dropDamage");
+		if (tmp == NULL || tmp->type != JSON_NUMBER) goto cerr;
+		bi->drop_damage = (int16_t) tmp->data.number;
 		tmp = getJSONValue(ur, "dropAmountMin");
 		if (tmp == NULL || tmp->type != JSON_NUMBER) goto cerr;
 		bi->drop_min = (uint8_t) tmp->data.number;

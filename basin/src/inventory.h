@@ -59,6 +59,8 @@ struct player;
 
 void setSlot(struct player* player, struct inventory* inv, int index, struct slot* slot, int broadcast, int free);
 
+int validItemForSlot(int invtype, int si, struct slot* slot);
+
 struct slot* getSlot(struct player* player, struct inventory* inv, int index);
 
 int maxStackSize(struct slot* slot);

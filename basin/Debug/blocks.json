@@ -3,7 +3,8 @@
 		"id": 0,
 		"collision": {
 		},
-		"dropItem": -1,
+		"dropItem": 0,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.0,
@@ -23,6 +24,127 @@
 			}
 		},
 		"dropItem": 4,
+		"dropDamage": 0,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 1.5,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stone_granite": {
+		"id": 17,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 1,
+		"dropDamage": 1,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 1.5,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stone_granitesmooth": {
+		"id": 18,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 1,
+		"dropDamage": 2,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 1.5,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stone_diorite": {
+		"id": 19,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 1,
+		"dropDamage": 3,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 1.5,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stone_dioritesmooth": {
+		"id": 20,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 1,
+		"dropDamage": 4,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 1.5,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stone_andesite": {
+		"id": 21,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 1,
+		"dropDamage": 5,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 1.5,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stone_andesitesmooth": {
+		"id": 22,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 1,
+		"dropDamage": 6,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 1.5,
@@ -42,6 +164,7 @@
 			}
 		},
 		"dropItem": 3,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.6,
@@ -61,6 +184,27 @@
 			}
 		},
 		"dropItem": 3,
+		"dropDamage": 0,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.5,
+		"material": "ground",
+		"slipperiness": 0.6
+	},
+	"dirt_coarse": {
+		"id": 49,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 3,
+		"dropDamage": 1,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.5,
@@ -80,6 +224,7 @@
 			}
 		},
 		"dropItem": 4,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -99,6 +244,107 @@
 			}
 		},
 		"dropItem": 5,
+		"dropDamage": 0,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"wood_spruce": {
+		"id": 81,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 5,
+		"dropDamage": 1,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"wood_birch": {
+		"id": 82,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 5,
+		"dropDamage": 2,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"wood_jungle": {
+		"id": 83,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 5,
+		"dropDamage": 3,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"wood_acacia": {
+		"id": 84,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 5,
+		"dropDamage": 4,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"wood_big_oak": {
+		"id": 85,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 5,
+		"dropDamage": 5,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -110,6 +356,127 @@
 		"collision": {
 		},
 		"dropItem": 6,
+		"dropDamage": 0,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.0,
+		"material": "plants",
+		"slipperiness": 0.6
+	},
+	"sapling_spruce": {
+		"id": 97,
+		"collision": {
+		},
+		"dropItem": 6,
+		"dropDamage": 1,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.0,
+		"material": "plants",
+		"slipperiness": 0.6
+	},
+	"sapling_birch": {
+		"id": 98,
+		"collision": {
+		},
+		"dropItem": 6,
+		"dropDamage": 2,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.0,
+		"material": "plants",
+		"slipperiness": 0.6
+	},
+	"sapling_jungle": {
+		"id": 99,
+		"collision": {
+		},
+		"dropItem": 6,
+		"dropDamage": 3,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.0,
+		"material": "plants",
+		"slipperiness": 0.6
+	},
+	"sapling_acacia": {
+		"id": 100,
+		"collision": {
+		},
+		"dropItem": 6,
+		"dropDamage": 4,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.0,
+		"material": "plants",
+		"slipperiness": 0.6
+	},
+	"sapling_big_oak": {
+		"id": 101,
+		"collision": {
+		},
+		"dropItem": 6,
+		"dropDamage": 5,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.0,
+		"material": "plants",
+		"slipperiness": 0.6
+	},
+	"sapling_oak_2": {
+		"id": 105,
+		"collision": {
+		},
+		"dropItem": 6,
+		"dropDamage": 1,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.0,
+		"material": "plants",
+		"slipperiness": 0.6
+	},
+	"sapling_oak_3": {
+		"id": 106,
+		"collision": {
+		},
+		"dropItem": 6,
+		"dropDamage": 2,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.0,
+		"material": "plants",
+		"slipperiness": 0.6
+	},
+	"sapling_oak_4": {
+		"id": 107,
+		"collision": {
+		},
+		"dropItem": 6,
+		"dropDamage": 3,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.0,
+		"material": "plants",
+		"slipperiness": 0.6
+	},
+	"sapling_oak_5": {
+		"id": 108,
+		"collision": {
+		},
+		"dropItem": 6,
+		"dropDamage": 4,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.0,
+		"material": "plants",
+		"slipperiness": 0.6
+	},
+	"sapling_oak_6": {
+		"id": 109,
+		"collision": {
+		},
+		"dropItem": 6,
+		"dropDamage": 5,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.0,
@@ -129,10 +496,59 @@
 			}
 		},
 		"dropItem": 0,
+		"dropDamage": 0,
 		"dropAmountMin": 0,
 		"dropAmountMax": 0,
 		"hardness": -1.0,
 		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"water": {
+		"id": 128,
+		"collision": {
+		},
+		"dropItem": 0,
+		"dropDamage": 0,
+		"dropAmountMin": 0,
+		"dropAmountMax": 0,
+		"hardness": 100.0,
+		"material": "water",
+		"slipperiness": 0.6
+	},
+	"water_16": {
+		"id": 144,
+		"collision": {
+		},
+		"dropItem": 0,
+		"dropDamage": 0,
+		"dropAmountMin": 0,
+		"dropAmountMax": 0,
+		"hardness": 100.0,
+		"material": "water",
+		"slipperiness": 0.6
+	},
+	"lava": {
+		"id": 160,
+		"collision": {
+		},
+		"dropItem": 0,
+		"dropDamage": 0,
+		"dropAmountMin": 0,
+		"dropAmountMax": 0,
+		"hardness": 100.0,
+		"material": "lava",
+		"slipperiness": 0.6
+	},
+	"lava_16": {
+		"id": 176,
+		"collision": {
+		},
+		"dropItem": 0,
+		"dropDamage": 0,
+		"dropAmountMin": 0,
+		"dropAmountMax": 0,
+		"hardness": 100.0,
+		"material": "lava",
 		"slipperiness": 0.6
 	},
 	"sand": {
@@ -148,6 +564,27 @@
 			}
 		},
 		"dropItem": 12,
+		"dropDamage": 0,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.5,
+		"material": "sand",
+		"slipperiness": 0.6
+	},
+	"sand_red": {
+		"id": 193,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 12,
+		"dropDamage": 1,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.5,
@@ -167,6 +604,7 @@
 			}
 		},
 		"dropItem": -1,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.6,
@@ -186,6 +624,7 @@
 			}
 		},
 		"dropItem": 14,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 3.0,
@@ -205,6 +644,7 @@
 			}
 		},
 		"dropItem": 15,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 3.0,
@@ -224,6 +664,7 @@
 			}
 		},
 		"dropItem": 263,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 3.0,
@@ -243,6 +684,247 @@
 			}
 		},
 		"dropItem": 17,
+		"dropDamage": 0,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"log_spruce": {
+		"id": 273,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 17,
+		"dropDamage": 1,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"log_birch": {
+		"id": 274,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 17,
+		"dropDamage": 2,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"log_jungle": {
+		"id": 275,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 17,
+		"dropDamage": 3,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"log_big_oak": {
+		"id": 277,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 17,
+		"dropDamage": 1,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"log_oak_1": {
+		"id": 278,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 17,
+		"dropDamage": 2,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"log_oak_2": {
+		"id": 279,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 17,
+		"dropDamage": 3,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"log_oak_4": {
+		"id": 281,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 17,
+		"dropDamage": 1,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"log_oak_5": {
+		"id": 282,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 17,
+		"dropDamage": 2,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"log_oak_6": {
+		"id": 283,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 17,
+		"dropDamage": 3,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"log_oak_8": {
+		"id": 285,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 17,
+		"dropDamage": 1,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"log_oak_9": {
+		"id": 286,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 17,
+		"dropDamage": 2,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"log_oak_10": {
+		"id": 287,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 17,
+		"dropDamage": 3,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -262,6 +944,87 @@
 			}
 		},
 		"dropItem": 162,
+		"dropDamage": 0,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"log_big_oak_1": {
+		"id": 2593,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 162,
+		"dropDamage": 1,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"log_oak_12": {
+		"id": 2597,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 162,
+		"dropDamage": 1,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"log_oak_14": {
+		"id": 2601,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 162,
+		"dropDamage": 1,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"log_oak_16": {
+		"id": 2605,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 162,
+		"dropDamage": 1,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -281,6 +1044,67 @@
 			}
 		},
 		"dropItem": -1,
+		"dropDamage": 0,
+		"dropAmountMin": 0,
+		"dropAmountMax": 0,
+		"hardness": 0.2,
+		"material": "leaves",
+		"slipperiness": 0.6
+	},
+	"leaves_spruce": {
+		"id": 289,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": -1,
+		"dropDamage": 0,
+		"dropAmountMin": 0,
+		"dropAmountMax": 0,
+		"hardness": 0.2,
+		"material": "leaves",
+		"slipperiness": 0.6
+	},
+	"leaves_birch": {
+		"id": 290,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": -1,
+		"dropDamage": 0,
+		"dropAmountMin": 0,
+		"dropAmountMax": 0,
+		"hardness": 0.2,
+		"material": "leaves",
+		"slipperiness": 0.6
+	},
+	"leaves_jungle": {
+		"id": 291,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": -1,
+		"dropDamage": 0,
 		"dropAmountMin": 0,
 		"dropAmountMax": 0,
 		"hardness": 0.2,
@@ -300,6 +1124,27 @@
 			}
 		},
 		"dropItem": -1,
+		"dropDamage": 0,
+		"dropAmountMin": 0,
+		"dropAmountMax": 0,
+		"hardness": 0.2,
+		"material": "leaves",
+		"slipperiness": 0.6
+	},
+	"leaves_big_oak": {
+		"id": 2577,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": -1,
+		"dropDamage": 0,
 		"dropAmountMin": 0,
 		"dropAmountMax": 0,
 		"hardness": 0.2,
@@ -319,6 +1164,167 @@
 			}
 		},
 		"dropItem": 19,
+		"dropDamage": 0,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.6,
+		"material": "sponge",
+		"slipperiness": 0.6
+	},
+	"sponge_wet": {
+		"id": 305,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 19,
+		"dropDamage": 1,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.6,
+		"material": "sponge",
+		"slipperiness": 0.6
+	},
+	"sponge_wet_1": {
+		"id": 307,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 19,
+		"dropDamage": 1,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.6,
+		"material": "sponge",
+		"slipperiness": 0.6
+	},
+	"sponge_wet_2": {
+		"id": 309,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 19,
+		"dropDamage": 1,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.6,
+		"material": "sponge",
+		"slipperiness": 0.6
+	},
+	"sponge_wet_3": {
+		"id": 311,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 19,
+		"dropDamage": 1,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.6,
+		"material": "sponge",
+		"slipperiness": 0.6
+	},
+	"sponge_wet_4": {
+		"id": 313,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 19,
+		"dropDamage": 1,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.6,
+		"material": "sponge",
+		"slipperiness": 0.6
+	},
+	"sponge_wet_5": {
+		"id": 315,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 19,
+		"dropDamage": 1,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.6,
+		"material": "sponge",
+		"slipperiness": 0.6
+	},
+	"sponge_wet_6": {
+		"id": 317,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 19,
+		"dropDamage": 1,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.6,
+		"material": "sponge",
+		"slipperiness": 0.6
+	},
+	"sponge_wet_7": {
+		"id": 319,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 19,
+		"dropDamage": 1,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.6,
@@ -338,6 +1344,7 @@
 			}
 		},
 		"dropItem": 20,
+		"dropDamage": 0,
 		"dropAmountMin": 0,
 		"dropAmountMax": 0,
 		"hardness": 0.3,
@@ -357,6 +1364,7 @@
 			}
 		},
 		"dropItem": 351,
+		"dropDamage": 4,
 		"dropAmountMin": 4,
 		"dropAmountMax": 9,
 		"hardness": 3.0,
@@ -376,6 +1384,7 @@
 			}
 		},
 		"dropItem": 22,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 3.0,
@@ -395,6 +1404,7 @@
 			}
 		},
 		"dropItem": 23,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 3.5,
@@ -414,6 +1424,47 @@
 			}
 		},
 		"dropItem": 24,
+		"dropDamage": 0,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.8,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"sandstone_chiseled": {
+		"id": 385,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 24,
+		"dropDamage": 1,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.8,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"sandstone_smooth": {
+		"id": 386,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 24,
+		"dropDamage": 2,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.8,
@@ -433,6 +1484,7 @@
 			}
 		},
 		"dropItem": 25,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.8,
@@ -444,6 +1496,7 @@
 		"collision": {
 		},
 		"dropItem": 27,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.7,
@@ -455,6 +1508,7 @@
 		"collision": {
 		},
 		"dropItem": 28,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.7,
@@ -474,6 +1528,7 @@
 			}
 		},
 		"dropItem": 29,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.5,
@@ -493,6 +1548,7 @@
 			}
 		},
 		"dropItem": 29,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.5,
@@ -512,6 +1568,7 @@
 			}
 		},
 		"dropItem": 29,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.5,
@@ -531,6 +1588,7 @@
 			}
 		},
 		"dropItem": 29,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.5,
@@ -550,6 +1608,7 @@
 			}
 		},
 		"dropItem": 29,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.5,
@@ -569,6 +1628,7 @@
 			}
 		},
 		"dropItem": 29,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.5,
@@ -588,6 +1648,7 @@
 			}
 		},
 		"dropItem": 29,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.5,
@@ -599,6 +1660,7 @@
 		"collision": {
 		},
 		"dropItem": 287,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 4.0,
@@ -610,8 +1672,9 @@
 		"collision": {
 		},
 		"dropItem": -1,
-		"dropAmountMin": 1,
-		"dropAmountMax": 1,
+		"dropDamage": 0,
+		"dropAmountMin": 0,
+		"dropAmountMax": 0,
 		"hardness": 0.0,
 		"material": "vine",
 		"slipperiness": 0.6
@@ -621,6 +1684,7 @@
 		"collision": {
 		},
 		"dropItem": 280,
+		"dropDamage": 0,
 		"dropAmountMin": 0,
 		"dropAmountMax": 3,
 		"hardness": 0.0,
@@ -640,6 +1704,7 @@
 			}
 		},
 		"dropItem": 33,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.5,
@@ -659,6 +1724,7 @@
 			}
 		},
 		"dropItem": 33,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.5,
@@ -678,6 +1744,7 @@
 			}
 		},
 		"dropItem": 33,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.5,
@@ -697,6 +1764,7 @@
 			}
 		},
 		"dropItem": 33,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.5,
@@ -716,6 +1784,7 @@
 			}
 		},
 		"dropItem": 33,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.5,
@@ -735,6 +1804,7 @@
 			}
 		},
 		"dropItem": 33,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.5,
@@ -754,6 +1824,7 @@
 			}
 		},
 		"dropItem": 33,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.5,
@@ -773,6 +1844,307 @@
 			}
 		},
 		"dropItem": 35,
+		"dropDamage": 0,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.8,
+		"material": "cloth",
+		"slipperiness": 0.6
+	},
+	"cloth_orange": {
+		"id": 561,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 35,
+		"dropDamage": 1,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.8,
+		"material": "cloth",
+		"slipperiness": 0.6
+	},
+	"cloth_magenta": {
+		"id": 562,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 35,
+		"dropDamage": 2,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.8,
+		"material": "cloth",
+		"slipperiness": 0.6
+	},
+	"cloth_lightblue": {
+		"id": 563,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 35,
+		"dropDamage": 3,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.8,
+		"material": "cloth",
+		"slipperiness": 0.6
+	},
+	"cloth_yellow": {
+		"id": 564,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 35,
+		"dropDamage": 4,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.8,
+		"material": "cloth",
+		"slipperiness": 0.6
+	},
+	"cloth_lime": {
+		"id": 565,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 35,
+		"dropDamage": 5,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.8,
+		"material": "cloth",
+		"slipperiness": 0.6
+	},
+	"cloth_pink": {
+		"id": 566,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 35,
+		"dropDamage": 6,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.8,
+		"material": "cloth",
+		"slipperiness": 0.6
+	},
+	"cloth_gray": {
+		"id": 567,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 35,
+		"dropDamage": 7,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.8,
+		"material": "cloth",
+		"slipperiness": 0.6
+	},
+	"cloth_silver": {
+		"id": 568,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 35,
+		"dropDamage": 8,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.8,
+		"material": "cloth",
+		"slipperiness": 0.6
+	},
+	"cloth_cyan": {
+		"id": 569,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 35,
+		"dropDamage": 9,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.8,
+		"material": "cloth",
+		"slipperiness": 0.6
+	},
+	"cloth_purple": {
+		"id": 570,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 35,
+		"dropDamage": 10,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.8,
+		"material": "cloth",
+		"slipperiness": 0.6
+	},
+	"cloth_blue": {
+		"id": 571,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 35,
+		"dropDamage": 11,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.8,
+		"material": "cloth",
+		"slipperiness": 0.6
+	},
+	"cloth_brown": {
+		"id": 572,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 35,
+		"dropDamage": 12,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.8,
+		"material": "cloth",
+		"slipperiness": 0.6
+	},
+	"cloth_green": {
+		"id": 573,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 35,
+		"dropDamage": 13,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.8,
+		"material": "cloth",
+		"slipperiness": 0.6
+	},
+	"cloth_red": {
+		"id": 574,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 35,
+		"dropDamage": 14,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.8,
+		"material": "cloth",
+		"slipperiness": 0.6
+	},
+	"cloth_black": {
+		"id": 575,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 35,
+		"dropDamage": 15,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.8,
@@ -784,6 +2156,7 @@
 		"collision": {
 		},
 		"dropItem": 37,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.0,
@@ -795,6 +2168,103 @@
 		"collision": {
 		},
 		"dropItem": 38,
+		"dropDamage": 0,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.0,
+		"material": "plants",
+		"slipperiness": 0.6
+	},
+	"flower2_blueorchid": {
+		"id": 609,
+		"collision": {
+		},
+		"dropItem": 38,
+		"dropDamage": 1,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.0,
+		"material": "plants",
+		"slipperiness": 0.6
+	},
+	"flower2_allium": {
+		"id": 610,
+		"collision": {
+		},
+		"dropItem": 38,
+		"dropDamage": 2,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.0,
+		"material": "plants",
+		"slipperiness": 0.6
+	},
+	"flower2_houstonia": {
+		"id": 611,
+		"collision": {
+		},
+		"dropItem": 38,
+		"dropDamage": 3,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.0,
+		"material": "plants",
+		"slipperiness": 0.6
+	},
+	"flower2_tulipred": {
+		"id": 612,
+		"collision": {
+		},
+		"dropItem": 38,
+		"dropDamage": 4,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.0,
+		"material": "plants",
+		"slipperiness": 0.6
+	},
+	"flower2_tuliporange": {
+		"id": 613,
+		"collision": {
+		},
+		"dropItem": 38,
+		"dropDamage": 5,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.0,
+		"material": "plants",
+		"slipperiness": 0.6
+	},
+	"flower2_tulipwhite": {
+		"id": 614,
+		"collision": {
+		},
+		"dropItem": 38,
+		"dropDamage": 6,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.0,
+		"material": "plants",
+		"slipperiness": 0.6
+	},
+	"flower2_tulippink": {
+		"id": 615,
+		"collision": {
+		},
+		"dropItem": 38,
+		"dropDamage": 7,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.0,
+		"material": "plants",
+		"slipperiness": 0.6
+	},
+	"flower2_oxeyedaisy": {
+		"id": 616,
+		"collision": {
+		},
+		"dropItem": 38,
+		"dropDamage": 8,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.0,
@@ -806,6 +2276,7 @@
 		"collision": {
 		},
 		"dropItem": 39,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.0,
@@ -817,6 +2288,7 @@
 		"collision": {
 		},
 		"dropItem": 40,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.0,
@@ -836,6 +2308,7 @@
 			}
 		},
 		"dropItem": 41,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 3.0,
@@ -855,6 +2328,7 @@
 			}
 		},
 		"dropItem": 42,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 5.0,
@@ -874,6 +2348,147 @@
 			}
 		},
 		"dropItem": 44,
+		"dropDamage": 0,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stoneslab_sand": {
+		"id": 705,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 44,
+		"dropDamage": 1,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stoneslab_wood": {
+		"id": 706,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 44,
+		"dropDamage": 2,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stoneslab_cobble": {
+		"id": 707,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 44,
+		"dropDamage": 3,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stoneslab_brick": {
+		"id": 708,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 44,
+		"dropDamage": 4,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stoneslab_smoothstonebrick": {
+		"id": 709,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 44,
+		"dropDamage": 5,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stoneslab_netherbrick": {
+		"id": 710,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 44,
+		"dropDamage": 6,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stoneslab_quartz": {
+		"id": 711,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 44,
+		"dropDamage": 7,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -893,6 +2508,7 @@
 			}
 		},
 		"dropItem": 44,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -912,6 +2528,7 @@
 			}
 		},
 		"dropItem": 44,
+		"dropDamage": 1,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -931,6 +2548,7 @@
 			}
 		},
 		"dropItem": 44,
+		"dropDamage": 2,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -950,6 +2568,7 @@
 			}
 		},
 		"dropItem": 44,
+		"dropDamage": 3,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -969,6 +2588,7 @@
 			}
 		},
 		"dropItem": 44,
+		"dropDamage": 4,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -988,6 +2608,7 @@
 			}
 		},
 		"dropItem": 44,
+		"dropDamage": 5,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -1007,6 +2628,7 @@
 			}
 		},
 		"dropItem": 44,
+		"dropDamage": 6,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -1026,6 +2648,7 @@
 			}
 		},
 		"dropItem": 44,
+		"dropDamage": 7,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -1045,6 +2668,7 @@
 			}
 		},
 		"dropItem": 45,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -1064,6 +2688,7 @@
 			}
 		},
 		"dropItem": 46,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.0,
@@ -1083,6 +2708,7 @@
 			}
 		},
 		"dropItem": 340,
+		"dropDamage": 0,
 		"dropAmountMin": 3,
 		"dropAmountMax": 3,
 		"hardness": 1.5,
@@ -1102,6 +2728,7 @@
 			}
 		},
 		"dropItem": 48,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -1121,6 +2748,7 @@
 			}
 		},
 		"dropItem": 49,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 50.0,
@@ -1132,6 +2760,7 @@
 		"collision": {
 		},
 		"dropItem": 50,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.0,
@@ -1151,6 +2780,7 @@
 			}
 		},
 		"dropItem": 198,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.0,
@@ -1170,6 +2800,7 @@
 			}
 		},
 		"dropItem": 198,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.0,
@@ -1189,6 +2820,7 @@
 			}
 		},
 		"dropItem": 198,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.0,
@@ -1208,6 +2840,7 @@
 			}
 		},
 		"dropItem": 198,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.0,
@@ -1227,6 +2860,7 @@
 			}
 		},
 		"dropItem": 198,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.0,
@@ -1246,6 +2880,7 @@
 			}
 		},
 		"dropItem": 198,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.0,
@@ -1265,6 +2900,7 @@
 			}
 		},
 		"dropItem": 198,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.0,
@@ -1284,6 +2920,7 @@
 			}
 		},
 		"dropItem": 198,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.0,
@@ -1303,6 +2940,7 @@
 			}
 		},
 		"dropItem": 198,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.0,
@@ -1322,6 +2960,7 @@
 			}
 		},
 		"dropItem": 198,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.0,
@@ -1341,6 +2980,7 @@
 			}
 		},
 		"dropItem": 198,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.0,
@@ -1408,6 +3048,7 @@
 			}
 		},
 		"dropItem": 432,
+		"dropDamage": 0,
 		"dropAmountMin": 0,
 		"dropAmountMax": 2,
 		"hardness": 0.4,
@@ -1427,6 +3068,7 @@
 			}
 		},
 		"dropItem": 0,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.4,
@@ -1446,6 +3088,7 @@
 			}
 		},
 		"dropItem": 201,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 1.5,
@@ -1465,6 +3108,7 @@
 			}
 		},
 		"dropItem": 202,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 1.5,
@@ -1492,6 +3136,7 @@
 			}
 		},
 		"dropItem": 203,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 1.5,
@@ -1519,6 +3164,7 @@
 			}
 		},
 		"dropItem": 203,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 1.5,
@@ -1546,6 +3192,7 @@
 			}
 		},
 		"dropItem": 203,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 1.5,
@@ -1573,6 +3220,7 @@
 			}
 		},
 		"dropItem": 203,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 1.5,
@@ -1600,6 +3248,7 @@
 			}
 		},
 		"dropItem": 203,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 1.5,
@@ -1627,6 +3276,7 @@
 			}
 		},
 		"dropItem": 203,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 1.5,
@@ -1654,6 +3304,7 @@
 			}
 		},
 		"dropItem": 203,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 1.5,
@@ -1681,6 +3332,7 @@
 			}
 		},
 		"dropItem": 203,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 1.5,
@@ -1708,6 +3360,7 @@
 			}
 		},
 		"dropItem": 203,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 1.5,
@@ -1735,6 +3388,7 @@
 			}
 		},
 		"dropItem": 203,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 1.5,
@@ -1762,6 +3416,7 @@
 			}
 		},
 		"dropItem": 203,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 1.5,
@@ -1789,6 +3444,7 @@
 			}
 		},
 		"dropItem": 203,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 1.5,
@@ -1816,6 +3472,7 @@
 			}
 		},
 		"dropItem": 203,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 1.5,
@@ -1835,6 +3492,7 @@
 			}
 		},
 		"dropItem": 205,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -1854,6 +3512,7 @@
 			}
 		},
 		"dropItem": 205,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -1873,6 +3532,7 @@
 			}
 		},
 		"dropItem": 205,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -1892,6 +3552,7 @@
 			}
 		},
 		"dropItem": 205,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -1911,6 +3572,7 @@
 			}
 		},
 		"dropItem": 205,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -1930,6 +3592,7 @@
 			}
 		},
 		"dropItem": 205,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -1949,6 +3612,7 @@
 			}
 		},
 		"dropItem": 205,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -1968,6 +3632,7 @@
 			}
 		},
 		"dropItem": 205,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -1987,6 +3652,7 @@
 			}
 		},
 		"dropItem": 205,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -2006,6 +3672,7 @@
 			}
 		},
 		"dropItem": 0,
+		"dropDamage": 0,
 		"dropAmountMin": 0,
 		"dropAmountMax": 0,
 		"hardness": 5.0,
@@ -2033,6 +3700,7 @@
 			}
 		},
 		"dropItem": 53,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -2060,6 +3728,7 @@
 			}
 		},
 		"dropItem": 53,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -2087,6 +3756,7 @@
 			}
 		},
 		"dropItem": 53,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -2114,6 +3784,7 @@
 			}
 		},
 		"dropItem": 53,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -2141,6 +3812,7 @@
 			}
 		},
 		"dropItem": 53,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -2168,6 +3840,7 @@
 			}
 		},
 		"dropItem": 53,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -2195,6 +3868,7 @@
 			}
 		},
 		"dropItem": 53,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -2222,6 +3896,7 @@
 			}
 		},
 		"dropItem": 53,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -2249,6 +3924,7 @@
 			}
 		},
 		"dropItem": 53,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -2276,6 +3952,7 @@
 			}
 		},
 		"dropItem": 53,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -2303,6 +3980,7 @@
 			}
 		},
 		"dropItem": 53,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -2330,6 +4008,7 @@
 			}
 		},
 		"dropItem": 53,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -2357,6 +4036,7 @@
 			}
 		},
 		"dropItem": 53,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -2376,6 +4056,7 @@
 			}
 		},
 		"dropItem": 54,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.5,
@@ -2395,6 +4076,7 @@
 			}
 		},
 		"dropItem": 264,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 3.0,
@@ -2414,6 +4096,7 @@
 			}
 		},
 		"dropItem": 57,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 5.0,
@@ -2433,6 +4116,7 @@
 			}
 		},
 		"dropItem": 58,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.5,
@@ -2452,6 +4136,7 @@
 			}
 		},
 		"dropItem": 3,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.6,
@@ -2471,6 +4156,7 @@
 			}
 		},
 		"dropItem": 61,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 3.5,
@@ -2490,6 +4176,7 @@
 			}
 		},
 		"dropItem": 61,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 3.5,
@@ -2509,6 +4196,7 @@
 			}
 		},
 		"dropItem": 65,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.4,
@@ -2528,6 +4216,7 @@
 			}
 		},
 		"dropItem": 65,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.4,
@@ -2547,6 +4236,7 @@
 			}
 		},
 		"dropItem": 65,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.4,
@@ -2566,6 +4256,7 @@
 			}
 		},
 		"dropItem": 65,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.4,
@@ -2585,6 +4276,7 @@
 			}
 		},
 		"dropItem": 65,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.4,
@@ -2604,6 +4296,7 @@
 			}
 		},
 		"dropItem": 65,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.4,
@@ -2623,6 +4316,7 @@
 			}
 		},
 		"dropItem": 65,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.4,
@@ -2642,6 +4336,7 @@
 			}
 		},
 		"dropItem": 65,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.4,
@@ -2653,6 +4348,7 @@
 		"collision": {
 		},
 		"dropItem": 66,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.7,
@@ -2680,6 +4376,7 @@
 			}
 		},
 		"dropItem": 67,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -2707,6 +4404,7 @@
 			}
 		},
 		"dropItem": 67,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -2734,6 +4432,7 @@
 			}
 		},
 		"dropItem": 67,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -2761,6 +4460,7 @@
 			}
 		},
 		"dropItem": 67,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -2788,6 +4488,7 @@
 			}
 		},
 		"dropItem": 67,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -2815,6 +4516,7 @@
 			}
 		},
 		"dropItem": 67,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -2842,6 +4544,7 @@
 			}
 		},
 		"dropItem": 67,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -2869,6 +4572,7 @@
 			}
 		},
 		"dropItem": 67,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -2896,6 +4600,7 @@
 			}
 		},
 		"dropItem": 67,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -2923,6 +4628,7 @@
 			}
 		},
 		"dropItem": 67,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -2950,6 +4656,7 @@
 			}
 		},
 		"dropItem": 67,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -2977,6 +4684,7 @@
 			}
 		},
 		"dropItem": 67,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -3004,6 +4712,7 @@
 			}
 		},
 		"dropItem": 67,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -3015,6 +4724,7 @@
 		"collision": {
 		},
 		"dropItem": 69,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.5,
@@ -3026,6 +4736,7 @@
 		"collision": {
 		},
 		"dropItem": 70,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.5,
@@ -3037,6 +4748,7 @@
 		"collision": {
 		},
 		"dropItem": 72,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.5,
@@ -3056,6 +4768,7 @@
 			}
 		},
 		"dropItem": 331,
+		"dropDamage": 0,
 		"dropAmountMin": 4,
 		"dropAmountMax": 6,
 		"hardness": 3.0,
@@ -3067,6 +4780,7 @@
 		"collision": {
 		},
 		"dropItem": 76,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.0,
@@ -3078,6 +4792,7 @@
 		"collision": {
 		},
 		"dropItem": 77,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.5,
@@ -3097,6 +4812,7 @@
 			}
 		},
 		"dropItem": 332,
+		"dropDamage": 0,
 		"dropAmountMin": 0,
 		"dropAmountMax": 0,
 		"hardness": 0.1,
@@ -3116,6 +4832,7 @@
 			}
 		},
 		"dropItem": 332,
+		"dropDamage": 0,
 		"dropAmountMin": 0,
 		"dropAmountMax": 0,
 		"hardness": 0.1,
@@ -3135,6 +4852,7 @@
 			}
 		},
 		"dropItem": 332,
+		"dropDamage": 0,
 		"dropAmountMin": 0,
 		"dropAmountMax": 0,
 		"hardness": 0.1,
@@ -3154,6 +4872,7 @@
 			}
 		},
 		"dropItem": 332,
+		"dropDamage": 0,
 		"dropAmountMin": 0,
 		"dropAmountMax": 0,
 		"hardness": 0.1,
@@ -3173,6 +4892,7 @@
 			}
 		},
 		"dropItem": 332,
+		"dropDamage": 0,
 		"dropAmountMin": 0,
 		"dropAmountMax": 0,
 		"hardness": 0.1,
@@ -3192,6 +4912,7 @@
 			}
 		},
 		"dropItem": 332,
+		"dropDamage": 0,
 		"dropAmountMin": 0,
 		"dropAmountMax": 0,
 		"hardness": 0.1,
@@ -3211,6 +4932,7 @@
 			}
 		},
 		"dropItem": 332,
+		"dropDamage": 0,
 		"dropAmountMin": 0,
 		"dropAmountMax": 0,
 		"hardness": 0.1,
@@ -3230,6 +4952,7 @@
 			}
 		},
 		"dropItem": 332,
+		"dropDamage": 0,
 		"dropAmountMin": 0,
 		"dropAmountMax": 0,
 		"hardness": 0.1,
@@ -3249,6 +4972,7 @@
 			}
 		},
 		"dropItem": 332,
+		"dropDamage": 0,
 		"dropAmountMin": 0,
 		"dropAmountMax": 0,
 		"hardness": 0.1,
@@ -3268,6 +4992,7 @@
 			}
 		},
 		"dropItem": 332,
+		"dropDamage": 0,
 		"dropAmountMin": 0,
 		"dropAmountMax": 0,
 		"hardness": 0.1,
@@ -3287,6 +5012,7 @@
 			}
 		},
 		"dropItem": 332,
+		"dropDamage": 0,
 		"dropAmountMin": 0,
 		"dropAmountMax": 0,
 		"hardness": 0.1,
@@ -3306,6 +5032,7 @@
 			}
 		},
 		"dropItem": 332,
+		"dropDamage": 0,
 		"dropAmountMin": 0,
 		"dropAmountMax": 0,
 		"hardness": 0.1,
@@ -3325,6 +5052,7 @@
 			}
 		},
 		"dropItem": 332,
+		"dropDamage": 0,
 		"dropAmountMin": 0,
 		"dropAmountMax": 0,
 		"hardness": 0.1,
@@ -3344,6 +5072,7 @@
 			}
 		},
 		"dropItem": 332,
+		"dropDamage": 0,
 		"dropAmountMin": 0,
 		"dropAmountMax": 0,
 		"hardness": 0.1,
@@ -3363,6 +5092,7 @@
 			}
 		},
 		"dropItem": 332,
+		"dropDamage": 0,
 		"dropAmountMin": 0,
 		"dropAmountMax": 0,
 		"hardness": 0.1,
@@ -3382,6 +5112,7 @@
 			}
 		},
 		"dropItem": 79,
+		"dropDamage": 0,
 		"dropAmountMin": 0,
 		"dropAmountMax": 0,
 		"hardness": 0.5,
@@ -3401,6 +5132,7 @@
 			}
 		},
 		"dropItem": 332,
+		"dropDamage": 0,
 		"dropAmountMin": 4,
 		"dropAmountMax": 4,
 		"hardness": 0.2,
@@ -3420,6 +5152,7 @@
 			}
 		},
 		"dropItem": 81,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.4,
@@ -3439,6 +5172,7 @@
 			}
 		},
 		"dropItem": 337,
+		"dropDamage": 0,
 		"dropAmountMin": 4,
 		"dropAmountMax": 4,
 		"hardness": 0.6,
@@ -3458,6 +5192,7 @@
 			}
 		},
 		"dropItem": 84,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -3509,6 +5244,7 @@
 			}
 		},
 		"dropItem": 85,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -3560,6 +5296,7 @@
 			}
 		},
 		"dropItem": 188,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -3611,6 +5348,7 @@
 			}
 		},
 		"dropItem": 189,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -3662,6 +5400,7 @@
 			}
 		},
 		"dropItem": 190,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -3713,6 +5452,7 @@
 			}
 		},
 		"dropItem": 191,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -3764,6 +5504,7 @@
 			}
 		},
 		"dropItem": 192,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -3783,6 +5524,7 @@
 			}
 		},
 		"dropItem": 86,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 1.0,
@@ -3802,6 +5544,7 @@
 			}
 		},
 		"dropItem": 87,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.4,
@@ -3821,6 +5564,7 @@
 			}
 		},
 		"dropItem": 88,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.5,
@@ -3840,6 +5584,7 @@
 			}
 		},
 		"dropItem": 348,
+		"dropDamage": 0,
 		"dropAmountMin": 2,
 		"dropAmountMax": 5,
 		"hardness": 0.3,
@@ -3859,6 +5604,7 @@
 			}
 		},
 		"dropItem": 91,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 1.0,
@@ -3878,6 +5624,7 @@
 			}
 		},
 		"dropItem": 96,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 3.0,
@@ -3897,6 +5644,7 @@
 			}
 		},
 		"dropItem": 96,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 3.0,
@@ -3916,6 +5664,7 @@
 			}
 		},
 		"dropItem": 96,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 3.0,
@@ -3935,6 +5684,7 @@
 			}
 		},
 		"dropItem": 96,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 3.0,
@@ -3954,6 +5704,7 @@
 			}
 		},
 		"dropItem": 96,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 3.0,
@@ -3973,6 +5724,7 @@
 			}
 		},
 		"dropItem": 96,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 3.0,
@@ -3992,6 +5744,7 @@
 			}
 		},
 		"dropItem": 96,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 3.0,
@@ -4011,6 +5764,7 @@
 			}
 		},
 		"dropItem": 96,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 3.0,
@@ -4030,6 +5784,7 @@
 			}
 		},
 		"dropItem": 96,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 3.0,
@@ -4049,6 +5804,7 @@
 			}
 		},
 		"dropItem": 96,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 3.0,
@@ -4068,6 +5824,7 @@
 			}
 		},
 		"dropItem": 96,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 3.0,
@@ -4087,6 +5844,7 @@
 			}
 		},
 		"dropItem": 96,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 3.0,
@@ -4106,6 +5864,7 @@
 			}
 		},
 		"dropItem": 96,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 3.0,
@@ -4125,6 +5884,7 @@
 			}
 		},
 		"dropItem": 97,
+		"dropDamage": 0,
 		"dropAmountMin": 0,
 		"dropAmountMax": 0,
 		"hardness": 0.75,
@@ -4144,6 +5904,67 @@
 			}
 		},
 		"dropItem": 98,
+		"dropDamage": 0,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 1.5,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stonebricksmooth_mossy": {
+		"id": 1569,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 98,
+		"dropDamage": 1,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 1.5,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stonebricksmooth_cracked": {
+		"id": 1570,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 98,
+		"dropDamage": 2,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 1.5,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stonebricksmooth_chiseled": {
+		"id": 1571,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 98,
+		"dropDamage": 3,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 1.5,
@@ -4162,9 +5983,10 @@
 				"maxZ": 1.0
 			}
 		},
-		"dropItem": -1,
+		"dropItem": 39,
+		"dropDamage": 0,
 		"dropAmountMin": 0,
-		"dropAmountMax": 0,
+		"dropAmountMax": 10,
 		"hardness": 0.2,
 		"material": "wood",
 		"slipperiness": 0.6
@@ -4181,9 +6003,10 @@
 				"maxZ": 1.0
 			}
 		},
-		"dropItem": -1,
+		"dropItem": 40,
+		"dropDamage": 0,
 		"dropAmountMin": 0,
-		"dropAmountMax": 0,
+		"dropAmountMax": 10,
 		"hardness": 0.2,
 		"material": "wood",
 		"slipperiness": 0.6
@@ -4233,6 +6056,7 @@
 			}
 		},
 		"dropItem": 101,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 5.0,
@@ -4284,6 +6108,7 @@
 			}
 		},
 		"dropItem": 0,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.3,
@@ -4303,6 +6128,7 @@
 			}
 		},
 		"dropItem": 360,
+		"dropDamage": 0,
 		"dropAmountMin": 3,
 		"dropAmountMax": 8,
 		"hardness": 1.0,
@@ -4314,6 +6140,7 @@
 		"collision": {
 		},
 		"dropItem": 0,
+		"dropDamage": 0,
 		"dropAmountMin": 0,
 		"dropAmountMax": 0,
 		"hardness": 0.2,
@@ -4333,6 +6160,7 @@
 			}
 		},
 		"dropItem": 107,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -4352,6 +6180,7 @@
 			}
 		},
 		"dropItem": 107,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -4371,6 +6200,7 @@
 			}
 		},
 		"dropItem": 107,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -4382,6 +6212,7 @@
 		"collision": {
 		},
 		"dropItem": 107,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -4393,6 +6224,7 @@
 		"collision": {
 		},
 		"dropItem": 107,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -4404,6 +6236,7 @@
 		"collision": {
 		},
 		"dropItem": 107,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -4415,6 +6248,7 @@
 		"collision": {
 		},
 		"dropItem": 107,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -4434,6 +6268,7 @@
 			}
 		},
 		"dropItem": 107,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -4453,6 +6288,7 @@
 			}
 		},
 		"dropItem": 107,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -4464,6 +6300,7 @@
 		"collision": {
 		},
 		"dropItem": 107,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -4475,6 +6312,7 @@
 		"collision": {
 		},
 		"dropItem": 107,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -4486,6 +6324,7 @@
 		"collision": {
 		},
 		"dropItem": 107,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -4497,6 +6336,7 @@
 		"collision": {
 		},
 		"dropItem": 107,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -4516,6 +6356,7 @@
 			}
 		},
 		"dropItem": 183,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -4535,6 +6376,7 @@
 			}
 		},
 		"dropItem": 183,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -4554,6 +6396,7 @@
 			}
 		},
 		"dropItem": 183,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -4565,6 +6408,7 @@
 		"collision": {
 		},
 		"dropItem": 183,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -4576,6 +6420,7 @@
 		"collision": {
 		},
 		"dropItem": 183,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -4587,6 +6432,7 @@
 		"collision": {
 		},
 		"dropItem": 183,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -4598,6 +6444,7 @@
 		"collision": {
 		},
 		"dropItem": 183,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -4617,6 +6464,7 @@
 			}
 		},
 		"dropItem": 183,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -4636,6 +6484,7 @@
 			}
 		},
 		"dropItem": 183,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -4647,6 +6496,7 @@
 		"collision": {
 		},
 		"dropItem": 183,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -4658,6 +6508,7 @@
 		"collision": {
 		},
 		"dropItem": 183,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -4669,6 +6520,7 @@
 		"collision": {
 		},
 		"dropItem": 183,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -4680,6 +6532,7 @@
 		"collision": {
 		},
 		"dropItem": 183,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -4699,6 +6552,7 @@
 			}
 		},
 		"dropItem": 184,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -4718,6 +6572,7 @@
 			}
 		},
 		"dropItem": 184,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -4737,6 +6592,7 @@
 			}
 		},
 		"dropItem": 184,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -4748,6 +6604,7 @@
 		"collision": {
 		},
 		"dropItem": 184,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -4759,6 +6616,7 @@
 		"collision": {
 		},
 		"dropItem": 184,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -4770,6 +6628,7 @@
 		"collision": {
 		},
 		"dropItem": 184,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -4781,6 +6640,7 @@
 		"collision": {
 		},
 		"dropItem": 184,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -4800,6 +6660,7 @@
 			}
 		},
 		"dropItem": 184,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -4819,6 +6680,7 @@
 			}
 		},
 		"dropItem": 184,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -4830,6 +6692,7 @@
 		"collision": {
 		},
 		"dropItem": 184,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -4841,6 +6704,7 @@
 		"collision": {
 		},
 		"dropItem": 184,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -4852,6 +6716,7 @@
 		"collision": {
 		},
 		"dropItem": 184,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -4863,6 +6728,7 @@
 		"collision": {
 		},
 		"dropItem": 184,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -4882,6 +6748,7 @@
 			}
 		},
 		"dropItem": 185,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -4901,6 +6768,7 @@
 			}
 		},
 		"dropItem": 185,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -4920,6 +6788,7 @@
 			}
 		},
 		"dropItem": 185,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -4931,6 +6800,7 @@
 		"collision": {
 		},
 		"dropItem": 185,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -4942,6 +6812,7 @@
 		"collision": {
 		},
 		"dropItem": 185,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -4953,6 +6824,7 @@
 		"collision": {
 		},
 		"dropItem": 185,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -4964,6 +6836,7 @@
 		"collision": {
 		},
 		"dropItem": 185,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -4983,6 +6856,7 @@
 			}
 		},
 		"dropItem": 185,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -5002,6 +6876,7 @@
 			}
 		},
 		"dropItem": 185,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -5013,6 +6888,7 @@
 		"collision": {
 		},
 		"dropItem": 185,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -5024,6 +6900,7 @@
 		"collision": {
 		},
 		"dropItem": 185,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -5035,6 +6912,7 @@
 		"collision": {
 		},
 		"dropItem": 185,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -5046,6 +6924,7 @@
 		"collision": {
 		},
 		"dropItem": 185,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -5065,6 +6944,7 @@
 			}
 		},
 		"dropItem": 186,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -5084,6 +6964,7 @@
 			}
 		},
 		"dropItem": 186,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -5103,6 +6984,7 @@
 			}
 		},
 		"dropItem": 186,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -5114,6 +6996,7 @@
 		"collision": {
 		},
 		"dropItem": 186,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -5125,6 +7008,7 @@
 		"collision": {
 		},
 		"dropItem": 186,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -5136,6 +7020,7 @@
 		"collision": {
 		},
 		"dropItem": 186,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -5147,6 +7032,7 @@
 		"collision": {
 		},
 		"dropItem": 186,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -5166,6 +7052,7 @@
 			}
 		},
 		"dropItem": 186,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -5185,6 +7072,7 @@
 			}
 		},
 		"dropItem": 186,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -5196,6 +7084,7 @@
 		"collision": {
 		},
 		"dropItem": 186,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -5207,6 +7096,7 @@
 		"collision": {
 		},
 		"dropItem": 186,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -5218,6 +7108,7 @@
 		"collision": {
 		},
 		"dropItem": 186,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -5229,6 +7120,7 @@
 		"collision": {
 		},
 		"dropItem": 186,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -5248,6 +7140,7 @@
 			}
 		},
 		"dropItem": 187,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -5267,6 +7160,7 @@
 			}
 		},
 		"dropItem": 187,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -5286,6 +7180,7 @@
 			}
 		},
 		"dropItem": 187,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -5297,6 +7192,7 @@
 		"collision": {
 		},
 		"dropItem": 187,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -5308,6 +7204,7 @@
 		"collision": {
 		},
 		"dropItem": 187,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -5319,6 +7216,7 @@
 		"collision": {
 		},
 		"dropItem": 187,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -5330,6 +7228,7 @@
 		"collision": {
 		},
 		"dropItem": 187,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -5349,6 +7248,7 @@
 			}
 		},
 		"dropItem": 187,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -5368,6 +7268,7 @@
 			}
 		},
 		"dropItem": 187,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -5379,6 +7280,7 @@
 		"collision": {
 		},
 		"dropItem": 187,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -5390,6 +7292,7 @@
 		"collision": {
 		},
 		"dropItem": 187,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -5401,6 +7304,7 @@
 		"collision": {
 		},
 		"dropItem": 187,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -5412,6 +7316,7 @@
 		"collision": {
 		},
 		"dropItem": 187,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -5439,6 +7344,7 @@
 			}
 		},
 		"dropItem": 108,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -5466,6 +7372,7 @@
 			}
 		},
 		"dropItem": 108,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -5493,6 +7400,7 @@
 			}
 		},
 		"dropItem": 108,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -5520,6 +7428,7 @@
 			}
 		},
 		"dropItem": 108,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -5547,6 +7456,7 @@
 			}
 		},
 		"dropItem": 108,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -5574,6 +7484,7 @@
 			}
 		},
 		"dropItem": 108,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -5601,6 +7512,7 @@
 			}
 		},
 		"dropItem": 108,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -5628,6 +7540,7 @@
 			}
 		},
 		"dropItem": 108,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -5655,6 +7568,7 @@
 			}
 		},
 		"dropItem": 108,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -5682,6 +7596,7 @@
 			}
 		},
 		"dropItem": 108,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -5709,6 +7624,7 @@
 			}
 		},
 		"dropItem": 108,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -5736,6 +7652,7 @@
 			}
 		},
 		"dropItem": 108,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -5763,6 +7680,7 @@
 			}
 		},
 		"dropItem": 108,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -5790,6 +7708,7 @@
 			}
 		},
 		"dropItem": 109,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 1.5,
@@ -5817,6 +7736,7 @@
 			}
 		},
 		"dropItem": 109,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 1.5,
@@ -5844,6 +7764,7 @@
 			}
 		},
 		"dropItem": 109,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 1.5,
@@ -5871,6 +7792,7 @@
 			}
 		},
 		"dropItem": 109,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 1.5,
@@ -5898,6 +7820,7 @@
 			}
 		},
 		"dropItem": 109,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 1.5,
@@ -5925,6 +7848,7 @@
 			}
 		},
 		"dropItem": 109,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 1.5,
@@ -5952,6 +7876,7 @@
 			}
 		},
 		"dropItem": 109,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 1.5,
@@ -5979,6 +7904,7 @@
 			}
 		},
 		"dropItem": 109,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 1.5,
@@ -6006,6 +7932,7 @@
 			}
 		},
 		"dropItem": 109,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 1.5,
@@ -6033,6 +7960,7 @@
 			}
 		},
 		"dropItem": 109,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 1.5,
@@ -6060,6 +7988,7 @@
 			}
 		},
 		"dropItem": 109,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 1.5,
@@ -6087,6 +8016,7 @@
 			}
 		},
 		"dropItem": 109,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 1.5,
@@ -6114,6 +8044,7 @@
 			}
 		},
 		"dropItem": 109,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 1.5,
@@ -6133,6 +8064,7 @@
 			}
 		},
 		"dropItem": 3,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.6,
@@ -6152,6 +8084,7 @@
 			}
 		},
 		"dropItem": 111,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.0,
@@ -6171,6 +8104,7 @@
 			}
 		},
 		"dropItem": 112,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -6222,6 +8156,7 @@
 			}
 		},
 		"dropItem": 113,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -6249,6 +8184,7 @@
 			}
 		},
 		"dropItem": 114,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -6276,6 +8212,7 @@
 			}
 		},
 		"dropItem": 114,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -6303,6 +8240,7 @@
 			}
 		},
 		"dropItem": 114,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -6330,6 +8268,7 @@
 			}
 		},
 		"dropItem": 114,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -6357,6 +8296,7 @@
 			}
 		},
 		"dropItem": 114,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -6384,6 +8324,7 @@
 			}
 		},
 		"dropItem": 114,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -6411,6 +8352,7 @@
 			}
 		},
 		"dropItem": 114,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -6438,6 +8380,7 @@
 			}
 		},
 		"dropItem": 114,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -6465,6 +8408,7 @@
 			}
 		},
 		"dropItem": 114,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -6492,6 +8436,7 @@
 			}
 		},
 		"dropItem": 114,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -6519,6 +8464,7 @@
 			}
 		},
 		"dropItem": 114,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -6546,6 +8492,7 @@
 			}
 		},
 		"dropItem": 114,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -6573,6 +8520,7 @@
 			}
 		},
 		"dropItem": 114,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -6592,6 +8540,7 @@
 			}
 		},
 		"dropItem": 116,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 5.0,
@@ -6611,6 +8560,7 @@
 			}
 		},
 		"dropItem": 0,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": -1.0,
@@ -6638,6 +8588,7 @@
 			}
 		},
 		"dropItem": 0,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": -1.0,
@@ -6665,6 +8616,7 @@
 			}
 		},
 		"dropItem": 0,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": -1.0,
@@ -6692,6 +8644,7 @@
 			}
 		},
 		"dropItem": 0,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": -1.0,
@@ -6719,6 +8672,7 @@
 			}
 		},
 		"dropItem": 0,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": -1.0,
@@ -6746,6 +8700,7 @@
 			}
 		},
 		"dropItem": 0,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": -1.0,
@@ -6773,6 +8728,7 @@
 			}
 		},
 		"dropItem": 0,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": -1.0,
@@ -6800,6 +8756,7 @@
 			}
 		},
 		"dropItem": 0,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": -1.0,
@@ -6827,6 +8784,7 @@
 			}
 		},
 		"dropItem": 0,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": -1.0,
@@ -6846,6 +8804,7 @@
 			}
 		},
 		"dropItem": 121,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 3.0,
@@ -6865,6 +8824,7 @@
 			}
 		},
 		"dropItem": 206,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.8,
@@ -6884,6 +8844,7 @@
 			}
 		},
 		"dropItem": 122,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 3.0,
@@ -6903,6 +8864,7 @@
 			}
 		},
 		"dropItem": 123,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.3,
@@ -6922,6 +8884,107 @@
 			}
 		},
 		"dropItem": 126,
+		"dropDamage": 0,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"woodslab_spruce": {
+		"id": 2017,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 126,
+		"dropDamage": 1,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"woodslab_birch": {
+		"id": 2018,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 126,
+		"dropDamage": 2,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"woodslab_jungle": {
+		"id": 2019,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 126,
+		"dropDamage": 3,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"woodslab_acacia": {
+		"id": 2020,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 126,
+		"dropDamage": 4,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"woodslab_big_oak": {
+		"id": 2021,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 126,
+		"dropDamage": 5,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -6941,6 +9004,7 @@
 			}
 		},
 		"dropItem": 126,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -6960,6 +9024,7 @@
 			}
 		},
 		"dropItem": 126,
+		"dropDamage": 1,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -6979,6 +9044,7 @@
 			}
 		},
 		"dropItem": 126,
+		"dropDamage": 2,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -6998,6 +9064,7 @@
 			}
 		},
 		"dropItem": 126,
+		"dropDamage": 3,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -7017,6 +9084,7 @@
 			}
 		},
 		"dropItem": 126,
+		"dropDamage": 4,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -7036,6 +9104,7 @@
 			}
 		},
 		"dropItem": 126,
+		"dropDamage": 5,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -7055,6 +9124,7 @@
 			}
 		},
 		"dropItem": 126,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -7074,6 +9144,7 @@
 			}
 		},
 		"dropItem": 126,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -7101,6 +9172,7 @@
 			}
 		},
 		"dropItem": 128,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.8,
@@ -7128,6 +9200,7 @@
 			}
 		},
 		"dropItem": 128,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.8,
@@ -7155,6 +9228,7 @@
 			}
 		},
 		"dropItem": 128,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.8,
@@ -7182,6 +9256,7 @@
 			}
 		},
 		"dropItem": 128,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.8,
@@ -7209,6 +9284,7 @@
 			}
 		},
 		"dropItem": 128,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.8,
@@ -7236,6 +9312,7 @@
 			}
 		},
 		"dropItem": 128,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.8,
@@ -7263,6 +9340,7 @@
 			}
 		},
 		"dropItem": 128,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.8,
@@ -7290,6 +9368,7 @@
 			}
 		},
 		"dropItem": 128,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.8,
@@ -7317,6 +9396,7 @@
 			}
 		},
 		"dropItem": 128,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.8,
@@ -7344,6 +9424,7 @@
 			}
 		},
 		"dropItem": 128,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.8,
@@ -7371,6 +9452,7 @@
 			}
 		},
 		"dropItem": 128,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.8,
@@ -7398,6 +9480,7 @@
 			}
 		},
 		"dropItem": 128,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.8,
@@ -7425,6 +9508,7 @@
 			}
 		},
 		"dropItem": 128,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.8,
@@ -7444,6 +9528,7 @@
 			}
 		},
 		"dropItem": 388,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 3.0,
@@ -7463,6 +9548,7 @@
 			}
 		},
 		"dropItem": 49,
+		"dropDamage": 0,
 		"dropAmountMin": 8,
 		"dropAmountMax": 8,
 		"hardness": 22.5,
@@ -7474,6 +9560,7 @@
 		"collision": {
 		},
 		"dropItem": 131,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.0,
@@ -7493,6 +9580,7 @@
 			}
 		},
 		"dropItem": 133,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 5.0,
@@ -7520,6 +9608,7 @@
 			}
 		},
 		"dropItem": 134,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -7547,6 +9636,7 @@
 			}
 		},
 		"dropItem": 134,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -7574,6 +9664,7 @@
 			}
 		},
 		"dropItem": 134,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -7601,6 +9692,7 @@
 			}
 		},
 		"dropItem": 134,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -7628,6 +9720,7 @@
 			}
 		},
 		"dropItem": 134,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -7655,6 +9748,7 @@
 			}
 		},
 		"dropItem": 134,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -7682,6 +9776,7 @@
 			}
 		},
 		"dropItem": 134,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -7709,6 +9804,7 @@
 			}
 		},
 		"dropItem": 134,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -7736,6 +9832,7 @@
 			}
 		},
 		"dropItem": 134,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -7763,6 +9860,7 @@
 			}
 		},
 		"dropItem": 134,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -7790,6 +9888,7 @@
 			}
 		},
 		"dropItem": 134,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -7817,6 +9916,7 @@
 			}
 		},
 		"dropItem": 134,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -7844,6 +9944,7 @@
 			}
 		},
 		"dropItem": 134,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -7871,6 +9972,7 @@
 			}
 		},
 		"dropItem": 135,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -7898,6 +10000,7 @@
 			}
 		},
 		"dropItem": 135,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -7925,6 +10028,7 @@
 			}
 		},
 		"dropItem": 135,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -7952,6 +10056,7 @@
 			}
 		},
 		"dropItem": 135,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -7979,6 +10084,7 @@
 			}
 		},
 		"dropItem": 135,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -8006,6 +10112,7 @@
 			}
 		},
 		"dropItem": 135,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -8033,6 +10140,7 @@
 			}
 		},
 		"dropItem": 135,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -8060,6 +10168,7 @@
 			}
 		},
 		"dropItem": 135,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -8087,6 +10196,7 @@
 			}
 		},
 		"dropItem": 135,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -8114,6 +10224,7 @@
 			}
 		},
 		"dropItem": 135,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -8141,6 +10252,7 @@
 			}
 		},
 		"dropItem": 135,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -8168,6 +10280,7 @@
 			}
 		},
 		"dropItem": 135,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -8195,6 +10308,7 @@
 			}
 		},
 		"dropItem": 135,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -8222,6 +10336,7 @@
 			}
 		},
 		"dropItem": 136,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -8249,6 +10364,7 @@
 			}
 		},
 		"dropItem": 136,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -8276,6 +10392,7 @@
 			}
 		},
 		"dropItem": 136,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -8303,6 +10420,7 @@
 			}
 		},
 		"dropItem": 136,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -8330,6 +10448,7 @@
 			}
 		},
 		"dropItem": 136,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -8357,6 +10476,7 @@
 			}
 		},
 		"dropItem": 136,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -8384,6 +10504,7 @@
 			}
 		},
 		"dropItem": 136,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -8411,6 +10532,7 @@
 			}
 		},
 		"dropItem": 136,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -8438,6 +10560,7 @@
 			}
 		},
 		"dropItem": 136,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -8465,6 +10588,7 @@
 			}
 		},
 		"dropItem": 136,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -8492,6 +10616,7 @@
 			}
 		},
 		"dropItem": 136,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -8519,6 +10644,7 @@
 			}
 		},
 		"dropItem": 136,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -8546,6 +10672,7 @@
 			}
 		},
 		"dropItem": 136,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -8565,6 +10692,7 @@
 			}
 		},
 		"dropItem": 137,
+		"dropDamage": 0,
 		"dropAmountMin": 0,
 		"dropAmountMax": 0,
 		"hardness": -1.0,
@@ -8584,6 +10712,7 @@
 			}
 		},
 		"dropItem": 138,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 3.0,
@@ -8603,6 +10732,27 @@
 			}
 		},
 		"dropItem": 139,
+		"dropDamage": 0,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"cobblewall_mossy": {
+		"id": 2225,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 139,
+		"dropDamage": 1,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -8614,6 +10764,7 @@
 		"collision": {
 		},
 		"dropItem": 143,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.5,
@@ -8633,6 +10784,7 @@
 			}
 		},
 		"dropItem": 145,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 5.0,
@@ -8652,6 +10804,7 @@
 			}
 		},
 		"dropItem": 145,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 5.0,
@@ -8671,6 +10824,27 @@
 			}
 		},
 		"dropItem": 145,
+		"dropDamage": 0,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 5.0,
+		"material": "anvil",
+		"slipperiness": 0.6
+	},
+	"anvil_intact_2": {
+		"id": 2324,
+		"collision": {
+			"0": {
+				"minX": 0.125,
+				"maxX": 0.875,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 145,
+		"dropDamage": 1,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 5.0,
@@ -8690,6 +10864,27 @@
 			}
 		},
 		"dropItem": 145,
+		"dropDamage": 1,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 5.0,
+		"material": "anvil",
+		"slipperiness": 0.6
+	},
+	"anvil_intact_4": {
+		"id": 2326,
+		"collision": {
+			"0": {
+				"minX": 0.125,
+				"maxX": 0.875,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 145,
+		"dropDamage": 1,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 5.0,
@@ -8709,6 +10904,27 @@
 			}
 		},
 		"dropItem": 145,
+		"dropDamage": 1,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 5.0,
+		"material": "anvil",
+		"slipperiness": 0.6
+	},
+	"anvil_intact_6": {
+		"id": 2328,
+		"collision": {
+			"0": {
+				"minX": 0.125,
+				"maxX": 0.875,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 145,
+		"dropDamage": 2,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 5.0,
@@ -8728,6 +10944,27 @@
 			}
 		},
 		"dropItem": 145,
+		"dropDamage": 2,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 5.0,
+		"material": "anvil",
+		"slipperiness": 0.6
+	},
+	"anvil_intact_8": {
+		"id": 2330,
+		"collision": {
+			"0": {
+				"minX": 0.125,
+				"maxX": 0.875,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 145,
+		"dropDamage": 2,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 5.0,
@@ -8747,6 +10984,7 @@
 			}
 		},
 		"dropItem": 145,
+		"dropDamage": 2,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 5.0,
@@ -8766,6 +11004,7 @@
 			}
 		},
 		"dropItem": 146,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.5,
@@ -8777,6 +11016,7 @@
 		"collision": {
 		},
 		"dropItem": 147,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.5,
@@ -8788,6 +11028,7 @@
 		"collision": {
 		},
 		"dropItem": 148,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.5,
@@ -8807,6 +11048,7 @@
 			}
 		},
 		"dropItem": 151,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.2,
@@ -8826,6 +11068,7 @@
 			}
 		},
 		"dropItem": 152,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 5.0,
@@ -8845,6 +11088,7 @@
 			}
 		},
 		"dropItem": 406,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 3.0,
@@ -8896,6 +11140,7 @@
 			}
 		},
 		"dropItem": 154,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 3.0,
@@ -8915,6 +11160,87 @@
 			}
 		},
 		"dropItem": 155,
+		"dropDamage": 0,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.8,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"quartzblock_chiseled": {
+		"id": 2481,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 155,
+		"dropDamage": 1,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.8,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"quartzblock_lines": {
+		"id": 2482,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 155,
+		"dropDamage": 2,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.8,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"quartzblock_1": {
+		"id": 2483,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 155,
+		"dropDamage": 2,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.8,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"quartzblock_2": {
+		"id": 2484,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 155,
+		"dropDamage": 2,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.8,
@@ -8942,6 +11268,7 @@
 			}
 		},
 		"dropItem": 156,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.8,
@@ -8969,6 +11296,7 @@
 			}
 		},
 		"dropItem": 156,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.8,
@@ -8996,6 +11324,7 @@
 			}
 		},
 		"dropItem": 156,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.8,
@@ -9023,6 +11352,7 @@
 			}
 		},
 		"dropItem": 156,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.8,
@@ -9050,6 +11380,7 @@
 			}
 		},
 		"dropItem": 156,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.8,
@@ -9077,6 +11408,7 @@
 			}
 		},
 		"dropItem": 156,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.8,
@@ -9104,6 +11436,7 @@
 			}
 		},
 		"dropItem": 156,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.8,
@@ -9131,6 +11464,7 @@
 			}
 		},
 		"dropItem": 156,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.8,
@@ -9158,6 +11492,7 @@
 			}
 		},
 		"dropItem": 156,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.8,
@@ -9185,6 +11520,7 @@
 			}
 		},
 		"dropItem": 156,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.8,
@@ -9212,6 +11548,7 @@
 			}
 		},
 		"dropItem": 156,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.8,
@@ -9239,6 +11576,7 @@
 			}
 		},
 		"dropItem": 156,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.8,
@@ -9266,6 +11604,7 @@
 			}
 		},
 		"dropItem": 156,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.8,
@@ -9277,6 +11616,7 @@
 		"collision": {
 		},
 		"dropItem": 157,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.7,
@@ -9296,6 +11636,7 @@
 			}
 		},
 		"dropItem": 158,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 3.5,
@@ -9315,6 +11656,307 @@
 			}
 		},
 		"dropItem": 159,
+		"dropDamage": 0,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 1.25,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"clayhardenedstained_orange": {
+		"id": 2545,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 159,
+		"dropDamage": 1,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 1.25,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"clayhardenedstained_magenta": {
+		"id": 2546,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 159,
+		"dropDamage": 2,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 1.25,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"clayhardenedstained_lightblue": {
+		"id": 2547,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 159,
+		"dropDamage": 3,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 1.25,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"clayhardenedstained_yellow": {
+		"id": 2548,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 159,
+		"dropDamage": 4,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 1.25,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"clayhardenedstained_lime": {
+		"id": 2549,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 159,
+		"dropDamage": 5,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 1.25,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"clayhardenedstained_pink": {
+		"id": 2550,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 159,
+		"dropDamage": 6,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 1.25,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"clayhardenedstained_gray": {
+		"id": 2551,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 159,
+		"dropDamage": 7,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 1.25,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"clayhardenedstained_silver": {
+		"id": 2552,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 159,
+		"dropDamage": 8,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 1.25,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"clayhardenedstained_cyan": {
+		"id": 2553,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 159,
+		"dropDamage": 9,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 1.25,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"clayhardenedstained_purple": {
+		"id": 2554,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 159,
+		"dropDamage": 10,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 1.25,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"clayhardenedstained_blue": {
+		"id": 2555,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 159,
+		"dropDamage": 11,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 1.25,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"clayhardenedstained_brown": {
+		"id": 2556,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 159,
+		"dropDamage": 12,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 1.25,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"clayhardenedstained_green": {
+		"id": 2557,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 159,
+		"dropDamage": 13,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 1.25,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"clayhardenedstained_red": {
+		"id": 2558,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 159,
+		"dropDamage": 14,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 1.25,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"clayhardenedstained_black": {
+		"id": 2559,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 159,
+		"dropDamage": 15,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 1.25,
@@ -9334,6 +11976,7 @@
 			}
 		},
 		"dropItem": 166,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": -1.0,
@@ -9353,6 +11996,7 @@
 			}
 		},
 		"dropItem": 167,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 5.0,
@@ -9372,6 +12016,7 @@
 			}
 		},
 		"dropItem": 167,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 5.0,
@@ -9391,6 +12036,7 @@
 			}
 		},
 		"dropItem": 167,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 5.0,
@@ -9410,6 +12056,7 @@
 			}
 		},
 		"dropItem": 167,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 5.0,
@@ -9429,6 +12076,7 @@
 			}
 		},
 		"dropItem": 167,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 5.0,
@@ -9448,6 +12096,7 @@
 			}
 		},
 		"dropItem": 167,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 5.0,
@@ -9467,6 +12116,7 @@
 			}
 		},
 		"dropItem": 167,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 5.0,
@@ -9486,6 +12136,7 @@
 			}
 		},
 		"dropItem": 167,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 5.0,
@@ -9505,6 +12156,7 @@
 			}
 		},
 		"dropItem": 167,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 5.0,
@@ -9524,6 +12176,7 @@
 			}
 		},
 		"dropItem": 167,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 5.0,
@@ -9543,6 +12196,7 @@
 			}
 		},
 		"dropItem": 167,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 5.0,
@@ -9562,6 +12216,7 @@
 			}
 		},
 		"dropItem": 167,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 5.0,
@@ -9581,6 +12236,7 @@
 			}
 		},
 		"dropItem": 167,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 5.0,
@@ -9600,6 +12256,7 @@
 			}
 		},
 		"dropItem": 170,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.5,
@@ -9619,6 +12276,307 @@
 			}
 		},
 		"dropItem": 171,
+		"dropDamage": 0,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.1,
+		"material": "carpet",
+		"slipperiness": 0.6
+	},
+	"woolcarpet_orange": {
+		"id": 2737,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.0625,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 171,
+		"dropDamage": 1,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.1,
+		"material": "carpet",
+		"slipperiness": 0.6
+	},
+	"woolcarpet_magenta": {
+		"id": 2738,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.0625,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 171,
+		"dropDamage": 2,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.1,
+		"material": "carpet",
+		"slipperiness": 0.6
+	},
+	"woolcarpet_lightblue": {
+		"id": 2739,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.0625,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 171,
+		"dropDamage": 3,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.1,
+		"material": "carpet",
+		"slipperiness": 0.6
+	},
+	"woolcarpet_yellow": {
+		"id": 2740,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.0625,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 171,
+		"dropDamage": 4,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.1,
+		"material": "carpet",
+		"slipperiness": 0.6
+	},
+	"woolcarpet_lime": {
+		"id": 2741,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.0625,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 171,
+		"dropDamage": 5,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.1,
+		"material": "carpet",
+		"slipperiness": 0.6
+	},
+	"woolcarpet_pink": {
+		"id": 2742,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.0625,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 171,
+		"dropDamage": 6,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.1,
+		"material": "carpet",
+		"slipperiness": 0.6
+	},
+	"woolcarpet_gray": {
+		"id": 2743,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.0625,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 171,
+		"dropDamage": 7,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.1,
+		"material": "carpet",
+		"slipperiness": 0.6
+	},
+	"woolcarpet_silver": {
+		"id": 2744,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.0625,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 171,
+		"dropDamage": 8,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.1,
+		"material": "carpet",
+		"slipperiness": 0.6
+	},
+	"woolcarpet_cyan": {
+		"id": 2745,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.0625,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 171,
+		"dropDamage": 9,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.1,
+		"material": "carpet",
+		"slipperiness": 0.6
+	},
+	"woolcarpet_purple": {
+		"id": 2746,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.0625,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 171,
+		"dropDamage": 10,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.1,
+		"material": "carpet",
+		"slipperiness": 0.6
+	},
+	"woolcarpet_blue": {
+		"id": 2747,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.0625,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 171,
+		"dropDamage": 11,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.1,
+		"material": "carpet",
+		"slipperiness": 0.6
+	},
+	"woolcarpet_brown": {
+		"id": 2748,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.0625,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 171,
+		"dropDamage": 12,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.1,
+		"material": "carpet",
+		"slipperiness": 0.6
+	},
+	"woolcarpet_green": {
+		"id": 2749,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.0625,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 171,
+		"dropDamage": 13,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.1,
+		"material": "carpet",
+		"slipperiness": 0.6
+	},
+	"woolcarpet_red": {
+		"id": 2750,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.0625,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 171,
+		"dropDamage": 14,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.1,
+		"material": "carpet",
+		"slipperiness": 0.6
+	},
+	"woolcarpet_black": {
+		"id": 2751,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.0625,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 171,
+		"dropDamage": 15,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.1,
@@ -9638,6 +12596,7 @@
 			}
 		},
 		"dropItem": 172,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 1.25,
@@ -9657,6 +12616,7 @@
 			}
 		},
 		"dropItem": 173,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 5.0,
@@ -9676,6 +12636,7 @@
 			}
 		},
 		"dropItem": 174,
+		"dropDamage": 0,
 		"dropAmountMin": 0,
 		"dropAmountMax": 0,
 		"hardness": 0.5,
@@ -9703,6 +12664,7 @@
 			}
 		},
 		"dropItem": 163,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -9730,6 +12692,7 @@
 			}
 		},
 		"dropItem": 163,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -9757,6 +12720,7 @@
 			}
 		},
 		"dropItem": 163,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -9784,6 +12748,7 @@
 			}
 		},
 		"dropItem": 163,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -9811,6 +12776,7 @@
 			}
 		},
 		"dropItem": 163,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -9838,6 +12804,7 @@
 			}
 		},
 		"dropItem": 163,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -9865,6 +12832,7 @@
 			}
 		},
 		"dropItem": 163,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -9892,6 +12860,7 @@
 			}
 		},
 		"dropItem": 163,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -9919,6 +12888,7 @@
 			}
 		},
 		"dropItem": 163,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -9946,6 +12916,7 @@
 			}
 		},
 		"dropItem": 163,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -9973,6 +12944,7 @@
 			}
 		},
 		"dropItem": 163,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -10000,6 +12972,7 @@
 			}
 		},
 		"dropItem": 163,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -10027,6 +13000,7 @@
 			}
 		},
 		"dropItem": 163,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -10054,6 +13028,7 @@
 			}
 		},
 		"dropItem": 164,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -10081,6 +13056,7 @@
 			}
 		},
 		"dropItem": 164,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -10108,6 +13084,7 @@
 			}
 		},
 		"dropItem": 164,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -10135,6 +13112,7 @@
 			}
 		},
 		"dropItem": 164,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -10162,6 +13140,7 @@
 			}
 		},
 		"dropItem": 164,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -10189,6 +13168,7 @@
 			}
 		},
 		"dropItem": 164,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -10216,6 +13196,7 @@
 			}
 		},
 		"dropItem": 164,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -10243,6 +13224,7 @@
 			}
 		},
 		"dropItem": 164,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -10270,6 +13252,7 @@
 			}
 		},
 		"dropItem": 164,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -10297,6 +13280,7 @@
 			}
 		},
 		"dropItem": 164,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -10324,6 +13308,7 @@
 			}
 		},
 		"dropItem": 164,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -10351,6 +13336,7 @@
 			}
 		},
 		"dropItem": 164,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -10378,6 +13364,7 @@
 			}
 		},
 		"dropItem": 164,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -10397,6 +13384,7 @@
 			}
 		},
 		"dropItem": 165,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.0,
@@ -10416,6 +13404,7 @@
 			}
 		},
 		"dropItem": 3,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.65,
@@ -10427,6 +13416,163 @@
 		"collision": {
 		},
 		"dropItem": 175,
+		"dropDamage": 0,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.0,
+		"material": "vine",
+		"slipperiness": 0.6
+	},
+	"doubleplant_syringa": {
+		"id": 2801,
+		"collision": {
+		},
+		"dropItem": 175,
+		"dropDamage": 1,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.0,
+		"material": "vine",
+		"slipperiness": 0.6
+	},
+	"doubleplant_grass": {
+		"id": 2802,
+		"collision": {
+		},
+		"dropItem": -1,
+		"dropDamage": 0,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.0,
+		"material": "vine",
+		"slipperiness": 0.6
+	},
+	"doubleplant_fern": {
+		"id": 2803,
+		"collision": {
+		},
+		"dropItem": 0,
+		"dropDamage": 3,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.0,
+		"material": "vine",
+		"slipperiness": 0.6
+	},
+	"doubleplant_rose": {
+		"id": 2804,
+		"collision": {
+		},
+		"dropItem": 175,
+		"dropDamage": 4,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.0,
+		"material": "vine",
+		"slipperiness": 0.6
+	},
+	"doubleplant_paeonia": {
+		"id": 2805,
+		"collision": {
+		},
+		"dropItem": 175,
+		"dropDamage": 5,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.0,
+		"material": "vine",
+		"slipperiness": 0.6
+	},
+	"doubleplant_sunflower_1": {
+		"id": 2808,
+		"collision": {
+		},
+		"dropItem": 0,
+		"dropDamage": 0,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.0,
+		"material": "vine",
+		"slipperiness": 0.6
+	},
+	"doubleplant_sunflower_2": {
+		"id": 2809,
+		"collision": {
+		},
+		"dropItem": 0,
+		"dropDamage": 0,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.0,
+		"material": "vine",
+		"slipperiness": 0.6
+	},
+	"doubleplant_sunflower_3": {
+		"id": 2810,
+		"collision": {
+		},
+		"dropItem": 0,
+		"dropDamage": 0,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.0,
+		"material": "vine",
+		"slipperiness": 0.6
+	},
+	"doubleplant_sunflower_4": {
+		"id": 2811,
+		"collision": {
+		},
+		"dropItem": 0,
+		"dropDamage": 0,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.0,
+		"material": "vine",
+		"slipperiness": 0.6
+	},
+	"doubleplant_sunflower_5": {
+		"id": 2812,
+		"collision": {
+		},
+		"dropItem": 0,
+		"dropDamage": 0,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.0,
+		"material": "vine",
+		"slipperiness": 0.6
+	},
+	"doubleplant_sunflower_6": {
+		"id": 2813,
+		"collision": {
+		},
+		"dropItem": 0,
+		"dropDamage": 0,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.0,
+		"material": "vine",
+		"slipperiness": 0.6
+	},
+	"doubleplant_sunflower_7": {
+		"id": 2814,
+		"collision": {
+		},
+		"dropItem": 0,
+		"dropDamage": 0,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.0,
+		"material": "vine",
+		"slipperiness": 0.6
+	},
+	"doubleplant_sunflower_8": {
+		"id": 2815,
+		"collision": {
+		},
+		"dropItem": 0,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.0,
@@ -10446,6 +13592,307 @@
 			}
 		},
 		"dropItem": 95,
+		"dropDamage": 0,
+		"dropAmountMin": 0,
+		"dropAmountMax": 0,
+		"hardness": 0.3,
+		"material": "glass",
+		"slipperiness": 0.6
+	},
+	"stainedglass_orange": {
+		"id": 1521,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 95,
+		"dropDamage": 1,
+		"dropAmountMin": 0,
+		"dropAmountMax": 0,
+		"hardness": 0.3,
+		"material": "glass",
+		"slipperiness": 0.6
+	},
+	"stainedglass_magenta": {
+		"id": 1522,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 95,
+		"dropDamage": 2,
+		"dropAmountMin": 0,
+		"dropAmountMax": 0,
+		"hardness": 0.3,
+		"material": "glass",
+		"slipperiness": 0.6
+	},
+	"stainedglass_lightblue": {
+		"id": 1523,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 95,
+		"dropDamage": 3,
+		"dropAmountMin": 0,
+		"dropAmountMax": 0,
+		"hardness": 0.3,
+		"material": "glass",
+		"slipperiness": 0.6
+	},
+	"stainedglass_yellow": {
+		"id": 1524,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 95,
+		"dropDamage": 4,
+		"dropAmountMin": 0,
+		"dropAmountMax": 0,
+		"hardness": 0.3,
+		"material": "glass",
+		"slipperiness": 0.6
+	},
+	"stainedglass_lime": {
+		"id": 1525,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 95,
+		"dropDamage": 5,
+		"dropAmountMin": 0,
+		"dropAmountMax": 0,
+		"hardness": 0.3,
+		"material": "glass",
+		"slipperiness": 0.6
+	},
+	"stainedglass_pink": {
+		"id": 1526,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 95,
+		"dropDamage": 6,
+		"dropAmountMin": 0,
+		"dropAmountMax": 0,
+		"hardness": 0.3,
+		"material": "glass",
+		"slipperiness": 0.6
+	},
+	"stainedglass_gray": {
+		"id": 1527,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 95,
+		"dropDamage": 7,
+		"dropAmountMin": 0,
+		"dropAmountMax": 0,
+		"hardness": 0.3,
+		"material": "glass",
+		"slipperiness": 0.6
+	},
+	"stainedglass_silver": {
+		"id": 1528,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 95,
+		"dropDamage": 8,
+		"dropAmountMin": 0,
+		"dropAmountMax": 0,
+		"hardness": 0.3,
+		"material": "glass",
+		"slipperiness": 0.6
+	},
+	"stainedglass_cyan": {
+		"id": 1529,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 95,
+		"dropDamage": 9,
+		"dropAmountMin": 0,
+		"dropAmountMax": 0,
+		"hardness": 0.3,
+		"material": "glass",
+		"slipperiness": 0.6
+	},
+	"stainedglass_purple": {
+		"id": 1530,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 95,
+		"dropDamage": 10,
+		"dropAmountMin": 0,
+		"dropAmountMax": 0,
+		"hardness": 0.3,
+		"material": "glass",
+		"slipperiness": 0.6
+	},
+	"stainedglass_blue": {
+		"id": 1531,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 95,
+		"dropDamage": 11,
+		"dropAmountMin": 0,
+		"dropAmountMax": 0,
+		"hardness": 0.3,
+		"material": "glass",
+		"slipperiness": 0.6
+	},
+	"stainedglass_brown": {
+		"id": 1532,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 95,
+		"dropDamage": 12,
+		"dropAmountMin": 0,
+		"dropAmountMax": 0,
+		"hardness": 0.3,
+		"material": "glass",
+		"slipperiness": 0.6
+	},
+	"stainedglass_green": {
+		"id": 1533,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 95,
+		"dropDamage": 13,
+		"dropAmountMin": 0,
+		"dropAmountMax": 0,
+		"hardness": 0.3,
+		"material": "glass",
+		"slipperiness": 0.6
+	},
+	"stainedglass_red": {
+		"id": 1534,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 95,
+		"dropDamage": 14,
+		"dropAmountMin": 0,
+		"dropAmountMax": 0,
+		"hardness": 0.3,
+		"material": "glass",
+		"slipperiness": 0.6
+	},
+	"stainedglass_black": {
+		"id": 1535,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 95,
+		"dropDamage": 15,
 		"dropAmountMin": 0,
 		"dropAmountMax": 0,
 		"hardness": 0.3,
@@ -10497,6 +13944,787 @@
 			}
 		},
 		"dropItem": 0,
+		"dropDamage": 0,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.3,
+		"material": "glass",
+		"slipperiness": 0.6
+	},
+	"thinstainedglass_orange": {
+		"id": 2561,
+		"collision": {
+			"0": {
+				"minX": 0.4375,
+				"maxX": 0.5625,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.4375,
+				"maxZ": 0.5625
+			},
+			"1": {
+				"minX": 0.4375,
+				"maxX": 0.5625,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 0.5625
+			},
+			"2": {
+				"minX": 0.4375,
+				"maxX": 0.5625,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.4375,
+				"maxZ": 1.0
+			},
+			"3": {
+				"minX": 0.4375,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.4375,
+				"maxZ": 0.5625
+			},
+			"4": {
+				"minX": 0.0,
+				"maxX": 0.5625,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.4375,
+				"maxZ": 0.5625
+			}
+		},
+		"dropItem": 0,
+		"dropDamage": 1,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.3,
+		"material": "glass",
+		"slipperiness": 0.6
+	},
+	"thinstainedglass_magenta": {
+		"id": 2562,
+		"collision": {
+			"0": {
+				"minX": 0.4375,
+				"maxX": 0.5625,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.4375,
+				"maxZ": 0.5625
+			},
+			"1": {
+				"minX": 0.4375,
+				"maxX": 0.5625,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 0.5625
+			},
+			"2": {
+				"minX": 0.4375,
+				"maxX": 0.5625,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.4375,
+				"maxZ": 1.0
+			},
+			"3": {
+				"minX": 0.4375,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.4375,
+				"maxZ": 0.5625
+			},
+			"4": {
+				"minX": 0.0,
+				"maxX": 0.5625,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.4375,
+				"maxZ": 0.5625
+			}
+		},
+		"dropItem": 0,
+		"dropDamage": 2,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.3,
+		"material": "glass",
+		"slipperiness": 0.6
+	},
+	"thinstainedglass_lightblue": {
+		"id": 2563,
+		"collision": {
+			"0": {
+				"minX": 0.4375,
+				"maxX": 0.5625,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.4375,
+				"maxZ": 0.5625
+			},
+			"1": {
+				"minX": 0.4375,
+				"maxX": 0.5625,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 0.5625
+			},
+			"2": {
+				"minX": 0.4375,
+				"maxX": 0.5625,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.4375,
+				"maxZ": 1.0
+			},
+			"3": {
+				"minX": 0.4375,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.4375,
+				"maxZ": 0.5625
+			},
+			"4": {
+				"minX": 0.0,
+				"maxX": 0.5625,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.4375,
+				"maxZ": 0.5625
+			}
+		},
+		"dropItem": 0,
+		"dropDamage": 3,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.3,
+		"material": "glass",
+		"slipperiness": 0.6
+	},
+	"thinstainedglass_yellow": {
+		"id": 2564,
+		"collision": {
+			"0": {
+				"minX": 0.4375,
+				"maxX": 0.5625,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.4375,
+				"maxZ": 0.5625
+			},
+			"1": {
+				"minX": 0.4375,
+				"maxX": 0.5625,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 0.5625
+			},
+			"2": {
+				"minX": 0.4375,
+				"maxX": 0.5625,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.4375,
+				"maxZ": 1.0
+			},
+			"3": {
+				"minX": 0.4375,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.4375,
+				"maxZ": 0.5625
+			},
+			"4": {
+				"minX": 0.0,
+				"maxX": 0.5625,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.4375,
+				"maxZ": 0.5625
+			}
+		},
+		"dropItem": 0,
+		"dropDamage": 4,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.3,
+		"material": "glass",
+		"slipperiness": 0.6
+	},
+	"thinstainedglass_lime": {
+		"id": 2565,
+		"collision": {
+			"0": {
+				"minX": 0.4375,
+				"maxX": 0.5625,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.4375,
+				"maxZ": 0.5625
+			},
+			"1": {
+				"minX": 0.4375,
+				"maxX": 0.5625,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 0.5625
+			},
+			"2": {
+				"minX": 0.4375,
+				"maxX": 0.5625,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.4375,
+				"maxZ": 1.0
+			},
+			"3": {
+				"minX": 0.4375,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.4375,
+				"maxZ": 0.5625
+			},
+			"4": {
+				"minX": 0.0,
+				"maxX": 0.5625,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.4375,
+				"maxZ": 0.5625
+			}
+		},
+		"dropItem": 0,
+		"dropDamage": 5,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.3,
+		"material": "glass",
+		"slipperiness": 0.6
+	},
+	"thinstainedglass_pink": {
+		"id": 2566,
+		"collision": {
+			"0": {
+				"minX": 0.4375,
+				"maxX": 0.5625,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.4375,
+				"maxZ": 0.5625
+			},
+			"1": {
+				"minX": 0.4375,
+				"maxX": 0.5625,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 0.5625
+			},
+			"2": {
+				"minX": 0.4375,
+				"maxX": 0.5625,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.4375,
+				"maxZ": 1.0
+			},
+			"3": {
+				"minX": 0.4375,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.4375,
+				"maxZ": 0.5625
+			},
+			"4": {
+				"minX": 0.0,
+				"maxX": 0.5625,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.4375,
+				"maxZ": 0.5625
+			}
+		},
+		"dropItem": 0,
+		"dropDamage": 6,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.3,
+		"material": "glass",
+		"slipperiness": 0.6
+	},
+	"thinstainedglass_gray": {
+		"id": 2567,
+		"collision": {
+			"0": {
+				"minX": 0.4375,
+				"maxX": 0.5625,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.4375,
+				"maxZ": 0.5625
+			},
+			"1": {
+				"minX": 0.4375,
+				"maxX": 0.5625,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 0.5625
+			},
+			"2": {
+				"minX": 0.4375,
+				"maxX": 0.5625,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.4375,
+				"maxZ": 1.0
+			},
+			"3": {
+				"minX": 0.4375,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.4375,
+				"maxZ": 0.5625
+			},
+			"4": {
+				"minX": 0.0,
+				"maxX": 0.5625,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.4375,
+				"maxZ": 0.5625
+			}
+		},
+		"dropItem": 0,
+		"dropDamage": 7,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.3,
+		"material": "glass",
+		"slipperiness": 0.6
+	},
+	"thinstainedglass_silver": {
+		"id": 2568,
+		"collision": {
+			"0": {
+				"minX": 0.4375,
+				"maxX": 0.5625,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.4375,
+				"maxZ": 0.5625
+			},
+			"1": {
+				"minX": 0.4375,
+				"maxX": 0.5625,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 0.5625
+			},
+			"2": {
+				"minX": 0.4375,
+				"maxX": 0.5625,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.4375,
+				"maxZ": 1.0
+			},
+			"3": {
+				"minX": 0.4375,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.4375,
+				"maxZ": 0.5625
+			},
+			"4": {
+				"minX": 0.0,
+				"maxX": 0.5625,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.4375,
+				"maxZ": 0.5625
+			}
+		},
+		"dropItem": 0,
+		"dropDamage": 8,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.3,
+		"material": "glass",
+		"slipperiness": 0.6
+	},
+	"thinstainedglass_cyan": {
+		"id": 2569,
+		"collision": {
+			"0": {
+				"minX": 0.4375,
+				"maxX": 0.5625,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.4375,
+				"maxZ": 0.5625
+			},
+			"1": {
+				"minX": 0.4375,
+				"maxX": 0.5625,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 0.5625
+			},
+			"2": {
+				"minX": 0.4375,
+				"maxX": 0.5625,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.4375,
+				"maxZ": 1.0
+			},
+			"3": {
+				"minX": 0.4375,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.4375,
+				"maxZ": 0.5625
+			},
+			"4": {
+				"minX": 0.0,
+				"maxX": 0.5625,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.4375,
+				"maxZ": 0.5625
+			}
+		},
+		"dropItem": 0,
+		"dropDamage": 9,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.3,
+		"material": "glass",
+		"slipperiness": 0.6
+	},
+	"thinstainedglass_purple": {
+		"id": 2570,
+		"collision": {
+			"0": {
+				"minX": 0.4375,
+				"maxX": 0.5625,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.4375,
+				"maxZ": 0.5625
+			},
+			"1": {
+				"minX": 0.4375,
+				"maxX": 0.5625,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 0.5625
+			},
+			"2": {
+				"minX": 0.4375,
+				"maxX": 0.5625,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.4375,
+				"maxZ": 1.0
+			},
+			"3": {
+				"minX": 0.4375,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.4375,
+				"maxZ": 0.5625
+			},
+			"4": {
+				"minX": 0.0,
+				"maxX": 0.5625,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.4375,
+				"maxZ": 0.5625
+			}
+		},
+		"dropItem": 0,
+		"dropDamage": 10,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.3,
+		"material": "glass",
+		"slipperiness": 0.6
+	},
+	"thinstainedglass_blue": {
+		"id": 2571,
+		"collision": {
+			"0": {
+				"minX": 0.4375,
+				"maxX": 0.5625,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.4375,
+				"maxZ": 0.5625
+			},
+			"1": {
+				"minX": 0.4375,
+				"maxX": 0.5625,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 0.5625
+			},
+			"2": {
+				"minX": 0.4375,
+				"maxX": 0.5625,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.4375,
+				"maxZ": 1.0
+			},
+			"3": {
+				"minX": 0.4375,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.4375,
+				"maxZ": 0.5625
+			},
+			"4": {
+				"minX": 0.0,
+				"maxX": 0.5625,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.4375,
+				"maxZ": 0.5625
+			}
+		},
+		"dropItem": 0,
+		"dropDamage": 11,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.3,
+		"material": "glass",
+		"slipperiness": 0.6
+	},
+	"thinstainedglass_brown": {
+		"id": 2572,
+		"collision": {
+			"0": {
+				"minX": 0.4375,
+				"maxX": 0.5625,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.4375,
+				"maxZ": 0.5625
+			},
+			"1": {
+				"minX": 0.4375,
+				"maxX": 0.5625,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 0.5625
+			},
+			"2": {
+				"minX": 0.4375,
+				"maxX": 0.5625,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.4375,
+				"maxZ": 1.0
+			},
+			"3": {
+				"minX": 0.4375,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.4375,
+				"maxZ": 0.5625
+			},
+			"4": {
+				"minX": 0.0,
+				"maxX": 0.5625,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.4375,
+				"maxZ": 0.5625
+			}
+		},
+		"dropItem": 0,
+		"dropDamage": 12,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.3,
+		"material": "glass",
+		"slipperiness": 0.6
+	},
+	"thinstainedglass_green": {
+		"id": 2573,
+		"collision": {
+			"0": {
+				"minX": 0.4375,
+				"maxX": 0.5625,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.4375,
+				"maxZ": 0.5625
+			},
+			"1": {
+				"minX": 0.4375,
+				"maxX": 0.5625,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 0.5625
+			},
+			"2": {
+				"minX": 0.4375,
+				"maxX": 0.5625,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.4375,
+				"maxZ": 1.0
+			},
+			"3": {
+				"minX": 0.4375,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.4375,
+				"maxZ": 0.5625
+			},
+			"4": {
+				"minX": 0.0,
+				"maxX": 0.5625,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.4375,
+				"maxZ": 0.5625
+			}
+		},
+		"dropItem": 0,
+		"dropDamage": 13,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.3,
+		"material": "glass",
+		"slipperiness": 0.6
+	},
+	"thinstainedglass_red": {
+		"id": 2574,
+		"collision": {
+			"0": {
+				"minX": 0.4375,
+				"maxX": 0.5625,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.4375,
+				"maxZ": 0.5625
+			},
+			"1": {
+				"minX": 0.4375,
+				"maxX": 0.5625,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 0.5625
+			},
+			"2": {
+				"minX": 0.4375,
+				"maxX": 0.5625,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.4375,
+				"maxZ": 1.0
+			},
+			"3": {
+				"minX": 0.4375,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.4375,
+				"maxZ": 0.5625
+			},
+			"4": {
+				"minX": 0.0,
+				"maxX": 0.5625,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.4375,
+				"maxZ": 0.5625
+			}
+		},
+		"dropItem": 0,
+		"dropDamage": 14,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.3,
+		"material": "glass",
+		"slipperiness": 0.6
+	},
+	"thinstainedglass_black": {
+		"id": 2575,
+		"collision": {
+			"0": {
+				"minX": 0.4375,
+				"maxX": 0.5625,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.4375,
+				"maxZ": 0.5625
+			},
+			"1": {
+				"minX": 0.4375,
+				"maxX": 0.5625,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 0.5625
+			},
+			"2": {
+				"minX": 0.4375,
+				"maxX": 0.5625,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.4375,
+				"maxZ": 1.0
+			},
+			"3": {
+				"minX": 0.4375,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.4375,
+				"maxZ": 0.5625
+			},
+			"4": {
+				"minX": 0.0,
+				"maxX": 0.5625,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.4375,
+				"maxZ": 0.5625
+			}
+		},
+		"dropItem": 0,
+		"dropDamage": 15,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.3,
@@ -10516,6 +14744,47 @@
 			}
 		},
 		"dropItem": 168,
+		"dropDamage": 0,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 1.5,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"prismarine_bricks": {
+		"id": 2689,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 168,
+		"dropDamage": 1,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 1.5,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"prismarine_dark": {
+		"id": 2690,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 168,
+		"dropDamage": 2,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 1.5,
@@ -10535,6 +14804,7 @@
 			}
 		},
 		"dropItem": 410,
+		"dropDamage": 0,
 		"dropAmountMin": 2,
 		"dropAmountMax": 4,
 		"hardness": 0.3,
@@ -10554,6 +14824,47 @@
 			}
 		},
 		"dropItem": 179,
+		"dropDamage": 0,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.8,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"redsandstone_chiseled": {
+		"id": 2865,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 179,
+		"dropDamage": 1,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.8,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"redsandstone_smooth": {
+		"id": 2866,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 179,
+		"dropDamage": 2,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.8,
@@ -10581,6 +14892,7 @@
 			}
 		},
 		"dropItem": 180,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.8,
@@ -10608,6 +14920,7 @@
 			}
 		},
 		"dropItem": 180,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.8,
@@ -10635,6 +14948,7 @@
 			}
 		},
 		"dropItem": 180,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.8,
@@ -10662,6 +14976,7 @@
 			}
 		},
 		"dropItem": 180,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.8,
@@ -10689,6 +15004,7 @@
 			}
 		},
 		"dropItem": 180,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.8,
@@ -10716,6 +15032,7 @@
 			}
 		},
 		"dropItem": 180,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.8,
@@ -10743,6 +15060,7 @@
 			}
 		},
 		"dropItem": 180,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.8,
@@ -10770,6 +15088,7 @@
 			}
 		},
 		"dropItem": 180,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.8,
@@ -10797,6 +15116,7 @@
 			}
 		},
 		"dropItem": 180,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.8,
@@ -10824,6 +15144,7 @@
 			}
 		},
 		"dropItem": 180,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.8,
@@ -10851,6 +15172,7 @@
 			}
 		},
 		"dropItem": 180,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.8,
@@ -10878,6 +15200,7 @@
 			}
 		},
 		"dropItem": 180,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.8,
@@ -10905,6 +15228,7 @@
 			}
 		},
 		"dropItem": 180,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.8,
@@ -10924,6 +15248,7 @@
 			}
 		},
 		"dropItem": 182,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -10943,6 +15268,7 @@
 			}
 		},
 		"dropItem": 182,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -10962,6 +15288,7 @@
 			}
 		},
 		"dropItem": 182,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -10981,6 +15308,7 @@
 			}
 		},
 		"dropItem": 182,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -11000,6 +15328,7 @@
 			}
 		},
 		"dropItem": 182,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -11019,6 +15348,7 @@
 			}
 		},
 		"dropItem": 182,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -11038,6 +15368,7 @@
 			}
 		},
 		"dropItem": 182,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -11057,6 +15388,7 @@
 			}
 		},
 		"dropItem": 182,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -11076,6 +15408,7 @@
 			}
 		},
 		"dropItem": 182,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -11095,6 +15428,7 @@
 			}
 		},
 		"dropItem": 210,
+		"dropDamage": 0,
 		"dropAmountMin": 0,
 		"dropAmountMax": 0,
 		"hardness": -1.0,
@@ -11114,6 +15448,7 @@
 			}
 		},
 		"dropItem": 211,
+		"dropDamage": 0,
 		"dropAmountMin": 0,
 		"dropAmountMax": 0,
 		"hardness": -1.0,
@@ -11133,6 +15468,7 @@
 			}
 		},
 		"dropItem": 213,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.5,
@@ -11152,6 +15488,7 @@
 			}
 		},
 		"dropItem": 214,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 1.0,
@@ -11171,6 +15508,7 @@
 			}
 		},
 		"dropItem": 215,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -11190,6 +15528,7 @@
 			}
 		},
 		"dropItem": 216,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -11201,6 +15540,7 @@
 		"collision": {
 		},
 		"dropItem": 217,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 0.0,
@@ -11220,6 +15560,7 @@
 			}
 		},
 		"dropItem": 218,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 3.0,
@@ -11239,6 +15580,7 @@
 			}
 		},
 		"dropItem": 219,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -11258,6 +15600,7 @@
 			}
 		},
 		"dropItem": 220,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -11277,6 +15620,7 @@
 			}
 		},
 		"dropItem": 221,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -11296,6 +15640,7 @@
 			}
 		},
 		"dropItem": 222,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -11315,6 +15660,7 @@
 			}
 		},
 		"dropItem": 223,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -11334,6 +15680,7 @@
 			}
 		},
 		"dropItem": 224,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -11353,6 +15700,7 @@
 			}
 		},
 		"dropItem": 225,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -11372,6 +15720,7 @@
 			}
 		},
 		"dropItem": 226,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -11391,6 +15740,7 @@
 			}
 		},
 		"dropItem": 227,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -11410,6 +15760,7 @@
 			}
 		},
 		"dropItem": 228,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -11429,6 +15780,7 @@
 			}
 		},
 		"dropItem": 229,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -11448,6 +15800,7 @@
 			}
 		},
 		"dropItem": 230,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -11467,6 +15820,7 @@
 			}
 		},
 		"dropItem": 231,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -11486,6 +15840,7 @@
 			}
 		},
 		"dropItem": 232,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -11505,6 +15860,7 @@
 			}
 		},
 		"dropItem": 233,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -11524,6 +15880,7 @@
 			}
 		},
 		"dropItem": 234,
+		"dropDamage": 0,
 		"dropAmountMin": 1,
 		"dropAmountMax": 1,
 		"hardness": 2.0,
@@ -11543,6 +15900,7 @@
 			}
 		},
 		"dropItem": 255,
+		"dropDamage": 0,
 		"dropAmountMin": 0,
 		"dropAmountMax": 0,
 		"hardness": -1.0,

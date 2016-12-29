@@ -124,7 +124,7 @@ int handleRead(struct conn* conn, struct work_param* param, int fd) {
 					if (writePacket(conn, &rep) < 0) goto rete;
 					xfree(rep.data.login_client.loginsuccess.uuid);
 					conn->state = STATE_PLAY;
-					struct entity* ep = newEntity(nextEntityID++, (float) overworld->spawnpos.x + .5, (float) overworld->spawnpos.y, (float) overworld->spawnpos.z + .5, ENT_PLAYER, 0., 0.);
+					struct entity* ep = newEntity(nextEntityID++, (double) overworld->spawnpos.x + .5, (double) overworld->spawnpos.y, (double) overworld->spawnpos.z + .5, ENT_PLAYER, 0., 0.);
 					struct player* player = newPlayer(ep, xstrdup(rep.data.login_client.loginsuccess.username, 1), uuid, conn, 0); // TODO default gamemode
 					conn->player = player;
 					add_collection(players, player);

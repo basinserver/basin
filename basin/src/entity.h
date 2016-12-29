@@ -381,7 +381,12 @@ struct entity {
 		struct world* world;
 		struct collection* loadingPlayers;
 		uint64_t age;
+		uint8_t invincibilityTicks;
 };
+
+void damageEntityWithItem(struct entity* attacked, struct entity* attacker, struct slot* item);
+
+void damageEntity(struct entity* attacked, float damage, int armorable);
 
 void readMetadata(struct entity* ent, unsigned char* meta, size_t size);
 

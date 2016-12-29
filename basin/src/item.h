@@ -234,9 +234,9 @@ struct item_info {
 		struct tool_info* toolType;
 		uint8_t maxStackSize;
 		int16_t maxDamage;
-		uint8_t damage;
 		uint8_t armor;
 		uint8_t armorType;
+		float damage;
 		float attackSpeed;
 		float toolProficiency;
 		uint8_t harvestLevel;

@@ -24,6 +24,7 @@
 #include "item.h"
 #include "network.h"
 #include "smelting.h"
+#include "server.h"
 
 void flush_outgoing(struct player* player) {
 	if (player->conn == NULL) return;
@@ -420,7 +421,7 @@ void dropBlockDrops(struct world* world, block blk, struct player* breaker, int3
 		if (bi->drop <= 0 || bi->drop_max == 0 || bi->drop_max < bi->drop_min) return;
 		struct slot dd;
 		dd.item = bi->drop;
-		dd.damage = 0;
+		dd.damage = bi->drop_damage;
 		dd.itemCount = bi->drop_min + ((bi->drop_max == bi->drop_min) ? 0 : (rand() % (bi->drop_max - bi->drop_min)));
 		dd.nbt = NULL;
 		dropBlockDrop(world, &dd, x, y, z);
@@ -462,6 +463,7 @@ void player_openInventory(struct player* player, struct inventory* inv) {
 }
 
 void player_receive_packet(struct player* player, struct packet* inp) {
+	if (player->entity->health <= 0. && inp->id != PKT_PLAY_SERVER_KEEPALIVE && inp->id != PKT_PLAY_SERVER_CLIENTSTATUS) goto cont;
 	if (inp->id == PKT_PLAY_SERVER_KEEPALIVE) {
 		if (inp->data.play_server.keepalive.keep_alive_id == player->nextKeepAlive) {
 			player->nextKeepAlive = 0;
@@ -499,6 +501,7 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 		player->entity->yaw = inp->data.play_server.playerpositionandlook.yaw;
 		player->entity->pitch = inp->data.play_server.playerpositionandlook.pitch;
 	} else if (inp->id == PKT_PLAY_SERVER_ANIMATION) {
+		player->lastSwing = tick_counter;
 		BEGIN_BROADCAST_EXCEPT_DIST(player, player->entity, 128.)
 		struct packet* pkt = xmalloc(sizeof(struct packet));
 		pkt->id = PKT_PLAY_CLIENT_ANIMATION;
@@ -509,7 +512,9 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 		END_BROADCAST
 	} else if (inp->id == PKT_PLAY_SERVER_PLAYERDIGGING) {
 		if (inp->data.play_server.playerdigging.status == 0) {
-			float hard = getBlockInfo(getBlockWorld(player->world, inp->data.play_server.playerdigging.location.x, inp->data.play_server.playerdigging.location.y, inp->data.play_server.playerdigging.location.z))->hardness;
+			struct block_info* bi = getBlockInfo(getBlockWorld(player->world, inp->data.play_server.playerdigging.location.x, inp->data.play_server.playerdigging.location.y, inp->data.play_server.playerdigging.location.z));
+			if (bi == NULL) goto cont;
+			float hard = bi->hardness;
 			if (hard > 0. && player->gamemode == 0) {
 				player->digging = 0.;
 				memcpy(&player->digging_position, &inp->data.play_server.playerdigging.location, sizeof(struct encpos));
@@ -1103,15 +1108,42 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 					pkt->data.play_client.blockaction.block_type = getBlockWorld(player->world, inv->te->x, inv->te->y, inv->te->z) >> 4;
 					add_queue(bc_player->outgoingPacket, pkt);
 					flush_outgoing (bc_player);
-					END_BROADCAST printf("nc: %i %i\n", inv->players->count - 1, inv->players->size);
-					for (int i = 0; i < inv->players->size; i++) {
-						printf("cix %i: %16lX\n", i, inv->players->data[i]);
-					}
+					END_BROADCAST
 				}
 			}
 		}
 		if (inv != NULL && inv->type != INVTYPE_PLAYERINVENTORY) rem_collection(inv->players, player);
 		player->openInv = NULL; // TODO: free sometimes?
+	} else if (inp->id == PKT_PLAY_SERVER_USEENTITY) {
+		if (inp->data.play_server.useentity.type == 1) {
+			struct entity* ent = getEntity(player->world, inp->data.play_server.useentity.target);
+			if (ent != NULL && ent != player->entity && ent->health > 0.) {
+				damageEntityWithItem(ent, player->entity, getSlot(player, player->inventory, 36 + player->currentItem));
+			}
+			player->lastSwing = tick_counter;
+		}
+	} else if (inp->id == PKT_PLAY_SERVER_CLIENTSTATUS) {
+		if (inp->data.play_server.clientstatus.action_id == 0 && player->entity->health <= 0.) {
+			player->entity->health = 20.;
+			player->food = 20;
+			player->saturation = 0.; // TODO
+			struct packet* pkt = xmalloc(sizeof(struct packet));
+			pkt->id = PKT_PLAY_CLIENT_UPDATEHEALTH;
+			pkt->data.play_client.updatehealth.health = player->entity->health;
+			pkt->data.play_client.updatehealth.food = player->food;
+			pkt->data.play_client.updatehealth.food_saturation = player->saturation;
+			add_queue(player->outgoingPacket, pkt);
+			flush_outgoing(player);
+			pkt = xmalloc(sizeof(struct packet));
+			pkt->id = PKT_PLAY_CLIENT_RESPAWN;
+			pkt->data.play_client.respawn.dimension = player->world->dimension;
+			pkt->data.play_client.respawn.difficulty = difficulty;
+			pkt->data.play_client.respawn.gamemode = player->gamemode;
+			pkt->data.play_client.respawn.level_type = xstrdup(player->world->levelType, 0);
+			add_queue(player->outgoingPacket, pkt);
+			flush_outgoing(player);
+			teleportPlayer(player, (double) player->world->spawnpos.x + .5, (double) player->world->spawnpos.y, (double) player->world->spawnpos.z + .5); // TODO: make overworld
+		}
 	}
 	cont: ;
 }
@@ -1411,12 +1443,16 @@ void tick_itemstack(struct world* world, struct entity* entity) {
 
 void tick_entity(struct world* world, struct entity* entity) {
 	entity->age++;
+	if (entity->invincibilityTicks > 0) entity->invincibilityTicks--;
 	if (entity->type > ENT_PLAYER) {
 		double friction_modifier = .98;
 		if (entity->type == ENT_ITEMSTACK) entity->motY -= 0.04;
 		moveEntity(entity);
 		double friction = .98; // todo per block
-		if (entity->onGround) friction = getBlockInfo(getBlockWorld(entity->world, floor_int(entity->x), floor_int(entity->y) - 1, floor_int(entity->z)))->slipperiness * friction_modifier;
+		if (entity->onGround) {
+			struct block_info* bi = getBlockInfo(getBlockWorld(entity->world, floor_int(entity->x), floor_int(entity->y) - 1, floor_int(entity->z)));
+			if (bi != NULL) friction = bi->slipperiness * friction_modifier;
+		}
 		entity->motX *= friction;
 		entity->motY *= .98;
 		entity->motZ *= friction;

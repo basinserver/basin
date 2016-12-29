@@ -544,9 +544,9 @@ struct world* newWorld() {
 	struct world* world = xmalloc(sizeof(struct world));
 	memset(world, 0, sizeof(struct world));
 	world->regions = new_collection(0, 1);
-	world->entities = new_collection(0, 1);
-	world->players = new_collection(0, 1);
-	world->loadedChunks = new_collection(0, 1);
+	world->entities = new_collection(0, 0);
+	world->players = new_collection(0, 0);
+	world->loadedChunks = new_collection(0, 0);
 	pthread_rwlock_init(&world->chl, NULL);
 	return world;
 }
@@ -620,21 +620,17 @@ void freeWorld(struct world* world) { // assumes all chunks are unloaded
 	pthread_rwlock_unlock(&world->regions->data_mutex);
 	pthread_rwlock_destroy(&world->chl);
 	del_collection(world->regions);
-	pthread_rwlock_wrlock(&world->entities->data_mutex);
 	for (size_t i = 0; i < world->entities->size; i++) {
 		if (world->entities->data[i] != NULL) {
 			freeEntity(world->entities->data[i]);
 		}
 	}
-	pthread_rwlock_unlock(&world->entities->data_mutex);
 	del_collection(world->entities);
-	pthread_rwlock_wrlock(&world->players->data_mutex);
 	for (size_t i = 0; i < world->players->size; i++) {
 		if (world->players->data[i] != NULL) {
 			freePlayer(world->players->data[i]);
 		}
 	}
-	pthread_rwlock_unlock(&world->players->data_mutex);
 	del_collection(world->players);
 	if (world->level != NULL) {
 		freeNBT(world->level);
@@ -688,13 +684,11 @@ void despawnEntity(struct world* world, struct entity* entity) {
 }
 
 struct entity* getEntity(struct world* world, int32_t id) {
-	pthread_rwlock_rdlock(&world->entities->data_mutex);
 	for (size_t i = 0; i < world->entities->size; i++) {
 		if (world->entities->data[i] != NULL && ((struct entity*) world->entities->data[i])->id == id) {
 			return world->entities->data[i];
 		}
 	}
-	pthread_rwlock_unlock(&world->entities->data_mutex);
 	return NULL;
 }
 

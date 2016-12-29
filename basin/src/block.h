@@ -1508,6 +1508,7 @@ struct block_info {
 		struct block_material* material;
 		float slipperiness;
 		item drop;
+		int16_t drop_damage;
 		uint8_t drop_min;
 		uint8_t drop_max;
 };

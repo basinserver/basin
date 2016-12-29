@@ -17,6 +17,9 @@
 #include "block.h"
 #include <time.h>
 #include "world.h"
+#include "item.h"
+#include "game.h"
+#include "queue.h"
 
 void getEntityCollision(struct entity* ent, struct boundingbox* bb) {
 	float width = .3;
@@ -444,6 +447,7 @@ struct entity* newEntity(int32_t id, float x, float y, float z, uint8_t type, fl
 	e->subtype = 0;
 	e->fallDistance = 0.;
 	e->maxHealth = 20;
+	e->health = e->maxHealth;
 	e->world = NULL;
 	e->loadingPlayers = new_collection(0, 0);
 	memset(&e->data, 0, sizeof(union entity_data));
@@ -839,6 +843,95 @@ void moveEntity(struct entity* entity) {
 			entity->motY = -entity->motY;
 		}
 	}
+}
+
+void applyKnockback(struct entity* entity, float yaw, float strength) {
+	float kb_resistance = 0.;
+	if (randFloat() > kb_resistance) {
+		float xr = sinf(yaw / 360. * 2 * M_PI);
+		float zr = -cosf(yaw / 360. * 2 * M_PI);
+		float m = sqrtf(xr * xr + zr * zr);
+		entity->motX /= 2.;
+		entity->motZ /= 2.;
+		entity->motX -= xr / m * strength;
+		entity->motZ -= zr / m * strength;
+		if (entity->onGround) {
+			entity->motY /= 2.;
+			entity->motY += strength;
+			if (entity->motY > .4) entity->motY = .4;
+		}
+		BEGIN_BROADCAST_DIST(entity, 128.)
+		struct packet* pkt = xmalloc(sizeof(struct packet));
+		pkt->id = PKT_PLAY_CLIENT_ENTITYVELOCITY;
+		pkt->data.play_client.entityvelocity.entity_id = entity->id;
+		pkt->data.play_client.entityvelocity.velocity_x = (int16_t)(entity->motX * 8000.);
+		pkt->data.play_client.entityvelocity.velocity_y = (int16_t)(entity->motY * 8000.);
+		pkt->data.play_client.entityvelocity.velocity_z = (int16_t)(entity->motZ * 8000.);
+		add_queue(bc_player->outgoingPacket, pkt);
+		flush_outgoing (bc_player);
+		END_BROADCAST
+	}
+}
+
+void damageEntityWithItem(struct entity* attacked, struct entity* attacker, struct slot* item) {
+	if (attacked == NULL || attacked->invincibilityTicks > 0) return;
+	float damage = 1.;
+	if (item != NULL) {
+		struct item_info* ii = getItemInfo(item->item);
+		if (ii != NULL) damage = ii->damage;
+	}
+	if (attacker->type == ENT_PLAYER) {
+		struct player* player = attacker->data.player.player;
+		float as = player_getAttackStrength(player, .5);
+		damage *= .2 + as * as * .8;
+	}
+	if (damage == 0.) return;
+	damageEntity(attacked, damage, 1);
+	float knockback_strength = 1.;
+	//TODO: enchantment
+	if (attacker->sprinting) knockback_strength++;
+	knockback_strength *= .125;
+	applyKnockback(attacked, attacker->yaw, knockback_strength);
+}
+
+void damageEntity(struct entity* attacked, float damage, int armorable) {
+	if (attacked == NULL || damage < 0. || attacked->invincibilityTicks > 0) return;
+	float armor = 0;
+	if (attacked->type == ENT_PLAYER) {
+		struct player* player = attacked->data.player.player;
+		for (int i = 5; i <= 8; i++) {
+			struct slot* sl = getSlot(player, player->inventory, i);
+			if (sl != NULL) {
+				struct item_info* ii = getItemInfo(sl->item);
+				if (ii != NULL) {
+					if ((i == 5 && ii->armorType == ARMOR_HELMET) || (i == 6 && ii->armorType == ARMOR_CHESTPLATE) || (i == 7 && ii->armorType == ARMOR_LEGGINGS) || (i == 8 && ii->armorType == ARMOR_BOOTS)) armor += (float) ii->armor;
+				}
+			}
+		}
+	}
+	float f = armor - damage / 2.;
+	if (f < armor * .2) f = armor * .2;
+	if (f > 20.) f = 20.;
+	damage *= 1. - (f) / 25.;
+	attacked->health -= damage;
+	attacked->invincibilityTicks = 10;
+	if (attacked->type == ENT_PLAYER) {
+		struct packet* pkt = xmalloc(sizeof(struct packet));
+		pkt->id = PKT_PLAY_CLIENT_UPDATEHEALTH;
+		pkt->data.play_client.updatehealth.health = attacked->health;
+		pkt->data.play_client.updatehealth.food = attacked->data.player.player->food;
+		pkt->data.play_client.updatehealth.food_saturation = attacked->data.player.player->saturation;
+		add_queue(attacked->data.player.player->outgoingPacket, pkt);
+		flush_outgoing(attacked->data.player.player);
+	}
+	BEGIN_BROADCAST_DIST(attacked, 128.)
+	struct packet* pkt = xmalloc(sizeof(struct packet));
+	pkt->id = PKT_PLAY_CLIENT_ANIMATION;
+	pkt->data.play_client.animation.entity_id = attacked->id;
+	pkt->data.play_client.animation.animation = 1;
+	add_queue(bc_player->outgoingPacket, pkt);
+	flush_outgoing (bc_player);
+	END_BROADCAST
 }
 
 void freeEntity(struct entity* entity) {

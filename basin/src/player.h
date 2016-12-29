@@ -53,9 +53,14 @@ struct player {
 		struct queue* incomingPacket;
 		uint8_t defunct;
 		struct slot* inHand;
+		size_t lastSwing;
 };
 
 struct player* newPlayer(struct entity* entity, char* name, struct uuid, struct conn* conn, uint8_t gamemode);
+
+float player_getAttackStrength(struct player* player, float adjust);
+
+void teleportPlayer(struct player* player, double x, double y, double z);
 
 void freePlayer(struct player* player);
 
