@@ -19,11 +19,11 @@
 #include "game.h"
 #include "block.h"
 #include <math.h>
-
 #include "crafting.h"
 #include "inventory.h"
 #include "item.h"
 #include "network.h"
+#include "smelting.h"
 
 void flush_outgoing(struct player* player) {
 	if (player->conn == NULL) return;
@@ -415,14 +415,16 @@ void dropPlayerItem(struct player* player, struct slot* drop) {
 }
 
 void dropBlockDrops(struct world* world, block blk, struct player* breaker, int32_t x, int32_t y, int32_t z) {
-	if (getBlockInfo(blk)->getDrop == NULL) {
+	struct block_info* bi = getBlockInfo(blk);
+	if (bi->dropItems == NULL) {
+		if (bi->drop <= 0 || bi->drop_max == 0 || bi->drop_max < bi->drop_min) return;
 		struct slot dd;
-		dd.item = blk >> 4;
-		dd.damage = blk & 0x0f;
-		dd.itemCount = 1;
+		dd.item = bi->drop;
+		dd.damage = 0;
+		dd.itemCount = bi->drop_min + ((bi->drop_max == bi->drop_min) ? 0 : (rand() % (bi->drop_max - bi->drop_min)));
 		dd.nbt = NULL;
 		dropBlockDrop(world, &dd, x, y, z);
-	} else (*getBlockInfo(blk)->getDrop)(world, blk, x, y, z, 0);
+	} else (*bi->dropItems)(world, blk, x, y, z, 0);
 }
 
 void player_openInventory(struct player* player, struct inventory* inv) {
@@ -530,6 +532,7 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 		} else if ((inp->data.play_server.playerdigging.status == 1 || inp->data.play_server.playerdigging.status == 2) && player->digging > 0.) {
 			if (inp->data.play_server.playerdigging.status == 2) {
 				block blk = getBlockWorld(player->world, player->digging_position.x, player->digging_position.y, player->digging_position.z);
+				printf("digging = %f, digspeed = %f total = %f\n", player->digging, player->digspeed, player->digging + player->digspeed);
 				if ((player->digging + player->digspeed) >= 1.) {
 					setBlockWorld(player->world, 0, player->digging_position.x, player->digging_position.y, player->digging_position.z);
 					if (player->gamemode != 1) dropBlockDrops(player->world, blk, player, player->digging_position.x, player->digging_position.y, player->digging_position.z);
@@ -604,10 +607,11 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 		int32_t z = inp->data.play_server.playerblockplacement.location.z;
 		uint8_t face = inp->data.play_server.playerblockplacement.face;
 		block b = getBlockWorld(player->world, x, y, z);
-		if (!player->entity->sneaking && getBlockInfo(b)->onBlockInteract != NULL) {
-			(*getBlockInfo(b)->onBlockInteract)(player->world, b, x, y, z, player, face, inp->data.play_server.playerblockplacement.cursor_position_x, inp->data.play_server.playerblockplacement.cursor_position_y, inp->data.play_server.playerblockplacement.cursor_position_z);
+		struct block_info* bi = getBlockInfo(b);
+		if (!player->entity->sneaking && bi != NULL && bi->onBlockInteract != NULL) {
+			(*bi->onBlockInteract)(player->world, b, x, y, z, player, face, inp->data.play_server.playerblockplacement.cursor_position_x, inp->data.play_server.playerblockplacement.cursor_position_y, inp->data.play_server.playerblockplacement.cursor_position_z);
 		} else if (ci != NULL && ci->item < 256) {
-			if (!block_materials[getBlockInfo(b)->material].replacable) {
+			if (bi == NULL || !bi->material->replacable) {
 				if (face == 0) y--;
 				else if (face == 1) y++;
 				else if (face == 2) z--;
@@ -616,8 +620,11 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 				else if (face == 5) x++;
 			}
 			block b2 = getBlockWorld(player->world, x, y, z);
-			if (b2 == 0 || block_materials[getBlockInfo(b2)->material].replacable) {
-				setBlockWorld(player->world, (ci->item << 4) | (ci->damage & 0x0f), x, y, z);
+			struct block_info* bi2 = getBlockInfo(b2);
+			if (b2 == 0 || bi2 == NULL || bi2->material->replacable) {
+				block tbb = (ci->item << 4) | (ci->damage & 0x0f);
+				if (getBlockInfo(tbb)->onBlockPlaced != NULL) tbb = (*getBlockInfo(tbb)->onBlockPlaced)(player->world, tbb, x, y, z);
+				setBlockWorld(player->world, tbb, x, y, z);
 				if (player->gamemode != 1) {
 					if (--ci->itemCount <= 0) {
 						ci = NULL;
@@ -811,7 +818,20 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 							if (r <= 0) setSlot(player, inv, slot, NULL, 0, 1);
 						}
 					} else if (inv->type == INVTYPE_FURNACE) {
-						//TODO
+						if (slot > 2) {
+							if (getSmeltingOutput(invs) != NULL) swapSlots(player, inv, 0, slot, 0);
+							else if (getSmeltingFuelBurnTime(invs) > 0) swapSlots(player, inv, 1, slot, 0);
+							else if (slot > 29) {
+								int r = addInventoryItem(player, inv, invs, 3, 30, 0);
+								if (r <= 0) setSlot(player, inv, slot, NULL, 0, 1);
+							} else if (slot < 30) {
+								int r = addInventoryItem(player, inv, invs, 30, 39, 0);
+								if (r <= 0) setSlot(player, inv, slot, NULL, 0, 1);
+							}
+						} else {
+							int r = addInventoryItem(player, inv, invs, 38, 2, 0);
+							if (r <= 0) setSlot(player, inv, slot, NULL, 0, 1);
+						}
 					}
 				} else if (mode == 2) {
 					if (inv->type == INVTYPE_PLAYERINVENTORY) {
@@ -859,7 +879,7 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 						if (inv->type == INVTYPE_PLAYERINVENTORY) {
 							if (slot == 0 || (slot >= 5 && slot <= 8)) ba = 1;
 						}
-						if (!ba && inv->dragSlot_count < inv->slot_count && (invs == NULL || itemsStackable(invs, player->inHand))) {
+						if (!ba && inv->dragSlot_count < inv->slot_count && validItemForSlot(inv->type, slot, player->inHand) && (invs == NULL || itemsStackable(invs, player->inHand))) {
 							inv->dragSlot[inv->dragSlot_count++] = slot;
 						}
 					}
@@ -1181,11 +1201,16 @@ void tick_player(struct world* world, struct player* player) {
 		}
 	}
 	if (player->digging >= 0.) {
-		struct block_info* bi = getBlockInfo(getBlockWorld(world, player->digging_position.x, player->digging_position.y, player->digging_position.z));
+		block bw = getBlockWorld(world, player->digging_position.x, player->digging_position.y, player->digging_position.z);
+		struct block_info* bi = getBlockInfo(bw);
 		float digspeed = 0.;
 		if (bi->hardness > 0.) {
-			int hasProperTool = 0 || block_materials[bi->material].requiresnotool; // TODO: proper tool not 0
-			float ds = 1.; // todo modify by tool
+			struct slot* ci = getSlot(player, player->inventory, 36 + player->currentItem);
+			struct item_info* cii = ci == NULL ? NULL : getItemInfo(ci->item);
+			int hasProperTool = (cii == NULL ? 0 : isToolProficient(cii->toolType, cii->harvestLevel, bw));
+			int hasProperTool2 = (cii == NULL ? 0 : isToolProficient(cii->toolType, 0xFF, bw));
+			int rnt = bi->material->requiresnotool;
+			float ds = hasProperTool2 ? cii->toolProficiency : 1.;
 			//efficiency enchantment
 			for (size_t i = 0; i < player->entity->effect_count; i++) {
 				if (player->entity->effects[i].effectID == POT_HASTE) {
@@ -1202,7 +1227,7 @@ void tick_player(struct world* world, struct player* player) {
 			}
 			//if in water and not in aqua affintity enchant ds /= 5.;
 			if (!player->entity->onGround) ds /= 5.;
-			digspeed = ds / (bi->hardness * (hasProperTool ? 30. : 100.));
+			digspeed = ds / (bi->hardness * ((hasProperTool || rnt) ? 30. : 100.));
 		}
 		player->digging += (player->digging == 0. ? 2. : 1.) * digspeed;
 		BEGIN_BROADCAST_EXCEPT_DIST(player, player->entity, 128.)
@@ -1321,10 +1346,11 @@ void tick_itemstack(struct world* world, struct entity* entity) {
 	if (tick_counter % 10 != 0) return;
 	struct boundingbox cebb;
 	getEntityCollision(entity, &cebb);
-	cebb.minX -= .375;
-	cebb.maxX += .375;
-	cebb.minZ -= .375;
-	cebb.maxZ += .375;
+	cebb.minX -= .625;
+	cebb.maxX += .625;
+	cebb.maxY += .75;
+	cebb.minZ -= .625;
+	cebb.maxZ += .625;
 	struct boundingbox oebb;
 	for (size_t i = 0; i < world->entities->size; i++) {
 		struct entity* oe = (struct entity*) world->entities->data[i];
@@ -1360,10 +1386,11 @@ void tick_itemstack(struct world* world, struct entity* entity) {
 		} else if (oe->type == ENT_ITEMSTACK) {
 			if (oe->data.itemstack.slot->item == entity->data.itemstack.slot->item && oe->data.itemstack.slot->damage == entity->data.itemstack.slot->damage && oe->data.itemstack.slot->itemCount + entity->data.itemstack.slot->itemCount <= maxStackSize(entity->data.itemstack.slot)) {
 				getEntityCollision(oe, &oebb);
-				oebb.minX -= .375;
-				oebb.maxX += .375;
-				oebb.minZ -= .375;
-				oebb.maxZ += .375;
+				oebb.minX -= .625;
+				oebb.maxX += .625;
+				cebb.maxY += .75;
+				oebb.minZ -= .625;
+				oebb.maxZ += .625;
 				if (boundingbox_intersects(&oebb, &cebb)) {
 					despawnEntity(world, oe);
 					entity->data.itemstack.slot->itemCount += oe->data.itemstack.slot->itemCount;

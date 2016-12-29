@@ -125,7 +125,7 @@ int handleRead(struct conn* conn, struct work_param* param, int fd) {
 					xfree(rep.data.login_client.loginsuccess.uuid);
 					conn->state = STATE_PLAY;
 					struct entity* ep = newEntity(nextEntityID++, (float) overworld->spawnpos.x + .5, (float) overworld->spawnpos.y, (float) overworld->spawnpos.z + .5, ENT_PLAYER, 0., 0.);
-					struct player* player = newPlayer(ep, xstrdup(rep.data.login_client.loginsuccess.username, 1), uuid, conn, 1); // TODO default gamemode
+					struct player* player = newPlayer(ep, xstrdup(rep.data.login_client.loginsuccess.username, 1), uuid, conn, 0); // TODO default gamemode
 					conn->player = player;
 					add_collection(players, player);
 					rep.id = PKT_PLAY_CLIENT_JOINGAME;
@@ -152,7 +152,7 @@ int handleRead(struct conn* conn, struct work_param* param, int fd) {
 					memcpy(&rep.data.play_client.spawnposition.location, &overworld->spawnpos, sizeof(struct encpos));
 					if (writePacket(conn, &rep) < 0) goto rete;
 					rep.id = PKT_PLAY_CLIENT_PLAYERABILITIES;
-					rep.data.play_client.playerabilities.flags = 0x4 | 0x8; // TODO: allows flying, remove
+					rep.data.play_client.playerabilities.flags = 0x4; // TODO: allows flying, remove
 					rep.data.play_client.playerabilities.flying_speed = 0.05;
 					rep.data.play_client.playerabilities.field_of_view_modifier = .1;
 					if (writePacket(conn, &rep) < 0) goto rete;

@@ -171,7 +171,7 @@ struct chunk* loadRegionChunk(struct region* region, int8_t lchx, int8_t lchz) {
 			struct chunk_section* cs = xmalloc(sizeof(struct chunk_section));
 			cs->palette = xmalloc(256 * sizeof(block));
 			cs->palette_count = 0;
-			block ipalette[BLOCK_LIMIT];
+			block ipalette[getBlockSize()];
 			block l = 0;
 			for (int i = 0; i < 4096; i++) {
 				if (rbl[i] != l) {
@@ -526,7 +526,7 @@ void setBlockWorld(struct world* world, block blk, int32_t x, int32_t y, int32_t
 		return;
 	}
 	setBlockChunk(chunk, blk, x & 0x0f, y, z & 0x0f);
-	BEGIN_BROADCAST_DISTXYZ((double) x + .5, (double) y + .5, (double) z + .5, world->players, 128.)
+	BEGIN_BROADCAST_DISTXYZ((double) x + .5, (double) y + .5, (double) z + .5, world->players, CHUNK_VIEW_DISTANCE * 16.)
 	struct packet* pkt = xmalloc(sizeof(struct packet));
 	pkt->id = PKT_PLAY_CLIENT_BLOCKCHANGE;
 	pkt->data.play_client.blockchange.location.x = x;
@@ -716,30 +716,4 @@ void onBlockCollide(struct world* world, int32_t x, int32_t y, int32_t z, struct
 
 void onBlockUpdate(struct world* world, int32_t x, int32_t y, int32_t z) {
 
-}
-
-struct boundingbox getBlockCollision(struct world* world, int32_t x, int32_t y, int32_t z, struct entity* entity) {
-	block b = getBlockWorld(world, x, y, z); // TODO: unload if out of range
-	struct block_info* bi = getBlockInfo(b);
-	if (bi->getBlockCollision != NULL) {
-		return (*bi->getBlockCollision)(world, b, x, y, z, entity);
-	}
-//generic
-	struct boundingbox bb;
-	if (block_materials[bi->material].solid && !block_materials[bi->material].liquid && block_materials[bi->material].blocksMovement) {
-		bb.minX = 0.;
-		bb.maxX = 1.;
-		bb.minY = 0.;
-		bb.maxY = 1.;
-		bb.minZ = 0.;
-		bb.maxZ = 1.;
-	} else {
-		bb.minX = 0.;
-		bb.maxX = 0.;
-		bb.minY = 0.;
-		bb.maxY = 0.;
-		bb.minZ = 0.;
-		bb.maxZ = 0.;
-	}
-	return bb;
 }

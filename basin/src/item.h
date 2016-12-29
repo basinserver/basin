@@ -13,6 +13,7 @@
 #include "world.h"
 #include "entity.h"
 #include "inventory.h"
+#include "tools.h"
 
 #define ITM_SHOVELIRON 256
 #define ITM_PICKAXEIRON 257
@@ -221,14 +222,6 @@
 #define ITM_RECORD_11 2266
 #define ITM_RECORD_12 2267
 
-#define TOOL_NONE 0
-#define TOOL_PICKAXE 1
-#define TOOL_SHOVEL 2
-#define TOOL_AXE 3
-#define TOOL_HOE 4
-#define TOOL_SWORD 4
-#define TOOL_SHEARS 5
-
 #define ARMOR_NONE 0
 #define ARMOR_HELMET 1
 #define ARMOR_CHESTPLATE 2
@@ -238,7 +231,7 @@
 typedef int16_t item;
 
 struct item_info {
-		uint8_t toolType;
+		struct tool_info* toolType;
 		uint8_t maxStackSize;
 		int16_t maxDamage;
 		uint8_t damage;
@@ -246,6 +239,7 @@ struct item_info {
 		uint8_t armorType;
 		float attackSpeed;
 		float toolProficiency;
+		uint8_t harvestLevel;
 		void (*onItemUse)(struct world* world, struct player* player, struct slot* slot, uint16_t ticks); // not in-world usage
 		void (*onItemInteract)(struct world* world, struct player* player, struct slot* slot, int32_t x, uint8_t y, int32_t z, uint8_t face); // in-world usage
 		void (*onItemBreakBlock)(struct world* world, struct player* player, struct slot* slot, int32_t x, uint8_t y, int32_t z); // in-world usage

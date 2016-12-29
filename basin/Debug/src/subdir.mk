@@ -24,6 +24,7 @@ C_SRCS += \
 ../src/smelting.c \
 ../src/streams.c \
 ../src/tileentity.c \
+../src/tools.c \
 ../src/util.c \
 ../src/work.c \
 ../src/world.c \
@@ -51,6 +52,7 @@ OBJS += \
 ./src/smelting.o \
 ./src/streams.o \
 ./src/tileentity.o \
+./src/tools.o \
 ./src/util.o \
 ./src/work.o \
 ./src/world.o \
@@ -78,6 +80,7 @@ C_DEPS += \
 ./src/smelting.d \
 ./src/streams.d \
 ./src/tileentity.d \
+./src/tools.d \
 ./src/util.d \
 ./src/work.d \
 ./src/world.d \

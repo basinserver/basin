@@ -165,7 +165,8 @@ void swapSlots(struct player* player, struct inventory* inv, int i1, int i2, int
 }
 
 int maxStackSize(struct slot* slot) {
-	return getItemInfo(slot->item)->maxStackSize;
+	struct item_info* ii = getItemInfo(slot->item);
+	return ii == NULL ? 64 : ii->maxStackSize;
 }
 
 int addInventoryItem_PI(struct player* player, struct inventory* inv, struct slot* slot, int broadcast) {

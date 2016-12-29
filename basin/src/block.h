@@ -389,6 +389,14 @@ int16_t getItemFromName(const char* name);
 #define BLK_FURNACE_5 986
 #define BLK_FURNACE_6 987
 #define BLK_FURNACE_7 991
+#define BLK_FURNACE_LIT 992
+#define BLK_FURNACE_LIT_1 995
+#define BLK_FURNACE_LIT_2 996
+#define BLK_FURNACE_LIT_3 997
+#define BLK_FURNACE_LIT_4 1001
+#define BLK_FURNACE_LIT_5 1002
+#define BLK_FURNACE_LIT_6 1003
+#define BLK_FURNACE_LIT_7 1007
 #define BLK_LADDER 1040
 #define BLK_LADDER_1 1043
 #define BLK_LADDER_2 1044
@@ -1468,12 +1476,12 @@ int16_t getItemFromName(const char* name);
 #define BLK_STRUCTUREBLOCK_2 4082
 #define BLK_STRUCTUREBLOCK_3 4083
 
-#define BLOCK_LIMIT 4084
 #define MATERIAL_LIMIT 36
 
 #include "world.h"
 
 struct block_material {
+		char* name;
 		uint8_t flammable;
 		uint8_t replacable;
 		uint8_t requiresnotool;
@@ -1485,23 +1493,30 @@ struct block_material {
 		uint8_t blocksMovement;
 };
 
+struct block_material* getBlockMaterial(char* name);
+
 struct block_info {
-		float hardness;
 		void (*onBlockDestroyed)(struct world* world, block blk, int32_t x, int32_t y, int32_t z);
-		void (*onBlockPlaced)(struct world* world, block blk, int32_t x, int32_t y, int32_t z);
+		block (*onBlockPlaced)(struct world* world, block blk, int32_t x, int32_t y, int32_t z);
 		void (*onBlockInteract)(struct world* world, block blk, int32_t x, int32_t y, int32_t z, struct player* player, uint8_t face, float curPosX, float curPosY, float curPosZ);
 		void (*onBlockCollide)(struct world* world, block blk, int32_t x, int32_t y, int32_t z, struct entity* entity);
 		void (*onBlockUpdate)(struct world* world, block blk, int32_t x, int32_t y, int32_t z);
-		struct boundingbox (*getBlockCollision)(struct world* world, block blk, int32_t x, int32_t y, int32_t z, struct entity* entity);
-		uint8_t requiresUpdates;
-		uint8_t material;
+		void (*dropItems)(struct world* world, block blk, int32_t x, int32_t y, int32_t z, int fortune);
+		struct boundingbox* boundingBoxes;
+		size_t boundingBox_count;
+		float hardness;
+		struct block_material* material;
 		float slipperiness;
-		void (*getDrop)(struct world* world, block blk, int32_t x, int32_t y, int32_t z, int fortune);
+		item drop;
+		uint8_t drop_min;
+		uint8_t drop_max;
 };
 
-struct block_material block_materials[MATERIAL_LIMIT];
+size_t getBlockSize();
 
-void init_blocks();
+void add_block_material(struct block_material* bm);
+
+void add_block_info(block blk, struct block_info* bm);
 
 void onBlockInteract_workbench(struct world* world, block blk, int32_t x, int32_t y, int32_t z, struct player* player, uint8_t face, float curPosX, float curPosY, float curPosZ);
 

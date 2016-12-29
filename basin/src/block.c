@@ -16,14 +16,44 @@
 #include "tileentity.h"
 #include "smelting.h"
 #include "network.h"
+#include <fcntl.h>
+#include <errno.h>
+#include "json.h"
 
-struct block_info block_infos[BLOCK_LIMIT];
+struct collection* block_infos;
+struct collection* block_materials;
 
 void onBlockInteract_workbench(struct world* world, block blk, int32_t x, int32_t y, int32_t z, struct player* player, uint8_t face, float curPosX, float curPosY, float curPosZ) {
 	struct inventory* wb = xmalloc(sizeof(struct inventory));
 	newInventory(wb, INVTYPE_WORKBENCH, 1, 10);
 	wb->title = xstrdup("{\"text\": \"Crafting Table\"}", 0);
 	player_openInventory(player, wb);
+}
+
+block onBlockPlaced_chest(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
+	int16_t meta = blk & 0x0f;
+	if (meta < 2 || meta > 5) meta = 2;
+	struct tile_entity* te = newTileEntity("minecraft:chest", x, y, z);
+	te->data.chest.lock = NULL;
+	te->data.chest.inv = xmalloc(sizeof(struct inventory));
+	newInventory(te->data.chest.inv, INVTYPE_CHEST, 2, 27);
+	te->data.chest.inv->te = te;
+	te->data.chest.inv->title = xstrdup("{\"text\": \"Chest\"}", 0);
+	setTileEntityWorld(world, x, y, z, te);
+	return (blk & ~0x0f) | meta;
+}
+
+block onBlockPlaced_furnace(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
+	int16_t meta = blk & 0x0f;
+	if (meta < 2 || meta > 5) meta = 2;
+	struct tile_entity* te = newTileEntity("minecraft:furnace", x, y, z);
+	te->data.furnace.lock = NULL;
+	te->data.furnace.inv = xmalloc(sizeof(struct inventory));
+	newInventory(te->data.furnace.inv, INVTYPE_FURNACE, 3, 3);
+	te->data.furnace.inv->te = te;
+	te->data.furnace.inv->title = xstrdup("{\"text\": \"Furnace\"}", 0);
+	setTileEntityWorld(world, x, y, z, te);
+	return (blk & ~0x0f) | meta;
 }
 
 void onBlockDestroyed_chest(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
@@ -34,13 +64,8 @@ void onBlockDestroyed_chest(struct world* world, block blk, int32_t x, int32_t y
 void onBlockInteract_chest(struct world* world, block blk, int32_t x, int32_t y, int32_t z, struct player* player, uint8_t face, float curPosX, float curPosY, float curPosZ) {
 	struct tile_entity* te = getTileEntityWorld(world, x, y, z);
 	if (te == NULL || !streq_nocase(te->id, "minecraft:chest")) {
-		te = newTileEntity("minecraft:chest", x, y, z);
-		te->data.chest.lock = NULL;
-		te->data.chest.inv = xmalloc(sizeof(struct inventory));
-		newInventory(te->data.chest.inv, INVTYPE_CHEST, 2, 27);
-		te->data.chest.inv->te = te;
-		te->data.chest.inv->title = xstrdup("{\"text\": \"Chest\"}", 0);
-		setTileEntityWorld(world, x, y, z, te);
+		onBlockPlaced_chest(world, blk, x, y, z);
+		te = getTileEntityWorld(world, x, y, z);
 	}
 	//TODO: impl locks, loot
 	player_openInventory(player, te->data.chest.inv);
@@ -66,13 +91,8 @@ void onBlockDestroyed_furnace(struct world* world, block blk, int32_t x, int32_t
 void onBlockInteract_furnace(struct world* world, block blk, int32_t x, int32_t y, int32_t z, struct player* player, uint8_t face, float curPosX, float curPosY, float curPosZ) {
 	struct tile_entity* te = getTileEntityWorld(world, x, y, z);
 	if (te == NULL || !streq_nocase(te->id, "minecraft:furnace")) {
-		te = newTileEntity("minecraft:furnace", x, y, z);
-		te->data.furnace.lock = NULL;
-		te->data.furnace.inv = xmalloc(sizeof(struct inventory));
-		newInventory(te->data.furnace.inv, INVTYPE_FURNACE, 3, 3);
-		te->data.furnace.inv->te = te;
-		te->data.furnace.inv->title = xstrdup("{\"text\": \"Furnace\"}", 0);
-		setTileEntityWorld(world, x, y, z, te);
+		onBlockPlaced_furnace(world, blk, x, y, z);
+		te = getTileEntityWorld(world, x, y, z);
 	}
 	//TODO: impl locks, loot
 	player_openInventory(player, te->data.furnace.inv);
@@ -104,10 +124,11 @@ void update_furnace(struct world* world, struct tile_entity* te) {
 		if (!te->tick) {
 			te->tick = &tetick_furnace;
 			enableTileEntityTickable(world, te);
+			setBlockWorld(world, BLK_FURNACE_LIT | (getBlockWorld(world, te->x, te->y, te->z) & 0x0f), te->x, te->y, te->z);
 		}
 		printf("bt = %i\n", te->data.furnace.burnTime);
 		if (te->data.furnace.burnTime <= 0 && st > 0 && fu != NULL) {
-			te->data.furnace.burnTime += st;
+			te->data.furnace.burnTime += st + 1;
 			if (--fu->itemCount == 0) fu = NULL;
 			setSlot(NULL, te->data.furnace.inv, 1, fu, 1, 1);
 			te->data.furnace.lastBurnMax = st;
@@ -161,6 +182,7 @@ void update_furnace(struct world* world, struct tile_entity* te) {
 			flush_outgoing(bc_player);
 			END_BROADCAST disableTileEntityTickable(world, te);
 			te->tick = NULL;
+			setBlockWorld(world, BLK_FURNACE | (getBlockWorld(world, te->x, te->y, te->z) & 0x0f), te->x, te->y, te->z);
 		}
 		te->data.furnace.cookTime = 0;
 	}
@@ -184,9 +206,109 @@ void update_furnace(struct world* world, struct tile_entity* te) {
 	}
 }
 
+void dropItems_gravel(struct world* world, block blk, int32_t x, int32_t y, int32_t z, int fortune) {
+	if (fortune > 3) fortune = 3;
+	if (fortune == 3 || (rand() % (10 - fortune * 3)) == 0) {
+		struct slot drop;
+		drop.item = ITM_FLINT;
+		drop.damage = 0;
+		drop.itemCount = 1;
+		drop.nbt = NULL;
+		dropBlockDrop(world, &drop, x, y, z);
+	} else {
+		struct slot drop;
+		drop.item = BLK_GRAVEL;
+		drop.damage = 0;
+		drop.itemCount = 1;
+		drop.nbt = NULL;
+		dropBlockDrop(world, &drop, x, y, z);
+	}
+}
+
+void dropItems_leaves(struct world* world, block blk, int32_t x, int32_t y, int32_t z, int fortune) {
+	int chance = 20;
+	if (fortune > 0) chance -= 2 << fortune;
+	if (chance < 10) chance = 10;
+	if (rand() % chance == 0) {
+		struct slot drop;
+		uint8_t m = blk & 0x0f;
+		if (blk >> 4 == BLK_LEAVES_OAK >> 4) {
+			if ((m & 0x03) == 0) {
+				drop.item = BLK_SAPLING_OAK >> 4;
+				drop.damage = 0;
+			} else if ((m & 0x03) == 1) {
+				drop.item = BLK_SAPLING_SPRUCE >> 4;
+				drop.damage = 1;
+			} else if ((m & 0x03) == 2) {
+				drop.item = BLK_SAPLING_BIRCH >> 4;
+				drop.damage = 2;
+			} else if ((m & 0x03) == 3) {
+				drop.item = BLK_SAPLING_JUNGLE >> 4;
+				drop.damage = 3;
+			}
+		} else if (blk >> 4 == BLK_LEAVES_ACACIA >> 4) {
+			if ((m & 0x03) == 0) {
+				drop.item = BLK_SAPLING_ACACIA >> 4;
+				drop.damage = 4;
+			} else if ((m & 0x03) == 1) {
+				drop.item = BLK_SAPLING_BIG_OAK >> 4;
+				drop.damage = 5;
+			} else return;
+		} else return;
+		drop.itemCount = 1;
+		drop.nbt = NULL;
+		dropBlockDrop(world, &drop, x, y, z);
+	}
+	if (blk == BLK_LEAVES_OAK || blk == BLK_LEAVES_BIG_OAK) {
+		chance = 200;
+		if (fortune > 0) {
+			chance -= 10 << fortune;
+			if (chance < 40) chance = 40;
+		}
+		if (rand() % chance == 0) {
+			struct slot drop;
+			drop.item = ITM_APPLE;
+			drop.damage = 0;
+			drop.itemCount = 1;
+			drop.nbt = NULL;
+			dropBlockDrop(world, &drop, x, y, z);
+		}
+	}
+}
+
+void dropItems_tallgrass(struct world* world, block blk, int32_t x, int32_t y, int32_t z, int fortune) {
+	if (rand() % 8 == 0) {
+		struct slot drop;
+		drop.item = ITM_SEEDS;
+		drop.damage = 0;
+		drop.itemCount = 1 + (rand() % (fortune * 2 + 1));
+		drop.nbt = NULL;
+		dropBlockDrop(world, &drop, x, y, z);
+	}
+}
+
+void dropItems_hugemushroom(struct world* world, block blk, int32_t x, int32_t y, int32_t z, int fortune) {
+	int ct = rand() % 10 - 7;
+	if (ct > 0) {
+		struct slot drop;
+		drop.item = ((blk >> 4) == (BLK_MUSHROOM_2 >> 4) ? 39 : 40);
+		drop.damage = 0;
+		drop.itemCount = ct;
+		drop.nbt = NULL;
+		dropBlockDrop(world, &drop, x, y, z);
+	}
+}
+
+//
+
 struct block_info* getBlockInfo(block b) {
-	if (block_infos[b].material > 0) return &block_infos[b];
-	return &block_infos[(b >> 4) << 4];
+	if (b >= block_infos->size) {
+		b &= ~0x0f;
+		if (b >= block_infos->size) return NULL;
+		else return block_infos->data[b];
+	}
+	if (block_infos->data[b] != NULL) return block_infos->data[b];
+	return block_infos->data[b & ~0x0f];
 }
 
 // index = item ID
@@ -216,896 +338,206 @@ int16_t getItemFromName(const char* name) {
 	return -1;
 }
 
+struct block_material* getBlockMaterial(char* name) {
+	for (size_t i = 0; i < block_materials->size; i++) {
+		struct block_material* bm = (struct block_material*) block_materials->data[i];
+		if (bm == NULL) continue;
+		if (streq_nocase(bm->name, name)) return bm;
+	}
+	return NULL;
+}
+
+size_t getBlockSize() {
+	return block_infos->size;
+}
+
+void add_block_material(struct block_material* bm) {
+	add_collection(block_materials, bm);
+}
+
+void add_block_info(block blk, struct block_info* bm) {
+	ensure_collection(block_infos, blk + 1);
+	block_infos->data[blk] = bm;
+	if (block_infos->size < blk) block_infos->size = blk;
+	block_infos->count++;
+}
+
+void init_materials() {
+	block_materials = new_collection(64, 0);
+	char* jsf = xmalloc(4097);
+	size_t jsfs = 4096;
+	size_t jsr = 0;
+	int fd = open("materials.json", O_RDONLY);
+	ssize_t r = 0;
+	while ((r = read(fd, jsf + jsr, jsfs - jsr)) > 0) {
+		jsr += r;
+		if (jsfs - jsr < 512) {
+			jsfs += 4096;
+			jsf = xrealloc(jsf, jsfs + 1);
+		}
+	}
+	jsf[jsr] = 0;
+	if (r < 0) {
+		printf("Error reading material information: %s\n", strerror(errno));
+	}
+	close(fd);
+	struct json_object json;
+	parseJSON(&json, jsf);
+	for (size_t i = 0; i < json.child_count; i++) {
+		struct json_object* ur = json.children[i];
+		struct block_material* bm = xcalloc(sizeof(struct block_material));
+		bm->name = xstrdup(ur->name, 0);
+		struct json_object* tmp = getJSONValue(ur, "flammable");
+		if (tmp == NULL || (tmp->type != JSON_TRUE && tmp->type != JSON_FALSE)) goto cerr;
+		bm->flammable = tmp->type == JSON_TRUE;
+		tmp = getJSONValue(ur, "replaceable");
+		if (tmp == NULL || (tmp->type != JSON_TRUE && tmp->type != JSON_FALSE)) goto cerr;
+		bm->replacable = tmp->type == JSON_TRUE;
+		tmp = getJSONValue(ur, "requiresnotool");
+		if (tmp == NULL || (tmp->type != JSON_TRUE && tmp->type != JSON_FALSE)) goto cerr;
+		bm->requiresnotool = tmp->type == JSON_TRUE;
+		tmp = getJSONValue(ur, "mobility");
+		if (tmp == NULL || tmp->type != JSON_NUMBER) goto cerr;
+		bm->mobility = (uint8_t) tmp->data.number;
+		tmp = getJSONValue(ur, "adventure_exempt");
+		if (tmp == NULL || (tmp->type != JSON_TRUE && tmp->type != JSON_FALSE)) goto cerr;
+		bm->adventure_exempt = tmp->type == JSON_TRUE;
+		tmp = getJSONValue(ur, "liquid");
+		if (tmp == NULL || (tmp->type != JSON_TRUE && tmp->type != JSON_FALSE)) goto cerr;
+		bm->liquid = tmp->type == JSON_TRUE;
+		tmp = getJSONValue(ur, "solid");
+		if (tmp == NULL || (tmp->type != JSON_TRUE && tmp->type != JSON_FALSE)) goto cerr;
+		bm->solid = tmp->type == JSON_TRUE;
+		tmp = getJSONValue(ur, "blocksLight");
+		if (tmp == NULL || (tmp->type != JSON_TRUE && tmp->type != JSON_FALSE)) goto cerr;
+		bm->blocksLight = tmp->type == JSON_TRUE;
+		tmp = getJSONValue(ur, "blocksMovement");
+		if (tmp == NULL || (tmp->type != JSON_TRUE && tmp->type != JSON_FALSE)) goto cerr;
+		bm->blocksMovement = tmp->type == JSON_TRUE;
+		add_block_material(bm);
+		continue;
+		cerr: ;
+		printf("[WARNING] Error Loading Material \"%s\"! Skipped.\n", ur->name);
+	}
+	freeJSON(&json);
+	xfree(jsf);
+}
+
 void init_blocks() {
-	block_materials[MAT_AIR].flammable = 0;
-	block_materials[MAT_AIR].replacable = 1;
-	block_materials[MAT_AIR].requiresnotool = 1;
-	block_materials[MAT_AIR].mobility = 0;
-	block_materials[MAT_AIR].adventure_exempt = 0;
-	block_materials[MAT_AIR].liquid = 0;
-	block_materials[MAT_AIR].solid = 0;
-	block_materials[MAT_AIR].blocksLight = 0;
-	block_materials[MAT_AIR].blocksMovement = 0;
-	block_materials[MAT_GRASS].flammable = 0;
-	block_materials[MAT_GRASS].replacable = 0;
-	block_materials[MAT_GRASS].requiresnotool = 1;
-	block_materials[MAT_GRASS].mobility = 0;
-	block_materials[MAT_GRASS].adventure_exempt = 0;
-	block_materials[MAT_GRASS].liquid = 0;
-	block_materials[MAT_GRASS].solid = 1;
-	block_materials[MAT_GRASS].blocksLight = 1;
-	block_materials[MAT_GRASS].blocksMovement = 1;
-	block_materials[MAT_GROUND].flammable = 0;
-	block_materials[MAT_GROUND].replacable = 0;
-	block_materials[MAT_GROUND].requiresnotool = 1;
-	block_materials[MAT_GROUND].mobility = 0;
-	block_materials[MAT_GROUND].adventure_exempt = 0;
-	block_materials[MAT_GROUND].liquid = 0;
-	block_materials[MAT_GROUND].solid = 1;
-	block_materials[MAT_GROUND].blocksLight = 1;
-	block_materials[MAT_GROUND].blocksMovement = 1;
-	block_materials[MAT_WOOD].flammable = 1;
-	block_materials[MAT_WOOD].replacable = 0;
-	block_materials[MAT_WOOD].requiresnotool = 1;
-	block_materials[MAT_WOOD].mobility = 0;
-	block_materials[MAT_WOOD].adventure_exempt = 0;
-	block_materials[MAT_WOOD].liquid = 0;
-	block_materials[MAT_WOOD].solid = 1;
-	block_materials[MAT_WOOD].blocksLight = 1;
-	block_materials[MAT_WOOD].blocksMovement = 1;
-	block_materials[MAT_ROCK].flammable = 0;
-	block_materials[MAT_ROCK].replacable = 0;
-	block_materials[MAT_ROCK].requiresnotool = 0;
-	block_materials[MAT_ROCK].mobility = 0;
-	block_materials[MAT_ROCK].adventure_exempt = 0;
-	block_materials[MAT_ROCK].liquid = 0;
-	block_materials[MAT_ROCK].solid = 1;
-	block_materials[MAT_ROCK].blocksLight = 1;
-	block_materials[MAT_ROCK].blocksMovement = 1;
-	block_materials[MAT_IRON].flammable = 0;
-	block_materials[MAT_IRON].replacable = 0;
-	block_materials[MAT_IRON].requiresnotool = 0;
-	block_materials[MAT_IRON].mobility = 0;
-	block_materials[MAT_IRON].adventure_exempt = 0;
-	block_materials[MAT_IRON].liquid = 0;
-	block_materials[MAT_IRON].solid = 1;
-	block_materials[MAT_IRON].blocksLight = 1;
-	block_materials[MAT_IRON].blocksMovement = 1;
-	block_materials[MAT_ANVIL].flammable = 0;
-	block_materials[MAT_ANVIL].replacable = 0;
-	block_materials[MAT_ANVIL].requiresnotool = 0;
-	block_materials[MAT_ANVIL].mobility = 2;
-	block_materials[MAT_ANVIL].adventure_exempt = 0;
-	block_materials[MAT_ANVIL].liquid = 0;
-	block_materials[MAT_ANVIL].solid = 1;
-	block_materials[MAT_ANVIL].blocksLight = 1;
-	block_materials[MAT_ANVIL].blocksMovement = 1;
-	block_materials[MAT_WATER].flammable = 0;
-	block_materials[MAT_WATER].replacable = 1;
-	block_materials[MAT_WATER].requiresnotool = 1;
-	block_materials[MAT_WATER].mobility = 1;
-	block_materials[MAT_WATER].adventure_exempt = 0;
-	block_materials[MAT_WATER].liquid = 1;
-	block_materials[MAT_WATER].solid = 0;
-	block_materials[MAT_WATER].blocksLight = 1;
-	block_materials[MAT_WATER].blocksMovement = 0;
-	block_materials[MAT_LAVA].flammable = 0;
-	block_materials[MAT_LAVA].replacable = 1;
-	block_materials[MAT_LAVA].requiresnotool = 1;
-	block_materials[MAT_LAVA].mobility = 1;
-	block_materials[MAT_LAVA].adventure_exempt = 0;
-	block_materials[MAT_LAVA].liquid = 1;
-	block_materials[MAT_LAVA].solid = 0;
-	block_materials[MAT_LAVA].blocksLight = 1;
-	block_materials[MAT_LAVA].blocksMovement = 0;
-	block_materials[MAT_LEAVES].flammable = 1;
-	block_materials[MAT_LEAVES].replacable = 0;
-	block_materials[MAT_LEAVES].requiresnotool = 1;
-	block_materials[MAT_LEAVES].mobility = 1;
-	block_materials[MAT_LEAVES].adventure_exempt = 0;
-	block_materials[MAT_LEAVES].liquid = 0;
-	block_materials[MAT_LEAVES].solid = 1;
-	block_materials[MAT_LEAVES].blocksLight = 1;
-	block_materials[MAT_LEAVES].blocksMovement = 1;
-	block_materials[MAT_PLANTS].flammable = 0;
-	block_materials[MAT_PLANTS].replacable = 0;
-	block_materials[MAT_PLANTS].requiresnotool = 1;
-	block_materials[MAT_PLANTS].mobility = 1;
-	block_materials[MAT_PLANTS].adventure_exempt = 1;
-	block_materials[MAT_PLANTS].liquid = 0;
-	block_materials[MAT_PLANTS].solid = 0;
-	block_materials[MAT_PLANTS].blocksLight = 0;
-	block_materials[MAT_PLANTS].blocksMovement = 0;
-	block_materials[MAT_VINE].flammable = 1;
-	block_materials[MAT_VINE].replacable = 1;
-	block_materials[MAT_VINE].requiresnotool = 1;
-	block_materials[MAT_VINE].mobility = 1;
-	block_materials[MAT_VINE].adventure_exempt = 1;
-	block_materials[MAT_VINE].liquid = 0;
-	block_materials[MAT_VINE].solid = 0;
-	block_materials[MAT_VINE].blocksLight = 0;
-	block_materials[MAT_VINE].blocksMovement = 0;
-	block_materials[MAT_SPONGE].flammable = 0;
-	block_materials[MAT_SPONGE].replacable = 0;
-	block_materials[MAT_SPONGE].requiresnotool = 1;
-	block_materials[MAT_SPONGE].mobility = 0;
-	block_materials[MAT_SPONGE].adventure_exempt = 0;
-	block_materials[MAT_SPONGE].liquid = 0;
-	block_materials[MAT_SPONGE].solid = 1;
-	block_materials[MAT_SPONGE].blocksLight = 1;
-	block_materials[MAT_SPONGE].blocksMovement = 1;
-	block_materials[MAT_CLOTH].flammable = 1;
-	block_materials[MAT_CLOTH].replacable = 0;
-	block_materials[MAT_CLOTH].requiresnotool = 1;
-	block_materials[MAT_CLOTH].mobility = 0;
-	block_materials[MAT_CLOTH].adventure_exempt = 0;
-	block_materials[MAT_CLOTH].liquid = 0;
-	block_materials[MAT_CLOTH].solid = 1;
-	block_materials[MAT_CLOTH].blocksLight = 1;
-	block_materials[MAT_CLOTH].blocksMovement = 1;
-	block_materials[MAT_FIRE].flammable = 0;
-	block_materials[MAT_FIRE].replacable = 1;
-	block_materials[MAT_FIRE].requiresnotool = 1;
-	block_materials[MAT_FIRE].mobility = 1;
-	block_materials[MAT_FIRE].adventure_exempt = 0;
-	block_materials[MAT_FIRE].liquid = 0;
-	block_materials[MAT_FIRE].solid = 0;
-	block_materials[MAT_FIRE].blocksLight = 0;
-	block_materials[MAT_FIRE].blocksMovement = 0;
-	block_materials[MAT_SAND].flammable = 0;
-	block_materials[MAT_SAND].replacable = 0;
-	block_materials[MAT_SAND].requiresnotool = 1;
-	block_materials[MAT_SAND].mobility = 0;
-	block_materials[MAT_SAND].adventure_exempt = 0;
-	block_materials[MAT_SAND].liquid = 0;
-	block_materials[MAT_SAND].solid = 1;
-	block_materials[MAT_SAND].blocksLight = 1;
-	block_materials[MAT_SAND].blocksMovement = 1;
-	block_materials[MAT_CIRCUITS].flammable = 0;
-	block_materials[MAT_CIRCUITS].replacable = 0;
-	block_materials[MAT_CIRCUITS].requiresnotool = 1;
-	block_materials[MAT_CIRCUITS].mobility = 1;
-	block_materials[MAT_CIRCUITS].adventure_exempt = 1;
-	block_materials[MAT_CIRCUITS].liquid = 0;
-	block_materials[MAT_CIRCUITS].solid = 0;
-	block_materials[MAT_CIRCUITS].blocksLight = 0;
-	block_materials[MAT_CIRCUITS].blocksMovement = 0;
-	block_materials[MAT_CARPET].flammable = 1;
-	block_materials[MAT_CARPET].replacable = 0;
-	block_materials[MAT_CARPET].requiresnotool = 1;
-	block_materials[MAT_CARPET].mobility = 0;
-	block_materials[MAT_CARPET].adventure_exempt = 1;
-	block_materials[MAT_CARPET].liquid = 0;
-	block_materials[MAT_CARPET].solid = 0;
-	block_materials[MAT_CARPET].blocksLight = 0;
-	block_materials[MAT_CARPET].blocksMovement = 0;
-	block_materials[MAT_GLASS].flammable = 0;
-	block_materials[MAT_GLASS].replacable = 0;
-	block_materials[MAT_GLASS].requiresnotool = 1;
-	block_materials[MAT_GLASS].mobility = 0;
-	block_materials[MAT_GLASS].adventure_exempt = 1;
-	block_materials[MAT_GLASS].liquid = 0;
-	block_materials[MAT_GLASS].solid = 1;
-	block_materials[MAT_GLASS].blocksLight = 1;
-	block_materials[MAT_GLASS].blocksMovement = 1;
-	block_materials[MAT_REDSTONE_LIGHT].flammable = 0;
-	block_materials[MAT_REDSTONE_LIGHT].replacable = 0;
-	block_materials[MAT_REDSTONE_LIGHT].requiresnotool = 1;
-	block_materials[MAT_REDSTONE_LIGHT].mobility = 0;
-	block_materials[MAT_REDSTONE_LIGHT].adventure_exempt = 1;
-	block_materials[MAT_REDSTONE_LIGHT].liquid = 0;
-	block_materials[MAT_REDSTONE_LIGHT].solid = 1;
-	block_materials[MAT_REDSTONE_LIGHT].blocksLight = 1;
-	block_materials[MAT_REDSTONE_LIGHT].blocksMovement = 1;
-	block_materials[MAT_TNT].flammable = 1;
-	block_materials[MAT_TNT].replacable = 0;
-	block_materials[MAT_TNT].requiresnotool = 1;
-	block_materials[MAT_TNT].mobility = 0;
-	block_materials[MAT_TNT].adventure_exempt = 0;
-	block_materials[MAT_TNT].liquid = 0;
-	block_materials[MAT_TNT].solid = 1;
-	block_materials[MAT_TNT].blocksLight = 1;
-	block_materials[MAT_TNT].blocksMovement = 1;
-	block_materials[MAT_CORAL].flammable = 0;
-	block_materials[MAT_CORAL].replacable = 0;
-	block_materials[MAT_CORAL].requiresnotool = 1;
-	block_materials[MAT_CORAL].mobility = 1;
-	block_materials[MAT_CORAL].adventure_exempt = 0;
-	block_materials[MAT_CORAL].liquid = 0;
-	block_materials[MAT_CORAL].solid = 1;
-	block_materials[MAT_CORAL].blocksLight = 1;
-	block_materials[MAT_CORAL].blocksMovement = 1;
-	block_materials[MAT_ICE].flammable = 0;
-	block_materials[MAT_ICE].replacable = 0;
-	block_materials[MAT_ICE].requiresnotool = 1;
-	block_materials[MAT_ICE].mobility = 0;
-	block_materials[MAT_ICE].adventure_exempt = 1;
-	block_materials[MAT_ICE].liquid = 0;
-	block_materials[MAT_ICE].solid = 1;
-	block_materials[MAT_ICE].blocksLight = 1;
-	block_materials[MAT_ICE].blocksMovement = 1;
-	block_materials[MAT_PACKED_ICE].flammable = 0;
-	block_materials[MAT_PACKED_ICE].replacable = 0;
-	block_materials[MAT_PACKED_ICE].requiresnotool = 1;
-	block_materials[MAT_PACKED_ICE].mobility = 0;
-	block_materials[MAT_PACKED_ICE].adventure_exempt = 1;
-	block_materials[MAT_PACKED_ICE].liquid = 0;
-	block_materials[MAT_PACKED_ICE].solid = 1;
-	block_materials[MAT_PACKED_ICE].blocksLight = 1;
-	block_materials[MAT_PACKED_ICE].blocksMovement = 1;
-	block_materials[MAT_SNOW].flammable = 0;
-	block_materials[MAT_SNOW].replacable = 1;
-	block_materials[MAT_SNOW].requiresnotool = 0;
-	block_materials[MAT_SNOW].mobility = 1;
-	block_materials[MAT_SNOW].adventure_exempt = 1;
-	block_materials[MAT_SNOW].liquid = 0;
-	block_materials[MAT_SNOW].solid = 0;
-	block_materials[MAT_SNOW].blocksLight = 0;
-	block_materials[MAT_SNOW].blocksMovement = 0;
-	block_materials[MAT_CRAFTED_SNOW].flammable = 0;
-	block_materials[MAT_CRAFTED_SNOW].replacable = 0;
-	block_materials[MAT_CRAFTED_SNOW].requiresnotool = 0;
-	block_materials[MAT_CRAFTED_SNOW].mobility = 0;
-	block_materials[MAT_CRAFTED_SNOW].adventure_exempt = 0;
-	block_materials[MAT_CRAFTED_SNOW].liquid = 0;
-	block_materials[MAT_CRAFTED_SNOW].solid = 1;
-	block_materials[MAT_CRAFTED_SNOW].blocksLight = 1;
-	block_materials[MAT_CRAFTED_SNOW].blocksMovement = 1;
-	block_materials[MAT_CACTUS].flammable = 0;
-	block_materials[MAT_CACTUS].replacable = 0;
-	block_materials[MAT_CACTUS].requiresnotool = 1;
-	block_materials[MAT_CACTUS].mobility = 1;
-	block_materials[MAT_CACTUS].adventure_exempt = 0;
-	block_materials[MAT_CACTUS].liquid = 0;
-	block_materials[MAT_CACTUS].solid = 1;
-	block_materials[MAT_CACTUS].blocksLight = 1;
-	block_materials[MAT_CACTUS].blocksMovement = 1;
-	block_materials[MAT_CLAY].flammable = 0;
-	block_materials[MAT_CLAY].replacable = 0;
-	block_materials[MAT_CLAY].requiresnotool = 1;
-	block_materials[MAT_CLAY].mobility = 0;
-	block_materials[MAT_CLAY].adventure_exempt = 0;
-	block_materials[MAT_CLAY].liquid = 0;
-	block_materials[MAT_CLAY].solid = 1;
-	block_materials[MAT_CLAY].blocksLight = 1;
-	block_materials[MAT_CLAY].blocksMovement = 1;
-	block_materials[MAT_GOURD].flammable = 0;
-	block_materials[MAT_GOURD].replacable = 0;
-	block_materials[MAT_GOURD].requiresnotool = 1;
-	block_materials[MAT_GOURD].mobility = 1;
-	block_materials[MAT_GOURD].adventure_exempt = 0;
-	block_materials[MAT_GOURD].liquid = 0;
-	block_materials[MAT_GOURD].solid = 1;
-	block_materials[MAT_GOURD].blocksLight = 1;
-	block_materials[MAT_GOURD].blocksMovement = 1;
-	block_materials[MAT_DRAGON_EGG].flammable = 0;
-	block_materials[MAT_DRAGON_EGG].replacable = 0;
-	block_materials[MAT_DRAGON_EGG].requiresnotool = 1;
-	block_materials[MAT_DRAGON_EGG].mobility = 1;
-	block_materials[MAT_DRAGON_EGG].adventure_exempt = 0;
-	block_materials[MAT_DRAGON_EGG].liquid = 0;
-	block_materials[MAT_DRAGON_EGG].solid = 1;
-	block_materials[MAT_DRAGON_EGG].blocksLight = 1;
-	block_materials[MAT_DRAGON_EGG].blocksMovement = 1;
-	block_materials[MAT_PORTAL].flammable = 0;
-	block_materials[MAT_PORTAL].replacable = 0;
-	block_materials[MAT_PORTAL].requiresnotool = 1;
-	block_materials[MAT_PORTAL].mobility = 2;
-	block_materials[MAT_PORTAL].adventure_exempt = 0;
-	block_materials[MAT_PORTAL].liquid = 0;
-	block_materials[MAT_PORTAL].solid = 0;
-	block_materials[MAT_PORTAL].blocksLight = 0;
-	block_materials[MAT_PORTAL].blocksMovement = 0;
-	block_materials[MAT_CAKE].flammable = 0;
-	block_materials[MAT_CAKE].replacable = 0;
-	block_materials[MAT_CAKE].requiresnotool = 1;
-	block_materials[MAT_CAKE].mobility = 1;
-	block_materials[MAT_CAKE].adventure_exempt = 0;
-	block_materials[MAT_CAKE].liquid = 0;
-	block_materials[MAT_CAKE].solid = 1;
-	block_materials[MAT_CAKE].blocksLight = 1;
-	block_materials[MAT_CAKE].blocksMovement = 1;
-	block_materials[MAT_WEB].flammable = 0;
-	block_materials[MAT_WEB].replacable = 0;
-	block_materials[MAT_WEB].requiresnotool = 0;
-	block_materials[MAT_WEB].mobility = 1;
-	block_materials[MAT_WEB].adventure_exempt = 0;
-	block_materials[MAT_WEB].liquid = 0;
-	block_materials[MAT_WEB].solid = 1;
-	block_materials[MAT_WEB].blocksLight = 1;
-	block_materials[MAT_WEB].blocksMovement = 0;
-	block_materials[MAT_PISTON].flammable = 0;
-	block_materials[MAT_PISTON].replacable = 0;
-	block_materials[MAT_PISTON].requiresnotool = 1;
-	block_materials[MAT_PISTON].mobility = 2;
-	block_materials[MAT_PISTON].adventure_exempt = 0;
-	block_materials[MAT_PISTON].liquid = 0;
-	block_materials[MAT_PISTON].solid = 1;
-	block_materials[MAT_PISTON].blocksLight = 1;
-	block_materials[MAT_PISTON].blocksMovement = 1;
-	block_materials[MAT_BARRIER].flammable = 0;
-	block_materials[MAT_BARRIER].replacable = 0;
-	block_materials[MAT_BARRIER].requiresnotool = 0;
-	block_materials[MAT_BARRIER].mobility = 2;
-	block_materials[MAT_BARRIER].adventure_exempt = 0;
-	block_materials[MAT_BARRIER].liquid = 0;
-	block_materials[MAT_BARRIER].solid = 1;
-	block_materials[MAT_BARRIER].blocksLight = 1;
-	block_materials[MAT_BARRIER].blocksMovement = 1;
-	block_materials[MAT_STRUCTURE_VOID].flammable = 0;
-	block_materials[MAT_STRUCTURE_VOID].replacable = 1;
-	block_materials[MAT_STRUCTURE_VOID].requiresnotool = 1;
-	block_materials[MAT_STRUCTURE_VOID].mobility = 0;
-	block_materials[MAT_STRUCTURE_VOID].adventure_exempt = 0;
-	block_materials[MAT_STRUCTURE_VOID].liquid = 0;
-	block_materials[MAT_STRUCTURE_VOID].solid = 0;
-	block_materials[MAT_STRUCTURE_VOID].blocksLight = 0;
-	block_materials[MAT_STRUCTURE_VOID].blocksMovement = 0;
-//
-	block_infos[BLK_AIR].hardness = 0.0;
-	block_infos[BLK_AIR].material = MAT_AIR;
-	block_infos[BLK_AIR].slipperiness = 0.6;
-	block_infos[BLK_STONE].hardness = 1.5;
-	block_infos[BLK_STONE].material = MAT_ROCK;
-	block_infos[BLK_STONE].slipperiness = 0.6;
-	block_infos[BLK_GRASS].hardness = 0.6;
-	block_infos[BLK_GRASS].material = MAT_GRASS;
-	block_infos[BLK_GRASS].slipperiness = 0.6;
-	block_infos[BLK_DIRT].hardness = 0.5;
-	block_infos[BLK_DIRT].material = MAT_GROUND;
-	block_infos[BLK_DIRT].slipperiness = 0.6;
-	block_infos[BLK_STONEBRICK].hardness = 2.0;
-	block_infos[BLK_STONEBRICK].material = MAT_ROCK;
-	block_infos[BLK_STONEBRICK].slipperiness = 0.6;
-	block_infos[BLK_WOOD_OAK].hardness = 2.0;
-	block_infos[BLK_WOOD_OAK].material = MAT_WOOD;
-	block_infos[BLK_WOOD_OAK].slipperiness = 0.6;
-	block_infos[BLK_SAPLING_OAK].hardness = 0.0;
-	block_infos[BLK_SAPLING_OAK].material = MAT_PLANTS;
-	block_infos[BLK_SAPLING_OAK].slipperiness = 0.6;
-	block_infos[BLK_BEDROCK].hardness = -1.0;
-	block_infos[BLK_BEDROCK].material = MAT_ROCK;
-	block_infos[BLK_BEDROCK].slipperiness = 0.6;
-	block_infos[BLK_SAND].hardness = 0.5;
-	block_infos[BLK_SAND].material = MAT_SAND;
-	block_infos[BLK_SAND].slipperiness = 0.6;
-	block_infos[BLK_GRAVEL].hardness = 0.6;
-	block_infos[BLK_GRAVEL].material = MAT_SAND;
-	block_infos[BLK_GRAVEL].slipperiness = 0.6;
-	block_infos[BLK_OREGOLD].hardness = 3.0;
-	block_infos[BLK_OREGOLD].material = MAT_ROCK;
-	block_infos[BLK_OREGOLD].slipperiness = 0.6;
-	block_infos[BLK_OREIRON].hardness = 3.0;
-	block_infos[BLK_OREIRON].material = MAT_ROCK;
-	block_infos[BLK_OREIRON].slipperiness = 0.6;
-	block_infos[BLK_ORECOAL].hardness = 3.0;
-	block_infos[BLK_ORECOAL].material = MAT_ROCK;
-	block_infos[BLK_ORECOAL].slipperiness = 0.6;
-	block_infos[BLK_LOG_OAK].hardness = 2.0;
-	block_infos[BLK_LOG_OAK].material = MAT_WOOD;
-	block_infos[BLK_LOG_OAK].slipperiness = 0.6;
-	block_infos[BLK_LOG_ACACIA_1].hardness = 2.0;
-	block_infos[BLK_LOG_ACACIA_1].material = MAT_WOOD;
-	block_infos[BLK_LOG_ACACIA_1].slipperiness = 0.6;
-	block_infos[BLK_LEAVES_OAK].hardness = 0.2;
-	block_infos[BLK_LEAVES_OAK].material = MAT_LEAVES;
-	block_infos[BLK_LEAVES_OAK].slipperiness = 0.6;
-	block_infos[BLK_LEAVES_ACACIA].hardness = 0.2;
-	block_infos[BLK_LEAVES_ACACIA].material = MAT_LEAVES;
-	block_infos[BLK_LEAVES_ACACIA].slipperiness = 0.6;
-	block_infos[BLK_SPONGE_DRY].hardness = 0.6;
-	block_infos[BLK_SPONGE_DRY].material = MAT_SPONGE;
-	block_infos[BLK_SPONGE_DRY].slipperiness = 0.6;
-	block_infos[BLK_GLASS].hardness = 0.3;
-	block_infos[BLK_GLASS].material = MAT_GLASS;
-	block_infos[BLK_GLASS].slipperiness = 0.6;
-	block_infos[BLK_ORELAPIS].hardness = 3.0;
-	block_infos[BLK_ORELAPIS].material = MAT_ROCK;
-	block_infos[BLK_ORELAPIS].slipperiness = 0.6;
-	block_infos[BLK_BLOCKLAPIS].hardness = 3.0;
-	block_infos[BLK_BLOCKLAPIS].material = MAT_IRON;
-	block_infos[BLK_BLOCKLAPIS].slipperiness = 0.6;
-	block_infos[BLK_DISPENSER].hardness = 3.5;
-	block_infos[BLK_DISPENSER].material = MAT_ROCK;
-	block_infos[BLK_DISPENSER].slipperiness = 0.6;
-	block_infos[BLK_SANDSTONE].hardness = 0.8;
-	block_infos[BLK_SANDSTONE].material = MAT_ROCK;
-	block_infos[BLK_SANDSTONE].slipperiness = 0.6;
-	block_infos[BLK_MUSICBLOCK].hardness = 0.8;
-	block_infos[BLK_MUSICBLOCK].material = MAT_WOOD;
-	block_infos[BLK_MUSICBLOCK].slipperiness = 0.6;
-	block_infos[BLK_GOLDENRAIL].hardness = 0.7;
-	block_infos[BLK_GOLDENRAIL].material = MAT_CIRCUITS;
-	block_infos[BLK_GOLDENRAIL].slipperiness = 0.6;
-	block_infos[BLK_DETECTORRAIL].hardness = 0.7;
-	block_infos[BLK_DETECTORRAIL].material = MAT_CIRCUITS;
-	block_infos[BLK_DETECTORRAIL].slipperiness = 0.6;
-	block_infos[BLK_PISTONSTICKYBASE].hardness = 0.5;
-	block_infos[BLK_PISTONSTICKYBASE].material = MAT_PISTON;
-	block_infos[BLK_PISTONSTICKYBASE].slipperiness = 0.6;
-	block_infos[BLK_WEB].hardness = 4.0;
-	block_infos[BLK_WEB].material = MAT_WEB;
-	block_infos[BLK_WEB].slipperiness = 0.6;
-	block_infos[BLK_TALLGRASS_SHRUB].hardness = 0.0;
-	block_infos[BLK_TALLGRASS_SHRUB].material = MAT_VINE;
-	block_infos[BLK_TALLGRASS_SHRUB].slipperiness = 0.6;
-	block_infos[BLK_DEADBUSH].hardness = 0.0;
-	block_infos[BLK_DEADBUSH].material = MAT_VINE;
-	block_infos[BLK_DEADBUSH].slipperiness = 0.6;
-	block_infos[BLK_PISTONBASE].hardness = 0.5;
-	block_infos[BLK_PISTONBASE].material = MAT_PISTON;
-	block_infos[BLK_PISTONBASE].slipperiness = 0.6;
-	block_infos[BLK_CLOTH_WHITE].hardness = 0.8;
-	block_infos[BLK_CLOTH_WHITE].material = MAT_CLOTH;
-	block_infos[BLK_CLOTH_WHITE].slipperiness = 0.6;
-	block_infos[BLK_FLOWER1_DANDELION].hardness = 0.0;
-	block_infos[BLK_FLOWER1_DANDELION].material = MAT_PLANTS;
-	block_infos[BLK_FLOWER1_DANDELION].slipperiness = 0.6;
-	block_infos[BLK_FLOWER2_POPPY].hardness = 0.0;
-	block_infos[BLK_FLOWER2_POPPY].material = MAT_PLANTS;
-	block_infos[BLK_FLOWER2_POPPY].slipperiness = 0.6;
-	block_infos[BLK_MUSHROOM].hardness = 0.0;
-	block_infos[BLK_MUSHROOM].material = MAT_PLANTS;
-	block_infos[BLK_MUSHROOM].slipperiness = 0.6;
-	block_infos[BLK_MUSHROOM_1].hardness = 0.0;
-	block_infos[BLK_MUSHROOM_1].material = MAT_PLANTS;
-	block_infos[BLK_MUSHROOM_1].slipperiness = 0.6;
-	block_infos[BLK_BLOCKGOLD].hardness = 3.0;
-	block_infos[BLK_BLOCKGOLD].material = MAT_IRON;
-	block_infos[BLK_BLOCKGOLD].slipperiness = 0.6;
-	block_infos[BLK_BLOCKIRON].hardness = 5.0;
-	block_infos[BLK_BLOCKIRON].material = MAT_IRON;
-	block_infos[BLK_BLOCKIRON].slipperiness = 0.6;
-	block_infos[BLK_STONESLAB_STONE].hardness = 2.0;
-	block_infos[BLK_STONESLAB_STONE].material = MAT_ROCK;
-	block_infos[BLK_STONESLAB_STONE].slipperiness = 0.6;
-	block_infos[BLK_BRICK].hardness = 2.0;
-	block_infos[BLK_BRICK].material = MAT_ROCK;
-	block_infos[BLK_BRICK].slipperiness = 0.6;
-	block_infos[BLK_TNT].hardness = 0.0;
-	block_infos[BLK_TNT].material = MAT_TNT;
-	block_infos[BLK_TNT].slipperiness = 0.6;
-	block_infos[BLK_BOOKSHELF].hardness = 1.5;
-	block_infos[BLK_BOOKSHELF].material = MAT_WOOD;
-	block_infos[BLK_BOOKSHELF].slipperiness = 0.6;
-	block_infos[BLK_STONEMOSS].hardness = 2.0;
-	block_infos[BLK_STONEMOSS].material = MAT_ROCK;
-	block_infos[BLK_STONEMOSS].slipperiness = 0.6;
-	block_infos[BLK_OBSIDIAN].hardness = 50.0;
-	block_infos[BLK_OBSIDIAN].material = MAT_ROCK;
-	block_infos[BLK_OBSIDIAN].slipperiness = 0.6;
-	block_infos[BLK_TORCH].hardness = 0.0;
-	block_infos[BLK_TORCH].material = MAT_CIRCUITS;
-	block_infos[BLK_TORCH].slipperiness = 0.6;
-	block_infos[BLK_ENDROD].hardness = 0.0;
-	block_infos[BLK_ENDROD].material = MAT_CIRCUITS;
-	block_infos[BLK_ENDROD].slipperiness = 0.6;
-	block_infos[BLK_CHORUSPLANT].hardness = 0.4;
-	block_infos[BLK_CHORUSPLANT].material = MAT_PLANTS;
-	block_infos[BLK_CHORUSPLANT].slipperiness = 0.6;
-	block_infos[BLK_CHORUSFLOWER].hardness = 0.4;
-	block_infos[BLK_CHORUSFLOWER].material = MAT_PLANTS;
-	block_infos[BLK_CHORUSFLOWER].slipperiness = 0.6;
-	block_infos[BLK_PURPURBLOCK].hardness = 1.5;
-	block_infos[BLK_PURPURBLOCK].material = MAT_ROCK;
-	block_infos[BLK_PURPURBLOCK].slipperiness = 0.6;
-	block_infos[BLK_PURPURPILLAR].hardness = 1.5;
-	block_infos[BLK_PURPURPILLAR].material = MAT_ROCK;
-	block_infos[BLK_PURPURPILLAR].slipperiness = 0.6;
-	block_infos[BLK_STAIRSPURPUR].hardness = 1.5;
-	block_infos[BLK_STAIRSPURPUR].material = MAT_ROCK;
-	block_infos[BLK_STAIRSPURPUR].slipperiness = 0.6;
-	block_infos[BLK_PURPURSLAB].hardness = 2.0;
-	block_infos[BLK_PURPURSLAB].material = MAT_ROCK;
-	block_infos[BLK_PURPURSLAB].slipperiness = 0.6;
-	block_infos[BLK_MOBSPAWNER].hardness = 5.0;
-	block_infos[BLK_MOBSPAWNER].material = MAT_ROCK;
-	block_infos[BLK_MOBSPAWNER].slipperiness = 0.6;
-	block_infos[BLK_STAIRSWOOD].hardness = 2.0;
-	block_infos[BLK_STAIRSWOOD].material = MAT_WOOD;
-	block_infos[BLK_STAIRSWOOD].slipperiness = 0.6;
-	block_infos[BLK_CHEST].hardness = 2.5;
-	block_infos[BLK_CHEST].material = MAT_WOOD;
-	block_infos[BLK_CHEST].slipperiness = 0.6;
-//
-	block_infos[BLK_CHEST].onBlockInteract = &onBlockInteract_chest;
-	block_infos[BLK_CHEST].onBlockDestroyed = &onBlockDestroyed_chest;
-//
-	block_infos[BLK_OREDIAMOND].hardness = 3.0;
-	block_infos[BLK_OREDIAMOND].material = MAT_ROCK;
-	block_infos[BLK_OREDIAMOND].slipperiness = 0.6;
-	block_infos[BLK_BLOCKDIAMOND].hardness = 5.0;
-	block_infos[BLK_BLOCKDIAMOND].material = MAT_IRON;
-	block_infos[BLK_BLOCKDIAMOND].slipperiness = 0.6;
-	block_infos[BLK_WORKBENCH].hardness = 2.5;
-	block_infos[BLK_WORKBENCH].material = MAT_WOOD;
-	block_infos[BLK_WORKBENCH].slipperiness = 0.6;
-//
-	block_infos[BLK_WORKBENCH].onBlockInteract = &onBlockInteract_workbench;
-//
-	block_infos[BLK_FARMLAND].hardness = 0.6;
-	block_infos[BLK_FARMLAND].material = MAT_GROUND;
-	block_infos[BLK_FARMLAND].slipperiness = 0.6;
-	block_infos[BLK_FURNACE].hardness = 3.5;
-	block_infos[BLK_FURNACE].material = MAT_ROCK;
-	block_infos[BLK_FURNACE].slipperiness = 0.6;
-//end auto
-	block_infos[BLK_FURNACE].onBlockInteract = &onBlockInteract_furnace;
-	block_infos[BLK_FURNACE].onBlockDestroyed = &onBlockDestroyed_furnace;
-//begin auto
-	block_infos[BLK_LADDER].hardness = 0.4;
-	block_infos[BLK_LADDER].material = MAT_CIRCUITS;
-	block_infos[BLK_LADDER].slipperiness = 0.6;
-	block_infos[BLK_RAIL].hardness = 0.7;
-	block_infos[BLK_RAIL].material = MAT_CIRCUITS;
-	block_infos[BLK_RAIL].slipperiness = 0.6;
-	block_infos[BLK_STAIRSSTONE].hardness = 2.0;
-	block_infos[BLK_STAIRSSTONE].material = MAT_ROCK;
-	block_infos[BLK_STAIRSSTONE].slipperiness = 0.6;
-	block_infos[BLK_LEVER].hardness = 0.5;
-	block_infos[BLK_LEVER].material = MAT_CIRCUITS;
-	block_infos[BLK_LEVER].slipperiness = 0.6;
-	block_infos[BLK_PRESSUREPLATESTONE].hardness = 0.5;
-	block_infos[BLK_PRESSUREPLATESTONE].material = MAT_ROCK;
-	block_infos[BLK_PRESSUREPLATESTONE].slipperiness = 0.6;
-	block_infos[BLK_PRESSUREPLATEWOOD].hardness = 0.5;
-	block_infos[BLK_PRESSUREPLATEWOOD].material = MAT_WOOD;
-	block_infos[BLK_PRESSUREPLATEWOOD].slipperiness = 0.6;
-	block_infos[BLK_OREREDSTONE].hardness = 3.0;
-	block_infos[BLK_OREREDSTONE].material = MAT_ROCK;
-	block_infos[BLK_OREREDSTONE].slipperiness = 0.6;
-	block_infos[BLK_NOTGATE].hardness = 0.0;
-	block_infos[BLK_NOTGATE].material = MAT_CIRCUITS;
-	block_infos[BLK_NOTGATE].slipperiness = 0.6;
-	block_infos[BLK_BUTTON].hardness = 0.5;
-	block_infos[BLK_BUTTON].material = MAT_CIRCUITS;
-	block_infos[BLK_BUTTON].slipperiness = 0.6;
-	block_infos[BLK_SNOW].hardness = 0.1;
-	block_infos[BLK_SNOW].material = MAT_SNOW;
-	block_infos[BLK_SNOW].slipperiness = 0.6;
-	block_infos[BLK_ICE].hardness = 0.5;
-	block_infos[BLK_ICE].material = MAT_ICE;
-	block_infos[BLK_ICE].slipperiness = 0.98;
-	block_infos[BLK_SNOW_15].hardness = 0.2;
-	block_infos[BLK_SNOW_15].material = MAT_CRAFTED_SNOW;
-	block_infos[BLK_SNOW_15].slipperiness = 0.6;
-	block_infos[BLK_CACTUS].hardness = 0.4;
-	block_infos[BLK_CACTUS].material = MAT_CACTUS;
-	block_infos[BLK_CACTUS].slipperiness = 0.6;
-	block_infos[BLK_CLAY].hardness = 0.6;
-	block_infos[BLK_CLAY].material = MAT_CLAY;
-	block_infos[BLK_CLAY].slipperiness = 0.6;
-	block_infos[BLK_JUKEBOX].hardness = 2.0;
-	block_infos[BLK_JUKEBOX].material = MAT_WOOD;
-	block_infos[BLK_JUKEBOX].slipperiness = 0.6;
-	block_infos[BLK_FENCE].hardness = 2.0;
-	block_infos[BLK_FENCE].material = MAT_WOOD;
-	block_infos[BLK_FENCE].slipperiness = 0.6;
-	block_infos[BLK_SPRUCEFENCE].hardness = 2.0;
-	block_infos[BLK_SPRUCEFENCE].material = MAT_WOOD;
-	block_infos[BLK_SPRUCEFENCE].slipperiness = 0.6;
-	block_infos[BLK_BIRCHFENCE].hardness = 2.0;
-	block_infos[BLK_BIRCHFENCE].material = MAT_WOOD;
-	block_infos[BLK_BIRCHFENCE].slipperiness = 0.6;
-	block_infos[BLK_JUNGLEFENCE].hardness = 2.0;
-	block_infos[BLK_JUNGLEFENCE].material = MAT_WOOD;
-	block_infos[BLK_JUNGLEFENCE].slipperiness = 0.6;
-	block_infos[BLK_DARKOAKFENCE].hardness = 2.0;
-	block_infos[BLK_DARKOAKFENCE].material = MAT_WOOD;
-	block_infos[BLK_DARKOAKFENCE].slipperiness = 0.6;
-	block_infos[BLK_ACACIAFENCE].hardness = 2.0;
-	block_infos[BLK_ACACIAFENCE].material = MAT_WOOD;
-	block_infos[BLK_ACACIAFENCE].slipperiness = 0.6;
-	block_infos[BLK_PUMPKIN].hardness = 1.0;
-	block_infos[BLK_PUMPKIN].material = MAT_GOURD;
-	block_infos[BLK_PUMPKIN].slipperiness = 0.6;
-	block_infos[BLK_HELLROCK].hardness = 0.4;
-	block_infos[BLK_HELLROCK].material = MAT_ROCK;
-	block_infos[BLK_HELLROCK].slipperiness = 0.6;
-	block_infos[BLK_HELLSAND].hardness = 0.5;
-	block_infos[BLK_HELLSAND].material = MAT_SAND;
-	block_infos[BLK_HELLSAND].slipperiness = 0.6;
-	block_infos[BLK_LIGHTGEM].hardness = 0.3;
-	block_infos[BLK_LIGHTGEM].material = MAT_GLASS;
-	block_infos[BLK_LIGHTGEM].slipperiness = 0.6;
-	block_infos[BLK_LITPUMPKIN].hardness = 1.0;
-	block_infos[BLK_LITPUMPKIN].material = MAT_GOURD;
-	block_infos[BLK_LITPUMPKIN].slipperiness = 0.6;
-	block_infos[BLK_TRAPDOOR].hardness = 3.0;
-	block_infos[BLK_TRAPDOOR].material = MAT_WOOD;
-	block_infos[BLK_TRAPDOOR].slipperiness = 0.6;
-	block_infos[BLK_MONSTERSTONEEGG_STONE].hardness = 0.75;
-	block_infos[BLK_MONSTERSTONEEGG_STONE].material = MAT_CLAY;
-	block_infos[BLK_MONSTERSTONEEGG_STONE].slipperiness = 0.6;
-	block_infos[BLK_STONEBRICKSMOOTH].hardness = 1.5;
-	block_infos[BLK_STONEBRICKSMOOTH].material = MAT_ROCK;
-	block_infos[BLK_STONEBRICKSMOOTH].slipperiness = 0.6;
-	block_infos[BLK_MUSHROOM_2].hardness = 0.2;
-	block_infos[BLK_MUSHROOM_2].material = MAT_WOOD;
-	block_infos[BLK_MUSHROOM_2].slipperiness = 0.6;
-	block_infos[BLK_MUSHROOM_17].hardness = 0.2;
-	block_infos[BLK_MUSHROOM_17].material = MAT_WOOD;
-	block_infos[BLK_MUSHROOM_17].slipperiness = 0.6;
-	block_infos[BLK_FENCEIRON].hardness = 5.0;
-	block_infos[BLK_FENCEIRON].material = MAT_IRON;
-	block_infos[BLK_FENCEIRON].slipperiness = 0.6;
-	block_infos[BLK_THINGLASS].hardness = 0.3;
-	block_infos[BLK_THINGLASS].material = MAT_GLASS;
-	block_infos[BLK_THINGLASS].slipperiness = 0.6;
-	block_infos[BLK_MELON].hardness = 1.0;
-	block_infos[BLK_MELON].material = MAT_GOURD;
-	block_infos[BLK_MELON].slipperiness = 0.6;
-	block_infos[BLK_VINE].hardness = 0.2;
-	block_infos[BLK_VINE].material = MAT_VINE;
-	block_infos[BLK_VINE].slipperiness = 0.6;
-	block_infos[BLK_FENCEGATE].hardness = 2.0;
-	block_infos[BLK_FENCEGATE].material = MAT_WOOD;
-	block_infos[BLK_FENCEGATE].slipperiness = 0.6;
-	block_infos[BLK_SPRUCEFENCEGATE].hardness = 2.0;
-	block_infos[BLK_SPRUCEFENCEGATE].material = MAT_WOOD;
-	block_infos[BLK_SPRUCEFENCEGATE].slipperiness = 0.6;
-	block_infos[BLK_BIRCHFENCEGATE].hardness = 2.0;
-	block_infos[BLK_BIRCHFENCEGATE].material = MAT_WOOD;
-	block_infos[BLK_BIRCHFENCEGATE].slipperiness = 0.6;
-	block_infos[BLK_JUNGLEFENCEGATE].hardness = 2.0;
-	block_infos[BLK_JUNGLEFENCEGATE].material = MAT_WOOD;
-	block_infos[BLK_JUNGLEFENCEGATE].slipperiness = 0.6;
-	block_infos[BLK_DARKOAKFENCEGATE].hardness = 2.0;
-	block_infos[BLK_DARKOAKFENCEGATE].material = MAT_WOOD;
-	block_infos[BLK_DARKOAKFENCEGATE].slipperiness = 0.6;
-	block_infos[BLK_ACACIAFENCEGATE].hardness = 2.0;
-	block_infos[BLK_ACACIAFENCEGATE].material = MAT_WOOD;
-	block_infos[BLK_ACACIAFENCEGATE].slipperiness = 0.6;
-	block_infos[BLK_STAIRSBRICK].hardness = 2.0;
-	block_infos[BLK_STAIRSBRICK].material = MAT_ROCK;
-	block_infos[BLK_STAIRSBRICK].slipperiness = 0.6;
-	block_infos[BLK_STAIRSSTONEBRICKSMOOTH].hardness = 1.5;
-	block_infos[BLK_STAIRSSTONEBRICKSMOOTH].material = MAT_ROCK;
-	block_infos[BLK_STAIRSSTONEBRICKSMOOTH].slipperiness = 0.6;
-	block_infos[BLK_MYCEL].hardness = 0.6;
-	block_infos[BLK_MYCEL].material = MAT_GRASS;
-	block_infos[BLK_MYCEL].slipperiness = 0.6;
-	block_infos[BLK_WATERLILY].hardness = 0.0;
-	block_infos[BLK_WATERLILY].material = MAT_PLANTS;
-	block_infos[BLK_WATERLILY].slipperiness = 0.6;
-	block_infos[BLK_NETHERBRICK].hardness = 2.0;
-	block_infos[BLK_NETHERBRICK].material = MAT_ROCK;
-	block_infos[BLK_NETHERBRICK].slipperiness = 0.6;
-	block_infos[BLK_NETHERFENCE].hardness = 2.0;
-	block_infos[BLK_NETHERFENCE].material = MAT_ROCK;
-	block_infos[BLK_NETHERFENCE].slipperiness = 0.6;
-	block_infos[BLK_STAIRSNETHERBRICK].hardness = 2.0;
-	block_infos[BLK_STAIRSNETHERBRICK].material = MAT_ROCK;
-	block_infos[BLK_STAIRSNETHERBRICK].slipperiness = 0.6;
-	block_infos[BLK_ENCHANTMENTTABLE].hardness = 5.0;
-	block_infos[BLK_ENCHANTMENTTABLE].material = MAT_ROCK;
-	block_infos[BLK_ENCHANTMENTTABLE].slipperiness = 0.6;
-	block_infos[BLK_ENDPORTALFRAME].hardness = -1.0;
-	block_infos[BLK_ENDPORTALFRAME].material = MAT_ROCK;
-	block_infos[BLK_ENDPORTALFRAME].slipperiness = 0.6;
-	block_infos[BLK_WHITESTONE].hardness = 3.0;
-	block_infos[BLK_WHITESTONE].material = MAT_ROCK;
-	block_infos[BLK_WHITESTONE].slipperiness = 0.6;
-	block_infos[BLK_ENDBRICKS].hardness = 0.8;
-	block_infos[BLK_ENDBRICKS].material = MAT_ROCK;
-	block_infos[BLK_ENDBRICKS].slipperiness = 0.6;
-	block_infos[BLK_DRAGONEGG].hardness = 3.0;
-	block_infos[BLK_DRAGONEGG].material = MAT_DRAGON_EGG;
-	block_infos[BLK_DRAGONEGG].slipperiness = 0.6;
-	block_infos[BLK_REDSTONELIGHT].hardness = 0.3;
-	block_infos[BLK_REDSTONELIGHT].material = MAT_REDSTONE_LIGHT;
-	block_infos[BLK_REDSTONELIGHT].slipperiness = 0.6;
-	block_infos[BLK_WOODSLAB_OAK].hardness = 2.0;
-	block_infos[BLK_WOODSLAB_OAK].material = MAT_WOOD;
-	block_infos[BLK_WOODSLAB_OAK].slipperiness = 0.6;
-	block_infos[BLK_STAIRSSANDSTONE].hardness = 0.8;
-	block_infos[BLK_STAIRSSANDSTONE].material = MAT_ROCK;
-	block_infos[BLK_STAIRSSANDSTONE].slipperiness = 0.6;
-	block_infos[BLK_OREEMERALD].hardness = 3.0;
-	block_infos[BLK_OREEMERALD].material = MAT_ROCK;
-	block_infos[BLK_OREEMERALD].slipperiness = 0.6;
-	block_infos[BLK_ENDERCHEST].hardness = 22.5;
-	block_infos[BLK_ENDERCHEST].material = MAT_ROCK;
-	block_infos[BLK_ENDERCHEST].slipperiness = 0.6;
-	block_infos[BLK_TRIPWIRESOURCE].hardness = 0.0;
-	block_infos[BLK_TRIPWIRESOURCE].material = MAT_CIRCUITS;
-	block_infos[BLK_TRIPWIRESOURCE].slipperiness = 0.6;
-	block_infos[BLK_BLOCKEMERALD].hardness = 5.0;
-	block_infos[BLK_BLOCKEMERALD].material = MAT_IRON;
-	block_infos[BLK_BLOCKEMERALD].slipperiness = 0.6;
-	block_infos[BLK_STAIRSWOODSPRUCE].hardness = 2.0;
-	block_infos[BLK_STAIRSWOODSPRUCE].material = MAT_WOOD;
-	block_infos[BLK_STAIRSWOODSPRUCE].slipperiness = 0.6;
-	block_infos[BLK_STAIRSWOODBIRCH].hardness = 2.0;
-	block_infos[BLK_STAIRSWOODBIRCH].material = MAT_WOOD;
-	block_infos[BLK_STAIRSWOODBIRCH].slipperiness = 0.6;
-	block_infos[BLK_STAIRSWOODJUNGLE].hardness = 2.0;
-	block_infos[BLK_STAIRSWOODJUNGLE].material = MAT_WOOD;
-	block_infos[BLK_STAIRSWOODJUNGLE].slipperiness = 0.6;
-	block_infos[BLK_COMMANDBLOCK].hardness = -1.0;
-	block_infos[BLK_COMMANDBLOCK].material = MAT_IRON;
-	block_infos[BLK_COMMANDBLOCK].slipperiness = 0.6;
-	block_infos[BLK_BEACON].hardness = 3.0;
-	block_infos[BLK_BEACON].material = MAT_GLASS;
-	block_infos[BLK_BEACON].slipperiness = 0.6;
-	block_infos[BLK_COBBLEWALL_NORMAL].hardness = 2.0;
-	block_infos[BLK_COBBLEWALL_NORMAL].material = MAT_ROCK;
-	block_infos[BLK_COBBLEWALL_NORMAL].slipperiness = 0.6;
-	block_infos[BLK_BUTTON_15].hardness = 0.5;
-	block_infos[BLK_BUTTON_15].material = MAT_CIRCUITS;
-	block_infos[BLK_BUTTON_15].slipperiness = 0.6;
-	block_infos[BLK_ANVIL_INTACT].hardness = 5.0;
-	block_infos[BLK_ANVIL_INTACT].material = MAT_ANVIL;
-	block_infos[BLK_ANVIL_INTACT].slipperiness = 0.6;
-	block_infos[BLK_CHESTTRAP].hardness = 2.5;
-	block_infos[BLK_CHESTTRAP].material = MAT_WOOD;
-	block_infos[BLK_CHESTTRAP].slipperiness = 0.6;
-//
-	block_infos[BLK_CHESTTRAP].onBlockInteract = &onBlockInteract_chest;
-//
-	block_infos[BLK_WEIGHTEDPLATE_LIGHT].hardness = 0.5;
-	block_infos[BLK_WEIGHTEDPLATE_LIGHT].material = MAT_IRON;
-	block_infos[BLK_WEIGHTEDPLATE_LIGHT].slipperiness = 0.6;
-	block_infos[BLK_WEIGHTEDPLATE_HEAVY].hardness = 0.5;
-	block_infos[BLK_WEIGHTEDPLATE_HEAVY].material = MAT_IRON;
-	block_infos[BLK_WEIGHTEDPLATE_HEAVY].slipperiness = 0.6;
-	block_infos[BLK_DAYLIGHTDETECTOR].hardness = 0.2;
-	block_infos[BLK_DAYLIGHTDETECTOR].material = MAT_WOOD;
-	block_infos[BLK_DAYLIGHTDETECTOR].slipperiness = 0.6;
-	block_infos[BLK_BLOCKREDSTONE].hardness = 5.0;
-	block_infos[BLK_BLOCKREDSTONE].material = MAT_IRON;
-	block_infos[BLK_BLOCKREDSTONE].slipperiness = 0.6;
-	block_infos[BLK_NETHERQUARTZ].hardness = 3.0;
-	block_infos[BLK_NETHERQUARTZ].material = MAT_ROCK;
-	block_infos[BLK_NETHERQUARTZ].slipperiness = 0.6;
-	block_infos[BLK_HOPPER].hardness = 3.0;
-	block_infos[BLK_HOPPER].material = MAT_IRON;
-	block_infos[BLK_HOPPER].slipperiness = 0.6;
-	block_infos[BLK_QUARTZBLOCK].hardness = 0.8;
-	block_infos[BLK_QUARTZBLOCK].material = MAT_ROCK;
-	block_infos[BLK_QUARTZBLOCK].slipperiness = 0.6;
-	block_infos[BLK_STAIRSQUARTZ].hardness = 0.8;
-	block_infos[BLK_STAIRSQUARTZ].material = MAT_ROCK;
-	block_infos[BLK_STAIRSQUARTZ].slipperiness = 0.6;
-	block_infos[BLK_ACTIVATORRAIL].hardness = 0.7;
-	block_infos[BLK_ACTIVATORRAIL].material = MAT_CIRCUITS;
-	block_infos[BLK_ACTIVATORRAIL].slipperiness = 0.6;
-	block_infos[BLK_DROPPER].hardness = 3.5;
-	block_infos[BLK_DROPPER].material = MAT_ROCK;
-	block_infos[BLK_DROPPER].slipperiness = 0.6;
-	block_infos[BLK_CLAYHARDENEDSTAINED_WHITE].hardness = 1.25;
-	block_infos[BLK_CLAYHARDENEDSTAINED_WHITE].material = MAT_ROCK;
-	block_infos[BLK_CLAYHARDENEDSTAINED_WHITE].slipperiness = 0.6;
-	block_infos[BLK_BARRIER].hardness = -1.0;
-	block_infos[BLK_BARRIER].material = MAT_BARRIER;
-	block_infos[BLK_BARRIER].slipperiness = 0.6;
-	block_infos[BLK_IRONTRAPDOOR].hardness = 5.0;
-	block_infos[BLK_IRONTRAPDOOR].material = MAT_IRON;
-	block_infos[BLK_IRONTRAPDOOR].slipperiness = 0.6;
-	block_infos[BLK_HAYBLOCK].hardness = 0.5;
-	block_infos[BLK_HAYBLOCK].material = MAT_GRASS;
-	block_infos[BLK_HAYBLOCK].slipperiness = 0.6;
-	block_infos[BLK_WOOLCARPET_WHITE].hardness = 0.1;
-	block_infos[BLK_WOOLCARPET_WHITE].material = MAT_CARPET;
-	block_infos[BLK_WOOLCARPET_WHITE].slipperiness = 0.6;
-	block_infos[BLK_CLAYHARDENED].hardness = 1.25;
-	block_infos[BLK_CLAYHARDENED].material = MAT_ROCK;
-	block_infos[BLK_CLAYHARDENED].slipperiness = 0.6;
-	block_infos[BLK_BLOCKCOAL].hardness = 5.0;
-	block_infos[BLK_BLOCKCOAL].material = MAT_ROCK;
-	block_infos[BLK_BLOCKCOAL].slipperiness = 0.6;
-	block_infos[BLK_ICEPACKED].hardness = 0.5;
-	block_infos[BLK_ICEPACKED].material = MAT_PACKED_ICE;
-	block_infos[BLK_ICEPACKED].slipperiness = 0.98;
-	block_infos[BLK_STAIRSWOODACACIA].hardness = 2.0;
-	block_infos[BLK_STAIRSWOODACACIA].material = MAT_WOOD;
-	block_infos[BLK_STAIRSWOODACACIA].slipperiness = 0.6;
-	block_infos[BLK_STAIRSWOODDARKOAK].hardness = 2.0;
-	block_infos[BLK_STAIRSWOODDARKOAK].material = MAT_WOOD;
-	block_infos[BLK_STAIRSWOODDARKOAK].slipperiness = 0.6;
-	block_infos[BLK_SLIME].hardness = 0.0;
-	block_infos[BLK_SLIME].material = MAT_CLAY;
-	block_infos[BLK_SLIME].slipperiness = 0.8;
-	block_infos[BLK_GRASSPATH].hardness = 0.65;
-	block_infos[BLK_GRASSPATH].material = MAT_GROUND;
-	block_infos[BLK_GRASSPATH].slipperiness = 0.6;
-	block_infos[BLK_DOUBLEPLANT_SUNFLOWER].hardness = 0.0;
-	block_infos[BLK_DOUBLEPLANT_SUNFLOWER].material = MAT_VINE;
-	block_infos[BLK_DOUBLEPLANT_SUNFLOWER].slipperiness = 0.6;
-	block_infos[BLK_STAINEDGLASS_WHITE].hardness = 0.3;
-	block_infos[BLK_STAINEDGLASS_WHITE].material = MAT_GLASS;
-	block_infos[BLK_STAINEDGLASS_WHITE].slipperiness = 0.6;
-	block_infos[BLK_THINSTAINEDGLASS_WHITE].hardness = 0.3;
-	block_infos[BLK_THINSTAINEDGLASS_WHITE].material = MAT_GLASS;
-	block_infos[BLK_THINSTAINEDGLASS_WHITE].slipperiness = 0.6;
-	block_infos[BLK_PRISMARINE_ROUGH].hardness = 1.5;
-	block_infos[BLK_PRISMARINE_ROUGH].material = MAT_ROCK;
-	block_infos[BLK_PRISMARINE_ROUGH].slipperiness = 0.6;
-	block_infos[BLK_SEALANTERN].hardness = 0.3;
-	block_infos[BLK_SEALANTERN].material = MAT_GLASS;
-	block_infos[BLK_SEALANTERN].slipperiness = 0.6;
-	block_infos[BLK_REDSANDSTONE].hardness = 0.8;
-	block_infos[BLK_REDSANDSTONE].material = MAT_ROCK;
-	block_infos[BLK_REDSANDSTONE].slipperiness = 0.6;
-	block_infos[BLK_STAIRSREDSANDSTONE].hardness = 0.8;
-	block_infos[BLK_STAIRSREDSANDSTONE].material = MAT_ROCK;
-	block_infos[BLK_STAIRSREDSANDSTONE].slipperiness = 0.6;
-	block_infos[BLK_STONESLAB2_RED_SANDSTONE].hardness = 2.0;
-	block_infos[BLK_STONESLAB2_RED_SANDSTONE].material = MAT_ROCK;
-	block_infos[BLK_STONESLAB2_RED_SANDSTONE].slipperiness = 0.6;
-	block_infos[BLK_REPEATINGCOMMANDBLOCK].hardness = -1.0;
-	block_infos[BLK_REPEATINGCOMMANDBLOCK].material = MAT_IRON;
-	block_infos[BLK_REPEATINGCOMMANDBLOCK].slipperiness = 0.6;
-	block_infos[BLK_CHAINCOMMANDBLOCK].hardness = -1.0;
-	block_infos[BLK_CHAINCOMMANDBLOCK].material = MAT_IRON;
-	block_infos[BLK_CHAINCOMMANDBLOCK].slipperiness = 0.6;
-	block_infos[BLK_MAGMA].hardness = 0.5;
-	block_infos[BLK_MAGMA].material = MAT_ROCK;
-	block_infos[BLK_MAGMA].slipperiness = 0.6;
-	block_infos[BLK_NETHERWARTBLOCK].hardness = 1.0;
-	block_infos[BLK_NETHERWARTBLOCK].material = MAT_GRASS;
-	block_infos[BLK_NETHERWARTBLOCK].slipperiness = 0.6;
-	block_infos[BLK_REDNETHERBRICK].hardness = 2.0;
-	block_infos[BLK_REDNETHERBRICK].material = MAT_ROCK;
-	block_infos[BLK_REDNETHERBRICK].slipperiness = 0.6;
-	block_infos[BLK_BONEBLOCK].hardness = 2.0;
-	block_infos[BLK_BONEBLOCK].material = MAT_ROCK;
-	block_infos[BLK_BONEBLOCK].slipperiness = 0.6;
-	block_infos[BLK_STRUCTUREVOID].hardness = 0.0;
-	block_infos[BLK_STRUCTUREVOID].material = MAT_STRUCTURE_VOID;
-	block_infos[BLK_STRUCTUREVOID].slipperiness = 0.6;
-	block_infos[BLK_OBSERVER].hardness = 3.0;
-	block_infos[BLK_OBSERVER].material = MAT_ROCK;
-	block_infos[BLK_OBSERVER].slipperiness = 0.6;
-	block_infos[BLK_SHULKERBOXWHITE].hardness = 2.0;
-	block_infos[BLK_SHULKERBOXWHITE].material = MAT_ROCK;
-	block_infos[BLK_SHULKERBOXWHITE].slipperiness = 0.6;
-	block_infos[BLK_SHULKERBOXORANGE].hardness = 2.0;
-	block_infos[BLK_SHULKERBOXORANGE].material = MAT_ROCK;
-	block_infos[BLK_SHULKERBOXORANGE].slipperiness = 0.6;
-	block_infos[BLK_SHULKERBOXMAGENTA].hardness = 2.0;
-	block_infos[BLK_SHULKERBOXMAGENTA].material = MAT_ROCK;
-	block_infos[BLK_SHULKERBOXMAGENTA].slipperiness = 0.6;
-	block_infos[BLK_SHULKERBOXLIGHTBLUE].hardness = 2.0;
-	block_infos[BLK_SHULKERBOXLIGHTBLUE].material = MAT_ROCK;
-	block_infos[BLK_SHULKERBOXLIGHTBLUE].slipperiness = 0.6;
-	block_infos[BLK_SHULKERBOXYELLOW].hardness = 2.0;
-	block_infos[BLK_SHULKERBOXYELLOW].material = MAT_ROCK;
-	block_infos[BLK_SHULKERBOXYELLOW].slipperiness = 0.6;
-	block_infos[BLK_SHULKERBOXLIME].hardness = 2.0;
-	block_infos[BLK_SHULKERBOXLIME].material = MAT_ROCK;
-	block_infos[BLK_SHULKERBOXLIME].slipperiness = 0.6;
-	block_infos[BLK_SHULKERBOXPINK].hardness = 2.0;
-	block_infos[BLK_SHULKERBOXPINK].material = MAT_ROCK;
-	block_infos[BLK_SHULKERBOXPINK].slipperiness = 0.6;
-	block_infos[BLK_SHULKERBOXGRAY].hardness = 2.0;
-	block_infos[BLK_SHULKERBOXGRAY].material = MAT_ROCK;
-	block_infos[BLK_SHULKERBOXGRAY].slipperiness = 0.6;
-	block_infos[BLK_SHULKERBOXSILVER].hardness = 2.0;
-	block_infos[BLK_SHULKERBOXSILVER].material = MAT_ROCK;
-	block_infos[BLK_SHULKERBOXSILVER].slipperiness = 0.6;
-	block_infos[BLK_SHULKERBOXCYAN].hardness = 2.0;
-	block_infos[BLK_SHULKERBOXCYAN].material = MAT_ROCK;
-	block_infos[BLK_SHULKERBOXCYAN].slipperiness = 0.6;
-	block_infos[BLK_SHULKERBOXPURPLE].hardness = 2.0;
-	block_infos[BLK_SHULKERBOXPURPLE].material = MAT_ROCK;
-	block_infos[BLK_SHULKERBOXPURPLE].slipperiness = 0.6;
-	block_infos[BLK_SHULKERBOXBLUE].hardness = 2.0;
-	block_infos[BLK_SHULKERBOXBLUE].material = MAT_ROCK;
-	block_infos[BLK_SHULKERBOXBLUE].slipperiness = 0.6;
-	block_infos[BLK_SHULKERBOXBROWN].hardness = 2.0;
-	block_infos[BLK_SHULKERBOXBROWN].material = MAT_ROCK;
-	block_infos[BLK_SHULKERBOXBROWN].slipperiness = 0.6;
-	block_infos[BLK_SHULKERBOXGREEN].hardness = 2.0;
-	block_infos[BLK_SHULKERBOXGREEN].material = MAT_ROCK;
-	block_infos[BLK_SHULKERBOXGREEN].slipperiness = 0.6;
-	block_infos[BLK_SHULKERBOXRED].hardness = 2.0;
-	block_infos[BLK_SHULKERBOXRED].material = MAT_ROCK;
-	block_infos[BLK_SHULKERBOXRED].slipperiness = 0.6;
-	block_infos[BLK_SHULKERBOXBLACK].hardness = 2.0;
-	block_infos[BLK_SHULKERBOXBLACK].material = MAT_ROCK;
-	block_infos[BLK_SHULKERBOXBLACK].slipperiness = 0.6;
-	block_infos[BLK_STRUCTUREBLOCK].hardness = -1.0;
-	block_infos[BLK_STRUCTUREBLOCK].material = MAT_IRON;
-	block_infos[BLK_STRUCTUREBLOCK].slipperiness = 0.6;
+	block_infos = new_collection(128, 0);
+	char* jsf = xmalloc(4097);
+	size_t jsfs = 4096;
+	size_t jsr = 0;
+	int fd = open("blocks.json", O_RDONLY);
+	ssize_t r = 0;
+	while ((r = read(fd, jsf + jsr, jsfs - jsr)) > 0) {
+		jsr += r;
+		if (jsfs - jsr < 512) {
+			jsfs += 4096;
+			jsf = xrealloc(jsf, jsfs + 1);
+		}
+	}
+	jsf[jsr] = 0;
+	if (r < 0) {
+		printf("Error reading block information: %s\n", strerror(errno));
+	}
+	close(fd);
+	struct json_object json;
+	parseJSON(&json, jsf);
+	for (size_t i = 0; i < json.child_count; i++) {
+		struct json_object* ur = json.children[i];
+		struct block_info* bi = xcalloc(sizeof(struct block_info));
+		struct json_object* tmp = getJSONValue(ur, "id");
+		if (tmp == NULL || tmp->type != JSON_NUMBER) goto cerr;
+		block id = (block) tmp->data.number;
+		if (id < 0) goto cerr;
+		struct json_object* colls = getJSONValue(ur, "collision");
+		if (colls == NULL || colls->type != JSON_OBJECT) goto cerr;
+		bi->boundingBox_count = colls->child_count;
+		bi->boundingBoxes = colls->child_count == 0 ? NULL : xmalloc(sizeof(struct boundingbox) * colls->child_count);
+		for (size_t x = 0; x < colls->child_count; x++) {
+			struct json_object* coll = colls->children[x];
+			struct boundingbox* bb = &bi->boundingBoxes[x];
+			tmp = getJSONValue(coll, "minX");
+			if (tmp == NULL || tmp->type != JSON_NUMBER) goto cerr;
+			bb->minX = (double) tmp->data.number;
+			tmp = getJSONValue(coll, "maxX");
+			if (tmp == NULL || tmp->type != JSON_NUMBER) goto cerr;
+			bb->maxX = (double) tmp->data.number;
+			tmp = getJSONValue(coll, "minY");
+			if (tmp == NULL || tmp->type != JSON_NUMBER) goto cerr;
+			bb->minY = (double) tmp->data.number;
+			tmp = getJSONValue(coll, "maxY");
+			if (tmp == NULL || tmp->type != JSON_NUMBER) goto cerr;
+			bb->maxY = (double) tmp->data.number;
+			tmp = getJSONValue(coll, "minZ");
+			if (tmp == NULL || tmp->type != JSON_NUMBER) goto cerr;
+			bb->minZ = (double) tmp->data.number;
+			tmp = getJSONValue(coll, "maxZ");
+			if (tmp == NULL || tmp->type != JSON_NUMBER) goto cerr;
+			bb->maxZ = (double) tmp->data.number;
+		}
+		tmp = getJSONValue(ur, "dropItem");
+		if (tmp == NULL || tmp->type != JSON_NUMBER) goto cerr;
+		bi->drop = (item) tmp->data.number;
+		tmp = getJSONValue(ur, "dropAmountMin");
+		if (tmp == NULL || tmp->type != JSON_NUMBER) goto cerr;
+		bi->drop_min = (uint8_t) tmp->data.number;
+		tmp = getJSONValue(ur, "dropAmountMax");
+		if (tmp == NULL || tmp->type != JSON_NUMBER) goto cerr;
+		bi->drop_max = (uint8_t) tmp->data.number;
+		tmp = getJSONValue(ur, "hardness");
+		if (tmp == NULL || tmp->type != JSON_NUMBER) goto cerr;
+		bi->hardness = (float) tmp->data.number;
+		tmp = getJSONValue(ur, "material");
+		if (tmp == NULL || tmp->type != JSON_STRING) goto cerr;
+		bi->material = getBlockMaterial(tmp->data.string);
+		tmp = getJSONValue(ur, "slipperiness");
+		if (tmp == NULL || tmp->type != JSON_NUMBER) goto cerr;
+		bi->slipperiness = (float) tmp->data.number;
+		add_block_info(id, bi);
+		continue;
+		cerr: ;
+		printf("[WARNING] Error Loading Block \"%s\"! Skipped.\n", ur->name);
+	}
+	freeJSON(&json);
+	xfree(jsf);
+	struct block_info* tmp = getBlockInfo(BLK_CHEST);
+	tmp->onBlockInteract = &onBlockInteract_chest;
+	tmp->onBlockDestroyed = &onBlockDestroyed_chest;
+	tmp->onBlockPlaced = &onBlockPlaced_chest;
+	tmp = getBlockInfo(BLK_WORKBENCH);
+	tmp->onBlockInteract = &onBlockInteract_workbench;
+	tmp = getBlockInfo(BLK_FURNACE);
+	tmp->onBlockInteract = &onBlockInteract_furnace;
+	tmp->onBlockDestroyed = &onBlockDestroyed_furnace;
+	tmp->onBlockPlaced = &onBlockPlaced_furnace;
+	tmp = getBlockInfo(BLK_FURNACE_LIT);
+	tmp->onBlockInteract = &onBlockInteract_furnace;
+	tmp->onBlockDestroyed = &onBlockDestroyed_furnace;
+	tmp->onBlockPlaced = &onBlockPlaced_furnace;
+	tmp = getBlockInfo(BLK_CHESTTRAP);
+	tmp->onBlockInteract = &onBlockInteract_chest;
+	tmp->onBlockDestroyed = &onBlockDestroyed_chest;
+	tmp->onBlockPlaced = &onBlockPlaced_chest;
+	tmp = getBlockInfo(BLK_GRAVEL);
+	tmp->dropItems = &dropItems_gravel;
+	tmp = getBlockInfo(BLK_LEAVES_OAK);
+	tmp->dropItems = &dropItems_leaves;
+	tmp = getBlockInfo(BLK_LEAVES_SPRUCE);
+	tmp->dropItems = &dropItems_leaves;
+	tmp = getBlockInfo(BLK_LEAVES_BIRCH);
+	tmp->dropItems = &dropItems_leaves;
+	tmp = getBlockInfo(BLK_LEAVES_JUNGLE);
+	tmp->dropItems = &dropItems_leaves;
+	tmp = getBlockInfo(BLK_LEAVES_ACACIA);
+	tmp->dropItems = &dropItems_leaves;
+	tmp = getBlockInfo(BLK_LEAVES_BIG_OAK);
+	tmp->dropItems = &dropItems_leaves;
+	tmp = getBlockInfo(BLK_TALLGRASS_GRASS);
+	tmp->dropItems = &dropItems_tallgrass;
+	for (block b = BLK_MUSHROOM_2; b <= BLK_MUSHROOM_31; b++) {
+		tmp = getBlockInfo(b);
+		tmp->dropItems = &dropItems_hugemushroom;
+	}
 }

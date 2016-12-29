@@ -714,20 +714,25 @@ void moveEntity(struct entity* entity) {
 		for (int32_t z = floor(obb.minZ); z < floor(obb.maxZ + 1.); z++) {
 			for (int32_t y = floor(obb.minY); y < floor(obb.maxY + 1.); y++) {
 				block b = getBlockWorld(entity->world, x, y, z);
-				struct boundingbox bb = getBlockCollision(entity->world, x, y, z, entity);
-				if (b > 0 && bb.minX != bb.maxX && bb.minY != bb.maxY && bb.minZ != bb.maxZ) {
-					if (bb.maxX + x > obb.minX && bb.minX + x < obb.maxX ? (bb.maxY + y > obb.minY && bb.minY + y < obb.maxY ? bb.maxZ + z > obb.minZ && bb.minZ + z < obb.maxZ : 0) : 0) {
-						if (pbb.maxX > bb.minX + x && pbb.minX < bb.maxX + x && pbb.maxZ > bb.minZ + z && pbb.minZ < bb.maxZ + z) {
-							double t;
-							if (ny > 0. && pbb.maxY <= bb.minY + y) {
-								t = bb.minY + y - pbb.maxY;
-								if (t < ny) {
-									ny = t;
-								}
-							} else if (ny < 0. && pbb.minY >= bb.maxY + y) {
-								t = bb.maxY + y - pbb.minY;
-								if (t > ny) {
-									ny = t;
+				if (b == 0) continue;
+				struct block_info* bi = getBlockInfo(b);
+				if (bi == NULL) continue;
+				for (size_t i = 0; i < bi->boundingBox_count; i++) {
+					struct boundingbox* bb = &bi->boundingBoxes[i];
+					if (b > 0 && bb->minX != bb->maxX && bb->minY != bb->maxY && bb->minZ != bb->maxZ) {
+						if (bb->maxX + x > obb.minX && bb->minX + x < obb.maxX ? (bb->maxY + y > obb.minY && bb->minY + y < obb.maxY ? bb->maxZ + z > obb.minZ && bb->minZ + z < obb.maxZ : 0) : 0) {
+							if (pbb.maxX > bb->minX + x && pbb.minX < bb->maxX + x && pbb.maxZ > bb->minZ + z && pbb.minZ < bb->maxZ + z) {
+								double t;
+								if (ny > 0. && pbb.maxY <= bb->minY + y) {
+									t = bb->minY + y - pbb.maxY;
+									if (t < ny) {
+										ny = t;
+									}
+								} else if (ny < 0. && pbb.minY >= bb->maxY + y) {
+									t = bb->maxY + y - pbb.minY;
+									if (t > ny) {
+										ny = t;
+									}
 								}
 							}
 						}
@@ -744,20 +749,25 @@ void moveEntity(struct entity* entity) {
 		for (int32_t z = floor(obb.minZ); z < floor(obb.maxZ + 1.); z++) {
 			for (int32_t y = floor(obb.minY); y < floor(obb.maxY + 1.); y++) {
 				block b = getBlockWorld(entity->world, x, y, z);
-				struct boundingbox bb = getBlockCollision(entity->world, x, y, z, entity);
-				if (b > 0 && bb.minX != bb.maxX && bb.minY != bb.maxY && bb.minZ != bb.maxZ) {
-					if (bb.maxX + x > obb.minX && bb.minX + x < obb.maxX ? (bb.maxY + y > obb.minY && bb.minY + y < obb.maxY ? bb.maxZ + z > obb.minZ && bb.minZ + z < obb.maxZ : 0) : 0) {
-						if (pbb.maxY > bb.minY + y && pbb.minY < bb.maxY + y && pbb.maxZ > bb.minZ + z && pbb.minZ < bb.maxZ + z) {
-							double t;
-							if (nx > 0. && pbb.maxX <= bb.minX + x) {
-								t = bb.minX + x - pbb.maxX;
-								if (t < nx) {
-									nx = t;
-								}
-							} else if (nx < 0. && pbb.minX >= bb.maxX + x) {
-								t = bb.maxX + x - pbb.minX;
-								if (t > nx) {
-									nx = t;
+				if (b == 0) continue;
+				struct block_info* bi = getBlockInfo(b);
+				if (bi == NULL) continue;
+				for (size_t i = 0; i < bi->boundingBox_count; i++) {
+					struct boundingbox* bb = &bi->boundingBoxes[i];
+					if (b > 0 && bb->minX != bb->maxX && bb->minY != bb->maxY && bb->minZ != bb->maxZ) {
+						if (bb->maxX + x > obb.minX && bb->minX + x < obb.maxX ? (bb->maxY + y > obb.minY && bb->minY + y < obb.maxY ? bb->maxZ + z > obb.minZ && bb->minZ + z < obb.maxZ : 0) : 0) {
+							if (pbb.maxY > bb->minY + y && pbb.minY < bb->maxY + y && pbb.maxZ > bb->minZ + z && pbb.minZ < bb->maxZ + z) {
+								double t;
+								if (nx > 0. && pbb.maxX <= bb->minX + x) {
+									t = bb->minX + x - pbb.maxX;
+									if (t < nx) {
+										nx = t;
+									}
+								} else if (nx < 0. && pbb.minX >= bb->maxX + x) {
+									t = bb->maxX + x - pbb.minX;
+									if (t > nx) {
+										nx = t;
+									}
 								}
 							}
 						}
@@ -774,20 +784,25 @@ void moveEntity(struct entity* entity) {
 		for (int32_t z = floor(obb.minZ); z < floor(obb.maxZ + 1.); z++) {
 			for (int32_t y = floor(obb.minY); y < floor(obb.maxY + 1.); y++) {
 				block b = getBlockWorld(entity->world, x, y, z);
-				struct boundingbox bb = getBlockCollision(entity->world, x, y, z, entity);
-				if (b > 0 && bb.minX != bb.maxX && bb.minY != bb.maxY && bb.minZ != bb.maxZ) {
-					if (bb.maxX + x > obb.minX && bb.minX + x < obb.maxX ? (bb.maxY + y > obb.minY && bb.minY + y < obb.maxY ? bb.maxZ + z > obb.minZ && bb.minZ + z < obb.maxZ : 0) : 0) {
-						if (pbb.maxX > bb.minX + x && pbb.minX < bb.maxX + x && pbb.maxY > bb.minY + y && pbb.minY < bb.maxY + y) {
-							double t;
-							if (nz > 0. && pbb.maxZ <= bb.minZ + z) {
-								t = bb.minZ + z - pbb.maxZ;
-								if (t < nz) {
-									nz = t;
-								}
-							} else if (nz < 0. && pbb.minZ >= bb.maxZ + z) {
-								t = bb.maxZ + z - pbb.minZ;
-								if (t > nz) {
-									nz = t;
+				if (b == 0) continue;
+				struct block_info* bi = getBlockInfo(b);
+				if (bi == NULL) continue;
+				for (size_t i = 0; i < bi->boundingBox_count; i++) {
+					struct boundingbox* bb = &bi->boundingBoxes[i];
+					if (b > 0 && bb->minX != bb->maxX && bb->minY != bb->maxY && bb->minZ != bb->maxZ) {
+						if (bb->maxX + x > obb.minX && bb->minX + x < obb.maxX ? (bb->maxY + y > obb.minY && bb->minY + y < obb.maxY ? bb->maxZ + z > obb.minZ && bb->minZ + z < obb.maxZ : 0) : 0) {
+							if (pbb.maxX > bb->minX + x && pbb.minX < bb->maxX + x && pbb.maxY > bb->minY + y && pbb.minY < bb->maxY + y) {
+								double t;
+								if (nz > 0. && pbb.maxZ <= bb->minZ + z) {
+									t = bb->minZ + z - pbb.maxZ;
+									if (t < nz) {
+										nz = t;
+									}
+								} else if (nz < 0. && pbb.minZ >= bb->maxZ + z) {
+									t = bb->maxZ + z - pbb.minZ;
+									if (t > nz) {
+										nz = t;
+									}
 								}
 							}
 						}

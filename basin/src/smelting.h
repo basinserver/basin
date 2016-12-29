@@ -1,15 +1,14 @@
 /*
- * item.h
+ * smelting.h
  *
  *  Created on: Mar 25, 2016
  *      Author: root
  */
 
-#ifndef ITEM_H_
-#define ITEM_H_
+#ifndef SMELTING_H_
+#define SMELTING_H_
 
 #include <stdint.h>
-#include "player.h"
 #include "world.h"
 #include "entity.h"
 #include "inventory.h"
@@ -35,4 +34,4 @@ void add_smelting_fuel(struct smelting_fuel* fuel);
 
 void add_smelting_recipe(struct smelting_recipe* recipe);
 
-#endif /* ITEM_H_ */
+#endif /* SMELTING_H_ */

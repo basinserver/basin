@@ -1,0 +1,11552 @@
+{
+	"air": {
+		"id": 0,
+		"collision": {
+		},
+		"dropItem": -1,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.0,
+		"material": "air",
+		"slipperiness": 0.6
+	},
+	"stone": {
+		"id": 16,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 4,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 1.5,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"grass": {
+		"id": 32,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 3,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.6,
+		"material": "grass",
+		"slipperiness": 0.6
+	},
+	"dirt": {
+		"id": 48,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 3,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.5,
+		"material": "ground",
+		"slipperiness": 0.6
+	},
+	"stonebrick": {
+		"id": 64,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 4,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"wood_oak": {
+		"id": 80,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 5,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"sapling_oak": {
+		"id": 96,
+		"collision": {
+		},
+		"dropItem": 6,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.0,
+		"material": "plants",
+		"slipperiness": 0.6
+	},
+	"bedrock": {
+		"id": 112,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 0,
+		"dropAmountMin": 0,
+		"dropAmountMax": 0,
+		"hardness": -1.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"sand": {
+		"id": 192,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 12,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.5,
+		"material": "sand",
+		"slipperiness": 0.6
+	},
+	"gravel": {
+		"id": 208,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": -1,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.6,
+		"material": "sand",
+		"slipperiness": 0.6
+	},
+	"oregold": {
+		"id": 224,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 14,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 3.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"oreiron": {
+		"id": 240,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 15,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 3.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"orecoal": {
+		"id": 256,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 263,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 3.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"log_oak": {
+		"id": 272,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 17,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"log_acacia_1": {
+		"id": 2592,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 162,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"leaves_oak": {
+		"id": 288,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": -1,
+		"dropAmountMin": 0,
+		"dropAmountMax": 0,
+		"hardness": 0.2,
+		"material": "leaves",
+		"slipperiness": 0.6
+	},
+	"leaves_acacia": {
+		"id": 2576,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": -1,
+		"dropAmountMin": 0,
+		"dropAmountMax": 0,
+		"hardness": 0.2,
+		"material": "leaves",
+		"slipperiness": 0.6
+	},
+	"sponge_dry": {
+		"id": 304,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 19,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.6,
+		"material": "sponge",
+		"slipperiness": 0.6
+	},
+	"glass": {
+		"id": 320,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 20,
+		"dropAmountMin": 0,
+		"dropAmountMax": 0,
+		"hardness": 0.3,
+		"material": "glass",
+		"slipperiness": 0.6
+	},
+	"orelapis": {
+		"id": 336,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 351,
+		"dropAmountMin": 4,
+		"dropAmountMax": 9,
+		"hardness": 3.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"blocklapis": {
+		"id": 352,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 22,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 3.0,
+		"material": "iron",
+		"slipperiness": 0.6
+	},
+	"dispenser": {
+		"id": 368,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 23,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 3.5,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"sandstone": {
+		"id": 384,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 24,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.8,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"musicblock": {
+		"id": 400,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 25,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.8,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"goldenrail": {
+		"id": 432,
+		"collision": {
+		},
+		"dropItem": 27,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.7,
+		"material": "circuits",
+		"slipperiness": 0.6
+	},
+	"detectorrail": {
+		"id": 448,
+		"collision": {
+		},
+		"dropItem": 28,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.7,
+		"material": "circuits",
+		"slipperiness": 0.6
+	},
+	"pistonstickybase": {
+		"id": 464,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 29,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.5,
+		"material": "piston",
+		"slipperiness": 0.6
+	},
+	"pistonstickybase_5": {
+		"id": 472,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.25,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 29,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.5,
+		"material": "piston",
+		"slipperiness": 0.6
+	},
+	"pistonstickybase_6": {
+		"id": 473,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.75,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 29,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.5,
+		"material": "piston",
+		"slipperiness": 0.6
+	},
+	"pistonstickybase_7": {
+		"id": 474,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.25,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 29,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.5,
+		"material": "piston",
+		"slipperiness": 0.6
+	},
+	"pistonstickybase_8": {
+		"id": 475,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 0.75
+			}
+		},
+		"dropItem": 29,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.5,
+		"material": "piston",
+		"slipperiness": 0.6
+	},
+	"pistonstickybase_9": {
+		"id": 476,
+		"collision": {
+			"0": {
+				"minX": 0.25,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 29,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.5,
+		"material": "piston",
+		"slipperiness": 0.6
+	},
+	"pistonstickybase_10": {
+		"id": 477,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 0.75,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 29,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.5,
+		"material": "piston",
+		"slipperiness": 0.6
+	},
+	"web": {
+		"id": 480,
+		"collision": {
+		},
+		"dropItem": 287,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 4.0,
+		"material": "web",
+		"slipperiness": 0.6
+	},
+	"tallgrass_shrub": {
+		"id": 496,
+		"collision": {
+		},
+		"dropItem": -1,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.0,
+		"material": "vine",
+		"slipperiness": 0.6
+	},
+	"deadbush": {
+		"id": 512,
+		"collision": {
+		},
+		"dropItem": 280,
+		"dropAmountMin": 0,
+		"dropAmountMax": 3,
+		"hardness": 0.0,
+		"material": "vine",
+		"slipperiness": 0.6
+	},
+	"pistonbase": {
+		"id": 528,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 33,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.5,
+		"material": "piston",
+		"slipperiness": 0.6
+	},
+	"pistonbase_5": {
+		"id": 536,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.25,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 33,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.5,
+		"material": "piston",
+		"slipperiness": 0.6
+	},
+	"pistonbase_6": {
+		"id": 537,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.75,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 33,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.5,
+		"material": "piston",
+		"slipperiness": 0.6
+	},
+	"pistonbase_7": {
+		"id": 538,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.25,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 33,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.5,
+		"material": "piston",
+		"slipperiness": 0.6
+	},
+	"pistonbase_8": {
+		"id": 539,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 0.75
+			}
+		},
+		"dropItem": 33,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.5,
+		"material": "piston",
+		"slipperiness": 0.6
+	},
+	"pistonbase_9": {
+		"id": 540,
+		"collision": {
+			"0": {
+				"minX": 0.25,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 33,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.5,
+		"material": "piston",
+		"slipperiness": 0.6
+	},
+	"pistonbase_10": {
+		"id": 541,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 0.75,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 33,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.5,
+		"material": "piston",
+		"slipperiness": 0.6
+	},
+	"cloth_white": {
+		"id": 560,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 35,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.8,
+		"material": "cloth",
+		"slipperiness": 0.6
+	},
+	"flower1_dandelion": {
+		"id": 592,
+		"collision": {
+		},
+		"dropItem": 37,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.0,
+		"material": "plants",
+		"slipperiness": 0.6
+	},
+	"flower2_poppy": {
+		"id": 608,
+		"collision": {
+		},
+		"dropItem": 38,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.0,
+		"material": "plants",
+		"slipperiness": 0.6
+	},
+	"mushroom": {
+		"id": 624,
+		"collision": {
+		},
+		"dropItem": 39,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.0,
+		"material": "plants",
+		"slipperiness": 0.6
+	},
+	"mushroom_1": {
+		"id": 640,
+		"collision": {
+		},
+		"dropItem": 40,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.0,
+		"material": "plants",
+		"slipperiness": 0.6
+	},
+	"blockgold": {
+		"id": 656,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 41,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 3.0,
+		"material": "iron",
+		"slipperiness": 0.6
+	},
+	"blockiron": {
+		"id": 672,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 42,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 5.0,
+		"material": "iron",
+		"slipperiness": 0.6
+	},
+	"stoneslab_stone": {
+		"id": 704,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 44,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stoneslab_stone_1": {
+		"id": 712,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 44,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stoneslab_stone_2": {
+		"id": 713,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 44,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stoneslab_stone_3": {
+		"id": 714,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 44,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stoneslab_stone_4": {
+		"id": 715,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 44,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stoneslab_stone_5": {
+		"id": 716,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 44,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stoneslab_stone_6": {
+		"id": 717,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 44,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stoneslab_stone_7": {
+		"id": 718,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 44,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stoneslab_stone_8": {
+		"id": 719,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 44,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"brick": {
+		"id": 720,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 45,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"tnt": {
+		"id": 736,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 46,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.0,
+		"material": "tnt",
+		"slipperiness": 0.6
+	},
+	"bookshelf": {
+		"id": 752,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 340,
+		"dropAmountMin": 3,
+		"dropAmountMax": 3,
+		"hardness": 1.5,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"stonemoss": {
+		"id": 768,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 48,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"obsidian": {
+		"id": 784,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 49,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 50.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"torch": {
+		"id": 800,
+		"collision": {
+		},
+		"dropItem": 50,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.0,
+		"material": "circuits",
+		"slipperiness": 0.6
+	},
+	"endrod": {
+		"id": 3168,
+		"collision": {
+			"0": {
+				"minX": 0.375,
+				"maxX": 0.625,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.375,
+				"maxZ": 0.625
+			}
+		},
+		"dropItem": 198,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.0,
+		"material": "circuits",
+		"slipperiness": 0.6
+	},
+	"endrod_1": {
+		"id": 3170,
+		"collision": {
+			"0": {
+				"minX": 0.375,
+				"maxX": 0.625,
+				"minY": 0.375,
+				"maxY": 0.625,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 198,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.0,
+		"material": "circuits",
+		"slipperiness": 0.6
+	},
+	"endrod_2": {
+		"id": 3171,
+		"collision": {
+			"0": {
+				"minX": 0.375,
+				"maxX": 0.625,
+				"minY": 0.375,
+				"maxY": 0.625,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 198,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.0,
+		"material": "circuits",
+		"slipperiness": 0.6
+	},
+	"endrod_3": {
+		"id": 3172,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.375,
+				"maxY": 0.625,
+				"minZ": 0.375,
+				"maxZ": 0.625
+			}
+		},
+		"dropItem": 198,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.0,
+		"material": "circuits",
+		"slipperiness": 0.6
+	},
+	"endrod_4": {
+		"id": 3173,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.375,
+				"maxY": 0.625,
+				"minZ": 0.375,
+				"maxZ": 0.625
+			}
+		},
+		"dropItem": 198,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.0,
+		"material": "circuits",
+		"slipperiness": 0.6
+	},
+	"endrod_6": {
+		"id": 3176,
+		"collision": {
+			"0": {
+				"minX": 0.375,
+				"maxX": 0.625,
+				"minY": 0.375,
+				"maxY": 0.625,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 198,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.0,
+		"material": "circuits",
+		"slipperiness": 0.6
+	},
+	"endrod_7": {
+		"id": 3177,
+		"collision": {
+			"0": {
+				"minX": 0.375,
+				"maxX": 0.625,
+				"minY": 0.375,
+				"maxY": 0.625,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 198,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.0,
+		"material": "circuits",
+		"slipperiness": 0.6
+	},
+	"endrod_8": {
+		"id": 3178,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.375,
+				"maxY": 0.625,
+				"minZ": 0.375,
+				"maxZ": 0.625
+			}
+		},
+		"dropItem": 198,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.0,
+		"material": "circuits",
+		"slipperiness": 0.6
+	},
+	"endrod_9": {
+		"id": 3179,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.375,
+				"maxY": 0.625,
+				"minZ": 0.375,
+				"maxZ": 0.625
+			}
+		},
+		"dropItem": 198,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.0,
+		"material": "circuits",
+		"slipperiness": 0.6
+	},
+	"endrod_11": {
+		"id": 3182,
+		"collision": {
+			"0": {
+				"minX": 0.375,
+				"maxX": 0.625,
+				"minY": 0.375,
+				"maxY": 0.625,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 198,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.0,
+		"material": "circuits",
+		"slipperiness": 0.6
+	},
+	"endrod_12": {
+		"id": 3183,
+		"collision": {
+			"0": {
+				"minX": 0.375,
+				"maxX": 0.625,
+				"minY": 0.375,
+				"maxY": 0.625,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 198,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.0,
+		"material": "circuits",
+		"slipperiness": 0.6
+	},
+	"chorusplant": {
+		"id": 3184,
+		"collision": {
+			"0": {
+				"minX": 0.1875,
+				"maxX": 0.8125,
+				"minY": 0.1875,
+				"maxY": 0.8125,
+				"minZ": 0.1875,
+				"maxZ": 0.8125
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 0.1875,
+				"minY": 0.1875,
+				"maxY": 0.8125,
+				"minZ": 0.1875,
+				"maxZ": 0.8125
+			},
+			"2": {
+				"minX": 0.8125,
+				"maxX": 1.0,
+				"minY": 0.1875,
+				"maxY": 0.8125,
+				"minZ": 0.1875,
+				"maxZ": 0.8125
+			},
+			"3": {
+				"minX": 0.1875,
+				"maxX": 0.8125,
+				"minY": 0.8125,
+				"maxY": 1.0,
+				"minZ": 0.1875,
+				"maxZ": 0.8125
+			},
+			"4": {
+				"minX": 0.1875,
+				"maxX": 0.8125,
+				"minY": 0.0,
+				"maxY": 0.1875,
+				"minZ": 0.1875,
+				"maxZ": 0.8125
+			},
+			"5": {
+				"minX": 0.1875,
+				"maxX": 0.8125,
+				"minY": 0.1875,
+				"maxY": 0.8125,
+				"minZ": 0.0,
+				"maxZ": 0.1875
+			},
+			"6": {
+				"minX": 0.1875,
+				"maxX": 0.8125,
+				"minY": 0.1875,
+				"maxY": 0.8125,
+				"minZ": 0.8125,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 432,
+		"dropAmountMin": 0,
+		"dropAmountMax": 2,
+		"hardness": 0.4,
+		"material": "plants",
+		"slipperiness": 0.6
+	},
+	"chorusflower": {
+		"id": 3200,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 0,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.4,
+		"material": "plants",
+		"slipperiness": 0.6
+	},
+	"purpurblock": {
+		"id": 3216,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 201,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 1.5,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"purpurpillar": {
+		"id": 3232,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 202,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 1.5,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stairspurpur": {
+		"id": 3248,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.5,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 203,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 1.5,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stairspurpur_1": {
+		"id": 3249,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 0.5,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 203,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 1.5,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stairspurpur_2": {
+		"id": 3250,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.5,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 203,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 1.5,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stairspurpur_3": {
+		"id": 3252,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.5,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 203,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 1.5,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stairspurpur_4": {
+		"id": 3253,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 0.5,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 203,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 1.5,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stairspurpur_5": {
+		"id": 3254,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.5,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 203,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 1.5,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stairspurpur_6": {
+		"id": 3255,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 0.5
+			}
+		},
+		"dropItem": 203,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 1.5,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stairspurpur_8": {
+		"id": 3257,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 0.5,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 203,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 1.5,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stairspurpur_9": {
+		"id": 3258,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.5,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 203,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 1.5,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stairspurpur_10": {
+		"id": 3260,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.5,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 203,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 1.5,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stairspurpur_11": {
+		"id": 3261,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 0.5,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 203,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 1.5,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stairspurpur_12": {
+		"id": 3262,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.5,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 203,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 1.5,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stairspurpur_13": {
+		"id": 3263,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 0.5
+			}
+		},
+		"dropItem": 203,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 1.5,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"purpurslab": {
+		"id": 3280,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 205,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"purpurslab_1": {
+		"id": 3288,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 205,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"purpurslab_2": {
+		"id": 3289,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 205,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"purpurslab_3": {
+		"id": 3290,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 205,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"purpurslab_4": {
+		"id": 3291,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 205,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"purpurslab_5": {
+		"id": 3292,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 205,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"purpurslab_6": {
+		"id": 3293,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 205,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"purpurslab_7": {
+		"id": 3294,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 205,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"purpurslab_8": {
+		"id": 3295,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 205,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"mobspawner": {
+		"id": 832,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 0,
+		"dropAmountMin": 0,
+		"dropAmountMax": 0,
+		"hardness": 5.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stairswood": {
+		"id": 848,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.5,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 53,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"stairswood_1": {
+		"id": 849,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 0.5,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 53,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"stairswood_2": {
+		"id": 850,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.5,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 53,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"stairswood_3": {
+		"id": 852,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.5,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 53,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"stairswood_4": {
+		"id": 853,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 0.5,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 53,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"stairswood_5": {
+		"id": 854,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.5,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 53,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"stairswood_6": {
+		"id": 855,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 0.5
+			}
+		},
+		"dropItem": 53,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"stairswood_8": {
+		"id": 857,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 0.5,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 53,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"stairswood_9": {
+		"id": 858,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.5,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 53,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"stairswood_10": {
+		"id": 860,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.5,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 53,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"stairswood_11": {
+		"id": 861,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 0.5,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 53,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"stairswood_12": {
+		"id": 862,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.5,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 53,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"stairswood_13": {
+		"id": 863,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 0.5
+			}
+		},
+		"dropItem": 53,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"chest": {
+		"id": 864,
+		"collision": {
+			"0": {
+				"minX": 0.0625,
+				"maxX": 0.9375,
+				"minY": 0.0,
+				"maxY": 0.875,
+				"minZ": 0.0,
+				"maxZ": 0.9375
+			}
+		},
+		"dropItem": 54,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.5,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"orediamond": {
+		"id": 896,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 264,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 3.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"blockdiamond": {
+		"id": 912,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 57,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 5.0,
+		"material": "iron",
+		"slipperiness": 0.6
+	},
+	"workbench": {
+		"id": 928,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 58,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.5,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"farmland": {
+		"id": 960,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.9375,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 3,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.6,
+		"material": "ground",
+		"slipperiness": 0.6
+	},
+	"furnace": {
+		"id": 976,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 61,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 3.5,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"furnace_lit": {
+		"id": 992,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 61,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 3.5,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"ladder": {
+		"id": 1040,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.8125,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 65,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.4,
+		"material": "circuits",
+		"slipperiness": 0.6
+	},
+	"ladder_1": {
+		"id": 1043,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 0.1875
+			}
+		},
+		"dropItem": 65,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.4,
+		"material": "circuits",
+		"slipperiness": 0.6
+	},
+	"ladder_2": {
+		"id": 1044,
+		"collision": {
+			"0": {
+				"minX": 0.8125,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 65,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.4,
+		"material": "circuits",
+		"slipperiness": 0.6
+	},
+	"ladder_3": {
+		"id": 1045,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 0.1875,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 65,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.4,
+		"material": "circuits",
+		"slipperiness": 0.6
+	},
+	"ladder_4": {
+		"id": 1049,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 0.1875
+			}
+		},
+		"dropItem": 65,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.4,
+		"material": "circuits",
+		"slipperiness": 0.6
+	},
+	"ladder_5": {
+		"id": 1050,
+		"collision": {
+			"0": {
+				"minX": 0.8125,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 65,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.4,
+		"material": "circuits",
+		"slipperiness": 0.6
+	},
+	"ladder_6": {
+		"id": 1051,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 0.1875,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 65,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.4,
+		"material": "circuits",
+		"slipperiness": 0.6
+	},
+	"ladder_7": {
+		"id": 1055,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 0.1875
+			}
+		},
+		"dropItem": 65,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.4,
+		"material": "circuits",
+		"slipperiness": 0.6
+	},
+	"rail": {
+		"id": 1056,
+		"collision": {
+		},
+		"dropItem": 66,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.7,
+		"material": "circuits",
+		"slipperiness": 0.6
+	},
+	"stairsstone": {
+		"id": 1072,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.5,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 67,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stairsstone_1": {
+		"id": 1073,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 0.5,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 67,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stairsstone_2": {
+		"id": 1074,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.5,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 67,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stairsstone_3": {
+		"id": 1076,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.5,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 67,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stairsstone_4": {
+		"id": 1077,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 0.5,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 67,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stairsstone_5": {
+		"id": 1078,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.5,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 67,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stairsstone_6": {
+		"id": 1079,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 0.5
+			}
+		},
+		"dropItem": 67,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stairsstone_8": {
+		"id": 1081,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 0.5,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 67,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stairsstone_9": {
+		"id": 1082,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.5,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 67,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stairsstone_10": {
+		"id": 1084,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.5,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 67,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stairsstone_11": {
+		"id": 1085,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 0.5,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 67,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stairsstone_12": {
+		"id": 1086,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.5,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 67,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stairsstone_13": {
+		"id": 1087,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 0.5
+			}
+		},
+		"dropItem": 67,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"lever": {
+		"id": 1104,
+		"collision": {
+		},
+		"dropItem": 69,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.5,
+		"material": "circuits",
+		"slipperiness": 0.6
+	},
+	"pressureplatestone": {
+		"id": 1120,
+		"collision": {
+		},
+		"dropItem": 70,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.5,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"pressureplatewood": {
+		"id": 1152,
+		"collision": {
+		},
+		"dropItem": 72,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.5,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"oreredstone": {
+		"id": 1168,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 331,
+		"dropAmountMin": 4,
+		"dropAmountMax": 6,
+		"hardness": 3.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"notgate": {
+		"id": 1216,
+		"collision": {
+		},
+		"dropItem": 76,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.0,
+		"material": "circuits",
+		"slipperiness": 0.6
+	},
+	"button": {
+		"id": 1232,
+		"collision": {
+		},
+		"dropItem": 77,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.5,
+		"material": "circuits",
+		"slipperiness": 0.6
+	},
+	"snow": {
+		"id": 1248,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 332,
+		"dropAmountMin": 0,
+		"dropAmountMax": 0,
+		"hardness": 0.1,
+		"material": "snow",
+		"slipperiness": 0.6
+	},
+	"snow_1": {
+		"id": 1249,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.125,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 332,
+		"dropAmountMin": 0,
+		"dropAmountMax": 0,
+		"hardness": 0.1,
+		"material": "snow",
+		"slipperiness": 0.6
+	},
+	"snow_2": {
+		"id": 1250,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.25,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 332,
+		"dropAmountMin": 0,
+		"dropAmountMax": 0,
+		"hardness": 0.1,
+		"material": "snow",
+		"slipperiness": 0.6
+	},
+	"snow_3": {
+		"id": 1251,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.375,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 332,
+		"dropAmountMin": 0,
+		"dropAmountMax": 0,
+		"hardness": 0.1,
+		"material": "snow",
+		"slipperiness": 0.6
+	},
+	"snow_4": {
+		"id": 1252,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 332,
+		"dropAmountMin": 0,
+		"dropAmountMax": 0,
+		"hardness": 0.1,
+		"material": "snow",
+		"slipperiness": 0.6
+	},
+	"snow_5": {
+		"id": 1253,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.625,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 332,
+		"dropAmountMin": 0,
+		"dropAmountMax": 0,
+		"hardness": 0.1,
+		"material": "snow",
+		"slipperiness": 0.6
+	},
+	"snow_6": {
+		"id": 1254,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.75,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 332,
+		"dropAmountMin": 0,
+		"dropAmountMax": 0,
+		"hardness": 0.1,
+		"material": "snow",
+		"slipperiness": 0.6
+	},
+	"snow_7": {
+		"id": 1255,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.875,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 332,
+		"dropAmountMin": 0,
+		"dropAmountMax": 0,
+		"hardness": 0.1,
+		"material": "snow",
+		"slipperiness": 0.6
+	},
+	"snow_8": {
+		"id": 1257,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.125,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 332,
+		"dropAmountMin": 0,
+		"dropAmountMax": 0,
+		"hardness": 0.1,
+		"material": "snow",
+		"slipperiness": 0.6
+	},
+	"snow_9": {
+		"id": 1258,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.25,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 332,
+		"dropAmountMin": 0,
+		"dropAmountMax": 0,
+		"hardness": 0.1,
+		"material": "snow",
+		"slipperiness": 0.6
+	},
+	"snow_10": {
+		"id": 1259,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.375,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 332,
+		"dropAmountMin": 0,
+		"dropAmountMax": 0,
+		"hardness": 0.1,
+		"material": "snow",
+		"slipperiness": 0.6
+	},
+	"snow_11": {
+		"id": 1260,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 332,
+		"dropAmountMin": 0,
+		"dropAmountMax": 0,
+		"hardness": 0.1,
+		"material": "snow",
+		"slipperiness": 0.6
+	},
+	"snow_12": {
+		"id": 1261,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.625,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 332,
+		"dropAmountMin": 0,
+		"dropAmountMax": 0,
+		"hardness": 0.1,
+		"material": "snow",
+		"slipperiness": 0.6
+	},
+	"snow_13": {
+		"id": 1262,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.75,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 332,
+		"dropAmountMin": 0,
+		"dropAmountMax": 0,
+		"hardness": 0.1,
+		"material": "snow",
+		"slipperiness": 0.6
+	},
+	"snow_14": {
+		"id": 1263,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.875,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 332,
+		"dropAmountMin": 0,
+		"dropAmountMax": 0,
+		"hardness": 0.1,
+		"material": "snow",
+		"slipperiness": 0.6
+	},
+	"ice": {
+		"id": 1264,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 79,
+		"dropAmountMin": 0,
+		"dropAmountMax": 0,
+		"hardness": 0.5,
+		"material": "ice",
+		"slipperiness": 0.98
+	},
+	"snow_15": {
+		"id": 1280,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 332,
+		"dropAmountMin": 4,
+		"dropAmountMax": 4,
+		"hardness": 0.2,
+		"material": "crafted_snow",
+		"slipperiness": 0.6
+	},
+	"cactus": {
+		"id": 1296,
+		"collision": {
+			"0": {
+				"minX": 0.0625,
+				"maxX": 0.9375,
+				"minY": 0.0,
+				"maxY": 0.9375,
+				"minZ": 0.0625,
+				"maxZ": 0.9375
+			}
+		},
+		"dropItem": 81,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.4,
+		"material": "cactus",
+		"slipperiness": 0.6
+	},
+	"clay": {
+		"id": 1312,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 337,
+		"dropAmountMin": 4,
+		"dropAmountMax": 4,
+		"hardness": 0.6,
+		"material": "clay",
+		"slipperiness": 0.6
+	},
+	"jukebox": {
+		"id": 1344,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 84,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"fence": {
+		"id": 1360,
+		"collision": {
+			"0": {
+				"minX": 0.375,
+				"maxX": 0.625,
+				"minY": 0.0,
+				"maxY": 1.5,
+				"minZ": 0.375,
+				"maxZ": 0.625
+			},
+			"1": {
+				"minX": 0.375,
+				"maxX": 0.625,
+				"minY": 0.0,
+				"maxY": 1.5,
+				"minZ": 0.0,
+				"maxZ": 0.375
+			},
+			"2": {
+				"minX": 0.625,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.5,
+				"minZ": 0.375,
+				"maxZ": 0.625
+			},
+			"3": {
+				"minX": 0.375,
+				"maxX": 0.625,
+				"minY": 0.0,
+				"maxY": 1.5,
+				"minZ": 0.625,
+				"maxZ": 1.0
+			},
+			"4": {
+				"minX": 0.0,
+				"maxX": 0.375,
+				"minY": 0.0,
+				"maxY": 1.5,
+				"minZ": 0.375,
+				"maxZ": 0.625
+			}
+		},
+		"dropItem": 85,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"sprucefence": {
+		"id": 3008,
+		"collision": {
+			"0": {
+				"minX": 0.375,
+				"maxX": 0.625,
+				"minY": 0.0,
+				"maxY": 1.5,
+				"minZ": 0.375,
+				"maxZ": 0.625
+			},
+			"1": {
+				"minX": 0.375,
+				"maxX": 0.625,
+				"minY": 0.0,
+				"maxY": 1.5,
+				"minZ": 0.0,
+				"maxZ": 0.375
+			},
+			"2": {
+				"minX": 0.625,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.5,
+				"minZ": 0.375,
+				"maxZ": 0.625
+			},
+			"3": {
+				"minX": 0.375,
+				"maxX": 0.625,
+				"minY": 0.0,
+				"maxY": 1.5,
+				"minZ": 0.625,
+				"maxZ": 1.0
+			},
+			"4": {
+				"minX": 0.0,
+				"maxX": 0.375,
+				"minY": 0.0,
+				"maxY": 1.5,
+				"minZ": 0.375,
+				"maxZ": 0.625
+			}
+		},
+		"dropItem": 188,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"birchfence": {
+		"id": 3024,
+		"collision": {
+			"0": {
+				"minX": 0.375,
+				"maxX": 0.625,
+				"minY": 0.0,
+				"maxY": 1.5,
+				"minZ": 0.375,
+				"maxZ": 0.625
+			},
+			"1": {
+				"minX": 0.375,
+				"maxX": 0.625,
+				"minY": 0.0,
+				"maxY": 1.5,
+				"minZ": 0.0,
+				"maxZ": 0.375
+			},
+			"2": {
+				"minX": 0.625,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.5,
+				"minZ": 0.375,
+				"maxZ": 0.625
+			},
+			"3": {
+				"minX": 0.375,
+				"maxX": 0.625,
+				"minY": 0.0,
+				"maxY": 1.5,
+				"minZ": 0.625,
+				"maxZ": 1.0
+			},
+			"4": {
+				"minX": 0.0,
+				"maxX": 0.375,
+				"minY": 0.0,
+				"maxY": 1.5,
+				"minZ": 0.375,
+				"maxZ": 0.625
+			}
+		},
+		"dropItem": 189,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"junglefence": {
+		"id": 3040,
+		"collision": {
+			"0": {
+				"minX": 0.375,
+				"maxX": 0.625,
+				"minY": 0.0,
+				"maxY": 1.5,
+				"minZ": 0.375,
+				"maxZ": 0.625
+			},
+			"1": {
+				"minX": 0.375,
+				"maxX": 0.625,
+				"minY": 0.0,
+				"maxY": 1.5,
+				"minZ": 0.0,
+				"maxZ": 0.375
+			},
+			"2": {
+				"minX": 0.625,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.5,
+				"minZ": 0.375,
+				"maxZ": 0.625
+			},
+			"3": {
+				"minX": 0.375,
+				"maxX": 0.625,
+				"minY": 0.0,
+				"maxY": 1.5,
+				"minZ": 0.625,
+				"maxZ": 1.0
+			},
+			"4": {
+				"minX": 0.0,
+				"maxX": 0.375,
+				"minY": 0.0,
+				"maxY": 1.5,
+				"minZ": 0.375,
+				"maxZ": 0.625
+			}
+		},
+		"dropItem": 190,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"darkoakfence": {
+		"id": 3056,
+		"collision": {
+			"0": {
+				"minX": 0.375,
+				"maxX": 0.625,
+				"minY": 0.0,
+				"maxY": 1.5,
+				"minZ": 0.375,
+				"maxZ": 0.625
+			},
+			"1": {
+				"minX": 0.375,
+				"maxX": 0.625,
+				"minY": 0.0,
+				"maxY": 1.5,
+				"minZ": 0.0,
+				"maxZ": 0.375
+			},
+			"2": {
+				"minX": 0.625,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.5,
+				"minZ": 0.375,
+				"maxZ": 0.625
+			},
+			"3": {
+				"minX": 0.375,
+				"maxX": 0.625,
+				"minY": 0.0,
+				"maxY": 1.5,
+				"minZ": 0.625,
+				"maxZ": 1.0
+			},
+			"4": {
+				"minX": 0.0,
+				"maxX": 0.375,
+				"minY": 0.0,
+				"maxY": 1.5,
+				"minZ": 0.375,
+				"maxZ": 0.625
+			}
+		},
+		"dropItem": 191,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"acaciafence": {
+		"id": 3072,
+		"collision": {
+			"0": {
+				"minX": 0.375,
+				"maxX": 0.625,
+				"minY": 0.0,
+				"maxY": 1.5,
+				"minZ": 0.375,
+				"maxZ": 0.625
+			},
+			"1": {
+				"minX": 0.375,
+				"maxX": 0.625,
+				"minY": 0.0,
+				"maxY": 1.5,
+				"minZ": 0.0,
+				"maxZ": 0.375
+			},
+			"2": {
+				"minX": 0.625,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.5,
+				"minZ": 0.375,
+				"maxZ": 0.625
+			},
+			"3": {
+				"minX": 0.375,
+				"maxX": 0.625,
+				"minY": 0.0,
+				"maxY": 1.5,
+				"minZ": 0.625,
+				"maxZ": 1.0
+			},
+			"4": {
+				"minX": 0.0,
+				"maxX": 0.375,
+				"minY": 0.0,
+				"maxY": 1.5,
+				"minZ": 0.375,
+				"maxZ": 0.625
+			}
+		},
+		"dropItem": 192,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"pumpkin": {
+		"id": 1376,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 86,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 1.0,
+		"material": "gourd",
+		"slipperiness": 0.6
+	},
+	"hellrock": {
+		"id": 1392,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 87,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.4,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"hellsand": {
+		"id": 1408,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.875,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 88,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.5,
+		"material": "sand",
+		"slipperiness": 0.6
+	},
+	"lightgem": {
+		"id": 1424,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 348,
+		"dropAmountMin": 2,
+		"dropAmountMax": 5,
+		"hardness": 0.3,
+		"material": "glass",
+		"slipperiness": 0.6
+	},
+	"litpumpkin": {
+		"id": 1456,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 91,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 1.0,
+		"material": "gourd",
+		"slipperiness": 0.6
+	},
+	"trapdoor": {
+		"id": 1536,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.1875,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 96,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 3.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"trapdoor_4": {
+		"id": 1540,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.8125,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 96,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 3.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"trapdoor_5": {
+		"id": 1541,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 0.1875
+			}
+		},
+		"dropItem": 96,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 3.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"trapdoor_6": {
+		"id": 1542,
+		"collision": {
+			"0": {
+				"minX": 0.8125,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 96,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 3.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"trapdoor_7": {
+		"id": 1543,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 0.1875,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 96,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 3.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"trapdoor_8": {
+		"id": 1544,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.8125,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 96,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 3.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"trapdoor_9": {
+		"id": 1545,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.8125,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 96,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 3.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"trapdoor_10": {
+		"id": 1546,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.8125,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 96,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 3.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"trapdoor_11": {
+		"id": 1547,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.8125,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 96,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 3.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"trapdoor_12": {
+		"id": 1548,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.8125,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 96,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 3.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"trapdoor_13": {
+		"id": 1549,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 0.1875
+			}
+		},
+		"dropItem": 96,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 3.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"trapdoor_14": {
+		"id": 1550,
+		"collision": {
+			"0": {
+				"minX": 0.8125,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 96,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 3.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"trapdoor_15": {
+		"id": 1551,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 0.1875,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 96,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 3.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"monsterstoneegg_stone": {
+		"id": 1552,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 97,
+		"dropAmountMin": 0,
+		"dropAmountMax": 0,
+		"hardness": 0.75,
+		"material": "clay",
+		"slipperiness": 0.6
+	},
+	"stonebricksmooth": {
+		"id": 1568,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 98,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 1.5,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"mushroom_2": {
+		"id": 1584,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": -1,
+		"dropAmountMin": 0,
+		"dropAmountMax": 0,
+		"hardness": 0.2,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"mushroom_17": {
+		"id": 1600,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": -1,
+		"dropAmountMin": 0,
+		"dropAmountMax": 0,
+		"hardness": 0.2,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"fenceiron": {
+		"id": 1616,
+		"collision": {
+			"0": {
+				"minX": 0.4375,
+				"maxX": 0.5625,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.4375,
+				"maxZ": 0.5625
+			},
+			"1": {
+				"minX": 0.4375,
+				"maxX": 0.5625,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 0.5625
+			},
+			"2": {
+				"minX": 0.4375,
+				"maxX": 0.5625,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.4375,
+				"maxZ": 1.0
+			},
+			"3": {
+				"minX": 0.4375,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.4375,
+				"maxZ": 0.5625
+			},
+			"4": {
+				"minX": 0.0,
+				"maxX": 0.5625,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.4375,
+				"maxZ": 0.5625
+			}
+		},
+		"dropItem": 101,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 5.0,
+		"material": "iron",
+		"slipperiness": 0.6
+	},
+	"thinglass": {
+		"id": 1632,
+		"collision": {
+			"0": {
+				"minX": 0.4375,
+				"maxX": 0.5625,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.4375,
+				"maxZ": 0.5625
+			},
+			"1": {
+				"minX": 0.4375,
+				"maxX": 0.5625,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 0.5625
+			},
+			"2": {
+				"minX": 0.4375,
+				"maxX": 0.5625,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.4375,
+				"maxZ": 1.0
+			},
+			"3": {
+				"minX": 0.4375,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.4375,
+				"maxZ": 0.5625
+			},
+			"4": {
+				"minX": 0.0,
+				"maxX": 0.5625,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.4375,
+				"maxZ": 0.5625
+			}
+		},
+		"dropItem": 0,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.3,
+		"material": "glass",
+		"slipperiness": 0.6
+	},
+	"melon": {
+		"id": 1648,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 360,
+		"dropAmountMin": 3,
+		"dropAmountMax": 8,
+		"hardness": 1.0,
+		"material": "gourd",
+		"slipperiness": 0.6
+	},
+	"vine": {
+		"id": 1696,
+		"collision": {
+		},
+		"dropItem": 0,
+		"dropAmountMin": 0,
+		"dropAmountMax": 0,
+		"hardness": 0.2,
+		"material": "vine",
+		"slipperiness": 0.6
+	},
+	"fencegate": {
+		"id": 1712,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.5,
+				"minZ": 0.375,
+				"maxZ": 0.625
+			}
+		},
+		"dropItem": 107,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"fencegate_1": {
+		"id": 1713,
+		"collision": {
+			"0": {
+				"minX": 0.375,
+				"maxX": 0.625,
+				"minY": 0.0,
+				"maxY": 1.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 107,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"fencegate_2": {
+		"id": 1715,
+		"collision": {
+			"0": {
+				"minX": 0.375,
+				"maxX": 0.625,
+				"minY": 0.0,
+				"maxY": 1.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 107,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"fencegate_3": {
+		"id": 1716,
+		"collision": {
+		},
+		"dropItem": 107,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"fencegate_4": {
+		"id": 1717,
+		"collision": {
+		},
+		"dropItem": 107,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"fencegate_5": {
+		"id": 1718,
+		"collision": {
+		},
+		"dropItem": 107,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"fencegate_6": {
+		"id": 1719,
+		"collision": {
+		},
+		"dropItem": 107,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"fencegate_8": {
+		"id": 1721,
+		"collision": {
+			"0": {
+				"minX": 0.375,
+				"maxX": 0.625,
+				"minY": 0.0,
+				"maxY": 1.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 107,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"fencegate_10": {
+		"id": 1723,
+		"collision": {
+			"0": {
+				"minX": 0.375,
+				"maxX": 0.625,
+				"minY": 0.0,
+				"maxY": 1.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 107,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"fencegate_11": {
+		"id": 1724,
+		"collision": {
+		},
+		"dropItem": 107,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"fencegate_12": {
+		"id": 1725,
+		"collision": {
+		},
+		"dropItem": 107,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"fencegate_13": {
+		"id": 1726,
+		"collision": {
+		},
+		"dropItem": 107,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"fencegate_14": {
+		"id": 1727,
+		"collision": {
+		},
+		"dropItem": 107,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"sprucefencegate": {
+		"id": 2928,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.5,
+				"minZ": 0.375,
+				"maxZ": 0.625
+			}
+		},
+		"dropItem": 183,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"sprucefencegate_1": {
+		"id": 2929,
+		"collision": {
+			"0": {
+				"minX": 0.375,
+				"maxX": 0.625,
+				"minY": 0.0,
+				"maxY": 1.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 183,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"sprucefencegate_2": {
+		"id": 2931,
+		"collision": {
+			"0": {
+				"minX": 0.375,
+				"maxX": 0.625,
+				"minY": 0.0,
+				"maxY": 1.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 183,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"sprucefencegate_3": {
+		"id": 2932,
+		"collision": {
+		},
+		"dropItem": 183,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"sprucefencegate_4": {
+		"id": 2933,
+		"collision": {
+		},
+		"dropItem": 183,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"sprucefencegate_5": {
+		"id": 2934,
+		"collision": {
+		},
+		"dropItem": 183,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"sprucefencegate_6": {
+		"id": 2935,
+		"collision": {
+		},
+		"dropItem": 183,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"sprucefencegate_8": {
+		"id": 2937,
+		"collision": {
+			"0": {
+				"minX": 0.375,
+				"maxX": 0.625,
+				"minY": 0.0,
+				"maxY": 1.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 183,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"sprucefencegate_10": {
+		"id": 2939,
+		"collision": {
+			"0": {
+				"minX": 0.375,
+				"maxX": 0.625,
+				"minY": 0.0,
+				"maxY": 1.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 183,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"sprucefencegate_11": {
+		"id": 2940,
+		"collision": {
+		},
+		"dropItem": 183,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"sprucefencegate_12": {
+		"id": 2941,
+		"collision": {
+		},
+		"dropItem": 183,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"sprucefencegate_13": {
+		"id": 2942,
+		"collision": {
+		},
+		"dropItem": 183,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"sprucefencegate_14": {
+		"id": 2943,
+		"collision": {
+		},
+		"dropItem": 183,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"birchfencegate": {
+		"id": 2944,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.5,
+				"minZ": 0.375,
+				"maxZ": 0.625
+			}
+		},
+		"dropItem": 184,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"birchfencegate_1": {
+		"id": 2945,
+		"collision": {
+			"0": {
+				"minX": 0.375,
+				"maxX": 0.625,
+				"minY": 0.0,
+				"maxY": 1.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 184,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"birchfencegate_2": {
+		"id": 2947,
+		"collision": {
+			"0": {
+				"minX": 0.375,
+				"maxX": 0.625,
+				"minY": 0.0,
+				"maxY": 1.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 184,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"birchfencegate_3": {
+		"id": 2948,
+		"collision": {
+		},
+		"dropItem": 184,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"birchfencegate_4": {
+		"id": 2949,
+		"collision": {
+		},
+		"dropItem": 184,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"birchfencegate_5": {
+		"id": 2950,
+		"collision": {
+		},
+		"dropItem": 184,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"birchfencegate_6": {
+		"id": 2951,
+		"collision": {
+		},
+		"dropItem": 184,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"birchfencegate_8": {
+		"id": 2953,
+		"collision": {
+			"0": {
+				"minX": 0.375,
+				"maxX": 0.625,
+				"minY": 0.0,
+				"maxY": 1.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 184,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"birchfencegate_10": {
+		"id": 2955,
+		"collision": {
+			"0": {
+				"minX": 0.375,
+				"maxX": 0.625,
+				"minY": 0.0,
+				"maxY": 1.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 184,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"birchfencegate_11": {
+		"id": 2956,
+		"collision": {
+		},
+		"dropItem": 184,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"birchfencegate_12": {
+		"id": 2957,
+		"collision": {
+		},
+		"dropItem": 184,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"birchfencegate_13": {
+		"id": 2958,
+		"collision": {
+		},
+		"dropItem": 184,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"birchfencegate_14": {
+		"id": 2959,
+		"collision": {
+		},
+		"dropItem": 184,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"junglefencegate": {
+		"id": 2960,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.5,
+				"minZ": 0.375,
+				"maxZ": 0.625
+			}
+		},
+		"dropItem": 185,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"junglefencegate_1": {
+		"id": 2961,
+		"collision": {
+			"0": {
+				"minX": 0.375,
+				"maxX": 0.625,
+				"minY": 0.0,
+				"maxY": 1.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 185,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"junglefencegate_2": {
+		"id": 2963,
+		"collision": {
+			"0": {
+				"minX": 0.375,
+				"maxX": 0.625,
+				"minY": 0.0,
+				"maxY": 1.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 185,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"junglefencegate_3": {
+		"id": 2964,
+		"collision": {
+		},
+		"dropItem": 185,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"junglefencegate_4": {
+		"id": 2965,
+		"collision": {
+		},
+		"dropItem": 185,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"junglefencegate_5": {
+		"id": 2966,
+		"collision": {
+		},
+		"dropItem": 185,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"junglefencegate_6": {
+		"id": 2967,
+		"collision": {
+		},
+		"dropItem": 185,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"junglefencegate_8": {
+		"id": 2969,
+		"collision": {
+			"0": {
+				"minX": 0.375,
+				"maxX": 0.625,
+				"minY": 0.0,
+				"maxY": 1.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 185,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"junglefencegate_10": {
+		"id": 2971,
+		"collision": {
+			"0": {
+				"minX": 0.375,
+				"maxX": 0.625,
+				"minY": 0.0,
+				"maxY": 1.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 185,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"junglefencegate_11": {
+		"id": 2972,
+		"collision": {
+		},
+		"dropItem": 185,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"junglefencegate_12": {
+		"id": 2973,
+		"collision": {
+		},
+		"dropItem": 185,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"junglefencegate_13": {
+		"id": 2974,
+		"collision": {
+		},
+		"dropItem": 185,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"junglefencegate_14": {
+		"id": 2975,
+		"collision": {
+		},
+		"dropItem": 185,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"darkoakfencegate": {
+		"id": 2976,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.5,
+				"minZ": 0.375,
+				"maxZ": 0.625
+			}
+		},
+		"dropItem": 186,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"darkoakfencegate_1": {
+		"id": 2977,
+		"collision": {
+			"0": {
+				"minX": 0.375,
+				"maxX": 0.625,
+				"minY": 0.0,
+				"maxY": 1.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 186,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"darkoakfencegate_2": {
+		"id": 2979,
+		"collision": {
+			"0": {
+				"minX": 0.375,
+				"maxX": 0.625,
+				"minY": 0.0,
+				"maxY": 1.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 186,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"darkoakfencegate_3": {
+		"id": 2980,
+		"collision": {
+		},
+		"dropItem": 186,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"darkoakfencegate_4": {
+		"id": 2981,
+		"collision": {
+		},
+		"dropItem": 186,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"darkoakfencegate_5": {
+		"id": 2982,
+		"collision": {
+		},
+		"dropItem": 186,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"darkoakfencegate_6": {
+		"id": 2983,
+		"collision": {
+		},
+		"dropItem": 186,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"darkoakfencegate_8": {
+		"id": 2985,
+		"collision": {
+			"0": {
+				"minX": 0.375,
+				"maxX": 0.625,
+				"minY": 0.0,
+				"maxY": 1.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 186,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"darkoakfencegate_10": {
+		"id": 2987,
+		"collision": {
+			"0": {
+				"minX": 0.375,
+				"maxX": 0.625,
+				"minY": 0.0,
+				"maxY": 1.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 186,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"darkoakfencegate_11": {
+		"id": 2988,
+		"collision": {
+		},
+		"dropItem": 186,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"darkoakfencegate_12": {
+		"id": 2989,
+		"collision": {
+		},
+		"dropItem": 186,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"darkoakfencegate_13": {
+		"id": 2990,
+		"collision": {
+		},
+		"dropItem": 186,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"darkoakfencegate_14": {
+		"id": 2991,
+		"collision": {
+		},
+		"dropItem": 186,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"acaciafencegate": {
+		"id": 2992,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.5,
+				"minZ": 0.375,
+				"maxZ": 0.625
+			}
+		},
+		"dropItem": 187,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"acaciafencegate_1": {
+		"id": 2993,
+		"collision": {
+			"0": {
+				"minX": 0.375,
+				"maxX": 0.625,
+				"minY": 0.0,
+				"maxY": 1.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 187,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"acaciafencegate_2": {
+		"id": 2995,
+		"collision": {
+			"0": {
+				"minX": 0.375,
+				"maxX": 0.625,
+				"minY": 0.0,
+				"maxY": 1.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 187,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"acaciafencegate_3": {
+		"id": 2996,
+		"collision": {
+		},
+		"dropItem": 187,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"acaciafencegate_4": {
+		"id": 2997,
+		"collision": {
+		},
+		"dropItem": 187,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"acaciafencegate_5": {
+		"id": 2998,
+		"collision": {
+		},
+		"dropItem": 187,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"acaciafencegate_6": {
+		"id": 2999,
+		"collision": {
+		},
+		"dropItem": 187,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"acaciafencegate_8": {
+		"id": 3001,
+		"collision": {
+			"0": {
+				"minX": 0.375,
+				"maxX": 0.625,
+				"minY": 0.0,
+				"maxY": 1.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 187,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"acaciafencegate_10": {
+		"id": 3003,
+		"collision": {
+			"0": {
+				"minX": 0.375,
+				"maxX": 0.625,
+				"minY": 0.0,
+				"maxY": 1.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 187,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"acaciafencegate_11": {
+		"id": 3004,
+		"collision": {
+		},
+		"dropItem": 187,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"acaciafencegate_12": {
+		"id": 3005,
+		"collision": {
+		},
+		"dropItem": 187,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"acaciafencegate_13": {
+		"id": 3006,
+		"collision": {
+		},
+		"dropItem": 187,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"acaciafencegate_14": {
+		"id": 3007,
+		"collision": {
+		},
+		"dropItem": 187,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"stairsbrick": {
+		"id": 1728,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.5,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 108,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stairsbrick_1": {
+		"id": 1729,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 0.5,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 108,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stairsbrick_2": {
+		"id": 1730,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.5,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 108,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stairsbrick_3": {
+		"id": 1732,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.5,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 108,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stairsbrick_4": {
+		"id": 1733,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 0.5,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 108,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stairsbrick_5": {
+		"id": 1734,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.5,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 108,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stairsbrick_6": {
+		"id": 1735,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 0.5
+			}
+		},
+		"dropItem": 108,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stairsbrick_8": {
+		"id": 1737,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 0.5,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 108,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stairsbrick_9": {
+		"id": 1738,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.5,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 108,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stairsbrick_10": {
+		"id": 1740,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.5,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 108,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stairsbrick_11": {
+		"id": 1741,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 0.5,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 108,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stairsbrick_12": {
+		"id": 1742,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.5,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 108,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stairsbrick_13": {
+		"id": 1743,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 0.5
+			}
+		},
+		"dropItem": 108,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stairsstonebricksmooth": {
+		"id": 1744,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.5,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 109,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 1.5,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stairsstonebricksmooth_1": {
+		"id": 1745,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 0.5,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 109,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 1.5,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stairsstonebricksmooth_2": {
+		"id": 1746,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.5,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 109,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 1.5,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stairsstonebricksmooth_3": {
+		"id": 1748,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.5,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 109,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 1.5,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stairsstonebricksmooth_4": {
+		"id": 1749,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 0.5,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 109,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 1.5,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stairsstonebricksmooth_5": {
+		"id": 1750,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.5,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 109,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 1.5,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stairsstonebricksmooth_6": {
+		"id": 1751,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 0.5
+			}
+		},
+		"dropItem": 109,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 1.5,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stairsstonebricksmooth_8": {
+		"id": 1753,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 0.5,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 109,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 1.5,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stairsstonebricksmooth_9": {
+		"id": 1754,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.5,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 109,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 1.5,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stairsstonebricksmooth_10": {
+		"id": 1756,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.5,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 109,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 1.5,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stairsstonebricksmooth_11": {
+		"id": 1757,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 0.5,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 109,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 1.5,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stairsstonebricksmooth_12": {
+		"id": 1758,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.5,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 109,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 1.5,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stairsstonebricksmooth_13": {
+		"id": 1759,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 0.5
+			}
+		},
+		"dropItem": 109,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 1.5,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"mycel": {
+		"id": 1760,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 3,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.6,
+		"material": "grass",
+		"slipperiness": 0.6
+	},
+	"waterlily": {
+		"id": 1776,
+		"collision": {
+			"0": {
+				"minX": 0.0625,
+				"maxX": 0.9375,
+				"minY": 0.0,
+				"maxY": 0.09375,
+				"minZ": 0.0625,
+				"maxZ": 0.9375
+			}
+		},
+		"dropItem": 111,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.0,
+		"material": "plants",
+		"slipperiness": 0.6
+	},
+	"netherbrick": {
+		"id": 1792,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 112,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"netherfence": {
+		"id": 1808,
+		"collision": {
+			"0": {
+				"minX": 0.375,
+				"maxX": 0.625,
+				"minY": 0.0,
+				"maxY": 1.5,
+				"minZ": 0.375,
+				"maxZ": 0.625
+			},
+			"1": {
+				"minX": 0.375,
+				"maxX": 0.625,
+				"minY": 0.0,
+				"maxY": 1.5,
+				"minZ": 0.0,
+				"maxZ": 0.375
+			},
+			"2": {
+				"minX": 0.625,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.5,
+				"minZ": 0.375,
+				"maxZ": 0.625
+			},
+			"3": {
+				"minX": 0.375,
+				"maxX": 0.625,
+				"minY": 0.0,
+				"maxY": 1.5,
+				"minZ": 0.625,
+				"maxZ": 1.0
+			},
+			"4": {
+				"minX": 0.0,
+				"maxX": 0.375,
+				"minY": 0.0,
+				"maxY": 1.5,
+				"minZ": 0.375,
+				"maxZ": 0.625
+			}
+		},
+		"dropItem": 113,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stairsnetherbrick": {
+		"id": 1824,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.5,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 114,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stairsnetherbrick_1": {
+		"id": 1825,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 0.5,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 114,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stairsnetherbrick_2": {
+		"id": 1826,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.5,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 114,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stairsnetherbrick_3": {
+		"id": 1828,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.5,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 114,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stairsnetherbrick_4": {
+		"id": 1829,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 0.5,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 114,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stairsnetherbrick_5": {
+		"id": 1830,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.5,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 114,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stairsnetherbrick_6": {
+		"id": 1831,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 0.5
+			}
+		},
+		"dropItem": 114,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stairsnetherbrick_8": {
+		"id": 1833,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 0.5,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 114,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stairsnetherbrick_9": {
+		"id": 1834,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.5,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 114,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stairsnetherbrick_10": {
+		"id": 1836,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.5,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 114,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stairsnetherbrick_11": {
+		"id": 1837,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 0.5,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 114,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stairsnetherbrick_12": {
+		"id": 1838,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.5,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 114,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stairsnetherbrick_13": {
+		"id": 1839,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 0.5
+			}
+		},
+		"dropItem": 114,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"enchantmenttable": {
+		"id": 1856,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.75,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 116,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 5.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"endportalframe": {
+		"id": 1920,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.8125,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 0,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": -1.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"endportalframe_3": {
+		"id": 1924,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.8125,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.3125,
+				"maxX": 0.6875,
+				"minY": 0.8125,
+				"maxY": 1.0,
+				"minZ": 0.3125,
+				"maxZ": 0.6875
+			}
+		},
+		"dropItem": 0,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": -1.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"endportalframe_4": {
+		"id": 1925,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.8125,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.3125,
+				"maxX": 0.6875,
+				"minY": 0.8125,
+				"maxY": 1.0,
+				"minZ": 0.3125,
+				"maxZ": 0.6875
+			}
+		},
+		"dropItem": 0,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": -1.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"endportalframe_5": {
+		"id": 1926,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.8125,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.3125,
+				"maxX": 0.6875,
+				"minY": 0.8125,
+				"maxY": 1.0,
+				"minZ": 0.3125,
+				"maxZ": 0.6875
+			}
+		},
+		"dropItem": 0,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": -1.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"endportalframe_6": {
+		"id": 1927,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.8125,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.3125,
+				"maxX": 0.6875,
+				"minY": 0.8125,
+				"maxY": 1.0,
+				"minZ": 0.3125,
+				"maxZ": 0.6875
+			}
+		},
+		"dropItem": 0,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": -1.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"endportalframe_10": {
+		"id": 1932,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.8125,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.3125,
+				"maxX": 0.6875,
+				"minY": 0.8125,
+				"maxY": 1.0,
+				"minZ": 0.3125,
+				"maxZ": 0.6875
+			}
+		},
+		"dropItem": 0,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": -1.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"endportalframe_11": {
+		"id": 1933,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.8125,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.3125,
+				"maxX": 0.6875,
+				"minY": 0.8125,
+				"maxY": 1.0,
+				"minZ": 0.3125,
+				"maxZ": 0.6875
+			}
+		},
+		"dropItem": 0,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": -1.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"endportalframe_12": {
+		"id": 1934,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.8125,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.3125,
+				"maxX": 0.6875,
+				"minY": 0.8125,
+				"maxY": 1.0,
+				"minZ": 0.3125,
+				"maxZ": 0.6875
+			}
+		},
+		"dropItem": 0,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": -1.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"endportalframe_13": {
+		"id": 1935,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.8125,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.3125,
+				"maxX": 0.6875,
+				"minY": 0.8125,
+				"maxY": 1.0,
+				"minZ": 0.3125,
+				"maxZ": 0.6875
+			}
+		},
+		"dropItem": 0,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": -1.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"whitestone": {
+		"id": 1936,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 121,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 3.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"endbricks": {
+		"id": 3296,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 206,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.8,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"dragonegg": {
+		"id": 1952,
+		"collision": {
+			"0": {
+				"minX": 0.0625,
+				"maxX": 0.9375,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0625,
+				"maxZ": 0.9375
+			}
+		},
+		"dropItem": 122,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 3.0,
+		"material": "dragon_egg",
+		"slipperiness": 0.6
+	},
+	"redstonelight": {
+		"id": 1968,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 123,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.3,
+		"material": "redstone_light",
+		"slipperiness": 0.6
+	},
+	"woodslab_oak": {
+		"id": 2016,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 126,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"woodslab_oak_1": {
+		"id": 2024,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 126,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"woodslab_oak_2": {
+		"id": 2025,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 126,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"woodslab_oak_3": {
+		"id": 2026,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 126,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"woodslab_oak_4": {
+		"id": 2027,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 126,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"woodslab_oak_5": {
+		"id": 2028,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 126,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"woodslab_oak_6": {
+		"id": 2029,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 126,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"woodslab_oak_7": {
+		"id": 2030,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 126,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"woodslab_oak_8": {
+		"id": 2031,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 126,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"stairssandstone": {
+		"id": 2048,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.5,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 128,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.8,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stairssandstone_1": {
+		"id": 2049,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 0.5,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 128,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.8,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stairssandstone_2": {
+		"id": 2050,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.5,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 128,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.8,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stairssandstone_3": {
+		"id": 2052,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.5,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 128,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.8,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stairssandstone_4": {
+		"id": 2053,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 0.5,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 128,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.8,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stairssandstone_5": {
+		"id": 2054,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.5,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 128,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.8,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stairssandstone_6": {
+		"id": 2055,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 0.5
+			}
+		},
+		"dropItem": 128,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.8,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stairssandstone_8": {
+		"id": 2057,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 0.5,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 128,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.8,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stairssandstone_9": {
+		"id": 2058,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.5,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 128,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.8,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stairssandstone_10": {
+		"id": 2060,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.5,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 128,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.8,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stairssandstone_11": {
+		"id": 2061,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 0.5,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 128,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.8,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stairssandstone_12": {
+		"id": 2062,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.5,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 128,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.8,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stairssandstone_13": {
+		"id": 2063,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 0.5
+			}
+		},
+		"dropItem": 128,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.8,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"oreemerald": {
+		"id": 2064,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 388,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 3.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"enderchest": {
+		"id": 2080,
+		"collision": {
+			"0": {
+				"minX": 0.0625,
+				"maxX": 0.9375,
+				"minY": 0.0,
+				"maxY": 0.875,
+				"minZ": 0.0625,
+				"maxZ": 0.9375
+			}
+		},
+		"dropItem": 49,
+		"dropAmountMin": 8,
+		"dropAmountMax": 8,
+		"hardness": 22.5,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"tripwiresource": {
+		"id": 2096,
+		"collision": {
+		},
+		"dropItem": 131,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.0,
+		"material": "circuits",
+		"slipperiness": 0.6
+	},
+	"blockemerald": {
+		"id": 2128,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 133,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 5.0,
+		"material": "iron",
+		"slipperiness": 0.6
+	},
+	"stairswoodspruce": {
+		"id": 2144,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.5,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 134,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"stairswoodspruce_1": {
+		"id": 2145,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 0.5,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 134,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"stairswoodspruce_2": {
+		"id": 2146,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.5,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 134,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"stairswoodspruce_3": {
+		"id": 2148,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.5,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 134,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"stairswoodspruce_4": {
+		"id": 2149,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 0.5,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 134,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"stairswoodspruce_5": {
+		"id": 2150,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.5,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 134,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"stairswoodspruce_6": {
+		"id": 2151,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 0.5
+			}
+		},
+		"dropItem": 134,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"stairswoodspruce_8": {
+		"id": 2153,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 0.5,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 134,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"stairswoodspruce_9": {
+		"id": 2154,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.5,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 134,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"stairswoodspruce_10": {
+		"id": 2156,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.5,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 134,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"stairswoodspruce_11": {
+		"id": 2157,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 0.5,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 134,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"stairswoodspruce_12": {
+		"id": 2158,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.5,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 134,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"stairswoodspruce_13": {
+		"id": 2159,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 0.5
+			}
+		},
+		"dropItem": 134,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"stairswoodbirch": {
+		"id": 2160,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.5,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 135,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"stairswoodbirch_1": {
+		"id": 2161,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 0.5,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 135,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"stairswoodbirch_2": {
+		"id": 2162,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.5,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 135,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"stairswoodbirch_3": {
+		"id": 2164,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.5,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 135,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"stairswoodbirch_4": {
+		"id": 2165,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 0.5,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 135,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"stairswoodbirch_5": {
+		"id": 2166,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.5,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 135,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"stairswoodbirch_6": {
+		"id": 2167,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 0.5
+			}
+		},
+		"dropItem": 135,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"stairswoodbirch_8": {
+		"id": 2169,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 0.5,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 135,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"stairswoodbirch_9": {
+		"id": 2170,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.5,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 135,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"stairswoodbirch_10": {
+		"id": 2172,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.5,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 135,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"stairswoodbirch_11": {
+		"id": 2173,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 0.5,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 135,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"stairswoodbirch_12": {
+		"id": 2174,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.5,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 135,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"stairswoodbirch_13": {
+		"id": 2175,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 0.5
+			}
+		},
+		"dropItem": 135,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"stairswoodjungle": {
+		"id": 2176,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.5,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 136,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"stairswoodjungle_1": {
+		"id": 2177,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 0.5,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 136,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"stairswoodjungle_2": {
+		"id": 2178,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.5,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 136,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"stairswoodjungle_3": {
+		"id": 2180,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.5,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 136,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"stairswoodjungle_4": {
+		"id": 2181,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 0.5,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 136,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"stairswoodjungle_5": {
+		"id": 2182,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.5,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 136,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"stairswoodjungle_6": {
+		"id": 2183,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 0.5
+			}
+		},
+		"dropItem": 136,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"stairswoodjungle_8": {
+		"id": 2185,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 0.5,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 136,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"stairswoodjungle_9": {
+		"id": 2186,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.5,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 136,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"stairswoodjungle_10": {
+		"id": 2188,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.5,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 136,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"stairswoodjungle_11": {
+		"id": 2189,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 0.5,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 136,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"stairswoodjungle_12": {
+		"id": 2190,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.5,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 136,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"stairswoodjungle_13": {
+		"id": 2191,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 0.5
+			}
+		},
+		"dropItem": 136,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"commandblock": {
+		"id": 2192,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 137,
+		"dropAmountMin": 0,
+		"dropAmountMax": 0,
+		"hardness": -1.0,
+		"material": "iron",
+		"slipperiness": 0.6
+	},
+	"beacon": {
+		"id": 2208,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 138,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 3.0,
+		"material": "glass",
+		"slipperiness": 0.6
+	},
+	"cobblewall_normal": {
+		"id": 2224,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 139,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"button_15": {
+		"id": 2288,
+		"collision": {
+		},
+		"dropItem": 143,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.5,
+		"material": "circuits",
+		"slipperiness": 0.6
+	},
+	"anvil_intact": {
+		"id": 2320,
+		"collision": {
+			"0": {
+				"minX": 0.125,
+				"maxX": 0.875,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 145,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 5.0,
+		"material": "anvil",
+		"slipperiness": 0.6
+	},
+	"anvil_slightlydamaged": {
+		"id": 2321,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.125,
+				"maxZ": 0.875
+			}
+		},
+		"dropItem": 145,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 5.0,
+		"material": "anvil",
+		"slipperiness": 0.6
+	},
+	"anvil_intact_1": {
+		"id": 2323,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.125,
+				"maxZ": 0.875
+			}
+		},
+		"dropItem": 145,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 5.0,
+		"material": "anvil",
+		"slipperiness": 0.6
+	},
+	"anvil_intact_3": {
+		"id": 2325,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.125,
+				"maxZ": 0.875
+			}
+		},
+		"dropItem": 145,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 5.0,
+		"material": "anvil",
+		"slipperiness": 0.6
+	},
+	"anvil_intact_5": {
+		"id": 2327,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.125,
+				"maxZ": 0.875
+			}
+		},
+		"dropItem": 145,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 5.0,
+		"material": "anvil",
+		"slipperiness": 0.6
+	},
+	"anvil_intact_7": {
+		"id": 2329,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.125,
+				"maxZ": 0.875
+			}
+		},
+		"dropItem": 145,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 5.0,
+		"material": "anvil",
+		"slipperiness": 0.6
+	},
+	"anvil_intact_9": {
+		"id": 2331,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.125,
+				"maxZ": 0.875
+			}
+		},
+		"dropItem": 145,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 5.0,
+		"material": "anvil",
+		"slipperiness": 0.6
+	},
+	"chesttrap": {
+		"id": 2336,
+		"collision": {
+			"0": {
+				"minX": 0.0625,
+				"maxX": 0.9375,
+				"minY": 0.0,
+				"maxY": 0.875,
+				"minZ": 0.0,
+				"maxZ": 0.9375
+			}
+		},
+		"dropItem": 146,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.5,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"weightedplate_light": {
+		"id": 2352,
+		"collision": {
+		},
+		"dropItem": 147,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.5,
+		"material": "iron",
+		"slipperiness": 0.6
+	},
+	"weightedplate_heavy": {
+		"id": 2368,
+		"collision": {
+		},
+		"dropItem": 148,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.5,
+		"material": "iron",
+		"slipperiness": 0.6
+	},
+	"daylightdetector": {
+		"id": 2416,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.375,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 151,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.2,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"blockredstone": {
+		"id": 2432,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 152,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 5.0,
+		"material": "iron",
+		"slipperiness": 0.6
+	},
+	"netherquartz": {
+		"id": 2448,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 406,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 3.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"hopper": {
+		"id": 2464,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.625,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 0.125,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"2": {
+				"minX": 0.875,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"3": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 0.125
+			},
+			"4": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.875,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 154,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 3.0,
+		"material": "iron",
+		"slipperiness": 0.6
+	},
+	"quartzblock": {
+		"id": 2480,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 155,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.8,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stairsquartz": {
+		"id": 2496,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.5,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 156,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.8,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stairsquartz_1": {
+		"id": 2497,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 0.5,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 156,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.8,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stairsquartz_2": {
+		"id": 2498,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.5,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 156,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.8,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stairsquartz_3": {
+		"id": 2500,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.5,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 156,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.8,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stairsquartz_4": {
+		"id": 2501,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 0.5,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 156,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.8,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stairsquartz_5": {
+		"id": 2502,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.5,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 156,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.8,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stairsquartz_6": {
+		"id": 2503,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 0.5
+			}
+		},
+		"dropItem": 156,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.8,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stairsquartz_8": {
+		"id": 2505,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 0.5,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 156,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.8,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stairsquartz_9": {
+		"id": 2506,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.5,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 156,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.8,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stairsquartz_10": {
+		"id": 2508,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.5,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 156,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.8,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stairsquartz_11": {
+		"id": 2509,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 0.5,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 156,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.8,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stairsquartz_12": {
+		"id": 2510,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.5,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 156,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.8,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stairsquartz_13": {
+		"id": 2511,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 0.5
+			}
+		},
+		"dropItem": 156,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.8,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"activatorrail": {
+		"id": 2512,
+		"collision": {
+		},
+		"dropItem": 157,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.7,
+		"material": "circuits",
+		"slipperiness": 0.6
+	},
+	"dropper": {
+		"id": 2528,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 158,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 3.5,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"clayhardenedstained_white": {
+		"id": 2544,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 159,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 1.25,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"barrier": {
+		"id": 2656,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 166,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": -1.0,
+		"material": "barrier",
+		"slipperiness": 0.6
+	},
+	"irontrapdoor": {
+		"id": 2672,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.1875,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 167,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 5.0,
+		"material": "iron",
+		"slipperiness": 0.6
+	},
+	"irontrapdoor_4": {
+		"id": 2676,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.8125,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 167,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 5.0,
+		"material": "iron",
+		"slipperiness": 0.6
+	},
+	"irontrapdoor_5": {
+		"id": 2677,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 0.1875
+			}
+		},
+		"dropItem": 167,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 5.0,
+		"material": "iron",
+		"slipperiness": 0.6
+	},
+	"irontrapdoor_6": {
+		"id": 2678,
+		"collision": {
+			"0": {
+				"minX": 0.8125,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 167,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 5.0,
+		"material": "iron",
+		"slipperiness": 0.6
+	},
+	"irontrapdoor_7": {
+		"id": 2679,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 0.1875,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 167,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 5.0,
+		"material": "iron",
+		"slipperiness": 0.6
+	},
+	"irontrapdoor_8": {
+		"id": 2680,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.8125,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 167,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 5.0,
+		"material": "iron",
+		"slipperiness": 0.6
+	},
+	"irontrapdoor_9": {
+		"id": 2681,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.8125,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 167,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 5.0,
+		"material": "iron",
+		"slipperiness": 0.6
+	},
+	"irontrapdoor_10": {
+		"id": 2682,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.8125,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 167,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 5.0,
+		"material": "iron",
+		"slipperiness": 0.6
+	},
+	"irontrapdoor_11": {
+		"id": 2683,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.8125,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 167,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 5.0,
+		"material": "iron",
+		"slipperiness": 0.6
+	},
+	"irontrapdoor_12": {
+		"id": 2684,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.8125,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 167,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 5.0,
+		"material": "iron",
+		"slipperiness": 0.6
+	},
+	"irontrapdoor_13": {
+		"id": 2685,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 0.1875
+			}
+		},
+		"dropItem": 167,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 5.0,
+		"material": "iron",
+		"slipperiness": 0.6
+	},
+	"irontrapdoor_14": {
+		"id": 2686,
+		"collision": {
+			"0": {
+				"minX": 0.8125,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 167,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 5.0,
+		"material": "iron",
+		"slipperiness": 0.6
+	},
+	"irontrapdoor_15": {
+		"id": 2687,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 0.1875,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 167,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 5.0,
+		"material": "iron",
+		"slipperiness": 0.6
+	},
+	"hayblock": {
+		"id": 2720,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 170,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.5,
+		"material": "grass",
+		"slipperiness": 0.6
+	},
+	"woolcarpet_white": {
+		"id": 2736,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.0625,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 171,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.1,
+		"material": "carpet",
+		"slipperiness": 0.6
+	},
+	"clayhardened": {
+		"id": 2752,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 172,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 1.25,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"blockcoal": {
+		"id": 2768,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 173,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 5.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"icepacked": {
+		"id": 2784,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 174,
+		"dropAmountMin": 0,
+		"dropAmountMax": 0,
+		"hardness": 0.5,
+		"material": "packed_ice",
+		"slipperiness": 0.98
+	},
+	"stairswoodacacia": {
+		"id": 2608,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.5,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 163,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"stairswoodacacia_1": {
+		"id": 2609,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 0.5,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 163,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"stairswoodacacia_2": {
+		"id": 2610,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.5,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 163,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"stairswoodacacia_3": {
+		"id": 2612,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.5,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 163,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"stairswoodacacia_4": {
+		"id": 2613,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 0.5,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 163,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"stairswoodacacia_5": {
+		"id": 2614,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.5,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 163,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"stairswoodacacia_6": {
+		"id": 2615,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 0.5
+			}
+		},
+		"dropItem": 163,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"stairswoodacacia_8": {
+		"id": 2617,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 0.5,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 163,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"stairswoodacacia_9": {
+		"id": 2618,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.5,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 163,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"stairswoodacacia_10": {
+		"id": 2620,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.5,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 163,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"stairswoodacacia_11": {
+		"id": 2621,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 0.5,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 163,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"stairswoodacacia_12": {
+		"id": 2622,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.5,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 163,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"stairswoodacacia_13": {
+		"id": 2623,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 0.5
+			}
+		},
+		"dropItem": 163,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"stairswooddarkoak": {
+		"id": 2624,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.5,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 164,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"stairswooddarkoak_1": {
+		"id": 2625,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 0.5,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 164,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"stairswooddarkoak_2": {
+		"id": 2626,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.5,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 164,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"stairswooddarkoak_3": {
+		"id": 2628,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.5,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 164,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"stairswooddarkoak_4": {
+		"id": 2629,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 0.5,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 164,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"stairswooddarkoak_5": {
+		"id": 2630,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.5,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 164,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"stairswooddarkoak_6": {
+		"id": 2631,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 0.5
+			}
+		},
+		"dropItem": 164,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"stairswooddarkoak_8": {
+		"id": 2633,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 0.5,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 164,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"stairswooddarkoak_9": {
+		"id": 2634,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.5,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 164,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"stairswooddarkoak_10": {
+		"id": 2636,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.5,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 164,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"stairswooddarkoak_11": {
+		"id": 2637,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 0.5,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 164,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"stairswooddarkoak_12": {
+		"id": 2638,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.5,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 164,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"stairswooddarkoak_13": {
+		"id": 2639,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 0.5
+			}
+		},
+		"dropItem": 164,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "wood",
+		"slipperiness": 0.6
+	},
+	"slime": {
+		"id": 2640,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 165,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.0,
+		"material": "clay",
+		"slipperiness": 0.8
+	},
+	"grasspath": {
+		"id": 3328,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.9375,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 3,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.65,
+		"material": "ground",
+		"slipperiness": 0.6
+	},
+	"doubleplant_sunflower": {
+		"id": 2800,
+		"collision": {
+		},
+		"dropItem": 175,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.0,
+		"material": "vine",
+		"slipperiness": 0.6
+	},
+	"stainedglass_white": {
+		"id": 1520,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 95,
+		"dropAmountMin": 0,
+		"dropAmountMax": 0,
+		"hardness": 0.3,
+		"material": "glass",
+		"slipperiness": 0.6
+	},
+	"thinstainedglass_white": {
+		"id": 2560,
+		"collision": {
+			"0": {
+				"minX": 0.4375,
+				"maxX": 0.5625,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.4375,
+				"maxZ": 0.5625
+			},
+			"1": {
+				"minX": 0.4375,
+				"maxX": 0.5625,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 0.5625
+			},
+			"2": {
+				"minX": 0.4375,
+				"maxX": 0.5625,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.4375,
+				"maxZ": 1.0
+			},
+			"3": {
+				"minX": 0.4375,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.4375,
+				"maxZ": 0.5625
+			},
+			"4": {
+				"minX": 0.0,
+				"maxX": 0.5625,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.4375,
+				"maxZ": 0.5625
+			}
+		},
+		"dropItem": 0,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.3,
+		"material": "glass",
+		"slipperiness": 0.6
+	},
+	"prismarine_rough": {
+		"id": 2688,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 168,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 1.5,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"sealantern": {
+		"id": 2704,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 410,
+		"dropAmountMin": 2,
+		"dropAmountMax": 4,
+		"hardness": 0.3,
+		"material": "glass",
+		"slipperiness": 0.6
+	},
+	"redsandstone": {
+		"id": 2864,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 179,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.8,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stairsredsandstone": {
+		"id": 2880,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.5,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 180,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.8,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stairsredsandstone_1": {
+		"id": 2881,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 0.5,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 180,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.8,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stairsredsandstone_2": {
+		"id": 2882,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.5,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 180,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.8,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stairsredsandstone_3": {
+		"id": 2884,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.5,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 180,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.8,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stairsredsandstone_4": {
+		"id": 2885,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 0.5,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 180,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.8,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stairsredsandstone_5": {
+		"id": 2886,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.5,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 180,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.8,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stairsredsandstone_6": {
+		"id": 2887,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 0.5
+			}
+		},
+		"dropItem": 180,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.8,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stairsredsandstone_8": {
+		"id": 2889,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 0.5,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 180,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.8,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stairsredsandstone_9": {
+		"id": 2890,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.5,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 180,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.8,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stairsredsandstone_10": {
+		"id": 2892,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.5,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 180,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.8,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stairsredsandstone_11": {
+		"id": 2893,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 0.5,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 180,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.8,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stairsredsandstone_12": {
+		"id": 2894,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.5,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 180,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.8,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stairsredsandstone_13": {
+		"id": 2895,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			},
+			"1": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 0.5
+			}
+		},
+		"dropItem": 180,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.8,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stoneslab2_red_sandstone": {
+		"id": 2912,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 0.5,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 182,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stoneslab2_red_sandstone_1": {
+		"id": 2920,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 182,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stoneslab2_red_sandstone_2": {
+		"id": 2921,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 182,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stoneslab2_red_sandstone_3": {
+		"id": 2922,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 182,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stoneslab2_red_sandstone_4": {
+		"id": 2923,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 182,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stoneslab2_red_sandstone_5": {
+		"id": 2924,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 182,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stoneslab2_red_sandstone_6": {
+		"id": 2925,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 182,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stoneslab2_red_sandstone_7": {
+		"id": 2926,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 182,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"stoneslab2_red_sandstone_8": {
+		"id": 2927,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.5,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 182,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"repeatingcommandblock": {
+		"id": 3360,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 210,
+		"dropAmountMin": 0,
+		"dropAmountMax": 0,
+		"hardness": -1.0,
+		"material": "iron",
+		"slipperiness": 0.6
+	},
+	"chaincommandblock": {
+		"id": 3376,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 211,
+		"dropAmountMin": 0,
+		"dropAmountMax": 0,
+		"hardness": -1.0,
+		"material": "iron",
+		"slipperiness": 0.6
+	},
+	"magma": {
+		"id": 3408,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 213,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.5,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"netherwartblock": {
+		"id": 3424,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 214,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 1.0,
+		"material": "grass",
+		"slipperiness": 0.6
+	},
+	"rednetherbrick": {
+		"id": 3440,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 215,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"boneblock": {
+		"id": 3456,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 216,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"structurevoid": {
+		"id": 3472,
+		"collision": {
+		},
+		"dropItem": 217,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.0,
+		"material": "structure_void",
+		"slipperiness": 0.6
+	},
+	"observer": {
+		"id": 3488,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 218,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 3.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"shulkerboxwhite": {
+		"id": 3504,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 219,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"shulkerboxorange": {
+		"id": 3520,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 220,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"shulkerboxmagenta": {
+		"id": 3536,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 221,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"shulkerboxlightblue": {
+		"id": 3552,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 222,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"shulkerboxyellow": {
+		"id": 3568,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 223,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"shulkerboxlime": {
+		"id": 3584,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 224,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"shulkerboxpink": {
+		"id": 3600,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 225,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"shulkerboxgray": {
+		"id": 3616,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 226,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"shulkerboxsilver": {
+		"id": 3632,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 227,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"shulkerboxcyan": {
+		"id": 3648,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 228,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"shulkerboxpurple": {
+		"id": 3664,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 229,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"shulkerboxblue": {
+		"id": 3680,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 230,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"shulkerboxbrown": {
+		"id": 3696,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 231,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"shulkerboxgreen": {
+		"id": 3712,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 232,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"shulkerboxred": {
+		"id": 3728,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 233,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"shulkerboxblack": {
+		"id": 3744,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 234,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 2.0,
+		"material": "rock",
+		"slipperiness": 0.6
+	},
+	"structureblock": {
+		"id": 4080,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.0,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 255,
+		"dropAmountMin": 0,
+		"dropAmountMax": 0,
+		"hardness": -1.0,
+		"material": "iron",
+		"slipperiness": 0.6
+	}
+}

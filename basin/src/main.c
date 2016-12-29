@@ -35,6 +35,7 @@
 #include "game.h"
 #include "block.h"
 #include "crafting.h"
+#include "tools.h"
 
 void main_tick() {
 	for (size_t i = 0; i < worlds->size; i++) {
@@ -121,8 +122,10 @@ int main(int argc, char* argv[]) {
 		return -1;
 	}
 	players = new_collection(0, 1);
+	init_materials();
 	init_blocks();
 	init_crafting();
+	init_tools();
 	init_items();
 	init_smelting();
 	for (int i = 0; i < servsl; i++) {

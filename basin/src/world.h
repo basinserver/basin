@@ -146,6 +146,4 @@ void onBlockCollide(struct world* world, int32_t x, int32_t y, int32_t z, struct
 
 void onBlockUpdate(struct world* world, int32_t x, int32_t y, int32_t z);
 
-struct boundingbox getBlockCollision(struct world* world, int32_t x, int32_t y, int32_t z, struct entity* entity);
-
 #endif /* WORLD_H_ */
