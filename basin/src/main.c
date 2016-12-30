@@ -73,10 +73,6 @@ int main(int argc, char* argv[]) {
 	struct timespec ts;
 	clock_gettime(CLOCK_MONOTONIC, &ts);
 	srand(ts.tv_sec * 1000000 + ts.tv_nsec / 1000);
-	if (getuid() != 0 || getgid() != 0) {
-		printf("Must run as root!\n");
-		return 1;
-	}
 	printf("Loading %s %s\n", DAEMON_NAME, VERSION);
 #ifdef DEBUG
 	printf("Running in Debug mode!\n");
