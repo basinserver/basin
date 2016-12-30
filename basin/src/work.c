@@ -315,11 +315,6 @@ void run_work(struct work_param* param) {
 		for (int i = 0; i < cc; i++) {
 			int re = fds[i].revents;
 			struct conn* conn = conns[i];
-			if (conn->disconnect) {
-				closeConn(param, conn);
-				conn = NULL;
-				goto cont;
-			}
 			if ((re & POLLERR) == POLLERR) {
 				//printf("POLLERR in worker poll! This is bad!\n");
 				closeConn(param, conn);
@@ -416,6 +411,11 @@ void run_work(struct work_param* param) {
 				conn = NULL;
 			}
 			cont: ;
+			if (conn != NULL && conn->disconnect) {
+				closeConn(param, conn);
+				conn = NULL;
+				goto cont;
+			}
 			if (--cp == 0) break;
 		}
 	}

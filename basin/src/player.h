@@ -52,9 +52,23 @@ struct player {
 		struct slot* inHand;
 		size_t lastSwing;
 		uint8_t foodTimer;
+		size_t lastTPSCalculation;
+		uint32_t tps;
+		uint8_t real_onGround;
+		float reachDistance;
+		uint8_t flightInfraction;
+		double ldy;
+		size_t lastJump;
+		uint32_t offGroundTime;
+		uint8_t spawnedIn;
+		size_t llTick;
 };
 
 struct player* newPlayer(struct entity* entity, char* name, struct uuid, struct conn* conn, uint8_t gamemode);
+
+void kickPlayer(struct player* player, char* message);
+
+int player_onGround(struct player* player);
 
 void player_closeWindow(struct player* player, uint16_t windowID);
 

@@ -782,8 +782,23 @@ struct pkt_play_client_entityteleport {
 
 #define PKT_PLAY_CLIENT_ENTITYPROPERTIES 74
 
+struct entity_property_modifier {
+		struct uuid uuid;
+		double amount;
+		int8_t operation;
+};
+
+struct entity_property {
+		char* key;
+		double value;
+		int32_t number_of_modifiers;
+		struct entity_property_modifier* modifiers;
+};
+
 struct pkt_play_client_entityproperties {
-		//TODO: Manual Implementation
+		int32_t entity_id;
+		int32_t number_of_properties;
+		struct entity_property* properties;
 };
 
 #define PKT_PLAY_CLIENT_ENTITYEFFECT 75

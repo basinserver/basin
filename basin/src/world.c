@@ -529,6 +529,7 @@ void setBlockWorld(struct world* world, block blk, int32_t x, int32_t y, int32_t
 	if (chunk == NULL) {
 		return;
 	}
+	block ob = getBlockChunk(chunk, x & 0x0f, y, z & 0x0f);
 	setBlockChunk(chunk, blk, x & 0x0f, y, z & 0x0f);
 	BEGIN_BROADCAST_DISTXYZ((double) x + .5, (double) y + .5, (double) z + .5, world->players, CHUNK_VIEW_DISTANCE * 16.)
 	struct packet* pkt = xmalloc(sizeof(struct packet));
@@ -540,8 +541,8 @@ void setBlockWorld(struct world* world, block blk, int32_t x, int32_t y, int32_t
 	add_queue(bc_player->outgoingPacket, pkt);
 	flush_outgoing (bc_player);
 	END_BROADCAST
-	struct block_info* bi = getBlockInfo(blk);
-	if (bi->onBlockDestroyed != NULL) (*bi->onBlockDestroyed)(world, blk, x, y, z);
+	struct block_info* bi = getBlockInfo(ob);
+	if (bi != NULL && bi->onBlockDestroyed != NULL) (*bi->onBlockDestroyed)(world, ob, x, y, z);
 }
 
 struct world* newWorld() {

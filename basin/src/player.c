@@ -19,6 +19,9 @@
 #include "globals.h"
 #include "item.h"
 #include "tileentity.h"
+#include <math.h>
+#include "block.h"
+#include "world.h"
 
 struct player* newPlayer(struct entity* entity, char* name, struct uuid uuid, struct conn* conn, uint8_t gamemode) {
 	struct player* player = xmalloc(sizeof(struct player));
@@ -65,7 +68,77 @@ struct player* newPlayer(struct entity* entity, char* name, struct uuid uuid, st
 	player->defunct = 0;
 	player->lastSwing = tick_counter;
 	player->foodTimer = 0;
+	player->tps = 0;
+	player->lastTPSCalculation = tick_counter;
+	player->real_onGround = 1;
+	player->reachDistance = 6.;
+	player->flightInfraction = 0;
+	player->ldy = 0.;
+	player->lastJump = 0;
+	player->offGroundTime = 0;
+	player->spawnedIn = 0;
+	player->llTick = 0;
 	return player;
+}
+
+int player_onGround(struct player* player) {
+	struct entity* entity = player->entity;
+	struct boundingbox obb;
+	getEntityCollision(entity, &obb);
+	if (obb.minX == obb.maxX || obb.minZ == obb.maxZ || obb.minY == obb.maxY) {
+		return 0;
+	}
+	obb.minY += -.08;
+	struct boundingbox pbb;
+	getEntityCollision(entity, &pbb);
+	double ny = -.08;
+	for (int32_t x = floor(obb.minX); x < floor(obb.maxX + 1.); x++) {
+		for (int32_t z = floor(obb.minZ); z < floor(obb.maxZ + 1.); z++) {
+			for (int32_t y = floor(obb.minY); y < floor(obb.maxY + 1.); y++) {
+				block b = getBlockWorld(entity->world, x, y, z);
+				if (b == 0) continue;
+				struct block_info* bi = getBlockInfo(b);
+				if (bi == NULL) continue;
+				for (size_t i = 0; i < bi->boundingBox_count; i++) {
+					struct boundingbox* bb = &bi->boundingBoxes[i];
+					if (b > 0 && bb->minX != bb->maxX && bb->minY != bb->maxY && bb->minZ != bb->maxZ) {
+						if (bb->maxX + x > obb.minX && bb->minX + x < obb.maxX ? (bb->maxY + y > obb.minY && bb->minY + y < obb.maxY ? bb->maxZ + z > obb.minZ && bb->minZ + z < obb.maxZ : 0) : 0) {
+							if (pbb.maxX > bb->minX + x && pbb.minX < bb->maxX + x && pbb.maxZ > bb->minZ + z && pbb.minZ < bb->maxZ + z) {
+								double t;
+								if (ny > 0. && pbb.maxY <= bb->minY + y) {
+									t = bb->minY + y - pbb.maxY;
+									if (t < ny) {
+										ny = t;
+									}
+								} else if (ny < 0. && pbb.minY >= bb->maxY + y) {
+									t = bb->maxY + y - pbb.minY;
+									if (t > ny) {
+										ny = t;
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	return fabs(-.08 - ny) > .001;
+}
+
+void kickPlayer(struct player* player, char* message) {
+	struct packet* pkt = xmalloc(sizeof(struct packet));
+	pkt->id = PKT_PLAY_CLIENT_DISCONNECT;
+	size_t sl = strlen(message);
+	pkt->data.play_client.disconnect.reason = xmalloc(sl + 512);
+	snprintf(pkt->data.play_client.disconnect.reason, sl + 512, "{\"text\": \"%s\"}", message);
+	add_queue(player->outgoingPacket, pkt);
+	flush_outgoing(player);
+	if (player->conn != NULL) player->conn->disconnect = 1;
+	char* nm = xmalloc(sl + 512);
+	snprintf(nm, sl + 512, "Kicked Player %s For Reason %s", player->name, message);
+	broadcast(nm);
+	xfree(nm);
 }
 
 float player_getAttackStrength(struct player* player, float adjust) {

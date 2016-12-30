@@ -470,6 +470,21 @@ double entity_distsq_block(struct entity* ent1, double x, double y, double z) {
 	return (ent1->x - x) * (ent1->x - x) + (ent1->y - y) * (ent1->y - y) + (ent1->z - z) * (ent1->z - z);
 }
 
+double entity_dist_block(struct entity* ent1, double x, double y, double z) {
+	return sqrt((ent1->x - x) * (ent1->x - x) + (ent1->y - y) * (ent1->y - y) + (ent1->z - z) * (ent1->z - z));
+}
+
+struct packet* getEntityPropertiesPacket(struct entity* entity) {
+	struct packet* pkt = xmalloc(sizeof(struct packet));
+	pkt->id = PKT_PLAY_CLIENT_ENTITYPROPERTIES;
+	pkt->data.play_client.entityproperties.entity_id = entity->id;
+	pkt->data.play_client.entityproperties.number_of_properties = 0;
+	if (entity->type == ENT_PLAYER) {
+
+	}
+	return pkt;
+}
+
 void handleMetaByte(struct entity* ent, int index, signed char b) {
 	if (index == 0) {
 		ent->sneaking = b & 0x02 ? 1 : 0;

@@ -1813,7 +1813,39 @@ ssize_t writePacket(struct conn* conn, struct packet* packet) {
 			memcpy(pktbuf + pi, &packet->data.play_client.entityteleport.on_ground, 1);
 			pi += 1;
 		} else if (id == PKT_PLAY_CLIENT_ENTITYPROPERTIES) {
-			//TODO: Manual Implementation
+			//entity_id
+			ENS(4)
+			pi += writeVarInt(packet->data.play_client.entityproperties.entity_id, pktbuf + pi);
+			ENS(4)
+			memcpy(pktbuf + pi, &packet->data.play_client.entityproperties.number_of_properties, 4);
+			swapEndian(pktbuf + pi, 4);
+			pi += 4;
+			for (int32_t i = 0; i < packet->data.play_client.entityproperties.number_of_properties; i++) {
+				struct entity_property* property = &packet->data.play_client.entityproperties.properties[i];
+				slb = strlen(property->key) + 4;
+				ENS(slb)
+				pi += writeString(property->key, pktbuf + pi, ps - pi);
+				ENS(8)
+				memcpy(pktbuf + pi, &property->value, 8);
+				swapEndian(pktbuf + pi, 8);
+				pi += 8;
+				ENS(4)
+				pi += writeVarInt(property->number_of_modifiers, pktbuf + pi);
+				for (int32_t x = 0; x < property->number_of_modifiers; x++) {
+					struct entity_property_modifier* epm = &property->modifiers[x];
+					ENS(16)
+					memcpy(pktbuf + pi, &epm->uuid, 16);
+					swapEndian(pktbuf + pi, 16);
+					pi += 16;
+					ENS(8)
+					memcpy(pktbuf + pi, &epm->amount, 8);
+					swapEndian(pktbuf + pi, 8);
+					pi += 8;
+					ENS(1)
+					memcpy(pktbuf + pi, &epm->operation, 1);
+					pi += 1;
+				}
+			}
 		} else if (id == PKT_PLAY_CLIENT_ENTITYEFFECT) {
 			//entity_id
 			ENS(4)
@@ -2119,7 +2151,11 @@ void freePacket(int state, int dir, struct packet* packet) {
 			} else if (packet->id == PKT_PLAY_CLIENT_COLLECTITEM) {
 			} else if (packet->id == PKT_PLAY_CLIENT_ENTITYTELEPORT) {
 			} else if (packet->id == PKT_PLAY_CLIENT_ENTITYPROPERTIES) {
-				//TODO: Manual Implementation
+				for (int32_t i = 0; i < packet->data.play_client.entityproperties.number_of_properties; i++) {
+					xfree(packet->data.play_client.entityproperties.properties[i].key);
+					xfree(packet->data.play_client.entityproperties.properties[i].modifiers);
+				}
+				xfree(packet->data.play_client.entityproperties.properties);
 			} else if (packet->id == PKT_PLAY_CLIENT_ENTITYEFFECT) {
 			}
 		}
