@@ -73,14 +73,16 @@ void init_base_commands() {
 	registerCommand("spawn", &command_spawn);
 }
 
+typedef void (*command_callback)(struct player* player, char** args, size_t args_count);
+
 struct command {
-		char* command;
-		void (*callback)(struct player* player, char** args, size_t args_count);
+	char* command;
+	command_callback callback;
 };
 
 struct collection* registered_commands;
 
-void registerCommand(char* command, void (*callback)(struct player* player, char** args, size_t args_count)) {
+void registerCommand(char* command, command_callback callback) {
 	if (registered_commands == NULL) registered_commands = new_collection(16, 0);
 	struct command* com = xmalloc(sizeof(struct command));
 	com->command = xstrdup(command, 0);
