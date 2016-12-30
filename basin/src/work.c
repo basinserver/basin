@@ -64,6 +64,7 @@ void closeConn(struct work_param* param, struct conn* conn) {
 }
 
 int handleRead(struct conn* conn, struct work_param* param, int fd) {
+	if (conn->disconnect) return 0;
 	while (conn->readBuffer != NULL && conn->readBuffer_size > 0) {
 		int32_t length = 0;
 		if (!readVarInt(&length, conn->readBuffer, conn->readBuffer_size)) {
@@ -107,6 +108,21 @@ int handleRead(struct conn* conn, struct work_param* param, int fd) {
 					//TODO
 					return -1;
 				} else {
+					int bn = 0;
+					for (size_t i = 0; i < players->size; i++) {
+						struct player* player = players->data[i];
+						if (player != NULL && streq_nocase(inp->data.login_server.loginstart.name, player->name)) {
+							bn = 1;
+							break;
+						}
+					}
+					if (bn) {
+						rep.id = PKT_LOGIN_CLIENT_DISCONNECT;
+						rep.data.login_client.disconnect.reason = xstrdup("{\"text\", \"You are already in the server!\"}", 0);
+						if (writePacket(conn, &rep) < 0) goto rete;
+						conn->disconnect = 1;
+						return 0;
+					}
 					rep.id = PKT_LOGIN_CLIENT_LOGINSUCCESS;
 					rep.data.login_client.loginsuccess.username = inp->data.login_server.loginstart.name;
 					struct uuid uuid;
@@ -165,6 +181,10 @@ int handleRead(struct conn* conn, struct work_param* param, int fd) {
 					rep.data.play_client.playerpositionandlook.pitch = ep->pitch;
 					rep.data.play_client.playerpositionandlook.flags = 0x0;
 					rep.data.play_client.playerpositionandlook.teleport_id = 0;
+					if (writePacket(conn, &rep) < 0) goto rete;
+					rep.id = PKT_PLAY_CLIENT_TIMEUPDATE;
+					rep.data.play_client.timeupdate.time_of_day = ep->world->time;
+					rep.data.play_client.timeupdate.world_age = ep->world->age;
 					if (writePacket(conn, &rep) < 0) goto rete;
 					rep.id = PKT_PLAY_CLIENT_PLAYERLISTITEM;
 					rep.data.play_client.playerlistitem.action_id = 0;

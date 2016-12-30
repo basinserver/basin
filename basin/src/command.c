@@ -54,6 +54,20 @@ void command_tp(struct player* player, char** args, size_t args_count) {
 	teleportPlayer(from, to->entity->x, to->entity->y, to->entity->z);
 }
 
+void command_kick(struct player* player, char** args, size_t args_count) {
+	if (player != NULL) return;
+	if (args_count == 0 || args_count > 2) {
+		sendMessageToPlayer(player, "Usage: /kick <player> OR /kick <player> <reason>");
+		return;
+	}
+	struct player* from = getPlayerByName(args[0]);
+	char* reason = args_count == 1 ? "You Have Been Kicked" : args[1];
+	size_t rl = strlen(reason);
+	char rreason[rl + 512];
+	snprintf(rreason, rl + 512, "{\"text\": \"%s\"}", reason);
+	kickPlayer(from, rreason);
+}
+
 void command_spawn(struct player* player, char** args, size_t args_count) {
 	if (player->entity->health < player->entity->maxHealth) {
 		sendMsgToPlayerf(player, "You must have full health to teleport to spawn!");
@@ -71,6 +85,7 @@ void init_base_commands() {
 	registerCommand("gm", &command_gamemode);
 	registerCommand("tp", &command_tp);
 	registerCommand("spawn", &command_spawn);
+	registerCommand("kick", &command_kick);
 }
 
 struct command {

@@ -1359,6 +1359,13 @@ void tick_player(struct world* world, struct player* player) {
 		pkt->data.play_client.keepalive.keep_alive_id = rand();
 		add_queue(player->outgoingPacket, pkt);
 		flush_outgoing(player);
+	} else if (tick_counter % 200 == 100) {
+		struct packet* pkt = xmalloc(sizeof(struct packet));
+		pkt->id = PKT_PLAY_CLIENT_TIMEUPDATE;
+		pkt->data.play_client.timeupdate.time_of_day = player->world->time;
+		pkt->data.play_client.timeupdate.world_age = player->world->age;
+		add_queue(player->outgoingPacket, pkt);
+		flush_outgoing(player);
 	}
 	struct timespec ts;
 	clock_gettime(CLOCK_MONOTONIC, &ts);
@@ -1538,7 +1545,7 @@ void tick_player(struct world* world, struct player* player) {
 		else loadEntity(player, ent);
 	}
 	//printf("%i\n", player->loadedChunks->size);
-	if (player->spawnedIn && !player->entity->inWater && !player->entity->inLava && (player->llTick + 5 < tick_counter) && player->gamemode != 1) {
+	if (player->spawnedIn && !player->entity->inWater && !player->entity->inLava && (player->llTick + 5 < tick_counter) && player->gamemode != 1 && player->entity->health > 0.) {
 		int nrog = player_onGround(player);
 		float dy = player->entity->ly - player->entity->y;
 		if (dy >= 0.) {
@@ -1711,6 +1718,8 @@ void tick_entity(struct world* world, struct entity* entity) {
 }
 
 void tick_world(struct world* world) { //TODO: separate tick threads
+	if (++world->time >= 24000) world->time = 0;
+	world->age++;
 	for (size_t i = 0; i < world->players->size; i++) {
 		struct player* player = (struct player*) world->players->data[i];
 		if (player == NULL) continue;
