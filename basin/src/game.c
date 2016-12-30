@@ -825,13 +825,41 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 			struct block_info* bi2 = getBlockInfo(b2);
 			if (b2 == 0 || bi2 == NULL || bi2->material->replacable) {
 				block tbb = (ci->item << 4) | (ci->damage & 0x0f);
-				if (getBlockInfo(tbb)->onBlockPlaced != NULL) tbb = (*getBlockInfo(tbb)->onBlockPlaced)(player->world, tbb, x, y, z);
-				setBlockWorld(player->world, tbb, x, y, z);
-				if (player->gamemode != 1) {
-					if (--ci->itemCount <= 0) {
-						ci = NULL;
+				struct block_info* tbi = getBlockInfo(tbb);
+				if (tbi == NULL) goto cont;
+				struct boundingbox pbb;
+				int bad = 0;
+				for (size_t x = 0; x < player->world->entities->size; x++) {
+					struct entity* ent = player->world->entities->data[x];
+					if (ent == NULL || entity_distsq_block(ent, x, y, z) > 8. * 8. || !isLiving(ent)) continue;
+					getEntityCollision(ent, &pbb);
+					for (size_t i = 0; i < tbi->boundingBox_count; i++) {
+						struct boundingbox* bb = &tbi->boundingBoxes[i];
+						if (bb == NULL) continue;
+						struct boundingbox abb;
+						abb.minX = bb->minX + x;
+						abb.maxX = bb->maxX + x;
+						abb.minY = bb->minY + y;
+						abb.maxY = bb->maxY + y;
+						abb.minZ = bb->minZ + z;
+						abb.maxZ = bb->maxZ + z;
+						if (boundingbox_intersects(&abb, &pbb)) {
+							bad = 1;
+							break;
+						}
 					}
-					setSlot(player, player->inventory, 36 + player->currentItem, ci, 1, 1);
+				}
+				if (!bad) {
+					if (getBlockInfo(tbb)->onBlockPlaced != NULL) tbb = (*getBlockInfo(tbb)->onBlockPlaced)(player->world, tbb, x, y, z);
+					setBlockWorld(player->world, tbb, x, y, z);
+					if (player->gamemode != 1) {
+						if (--ci->itemCount <= 0) {
+							ci = NULL;
+						}
+						setSlot(player, player->inventory, 36 + player->currentItem, ci, 1, 1);
+					}
+				} else {
+					setBlockWorld(player->world, b2, x, y, z);
 				}
 			} else {
 				setBlockWorld(player->world, b2, x, y, z);
@@ -1664,7 +1692,7 @@ void tick_entity(struct world* world, struct entity* entity) {
 				entity->fallDistance += dy;
 			}
 		} else if (entity->fallDistance > 0.) {
-			if (entity->fallDistance > 4. && !entity->inWater && !entity->inLava) {
+			if (entity->fallDistance > 3. && !entity->inWater && !entity->inLava) {
 				damageEntity(entity, entity->fallDistance - 3., 0);
 				playSound(entity->world, 312, 8, entity->x, entity->y, entity->z, 1., 1.);
 			}
