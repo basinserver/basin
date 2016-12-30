@@ -1364,7 +1364,6 @@ void tick_player(struct world* world, struct player* player) {
 	if (player->lastTPSCalculation + 1000. <= ct) {
 		float time = (float) (ct - player->lastTPSCalculation) / 1000.;
 		player->lastTPSCalculation = ct;
-		printf("%f > %f\n", (float) player->tps / 20., time + .25);
 		if ((float) player->tps / 20. > (time + .25)) {
 			kickPlayer(player, "Ticks Per Second Too High! (FastHeal, Teleport, or Lag?)");
 			return;

@@ -674,8 +674,10 @@ void despawnPlayer(struct world* world, struct player* player) {
 	}
 	for (size_t i = 0; i < player->loadedChunks->size; i++) {
 		struct chunk* pl = (struct chunk*) player->loadedChunks->data[i];
-		if (pl == NULL || pl == player->entity) continue;
-		pl->playersLoaded--;
+		if (pl == NULL) continue;
+		if (--pl->playersLoaded == 0) {
+			unloadChunk(player->world, pl);
+		}
 		player->loadedChunks->data[i] = NULL;
 		player->loadedChunks->count--;
 	}

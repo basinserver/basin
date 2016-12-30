@@ -69,7 +69,9 @@ struct player* newPlayer(struct entity* entity, char* name, struct uuid uuid, st
 	player->lastSwing = tick_counter;
 	player->foodTimer = 0;
 	player->tps = 0;
-	player->lastTPSCalculation = 0.;
+	struct timespec ts;
+	clock_gettime(CLOCK_MONOTONIC, &ts);
+	player->lastTPSCalculation = (double) ts.tv_nsec / 1000000. + (double) ts.tv_sec * 1000.;
 	player->real_onGround = 1;
 	player->reachDistance = 6.;
 	player->flightInfraction = 0;
