@@ -134,11 +134,11 @@ void kickPlayer(struct player* player, char* message) {
 	pkt->id = PKT_PLAY_CLIENT_DISCONNECT;
 	size_t sl = strlen(message);
 	pkt->data.play_client.disconnect.reason = xmalloc(sl + 512);
-	snprintf(pkt->data.play_client.disconnect.reason, sl + 512, "{\"text\": \"%s\"}", message);
+	snprintf(pkt->data.play_client.disconnect.reason, sl + 512, "{\"text\": \"%s\", \"color\": \"red\"}", message);
 	add_queue(player->outgoingPacket, pkt);
 	flush_outgoing(player);
 	if (player->conn != NULL) player->conn->disconnect = 1;
-	broadcastf("%sKicked Player %s for reason: %s", CHAT_RED, player->name, message);
+	broadcastf("red", "Kicked Player %s for reason: %s", player->name, message);
 }
 
 float player_getAttackStrength(struct player* player, float adjust) {

@@ -40,6 +40,7 @@ struct conn {
 		uint16_t host_port;
 		struct player* player;
 		int disconnect;
+		uint32_t protocolVersion;
 };
 
 void run_accept(struct accept_param* param);

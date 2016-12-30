@@ -46,6 +46,7 @@ void run_accept(struct accept_param* param) {
 		c->host_ip = NULL;
 		c->player = NULL;
 		c->host_port = 0;
+		c->protocolVersion = 0;
 		if (poll(&spfd, 1, -1) < 0) {
 			printf("Error while polling server: %s\n", strerror(errno));
 			xfree(c);

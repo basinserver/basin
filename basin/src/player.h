@@ -63,6 +63,7 @@ struct player {
 		uint8_t spawnedIn;
 		size_t llTick;
 		uint8_t triggerRechunk;
+		uint32_t protocolVersion;
 };
 
 struct player* newPlayer(struct entity* entity, char* name, struct uuid, struct conn* conn, uint8_t gamemode);

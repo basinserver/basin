@@ -29,6 +29,7 @@
 #include <unistd.h>
 #include "tileentity.h"
 #include <stdarg.h>
+#include "xstring.h"
 
 void flush_outgoing(struct player* player) {
 	if (player->conn == NULL) return;
@@ -701,8 +702,8 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 		flush_outgoing (bc_player);
 		END_BROADCAST
 	} else if (inp->id == PKT_PLAY_SERVER_PLAYERDIGGING) {
-		if (entity_dist_block(player->entity, inp->data.play_server.playerdigging.location.x, inp->data.play_server.playerdigging.location.y, inp->data.play_server.playerdigging.location.z) > player->reachDistance) goto cont;
 		if (inp->data.play_server.playerdigging.status == 0) {
+			if (entity_dist_block(player->entity, inp->data.play_server.playerdigging.location.x, inp->data.play_server.playerdigging.location.y, inp->data.play_server.playerdigging.location.z) > player->reachDistance) goto cont;
 			struct block_info* bi = getBlockInfo(getBlockWorld(player->world, inp->data.play_server.playerdigging.location.x, inp->data.play_server.playerdigging.location.y, inp->data.play_server.playerdigging.location.z));
 			if (bi == NULL) goto cont;
 			float hard = bi->hardness;
@@ -730,6 +731,7 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 				memset(&player->digging_position, 0, sizeof(struct encpos));
 			}
 		} else if ((inp->data.play_server.playerdigging.status == 1 || inp->data.play_server.playerdigging.status == 2) && player->digging > 0.) {
+			if (entity_dist_block(player->entity, inp->data.play_server.playerdigging.location.x, inp->data.play_server.playerdigging.location.y, inp->data.play_server.playerdigging.location.z) > player->reachDistance) goto cont;
 			if (inp->data.play_server.playerdigging.status == 2) {
 				block blk = getBlockWorld(player->world, player->digging_position.x, player->digging_position.y, player->digging_position.z);
 				if ((player->digging + player->digspeed) >= 1.) {
@@ -1358,6 +1360,13 @@ void tick_player(struct world* world, struct player* player) {
 		pkt->data.play_client.keepalive.keep_alive_id = rand();
 		add_queue(player->outgoingPacket, pkt);
 		flush_outgoing(player);
+	} else if (tick_counter % 200 == 100) {
+		struct packet* pkt = xmalloc(sizeof(struct packet));
+		pkt->id = PKT_PLAY_CLIENT_TIMEUPDATE;
+		pkt->data.play_client.timeupdate.time_of_day = player->world->time;
+		pkt->data.play_client.timeupdate.world_age = player->world->age;
+		add_queue(player->outgoingPacket, pkt);
+		flush_outgoing(player);
 	}
 	struct timespec ts;
 	clock_gettime(CLOCK_MONOTONIC, &ts);
@@ -1537,7 +1546,7 @@ void tick_player(struct world* world, struct player* player) {
 		else loadEntity(player, ent);
 	}
 	//printf("%i\n", player->loadedChunks->size);
-	if (player->spawnedIn && !player->entity->inWater && !player->entity->inLava && (player->llTick + 5 < tick_counter) && player->gamemode != 1) {
+	if (player->spawnedIn && !player->entity->inWater && !player->entity->inLava && (player->llTick + 5 < tick_counter) && player->gamemode != 1 && player->entity->health > 0.) {
 		int nrog = player_onGround(player);
 		float dy = player->entity->ly - player->entity->y;
 		if (dy >= 0.) {
@@ -1710,6 +1719,8 @@ void tick_entity(struct world* world, struct entity* entity) {
 }
 
 void tick_world(struct world* world) { //TODO: separate tick threads
+	if (++world->time >= 24000) world->time = 0;
+	world->age++;
 	for (size_t i = 0; i < world->players->size; i++) {
 		struct player* player = (struct player*) world->players->data[i];
 		if (player == NULL) continue;
@@ -1742,14 +1753,14 @@ void tick_world(struct world* world) { //TODO: separate tick threads
 	}
 }
 
-void sendMessageToPlayer(struct player* player, char* text) {
+void sendMessageToPlayer(struct player* player, char* text, char* color) {
 	if (player == NULL) {
 		printf("%s\n", text);
 	} else {
 		size_t s = strlen(text) + 512;
 		char* rsx = xstrdup(text, 512);
 		char* rs = xmalloc(512);
-		snprintf(rs, s, "{\"text\": \"%s\"}", replace(replace(rsx, "\\", "\\\\"), "\"", "\\\""));
+		snprintf(rs, s, "{\"text\": \"%s\", \"color\": \"%s\"}", replace(replace(rsx, "\\", "\\\\"), "\"", "\\\""), color);
 		//printf("<CHAT> %s\n", text);
 		struct packet* pkt = xmalloc(sizeof(struct packet));
 		pkt->id = PKT_PLAY_CLIENT_CHATMESSAGE;
@@ -1761,22 +1772,22 @@ void sendMessageToPlayer(struct player* player, char* text) {
 	}
 }
 
-void sendMsgToPlayerf(struct player* player, char* fmt, ...) {
+void sendMsgToPlayerf(struct player* player, char* color, char* fmt, ...) {
 	va_list args;
 	va_start(args, fmt);
 	size_t len = varstrlen(fmt, args);
 	char* bct = xmalloc(len);
 	vsnprintf(bct, len, fmt, args);
 	va_end(args);
-	sendMessageToPlayer(player, bct);
+	sendMessageToPlayer(player, bct, color);
 	xfree(bct);
 }
 
-void broadcast(char* text) {
+void broadcast(char* text, char* color) {
 	size_t s = strlen(text) + 512;
 	char* rsx = xstrdup(text, 512);
 	char* rs = xmalloc(512);
-	snprintf(rs, s, "{\"text\": \"%s\"}", replace(replace(rsx, "\\", "\\\\"), "\"", "\\\""));
+	snprintf(rs, s, "{\"text\": \"%s\", \"color\": \"%s\"}", replace(replace(rsx, "\\", "\\\\"), "\"", "\\\""), color);
 	printf("<CHAT> %s\n", text);
 	BEGIN_BROADCAST (players)
 	struct packet* pkt = xmalloc(sizeof(struct packet));
@@ -1789,13 +1800,13 @@ void broadcast(char* text) {
 	xfree(rsx);
 }
 
-void broadcastf(char* fmt, ...) {
+void broadcastf(char* color, char* fmt, ...) {
 	va_list args;
 	va_start(args, fmt);
 	size_t len = varstrlen(fmt, args);
 	char* bct = xmalloc(len);
 	vsnprintf(bct, len, fmt, args);
 	va_end(args);
-	broadcast(bct);
+	broadcast(bct, color);
 	xfree(bct);
 }

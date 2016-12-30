@@ -597,6 +597,8 @@ int loadWorld(struct world* world, char* path) {
 	world->spawnpos.x = getNBTChild(data, "SpawnX")->data.nbt_int;
 	world->spawnpos.y = getNBTChild(data, "SpawnY")->data.nbt_int;
 	world->spawnpos.z = getNBTChild(data, "SpawnZ")->data.nbt_int;
+	world->time = getNBTChild(data, "DayTime")->data.nbt_long;
+	world->age = getNBTChild(data, "Time")->data.nbt_long;
 	world->lpa = xstrdup(path, 0);
 	printf("spawn: %i, %i, %i\n", world->spawnpos.x, world->spawnpos.y, world->spawnpos.z);
 	snprintf(lp, PATH_MAX, "%s/region/", path);
