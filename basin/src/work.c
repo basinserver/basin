@@ -40,7 +40,7 @@ void closeConn(struct work_param* param, struct conn* conn) {
 	}
 	if (conn->player != NULL) {
 		rem_collection(players, conn->player);
-		broadcastf("%s%s has left the server!", CHAT_YELLOW, conn->player->name);
+		broadcastf("yellow", "%s has left the server!", conn->player->name);
 		for (size_t i = 0; i < players->size; i++) {
 			struct player* plx = (struct player*) players->data[i];
 			if (plx != NULL) {
@@ -237,7 +237,7 @@ int handleRead(struct conn* conn, struct work_param* param, int fd) {
 					rep.data.play_client.timeupdate.time_of_day = player->world->time;
 					rep.data.play_client.timeupdate.world_age = player->world->age;
 					if (writePacket(conn, &rep) < 0) goto rete;
-					broadcastf("%s%s has joined the server!", CHAT_YELLOW, player->name);
+					broadcastf("yellow", "%s has joined the server!", player->name);
 					const char* mip = NULL;
 					char tip[48];
 					if (conn->addr.sin6_family == AF_INET) {

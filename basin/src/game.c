@@ -1753,14 +1753,14 @@ void tick_world(struct world* world) { //TODO: separate tick threads
 	}
 }
 
-void sendMessageToPlayer(struct player* player, char* text) {
+void sendMessageToPlayer(struct player* player, char* text, char* color) {
 	if (player == NULL) {
 		printf("%s\n", text);
 	} else {
 		size_t s = strlen(text) + 512;
 		char* rsx = xstrdup(text, 512);
 		char* rs = xmalloc(512);
-		snprintf(rs, s, "{\"text\": \"%s\"}", replace(replace(rsx, "\\", "\\\\"), "\"", "\\\""));
+		snprintf(rs, s, "{\"text\": \"%s\", \"color\": \"%s\"}", replace(replace(rsx, "\\", "\\\\"), "\"", "\\\""), color);
 		//printf("<CHAT> %s\n", text);
 		struct packet* pkt = xmalloc(sizeof(struct packet));
 		pkt->id = PKT_PLAY_CLIENT_CHATMESSAGE;
@@ -1772,22 +1772,22 @@ void sendMessageToPlayer(struct player* player, char* text) {
 	}
 }
 
-void sendMsgToPlayerf(struct player* player, char* fmt, ...) {
+void sendMsgToPlayerf(struct player* player, char* color, char* fmt, ...) {
 	va_list args;
 	va_start(args, fmt);
 	size_t len = varstrlen(fmt, args);
 	char* bct = xmalloc(len);
 	vsnprintf(bct, len, fmt, args);
 	va_end(args);
-	sendMessageToPlayer(player, bct);
+	sendMessageToPlayer(player, bct, color);
 	xfree(bct);
 }
 
-void broadcast(char* text) {
+void broadcast(char* text, char* color) {
 	size_t s = strlen(text) + 512;
 	char* rsx = xstrdup(text, 512);
 	char* rs = xmalloc(512);
-	snprintf(rs, s, "{\"text\": \"%s\"}", replace(replace(rsx, "\\", "\\\\"), "\"", "\\\""));
+	snprintf(rs, s, "{\"text\": \"%s\", \"color\": \"%s\"}", replace(replace(rsx, "\\", "\\\\"), "\"", "\\\""), color);
 	printf("<CHAT> %s\n", text);
 	BEGIN_BROADCAST (players)
 	struct packet* pkt = xmalloc(sizeof(struct packet));
@@ -1800,13 +1800,13 @@ void broadcast(char* text) {
 	xfree(rsx);
 }
 
-void broadcastf(char* fmt, ...) {
+void broadcastf(char* color, char* fmt, ...) {
 	va_list args;
 	va_start(args, fmt);
 	size_t len = varstrlen(fmt, args);
 	char* bct = xmalloc(len);
 	vsnprintf(bct, len, fmt, args);
 	va_end(args);
-	broadcast(bct);
+	broadcast(bct, color);
 	xfree(bct);
 }
