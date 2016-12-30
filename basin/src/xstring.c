@@ -10,7 +10,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include "util.h"
-#include <stdarg.h>
+#include "xstring.h"
 
 char* trim(char* str) {
 	if (str == NULL) return NULL;

@@ -9,6 +9,7 @@
 #define XSTRING_H_
 
 #include <string.h>
+#include <stdarg.h>
 
 char* trim(char* str);
 
