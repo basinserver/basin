@@ -10,6 +10,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include "util.h"
+#include <stdarg.h>
 
 char* trim(char* str) {
 	if (str == NULL) return NULL;
@@ -269,3 +270,20 @@ int strisunum(const char* str) {
 	return 1;
 }
 
+size_t varstrlen(const char* fmt, const va_list args) {
+	va_list args_cpy;
+	va_copy(args_cpy, args);
+
+	size_t len = strlen(fmt) + 64;
+	for (const char* p = fmt; *p != '\0'; p++) {
+		if (*p != '%') continue;
+		switch (*++p) {
+		case 's':
+			len += strlen(va_arg(args_cpy, char *));
+			break;
+		default:
+		va_arg(args_cpy, int); // pop from list
+	}
+}
+return len;
+}

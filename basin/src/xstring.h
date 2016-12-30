@@ -40,4 +40,6 @@ char* replace_nocase(char* str, char* from, char* to);
 
 int strisunum(const char* str);
 
+size_t varstrlen(const char* fmt, const va_list args);
+
 #endif /* XSTRING_H_ */

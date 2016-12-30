@@ -30,7 +30,4 @@ int memeq(const unsigned char* mem1, size_t mem1_size, const unsigned char* mem2
 
 int memseq(const unsigned char* mem, size_t mem_size, const unsigned char c);
 
-// Estimates vararg string length based on format string and STRING ARGS ONLY
-size_t varstrlen(const char* fmt, const va_list args);
-
 #endif /* UTIL_H_ */

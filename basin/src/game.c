@@ -29,6 +29,7 @@
 #include <unistd.h>
 #include "tileentity.h"
 #include <stdarg.h>
+#include "xstring.h"
 
 void flush_outgoing(struct player* player) {
 	if (player->conn == NULL) return;
