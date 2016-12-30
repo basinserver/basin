@@ -327,30 +327,16 @@ int main(int argc, char* argv[]) {
 			close (sfd);
 			continue;
 		}
-		const char* neth = getConfigValue(serv, "world-nether");
-		if (ovr == NULL) {
-			if (serv->id != NULL) errlog(delog, "No world-nether defined for server: %s", serv->id);
-			else errlog(delog, "No world-nether defined for server");
-			close (sfd);
-			continue;
-		}
-		const char* ed = getConfigValue(serv, "world-the-end");
-		if (ovr == NULL) {
-			if (serv->id != NULL) errlog(delog, "No world-the-end defined for server: %s", serv->id);
-			else errlog(delog, "No world-the-end defined for server");
-			close (sfd);
-			continue;
-		}
 		overworld = newWorld();
 		loadWorld(overworld, ovr);
 		nether = newWorld();
-		loadWorld(nether, neth);
-		endworld = newWorld();
-		loadWorld(endworld, ed);
+		//loadWorld(nether, neth);
+		//endworld = newWorld();
+		//loadWorld(endworld, ed);
 		worlds = new_collection(0, 1);
 		add_collection(worlds, overworld);
-		add_collection(worlds, nether);
-		add_collection(worlds, endworld);
+		//add_collection(worlds, nether);
+		//add_collection(worlds, endworld);
 		struct accept_param* ap = xmalloc(sizeof(struct accept_param));
 		ap->port = port;
 		ap->server_fd = sfd;

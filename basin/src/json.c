@@ -207,6 +207,7 @@ void freeJSON(struct json_object* root) {
 		for (size_t i = 0; i < root->child_count; i++) {
 			if (root->children[i] != NULL) {
 				freeJSON(root->children[i]);
+				xfree(root->children[i]);
 				root->children[i] = NULL;
 			}
 		}

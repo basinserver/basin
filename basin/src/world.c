@@ -438,6 +438,7 @@ void freeChunk(struct chunk* chunk) {
 		if (cs->blocks != NULL) xfree(cs->blocks);
 		if (cs->palette != NULL) xfree(cs->palette);
 		if (cs->skyLight != NULL) xfree(cs->skyLight);
+		xfree(cs);
 	}
 	for (size_t i = 0; i < chunk->tileEntities->size; i++) {
 		if (chunk->tileEntities->data[i] != NULL) {
@@ -673,8 +674,10 @@ void despawnPlayer(struct world* world, struct player* player) {
 	}
 	for (size_t i = 0; i < player->loadedChunks->size; i++) {
 		struct chunk* pl = (struct chunk*) player->loadedChunks->data[i];
-		if (pl == NULL || pl == player->entity) continue;
-		pl->playersLoaded--;
+		if (pl == NULL) continue;
+		if (--pl->playersLoaded == 0) {
+			unloadChunk(player->world, pl);
+		}
 		player->loadedChunks->data[i] = NULL;
 		player->loadedChunks->count--;
 	}

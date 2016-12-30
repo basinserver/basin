@@ -453,6 +453,7 @@ struct entity* newEntity(int32_t id, float x, float y, float z, uint8_t type, fl
 	e->world = NULL;
 	e->inWater = 0;
 	e->inLava = 0;
+	e->invincibilityTicks = 0;
 	e->loadingPlayers = new_collection(0, 0);
 	memset(&e->data, 0, sizeof(union entity_data));
 	return e;

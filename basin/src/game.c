@@ -625,7 +625,6 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 		player->entity->lyaw = player->entity->yaw;
 		player->entity->lpitch = player->entity->pitch;
 		if (moveEntity(player->entity, inp->data.play_server.playerposition.x - lx, inp->data.play_server.playerposition.feet_y - ly, inp->data.play_server.playerposition.z - lz)) {
-			printf("rst1\n");
 			teleportPlayer(player, lx, ly, lz);
 		} else {
 			player->entity->lx = lx;
@@ -659,7 +658,6 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 		BEGIN_BROADCAST(player->entity->loadingPlayers)
 		sendEntityMove(bc_player, player->entity);
 		END_BROADCAST
-
 	} else if (inp->id == PKT_PLAY_SERVER_PLAYERPOSITIONANDLOOK) {
 		player->tps++;
 		double lx = player->entity->x;
@@ -668,7 +666,6 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 		player->entity->lyaw = player->entity->yaw;
 		player->entity->lpitch = player->entity->pitch;
 		if (moveEntity(player->entity, inp->data.play_server.playerpositionandlook.x - lx, inp->data.play_server.playerpositionandlook.feet_y - ly, inp->data.play_server.playerpositionandlook.z - lz)) {
-			printf("rst2\n");
 			teleportPlayer(player, lx, ly, lz);
 		} else {
 			player->entity->lx = lx;
@@ -825,13 +822,41 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 			struct block_info* bi2 = getBlockInfo(b2);
 			if (b2 == 0 || bi2 == NULL || bi2->material->replacable) {
 				block tbb = (ci->item << 4) | (ci->damage & 0x0f);
-				if (getBlockInfo(tbb)->onBlockPlaced != NULL) tbb = (*getBlockInfo(tbb)->onBlockPlaced)(player->world, tbb, x, y, z);
-				setBlockWorld(player->world, tbb, x, y, z);
-				if (player->gamemode != 1) {
-					if (--ci->itemCount <= 0) {
-						ci = NULL;
+				struct block_info* tbi = getBlockInfo(tbb);
+				if (tbi == NULL) goto cont;
+				struct boundingbox pbb;
+				int bad = 0;
+				for (size_t x = 0; x < player->world->entities->size; x++) {
+					struct entity* ent = player->world->entities->data[x];
+					if (ent == NULL || entity_distsq_block(ent, x, y, z) > 8. * 8. || !isLiving(ent)) continue;
+					getEntityCollision(ent, &pbb);
+					for (size_t i = 0; i < tbi->boundingBox_count; i++) {
+						struct boundingbox* bb = &tbi->boundingBoxes[i];
+						if (bb == NULL) continue;
+						struct boundingbox abb;
+						abb.minX = bb->minX + x;
+						abb.maxX = bb->maxX + x;
+						abb.minY = bb->minY + y;
+						abb.maxY = bb->maxY + y;
+						abb.minZ = bb->minZ + z;
+						abb.maxZ = bb->maxZ + z;
+						if (boundingbox_intersects(&abb, &pbb)) {
+							bad = 1;
+							break;
+						}
 					}
-					setSlot(player, player->inventory, 36 + player->currentItem, ci, 1, 1);
+				}
+				if (!bad) {
+					if (getBlockInfo(tbb)->onBlockPlaced != NULL) tbb = (*getBlockInfo(tbb)->onBlockPlaced)(player->world, tbb, x, y, z);
+					setBlockWorld(player->world, tbb, x, y, z);
+					if (player->gamemode != 1) {
+						if (--ci->itemCount <= 0) {
+							ci = NULL;
+						}
+						setSlot(player, player->inventory, 36 + player->currentItem, ci, 1, 1);
+					}
+				} else {
+					setBlockWorld(player->world, b2, x, y, z);
 				}
 			} else {
 				setBlockWorld(player->world, b2, x, y, z);
@@ -1333,10 +1358,12 @@ void tick_player(struct world* world, struct player* player) {
 		add_queue(player->outgoingPacket, pkt);
 		flush_outgoing(player);
 	}
-	if (player->lastTPSCalculation + 20 <= tick_counter) {
-		float time = (float) (tick_counter - player->lastTPSCalculation) * 50. / 1000.;
-		player->lastTPSCalculation = tick_counter;
-		//printf("%i, %f\n", player->tps, time);
+	struct timespec ts;
+	clock_gettime(CLOCK_MONOTONIC, &ts);
+	double ct = (double) ts.tv_nsec / 1000000. + (double) ts.tv_sec * 1000.;
+	if (player->lastTPSCalculation + 1000. <= ct) {
+		float time = (float) (ct - player->lastTPSCalculation) / 1000.;
+		player->lastTPSCalculation = ct;
 		if ((float) player->tps / 20. > (time + .25)) {
 			kickPlayer(player, "Ticks Per Second Too High! (FastHeal, Teleport, or Lag?)");
 			return;
@@ -1664,7 +1691,7 @@ void tick_entity(struct world* world, struct entity* entity) {
 				entity->fallDistance += dy;
 			}
 		} else if (entity->fallDistance > 0.) {
-			if (entity->fallDistance > 4. && !entity->inWater && !entity->inLava) {
+			if (entity->fallDistance > 3. && !entity->inWater && !entity->inLava) {
 				damageEntity(entity, entity->fallDistance - 3., 0);
 				playSound(entity->world, 312, 8, entity->x, entity->y, entity->z, 1., 1.);
 			}
