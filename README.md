@@ -10,6 +10,7 @@ A Minecraft Server written in C.
 * Item Entities from Block Drops and Player Throwing
 * Entities
 * Chests, Furnaces, Crafting
+* PvP
 
 # Planned Features
 * Natural Mob Spawning & AI
@@ -19,7 +20,6 @@ A Minecraft Server written in C.
 * Entities-by-chunk Logic - Hold Millions of Entities in a World
 * Block Physics & Updates
 * Fall Damage
-* PvP
 * World Generation
 * Lighting
 * Comprehensive Opt-in Anticheat

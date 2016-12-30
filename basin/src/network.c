@@ -5,7 +5,6 @@
  *      Author: root
  */
 
-#include "network.h"
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
@@ -21,6 +20,9 @@
 #include "accept.h"
 #include "packet.h"
 #include "util.h"
+#include <stdint.h>
+#include <stdlib.h>
+#include "network.h"
 
 void swapEndian(void* dou, size_t ss) {
 	uint8_t* pxs = (uint8_t*) dou;

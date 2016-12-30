@@ -12,6 +12,7 @@
 #include "xstring.h"
 #include <errno.h>
 #include "util.h"
+#include <unistd.h>
 
 struct collection* item_infos;
 

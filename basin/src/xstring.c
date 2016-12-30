@@ -203,7 +203,7 @@ char* replace(char* str, char* from, char* to) {
 	size_t fl = strlen(from);
 	size_t tl = strlen(to);
 	size_t ml = 0;
-	for (size_t i = 0; i < sl - fl; i++) {
+	for (size_t i = 0; i < sl; i++) {
 		char c = str[i];
 		if (c == from[ml]) {
 			if (++ml == fl) {
@@ -219,6 +219,7 @@ char* replace(char* str, char* from, char* to) {
 					memcpy(str + i - fl + 1, to, tl);
 				}
 				i += (tl - fl);
+				ml = 0;
 			}
 		} else ml = 0;
 	}
@@ -230,7 +231,7 @@ char* replace_nocase(char* str, char* from, char* to) {
 	size_t fl = strlen(from);
 	size_t tl = strlen(to);
 	size_t ml = 0;
-	for (size_t i = 0; i < sl - fl; i++) {
+	for (size_t i = 0; i < sl; i++) {
 		char c = str[i];
 		if (c >= 'A' && c <= 'Z') c += ' ';
 		char c2 = from[ml];
@@ -249,6 +250,7 @@ char* replace_nocase(char* str, char* from, char* to) {
 					memcpy(str + i - fl + 1, to, tl);
 				}
 				i += (tl - fl);
+				ml = 0;
 			}
 		} else ml = 0;
 	}

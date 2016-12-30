@@ -5,6 +5,7 @@
  *      Author: root
  */
 
+#include "block.h"
 #include "world.h"
 #include "globals.h"
 #include "util.h"
@@ -17,7 +18,6 @@
 #include <stdio.h>
 #include "entity.h"
 #include "game.h"
-#include "block.h"
 #include <math.h>
 #include "crafting.h"
 #include "inventory.h"
@@ -25,6 +25,9 @@
 #include "network.h"
 #include "smelting.h"
 #include "server.h"
+#include "command.h"
+#include <unistd.h>
+#include "tileentity.h"
 
 void flush_outgoing(struct player* player) {
 	if (player->conn == NULL) return;
@@ -226,32 +229,37 @@ struct slot* getCraftResult(struct slot** slots, size_t slot_count) { // 012/345
 			os[3] = NULL;
 		}
 	} else if (slot_count == 9) {
-		for (int z = 0; z < 2; z++)
-			for (int x = 0; x < 2; x++) {
-				if (os[3 * x] == NULL && os[3 * x + 1] == NULL && os[3 * x + 2] == NULL) {
-					os[3 * x] = os[3 * (x + 1)];
-					os[3 * x + 1] = os[3 * (x + 1) + 1];
-					os[3 * x + 2] = os[3 * (x + 1) + 2];
-					os[3 * (x + 1)] = NULL;
-					os[3 * (x + 1) + 1] = NULL;
-					os[3 * (x + 1) + 2] = NULL;
-				}
+		if (!os[3] && !os[4] && !os[5]) {
+			memmove(os + 3, os + 6, 3 * sizeof(struct slot*));
+			memset(os + 6, 0, 3 * sizeof(struct slot*));
+		}
+		if (!os[0] && !os[1] && !os[2]) {
+			memmove(os, os + 3, 6 * sizeof(struct slot*));
+			memset(os + 6, 0, 3 * sizeof(struct slot*));
+		}
+		if (!os[0] && !os[3] && !os[6]) {
+			os[0] = os[1];
+			os[3] = os[4];
+			os[6] = os[7];
+			os[1] = os[2];
+			os[4] = os[5];
+			os[7] = os[8];
+			os[2] = NULL;
+			os[5] = NULL;
+			os[8] = NULL;
+			if (!os[0] && !os[3] && !os[6]) {
+				os[0] = os[1];
+				os[3] = os[4];
+				os[6] = os[7];
+				os[1] = NULL;
+				os[4] = NULL;
+				os[7] = NULL;
 			}
-		for (int z = 0; z < 2; z++)
-			for (int x = 1; x >= 0; x--) {
-				if (os[x] == NULL && os[x + 3] == NULL && os[x + 6] == NULL) {
-					os[x] = os[x + 1];
-					os[x + 3] = os[x + 4];
-					os[x + 6] = os[x + 7];
-					os[x + 1] = NULL;
-					os[x + 4] = NULL;
-					os[x + 7] = NULL;
-				}
-			}
+		}
 	}
-	//for (int x = 0; x < slot_count; x++) {
-	//	printf("post %i = %i\n", x, os[x] != NULL);
-	//}
+//for (int x = 0; x < slot_count; x++) {
+//	printf("post %i = %i\n", x, os[x] != NULL);
+//}
 	for (size_t i = 0; i < crafting_recipies->size; i++) {
 		struct crafting_recipe* cr = (struct crafting_recipe*) crafting_recipies->data[i];
 		if (cr == NULL || (cr->width > 2 && slot_count <= 4) || (slot_count == 4 && (cr->slot[6] != NULL || cr->slot[7] != NULL || cr->slot[8] != NULL))) continue;
@@ -294,6 +302,22 @@ struct slot* getCraftResult(struct slot** slots, size_t slot_count) { // 012/345
 			}
 		} else {
 			int gs = 1;
+			if (cr->output.item == ITM_HATCHETWOOD) {
+				for (int x = 0; x < 3; x++) {
+					for (int y = 0; y < 3; y++) {
+						struct slot* oi = (slot_count == 4 && (x > 1 || y > 1)) ? NULL : os[y * (slot_count == 4 ? 2 : 3) + x];
+						printf("oi<%i, %i> = %i\n", x, y, oi == NULL ? -2 : oi->item);
+					}
+				}
+			}
+			if (cr->output.item == ITM_HATCHETWOOD) {
+				for (int x = 0; x < 3; x++) {
+					for (int y = 0; y < 3; y++) {
+						struct slot* cri = x >= cr->width ? NULL : cr->slot[y * 3 + ((cr->width - 1) - x)];
+						printf("cr<%i, %i> = %i\n", x, y, cri == NULL ? -2 : cri->item);
+					}
+				}
+			}
 			for (int x = 0; x < 3; x++) {
 				for (int y = 0; y < 3; y++) {
 					struct slot* cri = cr->slot[y * 3 + x];
@@ -309,7 +333,7 @@ struct slot* getCraftResult(struct slot** slots, size_t slot_count) { // 012/345
 				gs = 1;
 				for (int x = 0; x < 3; x++) {
 					for (int y = 0; y < 3; y++) {
-						struct slot* cri = cr->slot[y * 3 + (2 - x)];
+						struct slot* cri = x >= cr->width ? NULL : cr->slot[y * 3 + ((cr->width - 1) - x)];
 						struct slot* oi = (slot_count == 4 && (x > 1 || y > 1)) ? NULL : os[y * (slot_count == 4 ? 2 : 3) + x];
 						if (!itemsStackable2(cri, oi) && (cri != oi)) {
 							gs = 0;
@@ -415,6 +439,39 @@ void dropPlayerItem(struct player* player, struct slot* drop) {
 	END_BROADCAST
 }
 
+void playSound(struct world* world, int32_t soundID, int32_t soundCategory, float x, float y, float z, float volume, float pitch) {
+	BEGIN_BROADCAST_DISTXYZ(x, y, z, world->players, 64.)
+	struct packet* pkt = xmalloc(sizeof(struct packet));
+	pkt->id = PKT_PLAY_CLIENT_SOUNDEFFECT;
+	pkt->data.play_client.soundeffect.sound_id = 316;
+	pkt->data.play_client.soundeffect.sound_category = 8; //?
+	pkt->data.play_client.soundeffect.effect_position_x = (int32_t)(x * 8.);
+	pkt->data.play_client.soundeffect.effect_position_y = (int32_t)(y * 8.);
+	pkt->data.play_client.soundeffect.effect_position_z = (int32_t)(z * 8.);
+	pkt->data.play_client.soundeffect.volume = 1.;
+	pkt->data.play_client.soundeffect.pitch = 1.;
+	add_queue(bc_player->outgoingPacket, pkt);
+	flush_outgoing (bc_player);
+	END_BROADCAST
+}
+
+void dropPlayerItem_explode(struct player* player, struct slot* drop) {
+	struct entity* item = newEntity(nextEntityID++, player->entity->x, player->entity->y + 1.32, player->entity->z, ENT_ITEMSTACK, 0., 0.);
+	item->data.itemstack.slot = xmalloc(sizeof(struct slot));
+	item->objectData = 1;
+	float f1 = randFloat() * .5;
+	float f2 = randFloat() * M_PI * 2.;
+	item->motX = -sin(f2) * f1;
+	item->motZ = cos(f2) * f1;
+	item->motY = .2;
+	item->data.itemstack.delayBeforeCanPickup = 20;
+	duplicateSlot(drop, item->data.itemstack.slot);
+	spawnEntity(player->world, item);
+	BEGIN_BROADCAST_DIST(player->entity, 128.)
+	loadEntity(bc_player, item);
+	END_BROADCAST
+}
+
 void dropBlockDrops(struct world* world, block blk, struct player* breaker, int32_t x, int32_t y, int32_t z) {
 	struct block_info* bi = getBlockInfo(blk);
 	if (bi->dropItems == NULL) {
@@ -470,36 +527,74 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 		}
 	} else if (inp->id == PKT_PLAY_SERVER_CHATMESSAGE) {
 		char* msg = inp->data.play_server.chatmessage.message;
-		size_t s = strlen(msg) + 512;
-		char* rs = xmalloc(s);
-		snprintf(rs, s, "{\"text\": \"<%s>: %s\"}", player->name, replace(replace(msg, "\\", "\\\\"), "\"", "\\\""));
-		printf("<CHAT> <%s>: %s\n", player->name, msg);
-		BEGIN_BROADCAST (players)
-		struct packet* pkt = xmalloc(sizeof(struct packet));
-		pkt->id = PKT_PLAY_CLIENT_CHATMESSAGE;
-		pkt->data.play_client.chatmessage.position = 0;
-		pkt->data.play_client.chatmessage.json_data = xstrdup(rs, 0);
-		add_queue(bc_player->outgoingPacket, pkt);
-		flush_outgoing (bc_player);
-		END_BROADCAST xfree(rs);
+		if (startsWith(msg, "/")) {
+			callCommand(player, msg + 1);
+		} else {
+			size_t s = strlen(msg) + 512;
+			char* rs = xmalloc(s);
+			snprintf(rs, s, "{\"text\": \"<%s>: %s\"}", player->name, replace(replace(msg, "\\", "\\\\"), "\"", "\\\""));
+			printf("<CHAT> <%s>: %s\n", player->name, msg);
+			BEGIN_BROADCAST (players)
+			struct packet* pkt = xmalloc(sizeof(struct packet));
+			pkt->id = PKT_PLAY_CLIENT_CHATMESSAGE;
+			pkt->data.play_client.chatmessage.position = 0;
+			pkt->data.play_client.chatmessage.json_data = xstrdup(rs, 0);
+			add_queue(bc_player->outgoingPacket, pkt);
+			flush_outgoing (bc_player);
+			END_BROADCAST xfree(rs);
+		}
 	} else if (inp->id == PKT_PLAY_SERVER_PLAYER) {
+		player->entity->lx = player->entity->x;
+		player->entity->ly = player->entity->y;
+		player->entity->lz = player->entity->z;
+		player->entity->lyaw = player->entity->yaw;
+		player->entity->lpitch = player->entity->pitch;
 		player->entity->onGround = inp->data.play_server.player.on_ground;
 	} else if (inp->id == PKT_PLAY_SERVER_PLAYERPOSITION) {
+		player->entity->lx = player->entity->x;
+		player->entity->ly = player->entity->y;
+		player->entity->lz = player->entity->z;
+		player->entity->lyaw = player->entity->yaw;
+		player->entity->lpitch = player->entity->pitch;
 		player->entity->onGround = inp->data.play_server.playerposition.on_ground;
 		player->entity->x = inp->data.play_server.playerposition.x;
 		player->entity->y = inp->data.play_server.playerposition.feet_y;
 		player->entity->z = inp->data.play_server.playerposition.z;
+		float dx = player->entity->x - player->entity->lx;
+		float dy = player->entity->y - player->entity->ly;
+		float dz = player->entity->z - player->entity->lz;
+		if (dx * dx + dy * dy + dz * dz > 5. * 5. * 5.) {
+			teleportPlayer(player, player->entity->lx, player->entity->ly, player->entity->lz);
+			printf("Player '%s' attempted to move too fast!\n", player->name);
+		}
 	} else if (inp->id == PKT_PLAY_SERVER_PLAYERLOOK) {
+		player->entity->lx = player->entity->x;
+		player->entity->ly = player->entity->y;
+		player->entity->lz = player->entity->z;
+		player->entity->lyaw = player->entity->yaw;
+		player->entity->lpitch = player->entity->pitch;
 		player->entity->onGround = inp->data.play_server.playerlook.on_ground;
 		player->entity->yaw = inp->data.play_server.playerlook.yaw;
 		player->entity->pitch = inp->data.play_server.playerlook.pitch;
 	} else if (inp->id == PKT_PLAY_SERVER_PLAYERPOSITIONANDLOOK) {
+		player->entity->lx = player->entity->x;
+		player->entity->ly = player->entity->y;
+		player->entity->lz = player->entity->z;
+		player->entity->lyaw = player->entity->yaw;
+		player->entity->lpitch = player->entity->pitch;
 		player->entity->onGround = inp->data.play_server.playerpositionandlook.on_ground;
 		player->entity->x = inp->data.play_server.playerpositionandlook.x;
 		player->entity->y = inp->data.play_server.playerpositionandlook.feet_y;
 		player->entity->z = inp->data.play_server.playerpositionandlook.z;
 		player->entity->yaw = inp->data.play_server.playerpositionandlook.yaw;
 		player->entity->pitch = inp->data.play_server.playerpositionandlook.pitch;
+		float dx = player->entity->x - player->entity->lx;
+		float dy = player->entity->y - player->entity->ly;
+		float dz = player->entity->z - player->entity->lz;
+		if (dx * dx + dy * dy + dz * dz > 5. * 5. * 5.) {
+			teleportPlayer(player, player->entity->lx, player->entity->ly, player->entity->lz);
+			printf("Player '%s' attempted to move too fast!\n", player->name);
+		}
 	} else if (inp->id == PKT_PLAY_SERVER_ANIMATION) {
 		player->lastSwing = tick_counter;
 		BEGIN_BROADCAST_EXCEPT_DIST(player, player->entity, 128.)
@@ -528,6 +623,8 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 				flush_outgoing (bc_player);
 				END_BROADCAST
 			} else if (hard == 0. || player->gamemode == 1) {
+				struct slot* slot = getSlot(player, player->inventory, 36 + player->currentItem);
+				if (slot != NULL && (slot->item == ITM_SWORDWOOD || slot->item == ITM_SWORDGOLD || slot->item == ITM_SWORDSTONE || slot->item == ITM_SWORDIRON || slot->item == ITM_SWORDDIAMOND)) goto cont;
 				block blk = getBlockWorld(player->world, inp->data.play_server.playerdigging.location.x, inp->data.play_server.playerdigging.location.y, inp->data.play_server.playerdigging.location.z);
 				setBlockWorld(player->world, 0, inp->data.play_server.playerdigging.location.x, inp->data.play_server.playerdigging.location.y, inp->data.play_server.playerdigging.location.z);
 				if (player->gamemode != 1) dropBlockDrops(player->world, blk, player, inp->data.play_server.playerdigging.location.x, inp->data.play_server.playerdigging.location.y, inp->data.play_server.playerdigging.location.z);
@@ -537,7 +634,6 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 		} else if ((inp->data.play_server.playerdigging.status == 1 || inp->data.play_server.playerdigging.status == 2) && player->digging > 0.) {
 			if (inp->data.play_server.playerdigging.status == 2) {
 				block blk = getBlockWorld(player->world, player->digging_position.x, player->digging_position.y, player->digging_position.z);
-				printf("digging = %f, digspeed = %f total = %f\n", player->digging, player->digspeed, player->digging + player->digspeed);
 				if ((player->digging + player->digspeed) >= 1.) {
 					setBlockWorld(player->world, 0, player->digging_position.x, player->digging_position.y, player->digging_position.z);
 					if (player->gamemode != 1) dropBlockDrops(player->world, blk, player, player->digging_position.x, player->digging_position.y, player->digging_position.z);
@@ -650,11 +746,11 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 		int32_t mode = inp->data.play_server.clickwindow.mode;
 		int16_t slot = inp->data.play_server.clickwindow.slot;
 		int s0ic = inv->type == INVTYPE_PLAYERINVENTORY || inv->type == INVTYPE_WORKBENCH;
-		printf("click mode=%i, b=%i, slot=%i\n", mode, b, slot);
+		//printf("click mode=%i, b=%i, slot=%i\n", mode, b, slot);
 		if (slot >= 0) {
 			struct slot* invs = getSlot(player, inv, slot);
 			if ((mode != 4 && mode != 2 && ((inp->data.play_server.clickwindow.clicked_item.item < 0) != (invs == NULL))) || (invs != NULL && inp->data.play_server.clickwindow.clicked_item.item >= 0 && !(itemsStackable(invs, &inp->data.play_server.clickwindow.clicked_item) && invs->itemCount == inp->data.play_server.clickwindow.clicked_item.itemCount))) {
-				printf("desync\n");
+				//printf("desync\n");
 				struct packet* pkt = xmalloc(sizeof(struct packet));
 				pkt->id = PKT_PLAY_CLIENT_CONFIRMTRANSACTION;
 				pkt->data.play_client.confirmtransaction.window_id = inv->windowID;
@@ -1069,61 +1165,19 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 			}
 		}
 	} else if (inp->id == PKT_PLAY_SERVER_CLOSEWINDOW) {
-		struct inventory* inv = NULL;
-		if (inp->data.play_server.closewindow.window_id == 0 && player->openInv == NULL) inv = player->inventory;
-		else if (player->openInv != NULL && inp->data.play_server.closewindow.window_id == player->openInv->windowID) inv = player->openInv;
-		if (inv != NULL) {
-			if (player->inHand != NULL) {
-				dropPlayerItem(player, player->inHand);
-				freeSlot(player->inHand);
-				xfree(player->inHand);
-				player->inHand = NULL;
-			}
-			if (inv->type == INVTYPE_PLAYERINVENTORY) {
-				for (int i = 1; i < 5; i++) {
-					if (inv->slots[i] != NULL) {
-						dropPlayerItem(player, inv->slots[i]);
-						setSlot(player, inv, i, NULL, 0, 1);
-					}
-				}
-			} else if (inv->type == INVTYPE_WORKBENCH) {
-				for (int i = 1; i < 10; i++) {
-					if (inv->slots[i] != NULL) {
-						dropPlayerItem(player, inv->slots[i]);
-						setSlot(player, inv, i, NULL, 0, 1);
-					}
-				}
-				freeInventory(inv);
-				inv = NULL;
-			} else if (inv->type == INVTYPE_CHEST) {
-				if (inv->te != NULL) {
-					BEGIN_BROADCAST_DIST(player->entity, 128.)
-					struct packet* pkt = xmalloc(sizeof(struct packet));
-					pkt->id = PKT_PLAY_CLIENT_BLOCKACTION;
-					pkt->data.play_client.blockaction.location.x = inv->te->x;
-					pkt->data.play_client.blockaction.location.y = inv->te->y;
-					pkt->data.play_client.blockaction.location.z = inv->te->z;
-					pkt->data.play_client.blockaction.action_id = 1;
-					pkt->data.play_client.blockaction.action_param = inv->players->count - 1;
-					pkt->data.play_client.blockaction.block_type = getBlockWorld(player->world, inv->te->x, inv->te->y, inv->te->z) >> 4;
-					add_queue(bc_player->outgoingPacket, pkt);
-					flush_outgoing (bc_player);
-					END_BROADCAST
-				}
-			}
-		}
-		if (inv != NULL && inv->type != INVTYPE_PLAYERINVENTORY) rem_collection(inv->players, player);
-		player->openInv = NULL; // TODO: free sometimes?
+		player_closeWindow(player, inp->data.play_server.closewindow.window_id);
 	} else if (inp->id == PKT_PLAY_SERVER_USEENTITY) {
 		if (inp->data.play_server.useentity.type == 1) {
 			struct entity* ent = getEntity(player->world, inp->data.play_server.useentity.target);
-			if (ent != NULL && ent != player->entity && ent->health > 0.) {
+			if (ent != NULL && ent != player->entity && ent->health > 0. && ent->world == player->world && entity_dist(ent, player->entity) < 4. && (tick_counter - player->lastSwing) >= 3) {
 				damageEntityWithItem(ent, player->entity, getSlot(player, player->inventory, 36 + player->currentItem));
 			}
 			player->lastSwing = tick_counter;
 		}
 	} else if (inp->id == PKT_PLAY_SERVER_CLIENTSTATUS) {
 		if (inp->data.play_server.clientstatus.action_id == 0 && player->entity->health <= 0.) {
+			despawnEntity(player->world, player->entity);
+			spawnEntity(player->world, player->entity);
 			player->entity->health = 20.;
 			player->food = 20;
 			player->saturation = 0.; // TODO
@@ -1143,6 +1197,7 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 			add_queue(player->outgoingPacket, pkt);
 			flush_outgoing(player);
 			teleportPlayer(player, (double) player->world->spawnpos.x + .5, (double) player->world->spawnpos.y, (double) player->world->spawnpos.z + .5); // TODO: make overworld
+			setPlayerGamemode(player, -1);
 		}
 	}
 	cont: ;
@@ -1176,6 +1231,22 @@ void tick_player(struct world* world, struct player* player) {
 		pkt->data.play_client.keepalive.keep_alive_id = rand();
 		add_queue(player->outgoingPacket, pkt);
 		flush_outgoing(player);
+	}
+	if (player->saturation > 0. && player->food >= 20) {
+		if (++player->foodTimer >= 10) {
+			healEntity(player->entity, player->saturation > 6. ? player->saturation / 6. : 1.);
+			player->foodTimer = 0;
+		}
+	} else if (player->food >= 18) {
+		if (++player->foodTimer >= 80) {
+			healEntity(player->entity, 1.);
+			player->foodTimer = 0;
+		}
+	} else if (player->food <= 0) {
+		if (++player->foodTimer >= 80) {
+			if (player->entity->health > 10. || difficulty == 3 || (player->entity->health > 1. && difficulty == 2)) damageEntity(player->entity, 1., 0);
+			player->foodTimer = 0;
+		}
 	}
 	int32_t pcx = ((int32_t) player->entity->x >> 4);
 	int32_t pcz = ((int32_t) player->entity->z >> 4);
@@ -1387,7 +1458,7 @@ void tick_itemstack(struct world* world, struct entity* entity) {
 	for (size_t i = 0; i < world->entities->size; i++) {
 		struct entity* oe = (struct entity*) world->entities->data[i];
 		if (oe == NULL || oe == entity || entity_distsq(entity, oe) > 16. * 16.) continue;
-		if (oe->type == ENT_PLAYER) {
+		if (oe->type == ENT_PLAYER && oe->health > 0.) {
 			getEntityCollision(oe, &oebb);
 			if (boundingbox_intersects(&oebb, &cebb)) {
 				int os = entity->data.itemstack.slot->itemCount;
@@ -1459,11 +1530,34 @@ void tick_entity(struct world* world, struct entity* entity) {
 		if (entity->onGround) entity->motY *= -.5;
 	}
 	if (entity->type == ENT_ITEMSTACK) tick_itemstack(world, entity);
-	entity->lx = entity->x;
-	entity->ly = entity->y;
-	entity->lz = entity->z;
-	entity->lyaw = entity->yaw;
-	entity->lpitch = entity->pitch;
+	if (isLiving(entity->type)) {
+		entity->inWater = entity_inBlock(entity, BLK_WATER, .4, 0) || entity_inBlock(entity, BLK_WATER_1, .4, 0);
+		entity->inLava = entity_inBlock(entity, BLK_LAVA, .4, 0) || entity_inBlock(entity, BLK_LAVA_1, .4, 0);
+		//TODO: ladders
+		if (entity->inLava) {
+			damageEntity(entity, 4., 1);
+			//TODO: fire
+		}
+		if (!entity->onGround) {
+			float dy = entity->ly - entity->y;
+			if (dy > 0.) {
+				entity->fallDistance += dy;
+			}
+		} else if (entity->fallDistance > 0.) {
+			if (entity->fallDistance > 4. && !entity->inWater && !entity->inLava) {
+				damageEntity(entity, entity->fallDistance - 3., 0);
+				playSound(entity->world, 312, 8, entity->x, entity->y, entity->z, 1., 1.);
+			}
+			entity->fallDistance = 0.;
+		}
+	}
+	if (entity->type != ENT_PLAYER) {
+		entity->lx = entity->x;
+		entity->ly = entity->y;
+		entity->lz = entity->z;
+		entity->lyaw = entity->yaw;
+		entity->lpitch = entity->pitch;
+	}
 }
 
 void tick_world(struct world* world) { //TODO: separate tick threads
@@ -1496,6 +1590,25 @@ void tick_world(struct world* world) { //TODO: separate tick threads
 			if (te == NULL) continue;
 			(*te->tick)(world, te);
 		}
+	}
+}
+
+void sendMessageToPlayer(struct player* player, char* text) {
+	if (player == NULL) {
+		printf("%s\n", text);
+	} else {
+		size_t s = strlen(text) + 512;
+		char* rsx = xstrdup(text, 512);
+		char* rs = xmalloc(512);
+		snprintf(rs, s, "{\"text\": \"%s\"}", replace(replace(rsx, "\\", "\\\\"), "\"", "\\\""));
+		//printf("<CHAT> %s\n", text);
+		struct packet* pkt = xmalloc(sizeof(struct packet));
+		pkt->id = PKT_PLAY_CLIENT_CHATMESSAGE;
+		pkt->data.play_client.chatmessage.position = 0;
+		pkt->data.play_client.chatmessage.json_data = xstrdup(rs, 0);
+		add_queue(player->outgoingPacket, pkt);
+		flush_outgoing(player);
+		xfree(rsx);
 	}
 }
 

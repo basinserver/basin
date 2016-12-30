@@ -8,10 +8,7 @@
 #ifndef INVENTORY_H_
 #define INVENTORY_H_
 
-#include "nbt.h"
 #include <stdint.h>
-#include "tileentity.h"
-#include "item.h"
 
 #define INVTYPE_PLAYERINVENTORY 0
 #define INVTYPE_CHEST 1

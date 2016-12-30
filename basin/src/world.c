@@ -4,7 +4,7 @@
  *  Created on: Feb 22, 2016
  *      Author: root
  */
-#include "world.h"
+
 #include "entity.h"
 #include <stdlib.h>
 #include <stdint.h>
@@ -23,12 +23,16 @@
 #include <dirent.h>
 #include "worldmanager.h"
 #include "network.h"
+#include "packet.h"
 #include "game.h"
 #include "block.h"
 #include <math.h>
 #include "queue.h"
 #include "tileentity.h"
 #include "xstring.h"
+#include "entity.h"
+#include "world.h"
+#include "globals.h"
 
 int __boundingbox_intersects(struct boundingbox* bb1, struct boundingbox* bb2, int inv) {
 	return (((bb1->minX >= bb2->minX && bb1->minX <= bb2->maxX) || (bb1->maxX >= bb2->minX && bb1->maxX <= bb2->maxX)) && ((bb1->minY >= bb2->minY && bb1->minY <= bb2->maxY) || (bb1->maxY >= bb2->minY && bb1->maxY <= bb2->maxY)) && ((bb1->minZ >= bb2->minZ && bb1->minZ <= bb2->maxZ) || (bb1->maxZ >= bb2->minZ && bb1->maxZ <= bb2->maxZ))) || (inv ? 0 : __boundingbox_intersects(bb2, bb1, 1)); // the second intersects handles if bb2 is contained within bb1
@@ -659,6 +663,13 @@ void despawnPlayer(struct world* world, struct player* player) {
 		rem_collection(pl->loadingPlayers, player);
 		player->loadedEntities->data[i] = NULL;
 		player->loadedEntities->count--;
+	}
+	for (size_t i = 0; i < player->loadedChunks->size; i++) {
+		struct chunk* pl = (struct chunk*) player->loadedChunks->data[i];
+		if (pl == NULL || pl == player->entity) continue;
+		pl->playersLoaded--;
+		player->loadedChunks->data[i] = NULL;
+		player->loadedChunks->count--;
 	}
 	rem_collection(world->players, player);
 }

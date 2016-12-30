@@ -8,7 +8,8 @@
 #ifndef GLOBALS_H_
 #define GLOBALS_H_
 
-#define MC_PROTOCOL_VERSION 315
+#define MC_PROTOCOL_VERSION_MIN 315
+#define MC_PROTOCOL_VERSION_MAX 316
 #define CHUNK_VIEW_DISTANCE 10
 
 #include <stdlib.h>

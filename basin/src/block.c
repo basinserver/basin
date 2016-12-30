@@ -5,20 +5,24 @@
  *      Author: root
  */
 
-#include "block.h"
 #include "util.h"
 #include "inventory.h"
-#include "game.h"
+#include "globals.h"
+#include "network.h"
+#include "packet.h"
 #include "world.h"
+#include "game.h"
 #include "xstring.h"
 #include "queue.h"
 #include "smelting.h"
 #include "tileentity.h"
 #include "smelting.h"
-#include "network.h"
 #include <fcntl.h>
 #include <errno.h>
 #include "json.h"
+#include "item.h"
+#include "block.h"
+#include <unistd.h>
 
 struct collection* block_infos;
 struct collection* block_materials;
@@ -57,7 +61,12 @@ block onBlockPlaced_furnace(struct world* world, block blk, int32_t x, int32_t y
 }
 
 void onBlockDestroyed_chest(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
-	//TODO: spill items
+	struct tile_entity* te = getTileEntityWorld(world, x, y, z);
+	if (te == NULL) return;
+	for (size_t i = 0; i < te->data.chest.inv->slot_count; i++) {
+		struct slot* sl = getSlot(NULL, te->data.chest.inv, i);
+		dropBlockDrop(world, sl, x, y, z);
+	}
 	setTileEntityWorld(world, x, y, z, NULL);
 }
 
@@ -84,7 +93,12 @@ void onBlockInteract_chest(struct world* world, block blk, int32_t x, int32_t y,
 }
 
 void onBlockDestroyed_furnace(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
-	//TODO: spill items
+	struct tile_entity* te = getTileEntityWorld(world, x, y, z);
+	if (te == NULL) return;
+	for (size_t i = 0; i < te->data.furnace.inv->slot_count; i++) {
+		struct slot* sl = getSlot(NULL, te->data.furnace.inv, i);
+		dropBlockDrop(world, sl, x, y, z);
+	}
 	setTileEntityWorld(world, x, y, z, NULL);
 }
 
@@ -126,7 +140,7 @@ void update_furnace(struct world* world, struct tile_entity* te) {
 			enableTileEntityTickable(world, te);
 			setBlockWorld(world, BLK_FURNACE_LIT | (getBlockWorld(world, te->x, te->y, te->z) & 0x0f), te->x, te->y, te->z);
 		}
-		printf("bt = %i\n", te->data.furnace.burnTime);
+		//printf("bt = %i\n", te->data.furnace.burnTime);
 		if (te->data.furnace.burnTime <= 0 && st > 0 && fu != NULL) {
 			te->data.furnace.burnTime += st + 1;
 			if (--fu->itemCount == 0) fu = NULL;
@@ -143,14 +157,14 @@ void update_furnace(struct world* world, struct tile_entity* te) {
 			END_BROADCAST
 		}
 		if (te->data.furnace.cookTime <= 0) {
-			printf("start cookin\n");
+			//printf("start cookin\n");
 			te->data.furnace.cookTime++;
 		} else if (te->data.furnace.cookTime < 200) {
-			printf("cookin %i/%i\n", te->data.furnace.cookTime, 200);
+			//printf("cookin %i/%i\n", te->data.furnace.cookTime, 200);
 			te->data.furnace.cookTime++;
 		} else if (te->data.furnace.cookTime == 200) {
 			te->data.furnace.cookTime = 0;
-			printf("donecookin\n");
+			//printf("donecookin\n");
 			if (aso == NULL) setSlot(NULL, te->data.furnace.inv, 2, so, 1, 1);
 			else {
 				aso->itemCount++;
@@ -217,8 +231,8 @@ void dropItems_gravel(struct world* world, block blk, int32_t x, int32_t y, int3
 		dropBlockDrop(world, &drop, x, y, z);
 	} else {
 		struct slot drop;
-		drop.item = BLK_GRAVEL;
-		drop.damage = 0;
+		drop.item = BLK_GRAVEL >> 4;
+		drop.damage = BLK_GRAVEL & 0x0f;
 		drop.itemCount = 1;
 		drop.nbt = NULL;
 		dropBlockDrop(world, &drop, x, y, z);
@@ -331,7 +345,7 @@ const char* nameToIDMap[] = { "minecraft:air", "minecraft:stone", "minecraft:gra
 		"", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "",
 		"", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "minecraft:record_13", "minecraft:record_cat", "minecraft:record_blocks", "minecraft:record_chirp", "minecraft:record_far", "minecraft:record_mall", "minecraft:record_mellohi", "minecraft:record_stal", "minecraft:record_strad", "minecraft:record_ward", "minecraft:record_11", "minecraft:record_wait" };
 
-int16_t getItemFromName(const char* name) {
+item getItemFromName(const char* name) {
 	for (size_t i = 0; i < (sizeof(nameToIDMap) / sizeof(char*)); i++) {
 		if (streq_nocase(nameToIDMap[i], name)) return i;
 	}
@@ -539,8 +553,8 @@ void init_blocks() {
 	tmp->dropItems = &dropItems_leaves;
 	tmp = getBlockInfo(BLK_TALLGRASS_GRASS);
 	tmp->dropItems = &dropItems_tallgrass;
-	for (block b = BLK_MUSHROOM_2; b <= BLK_MUSHROOM_31; b++) {
-		tmp = getBlockInfo(b);
-		tmp->dropItems = &dropItems_hugemushroom;
-	}
+	tmp = getBlockInfo(BLK_MUSHROOM_2);
+	tmp->dropItems = &dropItems_hugemushroom;
+	tmp = getBlockInfo(BLK_MUSHROOM_3);
+	tmp->dropItems = &dropItems_hugemushroom;
 }

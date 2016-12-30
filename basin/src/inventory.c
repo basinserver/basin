@@ -6,7 +6,7 @@
  */
 
 #include "network.h"
-#include "inventory.h"
+#include "packet.h"
 #include "globals.h"
 #include "item.h"
 #include <string.h>
@@ -16,6 +16,10 @@
 #include "queue.h"
 #include "player.h"
 #include "smelting.h"
+#include "nbt.h"
+#include <stdint.h>
+#include "tileentity.h"
+#include "inventory.h"
 
 void newInventory(struct inventory* inv, int type, int id, int slots) {
 	inv->title = NULL;
@@ -71,7 +75,7 @@ void setSlot(struct player* player, struct inventory* inv, int index, struct slo
 		flush_outgoing (bc_player);
 		END_BROADCAST
 	}
-	printf("set %i = %i broadcast=%i pc=%i\n", index, slot == NULL ? -1 : slot->item, broadcast, inv->players->count);
+	//printf("set %i = %i broadcast=%i pc=%i\n", index, slot == NULL ? -1 : slot->item, broadcast, inv->players->count);
 }
 
 struct slot* getSlot(struct player* player, struct inventory* inv, int index) {

@@ -6,7 +6,6 @@
  */
 
 #include "network.h"
-#include "player.h"
 #include "entity.h"
 #include "accept.h"
 #include "util.h"
@@ -14,6 +13,12 @@
 #include "xstring.h"
 #include "queue.h"
 #include "packet.h"
+#include "game.h"
+#include "collection.h"
+#include "player.h"
+#include "globals.h"
+#include "item.h"
+#include "tileentity.h"
 
 struct player* newPlayer(struct entity* entity, char* name, struct uuid uuid, struct conn* conn, uint8_t gamemode) {
 	struct player* player = xmalloc(sizeof(struct player));
@@ -59,6 +64,7 @@ struct player* newPlayer(struct entity* entity, char* name, struct uuid uuid, st
 	player->outgoingPacket = new_queue(0, 1);
 	player->defunct = 0;
 	player->lastSwing = tick_counter;
+	player->foodTimer = 0;
 	return player;
 }
 
@@ -81,7 +87,18 @@ void teleportPlayer(struct player* player, double x, double y, double z) {
 	player->entity->x = x;
 	player->entity->y = y;
 	player->entity->z = z;
+	player->entity->lx = x;
+	player->entity->ly = y;
+	player->entity->lz = z;
 	struct packet* pkt = xmalloc(sizeof(struct packet));
+	pkt->id = PKT_PLAY_CLIENT_ENTITYVELOCITY;
+	pkt->data.play_client.entityvelocity.entity_id = player->entity->id;
+	pkt->data.play_client.entityvelocity.velocity_x = 0;
+	pkt->data.play_client.entityvelocity.velocity_y = 0;
+	pkt->data.play_client.entityvelocity.velocity_z = 0;
+	add_queue(player->outgoingPacket, pkt);
+	flush_outgoing(player);
+	pkt = xmalloc(sizeof(struct packet));
 	pkt->id = PKT_PLAY_CLIENT_PLAYERPOSITIONANDLOOK;
 	pkt->data.play_client.playerpositionandlook.x = player->entity->x;
 	pkt->data.play_client.playerpositionandlook.y = player->entity->y;
@@ -90,6 +107,82 @@ void teleportPlayer(struct player* player, double x, double y, double z) {
 	pkt->data.play_client.playerpositionandlook.pitch = player->entity->pitch;
 	pkt->data.play_client.playerpositionandlook.flags = 0x0;
 	pkt->data.play_client.playerpositionandlook.teleport_id = 0;
+	add_queue(player->outgoingPacket, pkt);
+	flush_outgoing(player);
+}
+
+struct player* getPlayerByName(char* name) {
+	for (size_t i = 0; i < players->size; i++) {
+		struct player* player = players->data[i];
+		if (player != NULL && streq_nocase(name, player->name)) return player;
+	}
+	return NULL;
+}
+
+void player_closeWindow(struct player* player, uint16_t windowID) {
+	struct inventory* inv = NULL;
+	if (windowID == 0 && player->openInv == NULL) inv = player->inventory;
+	else if (player->openInv != NULL && windowID == player->openInv->windowID) inv = player->openInv;
+	if (inv != NULL) {
+		if (player->inHand != NULL) {
+			dropPlayerItem(player, player->inHand);
+			freeSlot(player->inHand);
+			xfree(player->inHand);
+			player->inHand = NULL;
+		}
+		if (inv->type == INVTYPE_PLAYERINVENTORY) {
+			for (int i = 1; i < 5; i++) {
+				if (inv->slots[i] != NULL) {
+					dropPlayerItem(player, inv->slots[i]);
+					setSlot(player, inv, i, NULL, 0, 1);
+				}
+			}
+		} else if (inv->type == INVTYPE_WORKBENCH) {
+			for (int i = 1; i < 10; i++) {
+				if (inv->slots[i] != NULL) {
+					dropPlayerItem(player, inv->slots[i]);
+					setSlot(player, inv, i, NULL, 0, 1);
+				}
+			}
+			freeInventory(inv);
+			inv = NULL;
+		} else if (inv->type == INVTYPE_CHEST) {
+			if (inv->te != NULL) {
+				BEGIN_BROADCAST_DIST(player->entity, 128.)
+				struct packet* pkt = xmalloc(sizeof(struct packet));
+				pkt->id = PKT_PLAY_CLIENT_BLOCKACTION;
+				pkt->data.play_client.blockaction.location.x = inv->te->x;
+				pkt->data.play_client.blockaction.location.y = inv->te->y;
+				pkt->data.play_client.blockaction.location.z = inv->te->z;
+				pkt->data.play_client.blockaction.action_id = 1;
+				pkt->data.play_client.blockaction.action_param = inv->players->count - 1;
+				pkt->data.play_client.blockaction.block_type = getBlockWorld(player->world, inv->te->x, inv->te->y, inv->te->z) >> 4;
+				add_queue(bc_player->outgoingPacket, pkt);
+				flush_outgoing (bc_player);
+				END_BROADCAST
+			}
+		}
+	}
+	if (inv != NULL && inv->type != INVTYPE_PLAYERINVENTORY) rem_collection(inv->players, player);
+	player->openInv = NULL; // TODO: free sometimes?
+
+}
+
+void setPlayerGamemode(struct player* player, int gamemode) {
+	if (gamemode != -1) {
+		player->gamemode = gamemode;
+		struct packet* pkt = xmalloc(sizeof(struct packet));
+		pkt->id = PKT_PLAY_CLIENT_CHANGEGAMESTATE;
+		pkt->data.play_client.changegamestate.reason = 3;
+		pkt->data.play_client.changegamestate.value = gamemode;
+		add_queue(player->outgoingPacket, pkt);
+		flush_outgoing(player);
+	}
+	struct packet* pkt = xmalloc(sizeof(struct packet));
+	pkt->id = PKT_PLAY_CLIENT_PLAYERABILITIES;
+	pkt->data.play_client.playerabilities.flags = player->gamemode == 1 ? (0x04 | 0x08) : 0x0;
+	pkt->data.play_client.playerabilities.flying_speed = .05;
+	pkt->data.play_client.playerabilities.field_of_view_modifier = .1;
 	add_queue(player->outgoingPacket, pkt);
 	flush_outgoing(player);
 }

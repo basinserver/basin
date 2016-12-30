@@ -8,15 +8,15 @@
 #ifndef WORLD_H_
 #define WORLD_H_
 
-#include "entity.h"
-#include <stdlib.h>
+#include <stdint.h>
 #include "network.h"
-#include "collection.h"
-#include "player.h"
-#include <pthread.h>
-#include "tileentity.h"
+#include "inventory.h"
+
+typedef uint16_t block;
 
 uint32_t nextEntityID;
+
+struct entity;
 
 struct boundingbox {
 		double minX;
@@ -28,8 +28,6 @@ struct boundingbox {
 };
 
 int boundingbox_intersects(struct boundingbox* bb1, struct boundingbox* bb2);
-
-typedef uint16_t block;
 
 struct chunk_section {
 		uint8_t* blocks; // y, z, x

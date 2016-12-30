@@ -15,6 +15,7 @@
 #include "util.h"
 #include "json.h"
 #include "player.h"
+#include <unistd.h>
 
 struct collection* tool_infos;
 

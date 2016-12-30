@@ -9,6 +9,9 @@
 #define ITEM_H_
 
 #include <stdint.h>
+
+typedef int16_t item;
+
 #include "player.h"
 #include "world.h"
 #include "entity.h"
@@ -227,8 +230,6 @@
 #define ARMOR_CHESTPLATE 2
 #define ARMOR_LEGGINGS 3
 #define ARMOR_BOOTS 4
-
-typedef int16_t item;
 
 struct item_info {
 		struct tool_info* toolType;

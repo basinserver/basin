@@ -1,7 +1,8 @@
 #include "globals.h"
 
+#include "inventory.h"
+#include <stdint.h>
 #include "network.h"
-#include "packet.h"
 #include <zlib.h>
 #include <errno.h>
 #include "xstring.h"
@@ -21,6 +22,8 @@
 #include "util.h"
 #include "world.h"
 #include <math.h>
+#include "packet.h"
+#include "player.h"
 
 #define ADRX if(rx == 0) goto rer;pbuf += rx;ps -= rx;
 #define ADX(x) pbuf += x;ps -= x;
@@ -798,7 +801,7 @@ ssize_t writePacket(struct conn* conn, struct packet* packet) {
 			pi += 1;
 			//nbt_data
 			ENS(512)
-			pi += writeNBT(&packet->data.play_client.updateblockentity.nbt_data, pktbuf + pi, ps - pi);
+			pi += writeNBT(packet->data.play_client.updateblockentity.nbt_data, pktbuf + pi, ps - pi);
 		} else if (id == PKT_PLAY_CLIENT_BLOCKACTION) {
 			//location
 			ENS(8)
@@ -1467,7 +1470,6 @@ ssize_t writePacket(struct conn* conn, struct packet* packet) {
 				} else if (packet->data.play_client.playerlistitem.action_id == 4) {
 					//none
 				}
-				printf("5 %i\n", pi);
 			}
 		} else if (id == PKT_PLAY_CLIENT_PLAYERPOSITIONANDLOOK) {
 			//x

@@ -19,6 +19,7 @@
 #include "streams.h"
 #include <sys/ioctl.h>
 #include "network.h"
+#include "packet.h"
 #include "globals.h"
 #include <openssl/md5.h>
 #include "entity.h"
@@ -29,6 +30,8 @@
 #include "block.h"
 #include <math.h>
 #include "item.h"
+#include <netinet/in.h>
+#include <arpa/inet.h>
 
 void closeConn(struct work_param* param, struct conn* conn) {
 	close(conn->fd);
@@ -81,7 +84,7 @@ int handleRead(struct conn* conn, struct work_param* param, int fd) {
 		if (conn->state == STATE_HANDSHAKE && inp->id == PKT_HANDSHAKE_SERVER_HANDSHAKE) {
 			conn->host_ip = xstrdup(inp->data.handshake_server.handshake.server_address, 0);
 			conn->host_port = inp->data.handshake_server.handshake.server_port;
-			if (inp->data.handshake_server.handshake.protocol_version != MC_PROTOCOL_VERSION && inp->data.handshake_server.handshake.next_state != STATE_STATUS) return -2;
+			if ((inp->data.handshake_server.handshake.protocol_version < MC_PROTOCOL_VERSION_MIN || inp->data.handshake_server.handshake.protocol_version > MC_PROTOCOL_VERSION_MAX) && inp->data.handshake_server.handshake.next_state != STATE_STATUS) return -2;
 			if (inp->data.handshake_server.handshake.next_state == STATE_STATUS) {
 				conn->state = STATE_STATUS;
 			} else if (inp->data.handshake_server.handshake.next_state == STATE_LOGIN) {
@@ -92,7 +95,7 @@ int handleRead(struct conn* conn, struct work_param* param, int fd) {
 				rep.id = PKT_STATUS_CLIENT_RESPONSE;
 				rep.data.status_client.response.json_response = xmalloc(1000);
 				rep.data.status_client.response.json_response[999] = 0;
-				snprintf(rep.data.status_client.response.json_response, 999, "{\"version\":{\"name\":\"1.11.2\",\"protocol\":%i},\"players\":{\"max\":%i,\"online\":%i},\"description\":{\"text\":\"%s\"}}", MC_PROTOCOL_VERSION, max_players, players->count, motd);
+				snprintf(rep.data.status_client.response.json_response, 999, "{\"version\":{\"name\":\"1.11.2\",\"protocol\":%i},\"players\":{\"max\":%i,\"online\":%i},\"description\":{\"text\":\"%s\"}}", MC_PROTOCOL_VERSION_MIN, max_players, players->count, motd);
 				if (writePacket(conn, &rep) < 0) goto rete;
 				xfree(rep.data.status_client.response.json_response);
 			} else if (inp->id == PKT_STATUS_SERVER_PING) {
@@ -152,7 +155,7 @@ int handleRead(struct conn* conn, struct work_param* param, int fd) {
 					memcpy(&rep.data.play_client.spawnposition.location, &overworld->spawnpos, sizeof(struct encpos));
 					if (writePacket(conn, &rep) < 0) goto rete;
 					rep.id = PKT_PLAY_CLIENT_PLAYERABILITIES;
-					rep.data.play_client.playerabilities.flags = 0x4; // TODO: allows flying, remove
+					rep.data.play_client.playerabilities.flags = 0; // TODO: allows flying, remove
 					rep.data.play_client.playerabilities.flying_speed = 0.05;
 					rep.data.play_client.playerabilities.field_of_view_modifier = .1;
 					if (writePacket(conn, &rep) < 0) goto rete;
@@ -217,6 +220,22 @@ int handleRead(struct conn* conn, struct work_param* param, int fd) {
 					char bct[256];
 					snprintf(bct, 256, "%s has joined the server!", player->name);
 					broadcast(bct);
+					const char* mip = NULL;
+					char tip[48];
+					if (conn->addr.sin6_family == AF_INET) {
+						struct sockaddr_in *sip4 = (struct sockaddr_in*) &conn->addr;
+						mip = inet_ntop(AF_INET, &sip4->sin_addr, tip, 48);
+					} else if (conn->addr.sin6_family == AF_INET6) {
+						struct sockaddr_in6 *sip6 = (struct sockaddr_in6*) &conn->addr;
+						if (memseq((unsigned char*) &sip6->sin6_addr, 10, 0) && memseq((unsigned char*) &sip6->sin6_addr + 10, 2, 0xff)) {
+							mip = inet_ntop(AF_INET, ((unsigned char*) &sip6->sin6_addr) + 12, tip, 48);
+						} else mip = inet_ntop(AF_INET6, &sip6->sin6_addr, tip, 48);
+					} else if (conn->addr.sin6_family == AF_LOCAL) {
+						mip = "UNIX";
+					} else {
+						mip = "UNKNOWN";
+					}
+					printf("Player '%s' has joined with IP '%s'\n", player->name, mip);
 					/*for (int x = -9; x < 10; x++) {
 					 for (int z = -9; z < 10; z++) {
 					 struct chunk* ch = getChunk(overworld, x + (int32_t) ep->x / 16, z + (int32_t) ep->z / 16);

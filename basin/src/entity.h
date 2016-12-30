@@ -11,6 +11,7 @@
 #include <stdint.h>
 #include "world.h"
 #include <stdlib.h>
+#include "world.h"
 
 #define ENT_UNDEFINED 1
 #define ENT_PLAYER 2
@@ -382,17 +383,23 @@ struct entity {
 		struct collection* loadingPlayers;
 		uint64_t age;
 		uint8_t invincibilityTicks;
+		uint8_t inWater;
+		uint8_t inLava;
 };
 
 void damageEntityWithItem(struct entity* attacked, struct entity* attacker, struct slot* item);
 
 void damageEntity(struct entity* attacked, float damage, int armorable);
 
+void healEntity(struct entity* healed, float amount);
+
 void readMetadata(struct entity* ent, unsigned char* meta, size_t size);
 
 void writeMetadata(struct entity* ent, unsigned char** data, size_t* size);
 
 void load_entities();
+
+int entity_inBlock(struct entity* entity, uint16_t blk, float ydown, int meta_check);
 
 double entity_dist(struct entity* ent1, struct entity* ent2);
 

@@ -13,6 +13,7 @@
 #include "xstring.h"
 #include <errno.h>
 #include "util.h"
+#include <unistd.h>
 
 struct collection* smelting_fuels;
 

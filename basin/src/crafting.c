@@ -8,14 +8,15 @@
 #include "crafting.h"
 
 #include "network.h"
-#include "block.h"
 #include "item.h"
+#include "block.h"
 #include <fcntl.h>
 #include "xstring.h"
 #include <errno.h>
 #include "util.h"
 #include "json.h"
 #include "player.h"
+#include <unistd.h>
 
 void init_crafting() {
 	crafting_recipies = new_collection(128, 0);

@@ -122,7 +122,7 @@ const char* getConfigValue(const struct cnode* cat, const char* name) {
 }
 
 int hasConfigKey(const struct cnode* cat, const char* name) {
-	if (cat == NULL || name == NULL || cat->entries == 0) return NULL;
+	if (cat == NULL || name == NULL || cat->entries == 0) return 0;
 	for (int i = 0; i < cat->entries; i++) {
 		if (streq_nocase(cat->keys[i], name)) {
 			return 1;

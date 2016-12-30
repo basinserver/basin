@@ -15,7 +15,7 @@
 
 void* xmalloc(size_t size) {
 	if (size > 10485760) {
-		printf("Big malloc %u!\n", size);
+		//printf("Big malloc %u!\n", size);
 	}
 	void* m = malloc(size);
 	if (m == NULL) {
@@ -31,7 +31,7 @@ void xfree(void* ptr) {
 
 void* xcalloc(size_t size) {
 	if (size > 10485760) {
-		printf("Big calloc %u!\n", size);
+		//printf("Big calloc %u!\n", size);
 	}
 	void* m = calloc(1, size);
 	if (m == NULL) {
@@ -47,7 +47,7 @@ void* xrealloc(void* ptr, size_t size) {
 		return NULL;
 	}
 	if (size > 10485760) {
-		printf("Big realloc %u!\n", size);
+		//printf("Big realloc %u!\n", size);
 	}
 	void* m = realloc(ptr, size);
 	if (m == NULL) {

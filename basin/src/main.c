@@ -36,6 +36,8 @@
 #include "block.h"
 #include "crafting.h"
 #include "tools.h"
+#include "smelting.h"
+#include "command.h"
 
 void main_tick() {
 	for (size_t i = 0; i < worlds->size; i++) {
@@ -43,6 +45,27 @@ void main_tick() {
 		tick_world((struct world*) worlds->data[i]);
 	}
 	tick_counter++;
+}
+
+void main_tick_thread(void* ptr) {
+	struct timespec ts;
+	clock_gettime(CLOCK_MONOTONIC, &ts);
+	double lastRun = (double) ts.tv_nsec / 1000000. + (double) ts.tv_sec * 1000.;
+	while (1) {
+		clock_gettime(CLOCK_MONOTONIC, &ts);
+		double ct = (double) ts.tv_nsec / 1000000. + (double) ts.tv_sec * 1000.;
+		while (lastRun <= ct - 50.) {
+			lastRun += 50.;
+			clock_gettime(CLOCK_MONOTONIC, &ts);
+			double tks = (double) ts.tv_nsec / 1000000. + (double) ts.tv_sec * 1000.;
+			main_tick();
+			clock_gettime(CLOCK_MONOTONIC, &ts);
+			double tkf = (double) ts.tv_nsec / 1000000. + (double) ts.tv_sec * 1000.;
+			tkf -= tks;
+			if (tkf > 40.) printf("[WARNING] Tick took %f ms!\n", tkf);
+		}
+		usleep((lastRun - (ct - 50.)) * 1000.);
+	}
 }
 
 int main(int argc, char* argv[]) {
@@ -128,6 +151,7 @@ int main(int argc, char* argv[]) {
 	init_tools();
 	init_items();
 	init_smelting();
+	init_base_commands();
 	for (int i = 0; i < servsl; i++) {
 		struct cnode* serv = servs[i];
 		const char* bind_mode = getConfigValue(serv, "bind-mode");
@@ -380,22 +404,15 @@ int main(int argc, char* argv[]) {
 			close(aps[i]->server_fd);
 		}
 	}
-	clock_gettime(CLOCK_MONOTONIC, &ts);
-	double lastRun = (double) ts.tv_nsec / 1000000. + (double) ts.tv_sec * 1000.;
+	pthread_t tt;
+	pthread_create(&tt, NULL, &main_tick_thread, NULL);
+	char line[4096];
 	while (sr > 0) {
-		clock_gettime(CLOCK_MONOTONIC, &ts);
-		double ct = (double) ts.tv_nsec / 1000000. + (double) ts.tv_sec * 1000.;
-		while (lastRun <= ct - 50.) {
-			lastRun += 50.;
-			clock_gettime(CLOCK_MONOTONIC, &ts);
-			double tks = (double) ts.tv_nsec / 1000000. + (double) ts.tv_sec * 1000.;
-			main_tick();
-			clock_gettime(CLOCK_MONOTONIC, &ts);
-			double tkf = (double) ts.tv_nsec / 1000000. + (double) ts.tv_sec * 1000.;
-			tkf -= tks;
-			if (tkf > 40.) printf("[WARNING] Tick took %f ms!\n", tkf);
+		if (readLine(STDIN_FILENO, line, 4096) < 0) {
+			sleep(1);
+			continue;
 		}
-		usleep((lastRun - (ct - 50.)) * 1000.);
+		callCommand(NULL, line);
 	}
 	return 0;
 }

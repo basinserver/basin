@@ -5,21 +5,23 @@
  *      Author: root
  */
 
-#include "entity.h"
+#include "block.h"
 #include <stdint.h>
 #include <stdlib.h>
 #include "globals.h"
 #include <math.h>
 #include "network.h"
+#include "packet.h"
 #include "util.h"
 #include "xstring.h"
 #include "inventory.h"
-#include "block.h"
 #include <time.h>
 #include "world.h"
 #include "item.h"
 #include "game.h"
 #include "queue.h"
+#include "entity.h"
+#include <unistd.h>
 
 void getEntityCollision(struct entity* ent, struct boundingbox* bb) {
 	float width = .3;
@@ -449,13 +451,15 @@ struct entity* newEntity(int32_t id, float x, float y, float z, uint8_t type, fl
 	e->maxHealth = 20;
 	e->health = e->maxHealth;
 	e->world = NULL;
+	e->inWater = 0;
+	e->inLava = 0;
 	e->loadingPlayers = new_collection(0, 0);
 	memset(&e->data, 0, sizeof(union entity_data));
 	return e;
 }
 
 double entity_dist(struct entity* ent1, struct entity* ent2) {
-	return sqrt((ent1->x - ent2->x) * (ent1->x - ent2->x) + (ent1->y - ent2->y) * (ent1->y - ent2->y) + (ent1->z - ent2->z) * (ent1->z - ent2->z));
+	return ent1->world == ent2->world ? sqrt((ent1->x - ent2->x) * (ent1->x - ent2->x) + (ent1->y - ent2->y) * (ent1->y - ent2->y) + (ent1->z - ent2->z) * (ent1->z - ent2->z)) : 999.;
 }
 
 double entity_distsq(struct entity* ent1, struct entity* ent2) {
@@ -508,7 +512,41 @@ void handleMetaUUID(struct entity* ent, int index, struct uuid* pos) {
 }
 
 int isLiving(int type) {
-	return type == ENT_SKELETON || type == ENT_SPIDER || type == ENT_GIANT || type == ENT_ZOMBIE || type == ENT_SLIME || type == ENT_GHAST || type == ENT_ZPIGMAN || type == ENT_ENDERMAN || type == ENT_CAVESPIDER || type == ENT_SILVERFISH || type == ENT_BLAZE || type == ENT_MAGMACUBE || type == ENT_ENDERDRAGON || type == ENT_WITHER || type == ENT_BAT || type == ENT_WITCH || type == ENT_ENDERMITE || type == ENT_GUARDIAN || type == ENT_SHULKER || type == ENT_PIG || type == ENT_SHEEP || type == ENT_COW || type == ENT_CHICKEN || type == ENT_SQUID || type == ENT_WOLF || type == ENT_MOOSHROOM || type == ENT_SNOWMAN || type == ENT_OCELOT || type == ENT_IRONGOLEM || type == ENT_HORSE || type == ENT_RABBIT || type == ENT_VILLAGER || type == ENT_BOAT;
+	return type == ENT_PLAYER || type == ENT_SKELETON || type == ENT_SPIDER || type == ENT_GIANT || type == ENT_ZOMBIE || type == ENT_SLIME || type == ENT_GHAST || type == ENT_ZPIGMAN || type == ENT_ENDERMAN || type == ENT_CAVESPIDER || type == ENT_SILVERFISH || type == ENT_BLAZE || type == ENT_MAGMACUBE || type == ENT_ENDERDRAGON || type == ENT_WITHER || type == ENT_BAT || type == ENT_WITCH || type == ENT_ENDERMITE || type == ENT_GUARDIAN || type == ENT_SHULKER || type == ENT_PIG || type == ENT_SHEEP || type == ENT_COW || type == ENT_CHICKEN || type == ENT_SQUID || type == ENT_WOLF || type == ENT_MOOSHROOM || type == ENT_SNOWMAN || type == ENT_OCELOT || type == ENT_IRONGOLEM || type == ENT_HORSE || type == ENT_RABBIT || type == ENT_VILLAGER || type == ENT_BOAT;
+}
+
+int entity_inBlock(struct entity* entity, uint16_t blk, float ydown, int meta_check) {
+	struct boundingbox pbb;
+	getEntityCollision(entity, &pbb);
+	if (pbb.minX == pbb.maxX || pbb.minZ == pbb.maxZ || pbb.minY == pbb.maxY) return 0;
+	pbb.minX += .001;
+	pbb.minY += .001;
+	pbb.minY -= ydown;
+	pbb.minZ += .001;
+	pbb.maxX -= .001;
+	pbb.maxY -= .001;
+	pbb.maxZ -= .001;
+	for (int32_t x = floor(pbb.minX); x < floor(pbb.maxX + 1.); x++) {
+		for (int32_t z = floor(pbb.minZ); z < floor(pbb.maxZ + 1.); z++) {
+			for (int32_t y = floor(pbb.minY); y < floor(pbb.maxY + 1.); y++) {
+				block b = getBlockWorld(entity->world, x, y, z);
+				if (meta_check ? (b != blk) : ((b >> 4) != (blk >> 4))) continue;
+				struct block_info* bi = getBlockInfo(b);
+				if (bi == NULL) continue;
+				struct boundingbox bb2;
+				bb2.minX = 0. + (double) x;
+				bb2.maxX = 1. + (double) x;
+				bb2.minY = 0. + (double) y;
+				bb2.maxY = 1. + (double) y;
+				bb2.minZ = 0. + (double) z;
+				bb2.maxZ = 1. + (double) z;
+				if (boundingbox_intersects(&bb2, &pbb)) {
+					return 1;
+				}
+			}
+		}
+	}
+	return 0;
 }
 
 void outputMetaByte(struct entity* ent, unsigned char** loc, size_t* size) {
@@ -534,7 +572,8 @@ void outputMetaFloat(struct entity* ent, unsigned char** loc, size_t* size) {
 		*loc = xrealloc(*loc, *size + 6);
 		(*loc)[(*size)++] = 7;
 		(*loc)[(*size)++] = 2;
-		memcpy(*loc + *size, &ent->health, 4); // TODO: swap endian maybe?
+		memcpy(*loc + *size, &ent->health, 4);
+		swapEndian(*loc + *size, 4);
 		*size += 4;
 	}
 }
@@ -815,7 +854,7 @@ void moveEntity(struct entity* entity) {
 			}
 		}
 	}
-	//TODO step
+//TODO step
 	entity->z += nz;
 	pbb.minZ += nz;
 	pbb.maxZ += nz;
@@ -829,7 +868,7 @@ void moveEntity(struct entity* entity) {
 	if (lb == BLK_AIR) {
 		block lbb = getBlockWorld(entity->world, bx, by - 1, bz);
 		uint16_t lbi = lbb >> 4;
-		if ((lbi >= (BLK_FENCE >> 4) && lbi <= (BLK_ACACIAFENCE >> 4)) || (lbi >= (BLK_FENCEGATE >> 4) && lbi <= (BLK_ACACIAFENCEGATE_14 >> 4)) || lbi == BLK_COBBLEWALL_NORMAL >> 4) {
+		if ((lbi >= (BLK_FENCE >> 4) && lbi <= (BLK_ACACIAFENCE >> 4)) || (lbi >= (BLK_FENCEGATE >> 4) && lbi <= (BLK_ACACIAFENCEGATE >> 4)) || lbi == BLK_COBBLEWALL_NORMAL >> 4) {
 			lb = lbb;
 			by--;
 		}
@@ -874,31 +913,37 @@ void applyKnockback(struct entity* entity, float yaw, float strength) {
 }
 
 void damageEntityWithItem(struct entity* attacked, struct entity* attacker, struct slot* item) {
-	if (attacked == NULL || attacked->invincibilityTicks > 0) return;
+	if (attacked == NULL || attacked->invincibilityTicks > 0 || !isLiving(attacked->type) || attacked->health <= 0.) return;
+	if (attacked->type == ENT_PLAYER && attacked->data.player.player->gamemode == 1) return;
 	float damage = 1.;
 	if (item != NULL) {
 		struct item_info* ii = getItemInfo(item->item);
 		if (ii != NULL) damage = ii->damage;
 	}
+	float knockback_strength = 1.;
+	if (attacker->sprinting) knockback_strength++;
 	if (attacker->type == ENT_PLAYER) {
 		struct player* player = attacker->data.player.player;
 		float as = player_getAttackStrength(player, .5);
 		damage *= .2 + as * as * .8;
+		knockback_strength *= .2 + as * as * .8;
+	}
+	if (attacker->y > attacked->y && (attacker->ly - attacker->y) > 0 && !attacker->onGround && !attacker->sprinting) { // todo water/ladder
+		damage *= 1.5;
 	}
 	if (damage == 0.) return;
 	damageEntity(attacked, damage, 1);
-	float knockback_strength = 1.;
-	//TODO: enchantment
-	if (attacker->sprinting) knockback_strength++;
-	knockback_strength *= .125;
+//TODO: enchantment
+	knockback_strength *= .2;
 	applyKnockback(attacked, attacker->yaw, knockback_strength);
 }
 
 void damageEntity(struct entity* attacked, float damage, int armorable) {
-	if (attacked == NULL || damage < 0. || attacked->invincibilityTicks > 0) return;
+	if (attacked == NULL || damage <= 0. || attacked->invincibilityTicks > 0 || !isLiving(attacked->type) || attacked->health <= 0.) return;
 	float armor = 0;
 	if (attacked->type == ENT_PLAYER) {
 		struct player* player = attacked->data.player.player;
+		if (player->gamemode == 1) return;
 		for (int i = 5; i <= 8; i++) {
 			struct slot* sl = getSlot(player, player->inventory, i);
 			if (sl != NULL) {
@@ -924,6 +969,23 @@ void damageEntity(struct entity* attacked, float damage, int armorable) {
 		add_queue(attacked->data.player.player->outgoingPacket, pkt);
 		flush_outgoing(attacked->data.player.player);
 	}
+	if (attacked->health <= 0.) {
+		if (attacked->type == ENT_PLAYER) {
+			struct player* player = attacked->data.player.player;
+			for (size_t i = 0; i < player->inventory->slot_count; i++) {
+				struct slot* slot = getSlot(player, player->inventory, i);
+				if (slot != NULL) dropPlayerItem_explode(player, slot);
+				setSlot(player, player->inventory, i, 0, 0, 1);
+			}
+			if (player->inHand != NULL) {
+				dropPlayerItem_explode(player, player->inHand);
+				freeSlot(player->inHand);
+				xfree(player->inHand);
+				player->inHand = NULL;
+			}
+			if (player->openInv != NULL) player_closeWindow(player, player->openInv->windowID);
+		}
+	}
 	BEGIN_BROADCAST_DIST(attacked, 128.)
 	struct packet* pkt = xmalloc(sizeof(struct packet));
 	pkt->id = PKT_PLAY_CLIENT_ANIMATION;
@@ -931,7 +993,32 @@ void damageEntity(struct entity* attacked, float damage, int armorable) {
 	pkt->data.play_client.animation.animation = 1;
 	add_queue(bc_player->outgoingPacket, pkt);
 	flush_outgoing (bc_player);
+	if (attacked->health <= 0.) {
+		pkt = xmalloc(sizeof(struct packet));
+		pkt->id = PKT_PLAY_CLIENT_ENTITYMETADATA;
+		pkt->data.play_client.entitymetadata.entity_id = attacked->id;
+		writeMetadata(attacked, &pkt->data.play_client.entitymetadata.metadata.metadata, &pkt->data.play_client.entitymetadata.metadata.metadata_size);
+		add_queue(bc_player->outgoingPacket, pkt);
+		flush_outgoing(bc_player);
+	}
 	END_BROADCAST
+	if (attacked->type == ENT_PLAYER) playSound(attacked->world, 316, 8, attacked->x, attacked->y, attacked->z, 1., 1.);
+}
+
+void healEntity(struct entity* healed, float amount) {
+	if (healed == NULL || amount <= 0. || healed->health <= 0. || !isLiving(healed->type)) return;
+	float oh = healed->health;
+	healed->health += amount;
+	if (healed->health > healed->maxHealth) healed->health = 20.;
+	if (healed->type == ENT_PLAYER && oh != healed->health) {
+		struct packet* pkt = xmalloc(sizeof(struct packet));
+		pkt->id = PKT_PLAY_CLIENT_UPDATEHEALTH;
+		pkt->data.play_client.updatehealth.health = healed->health;
+		pkt->data.play_client.updatehealth.food = healed->data.player.player->food;
+		pkt->data.play_client.updatehealth.food_saturation = healed->data.player.player->saturation;
+		add_queue(healed->data.player.player->outgoingPacket, pkt);
+		flush_outgoing(healed->data.player.player);
+	}
 }
 
 void freeEntity(struct entity* entity) {

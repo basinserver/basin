@@ -7,6 +7,7 @@ C_SRCS += \
 ../src/accept.c \
 ../src/block.c \
 ../src/collection.c \
+../src/command.c \
 ../src/config.c \
 ../src/crafting.c \
 ../src/entity.c \
@@ -35,6 +36,7 @@ OBJS += \
 ./src/accept.o \
 ./src/block.o \
 ./src/collection.o \
+./src/command.o \
 ./src/config.o \
 ./src/crafting.o \
 ./src/entity.o \
@@ -63,6 +65,7 @@ C_DEPS += \
 ./src/accept.d \
 ./src/block.d \
 ./src/collection.d \
+./src/command.d \
 ./src/config.d \
 ./src/crafting.d \
 ./src/entity.d \

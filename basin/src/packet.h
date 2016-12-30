@@ -2,11 +2,6 @@
 #define PACKET_H_
 
 #include "network.h"
-#include "inventory.h"
-#include "accept.h"
-#include <stdlib.h>
-#include <stdint.h>
-#include "nbt.h"
 
 #define STATE_HANDSHAKE 0
 #define STATE_PLAY 3

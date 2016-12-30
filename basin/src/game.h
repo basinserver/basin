@@ -17,7 +17,11 @@ void flush_outgoing(struct player* player);
 
 float randFloat();
 
+void playSound(struct world* world, int32_t soundID, int32_t soundCategory, float x, float y, float z, float volume, float pitch);
+
 void dropPlayerItem(struct player* player, struct slot* drop);
+
+void dropPlayerItem_explode(struct player* player, struct slot* drop);
 
 void dropBlockDrop(struct world* world, struct slot* slot, int32_t x, int32_t y, int32_t z);
 
@@ -30,6 +34,8 @@ void loadEntity(struct player* to, struct entity* from);
 void onInventoryUpdate(struct player* player, struct inventory* inv, int slot);
 
 void tick_world(struct world* world);
+
+void sendMessageToPlayer(struct player* player, char* text);
 
 void broadcast(char* text);
 

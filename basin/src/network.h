@@ -8,18 +8,10 @@
 #ifndef NETWORK_H_
 #define NETWORK_H_
 
-#include <stdint.h>
-#include <stdlib.h>
-#include "nbt.h"
-#include <pthread.h>
-#ifdef __MINGW32__
-# include <winsock2.h>
-#endif
 #include "accept.h"
-#include <unistd.h>
-#include "globals.h"
+#include "inventory.h"
 
-typedef uint8_t mcbool;
+struct packet;
 
 struct __attribute__((__packed__)) encpos {
 		int32_t z :26;
@@ -36,8 +28,6 @@ struct entity_metadata {
 		uint8_t* metadata;
 		size_t metadata_size;
 };
-
-#include "packet.h"
 
 void swapEndian(void* dou, size_t ss);
 

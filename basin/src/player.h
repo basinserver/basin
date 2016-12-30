@@ -8,10 +8,7 @@
 #ifndef PLAYER_H_
 #define PLAYER_H_
 
-#include "inventory.h"
 #include "network.h"
-#include "accept.h"
-#include "collection.h"
 
 struct player {
 		struct entity* entity;
@@ -54,13 +51,20 @@ struct player {
 		uint8_t defunct;
 		struct slot* inHand;
 		size_t lastSwing;
+		uint8_t foodTimer;
 };
 
 struct player* newPlayer(struct entity* entity, char* name, struct uuid, struct conn* conn, uint8_t gamemode);
 
+void player_closeWindow(struct player* player, uint16_t windowID);
+
 float player_getAttackStrength(struct player* player, float adjust);
 
 void teleportPlayer(struct player* player, double x, double y, double z);
+
+struct player* getPlayerByName(char* name);
+
+void setPlayerGamemode(struct player* player, int gamemode);
 
 void freePlayer(struct player* player);
 
