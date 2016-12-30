@@ -28,6 +28,7 @@
 #include "command.h"
 #include <unistd.h>
 #include "tileentity.h"
+#include <stdarg.h>
 
 void flush_outgoing(struct player* player) {
 	if (player->conn == NULL) return;
@@ -1365,7 +1366,7 @@ void tick_player(struct world* world, struct player* player) {
 		float time = (float) (ct - player->lastTPSCalculation) / 1000.;
 		player->lastTPSCalculation = ct;
 		if ((float) player->tps / 20. > (time + .25)) {
-			kickPlayer(player, "Ticks Per Second Too High! (FastHeal, Teleport, or Lag?)");
+			kickPlayer(player, "Ticks per second Too high! (FastHeal, Teleport, or Lag?)");
 			return;
 		}
 		player->tps = 0;
@@ -1573,7 +1574,7 @@ void tick_player(struct world* world, struct player* player) {
 			//printf("nog %i %i\n", player->real_onGround, player->entity->onGround);
 		}
 		if (player->flightInfraction > 0) if (player->flightInfraction-- > 25) {
-			kickPlayer(player, "Flying Is Not Allowed On This Server");
+			kickPlayer(player, "Flying is not enabled on this server");
 		}
 	}
 }
@@ -1760,6 +1761,17 @@ void sendMessageToPlayer(struct player* player, char* text) {
 	}
 }
 
+void sendMsgToPlayerf(struct player* player, char* fmt, ...) {
+
+	va_list args;
+	va_start(args, fmt);
+	char bct[256];
+	vsnprintf(bct, 256, fmt, args);
+	va_end(args);
+	sendMessageToPlayer(player, bct);
+}
+
+
 void broadcast(char* text) {
 	size_t s = strlen(text) + 512;
 	char* rsx = xstrdup(text, 512);
@@ -1775,4 +1787,16 @@ void broadcast(char* text) {
 	flush_outgoing (bc_player);
 	END_BROADCAST xfree(rs);
 	xfree(rsx);
+}
+
+void broadcastf(char* fmt, ...) {
+	va_list args;
+	va_start(args, fmt);
+	size_t len = varstrlen(fmt, args);
+	char* bct = xmalloc(len);
+	vsnprintf(bct, len, fmt, args);
+	va_end(args);
+	printf(bct);
+	broadcast(bct);
+	xfree(bct);
 }

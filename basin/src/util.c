@@ -12,6 +12,7 @@
 #include <errno.h>
 #include <sys/stat.h>
 #include <stdio.h>
+#include <stdarg.h>
 
 void* xmalloc(size_t size) {
 	if (size > 10485760) {
@@ -115,4 +116,23 @@ int memseq(const unsigned char* mem, size_t mem_size, const unsigned char c) {
 		}
 	}
 	return 1;
+}
+
+size_t varstrlen(const char* fmt, const va_list args) {
+	va_list args_cpy ;
+	va_copy(args_cpy, args);
+
+	size_t len = strlen(fmt) + 64;
+	for (const char* p = fmt; *p != '\0'; p++) {
+		if (*p != '%')
+			continue;
+		switch (*++p) {
+			case 's':
+				len += strlen(va_arg(args_cpy, char *));
+				break;
+			default:
+				va_arg(args_cpy, int); // pop from list
+		}
+	}
+	return len;
 }

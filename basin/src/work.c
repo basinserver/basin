@@ -40,9 +40,7 @@ void closeConn(struct work_param* param, struct conn* conn) {
 	}
 	if (conn->player != NULL) {
 		rem_collection(players, conn->player);
-		char bct[256];
-		snprintf(bct, 256, "%s has left the server!", conn->player->name);
-		broadcast(bct);
+		broadcastf("%s%s has left the server!", CHAT_YELLOW, conn->player->name);
 		for (size_t i = 0; i < players->size; i++) {
 			struct player* plx = (struct player*) players->data[i];
 			if (plx != NULL) {
@@ -217,9 +215,7 @@ int handleRead(struct conn* conn, struct work_param* param, int fd) {
 							}
 						}
 					}
-					char bct[256];
-					snprintf(bct, 256, "%s has joined the server!", player->name);
-					broadcast(bct);
+					broadcastf("%s%s has joined the server!", CHAT_YELLOW, player->name);
 					const char* mip = NULL;
 					char tip[48];
 					if (conn->addr.sin6_family == AF_INET) {

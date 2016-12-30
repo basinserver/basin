@@ -138,10 +138,7 @@ void kickPlayer(struct player* player, char* message) {
 	add_queue(player->outgoingPacket, pkt);
 	flush_outgoing(player);
 	if (player->conn != NULL) player->conn->disconnect = 1;
-	char* nm = xmalloc(sl + 512);
-	snprintf(nm, sl + 512, "Kicked Player %s For Reason %s", player->name, message);
-	broadcast(nm);
-	xfree(nm);
+	broadcastf("%sKicked Player %s for reason: %s", CHAT_RED, player->name, message);
 }
 
 float player_getAttackStrength(struct player* player, float adjust) {

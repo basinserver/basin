@@ -10,6 +10,7 @@
 
 #include <sys/stat.h>
 #include <stdlib.h>
+#include <stdarg.h>
 
 void* xmalloc(size_t size);
 
@@ -28,5 +29,8 @@ int recur_mkdir(const char* path, mode_t mode);
 int memeq(const unsigned char* mem1, size_t mem1_size, const unsigned char* mem2, size_t mem2_size);
 
 int memseq(const unsigned char* mem, size_t mem_size, const unsigned char c);
+
+// Estimates vararg string length based on format string and STRING ARGS ONLY
+size_t varstrlen(const char* fmt, const va_list args);
 
 #endif /* UTIL_H_ */

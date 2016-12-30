@@ -56,7 +56,7 @@ void command_tp(struct player* player, char** args, size_t args_count) {
 
 void command_spawn(struct player* player, char** args, size_t args_count) {
 	if (player->entity->health < player->entity->maxHealth) {
-		sendMessageToPlayer(player, "You must have full health to teleport to spawn!");
+		sendMsgToPlayerf(player, "You must have full health to teleport to spawn!");
 		return;
 	}
 	if (args_count > 0) {
