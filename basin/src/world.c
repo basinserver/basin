@@ -255,7 +255,7 @@ void generateChunk(struct world* world, struct chunk* chunk) {
 	memset(chunk->sections[0]->blockLight, 0xFF, 2048);
 	for (int x = 0; x < 16; x++) {
 		for (int z = 0; z < 16; z++) {
-			setBlockChunk(chunk, 1 << 4, x, 0, z);
+			setBlockChunk(chunk, 1 << 4, x, 0, z, world->dimension == 0);
 		}
 	}
 }
@@ -464,7 +464,7 @@ void freeRegion(struct region* region) {
 	xfree(region);
 }
 
-void setBlockChunk(struct chunk* chunk, block blk, uint8_t x, uint8_t y, uint8_t z) {
+void setBlockChunk(struct chunk* chunk, block blk, uint8_t x, uint8_t y, uint8_t z, int skylight) {
 	if (x > 15 || z > 15 || y > 255 || x < 0 || z < 0 || y < 0) return;
 	struct chunk_section* cs = chunk->sections[y >> 4];
 	if (cs == NULL && blk != 0) {
@@ -473,6 +473,12 @@ void setBlockChunk(struct chunk* chunk, block blk, uint8_t x, uint8_t y, uint8_t
 		cs->bpb = 13;
 		cs->block_size = 512 * 13;
 		cs->blocks = xcalloc(512 * 13 + 4);
+		cs->mvs = 0x1FFF;
+		memset(cs->blockLight, 0xFF, 2048);
+		if (skylight) {
+			cs->skyLight = xmalloc(2048);
+			memset(cs->skyLight, 0xFF, 2048);
+		}
 	} else if (cs == NULL) return;
 	block ts = blk;
 	if (cs->bpb < 9) {
@@ -530,7 +536,7 @@ void setBlockWorld(struct world* world, block blk, int32_t x, int32_t y, int32_t
 		return;
 	}
 	block ob = getBlockChunk(chunk, x & 0x0f, y, z & 0x0f);
-	setBlockChunk(chunk, blk, x & 0x0f, y, z & 0x0f);
+	setBlockChunk(chunk, blk, x & 0x0f, y, z & 0x0f, world->dimension == 0);
 	BEGIN_BROADCAST_DISTXYZ((double) x + .5, (double) y + .5, (double) z + .5, world->players, CHUNK_VIEW_DISTANCE * 16.)
 	struct packet* pkt = xmalloc(sizeof(struct packet));
 	pkt->id = PKT_PLAY_CLIENT_BLOCKCHANGE;

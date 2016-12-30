@@ -78,6 +78,7 @@ struct player* newPlayer(struct entity* entity, char* name, struct uuid uuid, st
 	player->offGroundTime = 0;
 	player->spawnedIn = 0;
 	player->llTick = 0;
+	player->triggerRechunk = 0;
 	return player;
 }
 
@@ -163,6 +164,7 @@ void teleportPlayer(struct player* player, double x, double y, double z) {
 	player->entity->lx = x;
 	player->entity->ly = y;
 	player->entity->lz = z;
+	player->triggerRechunk = 1;
 	struct packet* pkt = xmalloc(sizeof(struct packet));
 	pkt->id = PKT_PLAY_CLIENT_ENTITYVELOCITY;
 	pkt->data.play_client.entityvelocity.entity_id = player->entity->id;
@@ -182,6 +184,7 @@ void teleportPlayer(struct player* player, double x, double y, double z) {
 	pkt->data.play_client.playerpositionandlook.teleport_id = 0;
 	add_queue(player->outgoingPacket, pkt);
 	flush_outgoing(player);
+	if (player->tps > 0) player->tps--;
 }
 
 struct player* getPlayerByName(char* name) {

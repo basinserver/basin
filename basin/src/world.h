@@ -104,7 +104,7 @@ struct region* newRegion(char* path, int16_t x, int16_t z);
 
 void freeRegion(struct region* region);
 
-void setBlockChunk(struct chunk* chunk, block blk, uint8_t x, uint8_t y, uint8_t z);
+void setBlockChunk(struct chunk* chunk, block blk, uint8_t x, uint8_t y, uint8_t z, int skylight);
 
 void setBlockWorld(struct world* world, block blk, int32_t x, int32_t y, int32_t z);
 

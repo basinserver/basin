@@ -619,15 +619,20 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 		END_BROADCAST
 	} else if (inp->id == PKT_PLAY_SERVER_PLAYERPOSITION) {
 		player->tps++;
-		player->entity->lx = player->entity->x;
-		player->entity->ly = player->entity->y;
-		player->entity->lz = player->entity->z;
+		double lx = player->entity->x;
+		double ly = player->entity->y;
+		double lz = player->entity->z;
 		player->entity->lyaw = player->entity->yaw;
 		player->entity->lpitch = player->entity->pitch;
+		if (moveEntity(player->entity, inp->data.play_server.playerposition.x - lx, inp->data.play_server.playerposition.feet_y - ly, inp->data.play_server.playerposition.z - lz)) {
+			printf("rst1\n");
+			teleportPlayer(player, lx, ly, lz);
+		} else {
+			player->entity->lx = lx;
+			player->entity->ly = ly;
+			player->entity->lz = lz;
+		}
 		player->entity->onGround = inp->data.play_server.playerposition.on_ground;
-		player->entity->x = inp->data.play_server.playerposition.x;
-		player->entity->y = inp->data.play_server.playerposition.feet_y;
-		player->entity->z = inp->data.play_server.playerposition.z;
 		float dx = player->entity->x - player->entity->lx;
 		float dy = player->entity->y - player->entity->ly;
 		float dz = player->entity->z - player->entity->lz;
@@ -657,15 +662,20 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 
 	} else if (inp->id == PKT_PLAY_SERVER_PLAYERPOSITIONANDLOOK) {
 		player->tps++;
-		player->entity->lx = player->entity->x;
-		player->entity->ly = player->entity->y;
-		player->entity->lz = player->entity->z;
+		double lx = player->entity->x;
+		double ly = player->entity->y;
+		double lz = player->entity->z;
 		player->entity->lyaw = player->entity->yaw;
 		player->entity->lpitch = player->entity->pitch;
+		if (moveEntity(player->entity, inp->data.play_server.playerpositionandlook.x - lx, inp->data.play_server.playerpositionandlook.feet_y - ly, inp->data.play_server.playerpositionandlook.z - lz)) {
+			printf("rst2\n");
+			teleportPlayer(player, lx, ly, lz);
+		} else {
+			player->entity->lx = lx;
+			player->entity->ly = ly;
+			player->entity->lz = lz;
+		}
 		player->entity->onGround = inp->data.play_server.playerpositionandlook.on_ground;
-		player->entity->x = inp->data.play_server.playerpositionandlook.x;
-		player->entity->y = inp->data.play_server.playerpositionandlook.feet_y;
-		player->entity->z = inp->data.play_server.playerpositionandlook.z;
 		player->entity->yaw = inp->data.play_server.playerpositionandlook.yaw;
 		player->entity->pitch = inp->data.play_server.playerpositionandlook.pitch;
 		float dx = player->entity->x - player->entity->lx;
@@ -674,6 +684,7 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 		float d3 = dx * dx + dy * dy + dz * dz;
 		if (!player->spawnedIn && d3 > 0.00000001) player->spawnedIn = 1;
 		if (d3 > 5. * 5. * 5.) {
+			printf("rst2\n");
 			teleportPlayer(player, player->entity->lx, player->entity->ly, player->entity->lz);
 			printf("Player '%s' attempted to move too fast!\n", player->name);
 		} else {
@@ -1350,7 +1361,8 @@ void tick_player(struct world* world, struct player* player) {
 	}
 	int32_t pcx = ((int32_t) player->entity->x >> 4);
 	int32_t pcz = ((int32_t) player->entity->z >> 4);
-	if (((int32_t) player->entity->lx >> 4) != pcx || ((int32_t) player->entity->lz >> 4) != pcz || player->loadedChunks->count < CHUNK_VIEW_DISTANCE * CHUNK_VIEW_DISTANCE * 4) {
+	if (((int32_t) player->entity->lx >> 4) != pcx || ((int32_t) player->entity->lz >> 4) != pcz || player->loadedChunks->count < CHUNK_VIEW_DISTANCE * CHUNK_VIEW_DISTANCE * 4 || player->triggerRechunk) {
+		player->triggerRechunk = 0;
 		int mcl = 0;
 		for (int r = 0; r <= CHUNK_VIEW_DISTANCE; r++) {
 			int32_t x = pcx - r;
@@ -1624,7 +1636,7 @@ void tick_entity(struct world* world, struct entity* entity) {
 	if (entity->type > ENT_PLAYER) {
 		double friction_modifier = .98;
 		if (entity->type == ENT_ITEMSTACK) entity->motY -= 0.04;
-		moveEntity(entity);
+		moveEntity(entity, entity->motX, entity->motY, entity->motZ);
 		double friction = .98; // todo per block
 		if (entity->onGround) {
 			struct block_info* bi = getBlockInfo(getBlockWorld(entity->world, floor_int(entity->x), floor_int(entity->y) - 1, floor_int(entity->z)));

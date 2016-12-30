@@ -413,7 +413,7 @@ struct entity* newEntity(int32_t id, float x, float y, float z, uint8_t type, fl
 
 void getEntityCollision(struct entity* ent, struct boundingbox* bb);
 
-void moveEntity(struct entity* entity);
+int moveEntity(struct entity* entity, double mx, double my, double mz);
 
 void freeEntity(struct entity* entity);
 

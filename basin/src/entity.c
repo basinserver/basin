@@ -741,33 +741,33 @@ int getSwingTime(struct entity* ent) {
 	return 6;
 }
 
-void moveEntity(struct entity* entity) {
+int moveEntity(struct entity* entity, double mx, double my, double mz) {
 	struct boundingbox obb;
 	getEntityCollision(entity, &obb);
 	if (obb.minX == obb.maxX || obb.minZ == obb.maxZ || obb.minY == obb.maxY) {
-		entity->x += entity->motX;
-		entity->y += entity->motY;
-		entity->z += entity->motZ;
-		return;
+		entity->x += mx;
+		entity->y += my;
+		entity->z += mz;
+		return 0;
 	}
-	if (entity->motX < 0.) {
-		obb.minX += entity->motX;
+	if (mx < 0.) {
+		obb.minX += mx;
 	} else {
-		obb.maxX += entity->motX;
+		obb.maxX += mx;
 	}
-	if (entity->motY < 0.) {
-		obb.minY += entity->motY;
+	if (my < 0.) {
+		obb.minY += my;
 	} else {
-		obb.maxY += entity->motY;
+		obb.maxY += my;
 	}
-	if (entity->motZ < 0.) {
-		obb.minZ += entity->motZ;
+	if (mz < 0.) {
+		obb.minZ += mz;
 	} else {
-		obb.maxZ += entity->motZ;
+		obb.maxZ += mz;
 	}
 	struct boundingbox pbb;
 	getEntityCollision(entity, &pbb);
-	double ny = entity->motY;
+	double ny = my;
 	for (int32_t x = floor(obb.minX); x < floor(obb.maxX + 1.); x++) {
 		for (int32_t z = floor(obb.minZ); z < floor(obb.maxZ + 1.); z++) {
 			for (int32_t y = floor(obb.minY); y < floor(obb.maxY + 1.); y++) {
@@ -802,7 +802,7 @@ void moveEntity(struct entity* entity) {
 	entity->y += ny;
 	pbb.minY += ny;
 	pbb.maxY += ny;
-	double nx = entity->motX;
+	double nx = mx;
 	for (int32_t x = floor(obb.minX); x < floor(obb.maxX + 1.); x++) {
 		for (int32_t z = floor(obb.minZ); z < floor(obb.maxZ + 1.); z++) {
 			for (int32_t y = floor(obb.minY); y < floor(obb.maxY + 1.); y++) {
@@ -837,7 +837,7 @@ void moveEntity(struct entity* entity) {
 	entity->x += nx;
 	pbb.minX += nx;
 	pbb.maxX += nx;
-	double nz = entity->motZ;
+	double nz = mz;
 	for (int32_t x = floor(obb.minX); x < floor(obb.maxX + 1.); x++) {
 		for (int32_t z = floor(obb.minZ); z < floor(obb.maxZ + 1.); z++) {
 			for (int32_t y = floor(obb.minY); y < floor(obb.maxY + 1.); y++) {
@@ -873,9 +873,9 @@ void moveEntity(struct entity* entity) {
 	entity->z += nz;
 	pbb.minZ += nz;
 	pbb.maxZ += nz;
-	entity->collidedHorizontally = entity->motX != nx || entity->motZ != nz;
-	entity->collidedVertically = entity->motY != ny;
-	entity->onGround = entity->collidedVertically && entity->motY < 0.;
+	entity->collidedHorizontally = mx != nx || mz != nz;
+	entity->collidedVertically = my != ny;
+	entity->onGround = entity->collidedVertically && my < 0.;
 	int32_t bx = floor(entity->x);
 	int32_t by = floor(entity->y - .20000000298023224);
 	int32_t bz = floor(entity->z);
@@ -888,15 +888,16 @@ void moveEntity(struct entity* entity) {
 			by--;
 		}
 	}
-	if (entity->motX != nx) entity->motX = 0.;
-	if (entity->motZ != nz) entity->motZ = 0.;
-	if (entity->motY != ny) {
+	if (mx != nx) mx = 0.;
+	if (mz != nz) mz = 0.;
+	if (my != ny) {
 		if (lb != BLK_SLIME || entity->sneaking) {
-			entity->motY = 0.;
+			my = 0.;
 		} else {
-			entity->motY = -entity->motY;
+			my = -my;
 		}
 	}
+	return ny != my || nx != mx || nz != mz;
 }
 
 void applyKnockback(struct entity* entity, float yaw, float strength) {
