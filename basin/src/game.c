@@ -1762,15 +1762,15 @@ void sendMessageToPlayer(struct player* player, char* text) {
 }
 
 void sendMsgToPlayerf(struct player* player, char* fmt, ...) {
-
 	va_list args;
 	va_start(args, fmt);
-	char bct[256];
-	vsnprintf(bct, 256, fmt, args);
+	size_t len = varstrlen(fmt, args);
+	char* bct = xmalloc(len);
+	vsnprintf(bct, len, fmt, args);
 	va_end(args);
 	sendMessageToPlayer(player, bct);
+	xfree(bct);
 }
-
 
 void broadcast(char* text) {
 	size_t s = strlen(text) + 512;
@@ -1796,7 +1796,6 @@ void broadcastf(char* fmt, ...) {
 	char* bct = xmalloc(len);
 	vsnprintf(bct, len, fmt, args);
 	va_end(args);
-	printf(bct);
 	broadcast(bct);
 	xfree(bct);
 }
