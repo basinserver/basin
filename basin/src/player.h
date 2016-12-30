@@ -52,7 +52,7 @@ struct player {
 		struct slot* inHand;
 		size_t lastSwing;
 		uint8_t foodTimer;
-		size_t lastTPSCalculation;
+		double lastTPSCalculation;
 		uint32_t tps;
 		uint8_t real_onGround;
 		float reachDistance;

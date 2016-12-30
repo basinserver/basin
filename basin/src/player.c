@@ -69,7 +69,7 @@ struct player* newPlayer(struct entity* entity, char* name, struct uuid uuid, st
 	player->lastSwing = tick_counter;
 	player->foodTimer = 0;
 	player->tps = 0;
-	player->lastTPSCalculation = tick_counter;
+	player->lastTPSCalculation = 0.;
 	player->real_onGround = 1;
 	player->reachDistance = 6.;
 	player->flightInfraction = 0;

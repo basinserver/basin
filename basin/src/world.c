@@ -438,6 +438,7 @@ void freeChunk(struct chunk* chunk) {
 		if (cs->blocks != NULL) xfree(cs->blocks);
 		if (cs->palette != NULL) xfree(cs->palette);
 		if (cs->skyLight != NULL) xfree(cs->skyLight);
+		xfree(cs);
 	}
 	for (size_t i = 0; i < chunk->tileEntities->size; i++) {
 		if (chunk->tileEntities->data[i] != NULL) {

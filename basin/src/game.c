@@ -625,7 +625,6 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 		player->entity->lyaw = player->entity->yaw;
 		player->entity->lpitch = player->entity->pitch;
 		if (moveEntity(player->entity, inp->data.play_server.playerposition.x - lx, inp->data.play_server.playerposition.feet_y - ly, inp->data.play_server.playerposition.z - lz)) {
-			printf("rst1\n");
 			teleportPlayer(player, lx, ly, lz);
 		} else {
 			player->entity->lx = lx;
@@ -659,7 +658,6 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 		BEGIN_BROADCAST(player->entity->loadingPlayers)
 		sendEntityMove(bc_player, player->entity);
 		END_BROADCAST
-
 	} else if (inp->id == PKT_PLAY_SERVER_PLAYERPOSITIONANDLOOK) {
 		player->tps++;
 		double lx = player->entity->x;
@@ -668,7 +666,6 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 		player->entity->lyaw = player->entity->yaw;
 		player->entity->lpitch = player->entity->pitch;
 		if (moveEntity(player->entity, inp->data.play_server.playerpositionandlook.x - lx, inp->data.play_server.playerpositionandlook.feet_y - ly, inp->data.play_server.playerpositionandlook.z - lz)) {
-			printf("rst2\n");
 			teleportPlayer(player, lx, ly, lz);
 		} else {
 			player->entity->lx = lx;
@@ -1361,10 +1358,13 @@ void tick_player(struct world* world, struct player* player) {
 		add_queue(player->outgoingPacket, pkt);
 		flush_outgoing(player);
 	}
-	if (player->lastTPSCalculation + 20 <= tick_counter) {
-		float time = (float) (tick_counter - player->lastTPSCalculation) * 50. / 1000.;
-		player->lastTPSCalculation = tick_counter;
-		//printf("%i, %f\n", player->tps, time);
+	struct timespec ts;
+	clock_gettime(CLOCK_MONOTONIC, &ts);
+	double ct = (double) ts.tv_nsec / 1000000. + (double) ts.tv_sec * 1000.;
+	if (player->lastTPSCalculation + 1000. <= ct) {
+		float time = (float) (ct - player->lastTPSCalculation) / 1000.;
+		player->lastTPSCalculation = ct;
+		printf("%f > %f\n", (float) player->tps / 20., time + .25);
 		if ((float) player->tps / 20. > (time + .25)) {
 			kickPlayer(player, "Ticks Per Second Too High! (FastHeal, Teleport, or Lag?)");
 			return;
