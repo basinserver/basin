@@ -702,8 +702,8 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 		flush_outgoing (bc_player);
 		END_BROADCAST
 	} else if (inp->id == PKT_PLAY_SERVER_PLAYERDIGGING) {
-		if (entity_dist_block(player->entity, inp->data.play_server.playerdigging.location.x, inp->data.play_server.playerdigging.location.y, inp->data.play_server.playerdigging.location.z) > player->reachDistance) goto cont;
 		if (inp->data.play_server.playerdigging.status == 0) {
+			if (entity_dist_block(player->entity, inp->data.play_server.playerdigging.location.x, inp->data.play_server.playerdigging.location.y, inp->data.play_server.playerdigging.location.z) > player->reachDistance) goto cont;
 			struct block_info* bi = getBlockInfo(getBlockWorld(player->world, inp->data.play_server.playerdigging.location.x, inp->data.play_server.playerdigging.location.y, inp->data.play_server.playerdigging.location.z));
 			if (bi == NULL) goto cont;
 			float hard = bi->hardness;
@@ -731,6 +731,7 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 				memset(&player->digging_position, 0, sizeof(struct encpos));
 			}
 		} else if ((inp->data.play_server.playerdigging.status == 1 || inp->data.play_server.playerdigging.status == 2) && player->digging > 0.) {
+			if (entity_dist_block(player->entity, inp->data.play_server.playerdigging.location.x, inp->data.play_server.playerdigging.location.y, inp->data.play_server.playerdigging.location.z) > player->reachDistance) goto cont;
 			if (inp->data.play_server.playerdigging.status == 2) {
 				block blk = getBlockWorld(player->world, player->digging_position.x, player->digging_position.y, player->digging_position.z);
 				if ((player->digging + player->digspeed) >= 1.) {

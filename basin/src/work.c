@@ -83,6 +83,7 @@ int handleRead(struct conn* conn, struct work_param* param, int fd) {
 		if (conn->state == STATE_HANDSHAKE && inp->id == PKT_HANDSHAKE_SERVER_HANDSHAKE) {
 			conn->host_ip = xstrdup(inp->data.handshake_server.handshake.server_address, 0);
 			conn->host_port = inp->data.handshake_server.handshake.server_port;
+			conn->protocolVersion = inp->data.handshake_server.handshake.protocol_version;
 			if ((inp->data.handshake_server.handshake.protocol_version < MC_PROTOCOL_VERSION_MIN || inp->data.handshake_server.handshake.protocol_version > MC_PROTOCOL_VERSION_MAX) && inp->data.handshake_server.handshake.next_state != STATE_STATUS) return -2;
 			if (inp->data.handshake_server.handshake.next_state == STATE_STATUS) {
 				conn->state = STATE_STATUS;
@@ -143,6 +144,7 @@ int handleRead(struct conn* conn, struct work_param* param, int fd) {
 					conn->state = STATE_PLAY;
 					struct entity* ep = newEntity(nextEntityID++, (double) overworld->spawnpos.x + .5, (double) overworld->spawnpos.y, (double) overworld->spawnpos.z + .5, ENT_PLAYER, 0., 0.);
 					struct player* player = newPlayer(ep, xstrdup(rep.data.login_client.loginsuccess.username, 1), uuid, conn, 0); // TODO default gamemode
+					player->protocolVersion = conn->protocolVersion;
 					conn->player = player;
 					add_collection(players, player);
 					rep.id = PKT_PLAY_CLIENT_JOINGAME;
@@ -181,10 +183,6 @@ int handleRead(struct conn* conn, struct work_param* param, int fd) {
 					rep.data.play_client.playerpositionandlook.pitch = ep->pitch;
 					rep.data.play_client.playerpositionandlook.flags = 0x0;
 					rep.data.play_client.playerpositionandlook.teleport_id = 0;
-					if (writePacket(conn, &rep) < 0) goto rete;
-					rep.id = PKT_PLAY_CLIENT_TIMEUPDATE;
-					rep.data.play_client.timeupdate.time_of_day = ep->world->time;
-					rep.data.play_client.timeupdate.world_age = ep->world->age;
 					if (writePacket(conn, &rep) < 0) goto rete;
 					rep.id = PKT_PLAY_CLIENT_PLAYERLISTITEM;
 					rep.data.play_client.playerlistitem.action_id = 0;
@@ -235,6 +233,10 @@ int handleRead(struct conn* conn, struct work_param* param, int fd) {
 							}
 						}
 					}
+					rep.id = PKT_PLAY_CLIENT_TIMEUPDATE;
+					rep.data.play_client.timeupdate.time_of_day = player->world->time;
+					rep.data.play_client.timeupdate.world_age = player->world->age;
+					if (writePacket(conn, &rep) < 0) goto rete;
 					broadcastf("%s%s has joined the server!", CHAT_YELLOW, player->name);
 					const char* mip = NULL;
 					char tip[48];
