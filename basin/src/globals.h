@@ -17,6 +17,8 @@
 size_t tick_counter;
 struct config* cfg;
 struct logsess* delog;
-struct collection* players;
+struct hashmap* players;
+struct collection* defunctPlayers;
+struct collection* defunctChunks;
 
 #endif /* GLOBALS_H_ */

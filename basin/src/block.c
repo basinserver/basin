@@ -85,11 +85,10 @@ void onBlockInteract_chest(struct world* world, block blk, int32_t x, int32_t y,
 	pkt->data.play_client.blockaction.location.y = y;
 	pkt->data.play_client.blockaction.location.z = z;
 	pkt->data.play_client.blockaction.action_id = 1;
-	pkt->data.play_client.blockaction.action_param = te->data.chest.inv->players->count;
+	pkt->data.play_client.blockaction.action_param = te->data.chest.inv->players->entry_count;
 	pkt->data.play_client.blockaction.block_type = blk >> 4;
 	add_queue(bc_player->outgoingPacket, pkt);
-	flush_outgoing (bc_player);
-	END_BROADCAST
+	END_BROADCAST(player->world->players)
 }
 
 void onBlockDestroyed_furnace(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
@@ -116,14 +115,12 @@ void onBlockInteract_furnace(struct world* world, block blk, int32_t x, int32_t 
 	pkt->data.play_client.windowproperty.property = 1;
 	pkt->data.play_client.windowproperty.value = te->data.furnace.lastBurnMax;
 	add_queue(player->outgoingPacket, pkt);
-	flush_outgoing(player);
 	pkt = xmalloc(sizeof(struct packet));
 	pkt->id = PKT_PLAY_CLIENT_WINDOWPROPERTY;
 	pkt->data.play_client.windowproperty.window_id = te->data.furnace.inv->windowID;
 	pkt->data.play_client.windowproperty.property = 3;
 	pkt->data.play_client.windowproperty.value = 200;
 	add_queue(player->outgoingPacket, pkt);
-	flush_outgoing(player);
 }
 
 void update_furnace(struct world* world, struct tile_entity* te) {
@@ -138,7 +135,7 @@ void update_furnace(struct world* world, struct tile_entity* te) {
 		if (!te->tick) {
 			te->tick = &tetick_furnace;
 			enableTileEntityTickable(world, te);
-			setBlockWorld(world, BLK_FURNACE_LIT | (getBlockWorld(world, te->x, te->y, te->z) & 0x0f), te->x, te->y, te->z);
+			setBlockWorld(world, BLK_FURNACE_1 | (getBlockWorld(world, te->x, te->y, te->z) & 0x0f), te->x, te->y, te->z);
 		}
 		//printf("bt = %i\n", te->data.furnace.burnTime);
 		if (te->data.furnace.burnTime <= 0 && st > 0 && fu != NULL) {
@@ -153,8 +150,7 @@ void update_furnace(struct world* world, struct tile_entity* te) {
 			pkt->data.play_client.windowproperty.property = 1;
 			pkt->data.play_client.windowproperty.value = te->data.furnace.lastBurnMax;
 			add_queue(bc_player->outgoingPacket, pkt);
-			flush_outgoing (bc_player);
-			END_BROADCAST
+			END_BROADCAST(te->data.furnace.inv->players)
 		}
 		if (te->data.furnace.cookTime <= 0) {
 			//printf("start cookin\n");
@@ -186,15 +182,14 @@ void update_furnace(struct world* world, struct tile_entity* te) {
 			pkt->data.play_client.windowproperty.property = 0;
 			pkt->data.play_client.windowproperty.value = 0;
 			add_queue(bc_player->outgoingPacket, pkt);
-			flush_outgoing (bc_player);
 			pkt = xmalloc(sizeof(struct packet));
 			pkt->id = PKT_PLAY_CLIENT_WINDOWPROPERTY;
 			pkt->data.play_client.windowproperty.window_id = te->data.furnace.inv->windowID;
 			pkt->data.play_client.windowproperty.property = 2;
 			pkt->data.play_client.windowproperty.value = 0;
 			add_queue(bc_player->outgoingPacket, pkt);
-			flush_outgoing(bc_player);
-			END_BROADCAST disableTileEntityTickable(world, te);
+			END_BROADCAST(te->data.furnace.inv->players)
+			disableTileEntityTickable(world, te);
 			te->tick = NULL;
 			setBlockWorld(world, BLK_FURNACE | (getBlockWorld(world, te->x, te->y, te->z) & 0x0f), te->x, te->y, te->z);
 		}
@@ -208,15 +203,13 @@ void update_furnace(struct world* world, struct tile_entity* te) {
 		pkt->data.play_client.windowproperty.property = 0;
 		pkt->data.play_client.windowproperty.value = te->data.furnace.burnTime;
 		add_queue(bc_player->outgoingPacket, pkt);
-		flush_outgoing (bc_player);
 		pkt = xmalloc(sizeof(struct packet));
 		pkt->id = PKT_PLAY_CLIENT_WINDOWPROPERTY;
 		pkt->data.play_client.windowproperty.window_id = te->data.furnace.inv->windowID;
 		pkt->data.play_client.windowproperty.property = 2;
 		pkt->data.play_client.windowproperty.value = te->data.furnace.cookTime;
 		add_queue(bc_player->outgoingPacket, pkt);
-		flush_outgoing(bc_player);
-		END_BROADCAST
+		END_BROADCAST(te->data.furnace.inv->players)
 	}
 }
 
@@ -310,6 +303,118 @@ void dropItems_hugemushroom(struct world* world, block blk, int32_t x, int32_t y
 		drop.itemCount = ct;
 		drop.nbt = NULL;
 		dropBlockDrop(world, &drop, x, y, z);
+	}
+}
+
+void dropItems_crops(struct world* world, block blk, int32_t x, int32_t y, int32_t z, int fortune) {
+	struct slot drop;
+	uint8_t age = blk & 0x0f;
+	uint8_t maxAge = 0;
+	item seed = 0;
+	if ((blk >> 4) == (BLK_CROPS >> 4)) {
+		maxAge = 7;
+		if (age >= maxAge) {
+			drop.item = ITM_WHEAT;
+			drop.itemCount = 1;
+			drop.damage = 0;
+			drop.nbt = NULL;
+			dropBlockDrop(world, &drop, x, y, z);
+		}
+		seed = ITM_SEEDS;
+	} else if ((blk >> 4) == (BLK_PUMPKINSTEM >> 4)) {
+		drop.item = ITM_SEEDS_PUMPKIN;
+		drop.itemCount = 1;
+		drop.damage = 0;
+		drop.nbt = NULL;
+		for (int i = 0; i < 3; i++) {
+			if (rand() % 15 <= age) {
+				dropBlockDrop(world, &drop, x, y, z);
+			}
+		}
+		seed = ITM_SEEDS_PUMPKIN;
+		maxAge = 7;
+	} else if ((blk >> 4) == (BLK_PUMPKINSTEM_1 >> 4)) {
+		drop.item = ITM_SEEDS_MELON;
+		drop.itemCount = 1;
+		drop.damage = 0;
+		drop.nbt = NULL;
+		for (int i = 0; i < 3; i++) {
+			if (rand() % 15 <= age) {
+				dropBlockDrop(world, &drop, x, y, z);
+			}
+		}
+		seed = ITM_SEEDS_PUMPKIN;
+		maxAge = 7;
+	} else if ((blk >> 4) == (BLK_CARROTS >> 4)) {
+		maxAge = 7;
+		if (age >= maxAge) {
+			drop.item = ITM_CARROTS;
+			drop.itemCount = 1;
+			drop.damage = 0;
+			drop.nbt = NULL;
+			dropBlockDrop(world, &drop, x, y, z);
+			seed = ITM_CARROTS;
+		}
+	} else if ((blk >> 4) == (BLK_POTATOES >> 4)) {
+		maxAge = 7;
+		if (age >= maxAge) {
+			drop.item = ITM_POTATO;
+			drop.itemCount = 1;
+			drop.damage = 0;
+			drop.nbt = NULL;
+			dropBlockDrop(world, &drop, x, y, z);
+			seed = ITM_POTATO;
+			if (rand() % 50 == 0) {
+				drop.item = ITM_POTATOPOISONOUS;
+				drop.itemCount = 1;
+				drop.damage = 0;
+				drop.nbt = NULL;
+				dropBlockDrop(world, &drop, x, y, z);
+			}
+		}
+	} else if ((blk >> 4) == (BLK_NETHERSTALK >> 4)) {
+		int rct = 1;
+		drop.item = ITM_NETHERSTALKSEEDS;
+		drop.itemCount = 1;
+		drop.damage = 0;
+		drop.nbt = NULL;
+		if (age >= 3) {
+			rct += 2 + rand() % 3;
+			if (fortune > 0) rct += rand() % (fortune + 1);
+		}
+		for (int i = 0; i < rct; i++)
+			dropBlockDrop(world, &drop, x, y, z);
+		return;
+	} else if ((blk >> 4) == (BLK_BEETROOTS >> 4)) {
+		maxAge = 3;
+		if (age >= maxAge) {
+			drop.item = ITM_BEETROOT;
+			drop.itemCount = 1;
+			drop.damage = 0;
+			drop.nbt = NULL;
+			dropBlockDrop(world, &drop, x, y, z);
+			seed = ITM_BEETROOT_SEEDS;
+		}
+	} else if ((blk >> 4) == (BLK_COCOA >> 4)) {
+		int rc = 1;
+		if (age >= 2) rc = 3;
+		drop.item = ITM_DYEPOWDER_BLACK;
+		drop.itemCount = 1;
+		drop.damage = 3;
+		drop.nbt = NULL;
+		for (int i = 0; i < rc; i++)
+			dropBlockDrop(world, &drop, x, y, z);
+		return;
+	}
+	if (age >= maxAge) {
+		int rct = 3 + fortune;
+		drop.item = seed;
+		drop.itemCount = 1;
+		drop.damage = 0;
+		drop.nbt = NULL;
+		for (int i = 0; i < rct; i++) {
+			if (rand() % (2 * maxAge) <= age) dropBlockDrop(world, &drop, x, y, z);
+		}
 	}
 }
 
@@ -428,6 +533,9 @@ void init_materials() {
 		tmp = getJSONValue(ur, "blocksMovement");
 		if (tmp == NULL || (tmp->type != JSON_TRUE && tmp->type != JSON_FALSE)) goto cerr;
 		bm->blocksMovement = tmp->type == JSON_TRUE;
+		tmp = getJSONValue(ur, "opaque");
+		if (tmp == NULL || (tmp->type != JSON_TRUE && tmp->type != JSON_FALSE)) goto cerr;
+		bm->opaque = tmp->type == JSON_TRUE;
 		add_block_material(bm);
 		continue;
 		cerr: ;
@@ -435,6 +543,10 @@ void init_materials() {
 	}
 	freeJSON(&json);
 	xfree(jsf);
+}
+
+int isNormalCube(struct block_info* bi) {
+	return bi == NULL ? 0 : (bi->material->opaque && bi->fullCube && !bi->canProvidePower);
 }
 
 void init_blocks() {
@@ -512,6 +624,18 @@ void init_blocks() {
 		tmp = getJSONValue(ur, "slipperiness");
 		if (tmp == NULL || tmp->type != JSON_NUMBER) goto cerr;
 		bi->slipperiness = (float) tmp->data.number;
+		tmp = getJSONValue(ur, "isFullCube");
+		if (tmp == NULL || (tmp->type != JSON_TRUE && tmp->type != JSON_FALSE)) goto cerr;
+		bi->fullCube = tmp->type == JSON_TRUE;
+		tmp = getJSONValue(ur, "canProvidePower");
+		if (tmp == NULL || (tmp->type != JSON_TRUE && tmp->type != JSON_FALSE)) goto cerr;
+		bi->canProvidePower = tmp->type == JSON_TRUE;
+		tmp = getJSONValue(ur, "lightOpacity");
+		if (tmp == NULL || tmp->type != JSON_NUMBER) goto cerr;
+		bi->lightOpacity = (uint8_t) tmp->data.number;
+		tmp = getJSONValue(ur, "lightEmission");
+		if (tmp == NULL || tmp->type != JSON_NUMBER) goto cerr;
+		bi->lightEmission = (uint8_t) tmp->data.number;
 		add_block_info(id, bi);
 		continue;
 		cerr: ;
@@ -529,7 +653,7 @@ void init_blocks() {
 	tmp->onBlockInteract = &onBlockInteract_furnace;
 	tmp->onBlockDestroyed = &onBlockDestroyed_furnace;
 	tmp->onBlockPlaced = &onBlockPlaced_furnace;
-	tmp = getBlockInfo(BLK_FURNACE_LIT);
+	tmp = getBlockInfo(BLK_FURNACE_1);
 	tmp->onBlockInteract = &onBlockInteract_furnace;
 	tmp->onBlockDestroyed = &onBlockDestroyed_furnace;
 	tmp->onBlockPlaced = &onBlockPlaced_furnace;
@@ -539,22 +663,21 @@ void init_blocks() {
 	tmp->onBlockPlaced = &onBlockPlaced_chest;
 	tmp = getBlockInfo(BLK_GRAVEL);
 	tmp->dropItems = &dropItems_gravel;
-	tmp = getBlockInfo(BLK_LEAVES_OAK);
-	tmp->dropItems = &dropItems_leaves;
-	tmp = getBlockInfo(BLK_LEAVES_SPRUCE);
-	tmp->dropItems = &dropItems_leaves;
-	tmp = getBlockInfo(BLK_LEAVES_BIRCH);
-	tmp->dropItems = &dropItems_leaves;
-	tmp = getBlockInfo(BLK_LEAVES_JUNGLE);
-	tmp->dropItems = &dropItems_leaves;
-	tmp = getBlockInfo(BLK_LEAVES_ACACIA);
-	tmp->dropItems = &dropItems_leaves;
-	tmp = getBlockInfo(BLK_LEAVES_BIG_OAK);
-	tmp->dropItems = &dropItems_leaves;
-	tmp = getBlockInfo(BLK_TALLGRASS_GRASS);
-	tmp->dropItems = &dropItems_tallgrass;
-	tmp = getBlockInfo(BLK_MUSHROOM_2);
-	tmp->dropItems = &dropItems_hugemushroom;
-	tmp = getBlockInfo(BLK_MUSHROOM_3);
-	tmp->dropItems = &dropItems_hugemushroom;
+	getBlockInfo(BLK_LEAVES_OAK)->dropItems = &dropItems_leaves;
+	getBlockInfo(BLK_LEAVES_SPRUCE)->dropItems = &dropItems_leaves;
+	getBlockInfo(BLK_LEAVES_BIRCH)->dropItems = &dropItems_leaves;
+	getBlockInfo(BLK_LEAVES_JUNGLE)->dropItems = &dropItems_leaves;
+	getBlockInfo(BLK_LEAVES_ACACIA)->dropItems = &dropItems_leaves;
+	getBlockInfo(BLK_LEAVES_BIG_OAK)->dropItems = &dropItems_leaves;
+	getBlockInfo(BLK_TALLGRASS_GRASS)->dropItems = &dropItems_tallgrass;
+	getBlockInfo(BLK_MUSHROOM_2)->dropItems = &dropItems_hugemushroom;
+	getBlockInfo(BLK_MUSHROOM_3)->dropItems = &dropItems_hugemushroom;
+	getBlockInfo(BLK_CROPS)->dropItems = &dropItems_crops;
+	getBlockInfo(BLK_PUMPKINSTEM)->dropItems = &dropItems_crops;
+	getBlockInfo(BLK_PUMPKINSTEM_1)->dropItems = &dropItems_crops;
+	getBlockInfo(BLK_CARROTS)->dropItems = &dropItems_crops;
+	getBlockInfo(BLK_POTATOES)->dropItems = &dropItems_crops;
+	getBlockInfo(BLK_NETHERSTALK)->dropItems = &dropItems_crops;
+	getBlockInfo(BLK_BEETROOTS)->dropItems = &dropItems_crops;
+	getBlockInfo(BLK_COCOA)->dropItems = &dropItems_crops;
 }

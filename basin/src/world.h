@@ -16,6 +16,15 @@ typedef uint16_t block;
 
 uint32_t nextEntityID;
 
+struct chunk_req {
+		struct player* pl;
+		int32_t cx;
+		int32_t cz;
+		uint8_t load;
+};
+
+struct queue* chunk_input;
+
 struct entity;
 
 struct boundingbox {
@@ -52,24 +61,28 @@ struct chunk {
 		struct collection* tileEntities;
 		struct collection* tileEntitiesTickable;
 		uint32_t playersLoaded;
+		uint8_t defunct;
+		//struct hashmap* entities;
 		//TODO: tileTicks
 };
+
+void chunkloadthr(size_t b);
+
+uint64_t getChunkKey(struct chunk* ch);
 
 struct region {
 		int16_t x;
 		int16_t z;
-		struct chunk* chunks[32][32];
-		uint8_t loaded[32][32];
-		int fd; // -1 if not loaded, >= 0 is the FD.
-		void* mapping; // NULL if not loaded
+		int* fd; // -1 if not loaded, >= 0 is the FD.
+		void** mapping; // NULL if not loaded
 		char* file;
 };
 
 struct world {
-		struct collection* entities;
-		struct collection* players;
-		struct collection* regions;
-		struct collection* loadedChunks;
+		struct hashmap* entities;
+		struct hashmap* players;
+		struct hashmap* regions;
+		struct hashmap* chunks;
 		char* levelType;
 		struct encpos spawnpos;
 		int32_t dimension;
@@ -78,15 +91,18 @@ struct world {
 		struct nbt_tag* level;
 		char* lpa;
 		pthread_rwlock_t chl;
+		size_t chl_count;
 };
 
-int isChunkLoaded(struct world* world, int16_t x, int16_t z);
+struct chunk* getEntityChunk(struct entity* entity);
+
+int isChunkLoaded(struct world* world, int32_t x, int32_t z);
 
 int loadWorld(struct world* world, char* path);
 
 int saveWorld(struct world* world, char* path);
 
-struct chunk* getChunk(struct world* world, int16_t x, int16_t z);
+struct chunk* getChunk(struct world* world, int32_t x, int32_t z);
 
 void unloadChunk(struct world* world, struct chunk* chunk);
 
@@ -100,7 +116,7 @@ struct chunk* newChunk(int16_t x, int16_t z);
 
 void freeChunk(struct chunk* chunk);
 
-struct region* newRegion(char* path, int16_t x, int16_t z);
+struct region* newRegion(char* path, int16_t x, int16_t z, size_t chr_count);
 
 void freeRegion(struct region* region);
 

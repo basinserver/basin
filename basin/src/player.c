@@ -60,9 +60,9 @@ struct player* newPlayer(struct entity* entity, char* name, struct uuid uuid, st
 	player->inventory = xmalloc(sizeof(struct inventory));
 	newInventory(player->inventory, INVTYPE_PLAYERINVENTORY, 0, 46);
 	player->openInv = NULL;
-	add_collection(player->inventory->players, player);
-	player->loadedChunks = new_collection(0, 0);
-	player->loadedEntities = new_collection(0, 0);
+	put_hashmap(player->inventory->players, player->entity->id, player);
+	player->loadedChunks = new_hashmap(1, 1);
+	player->loadedEntities = new_hashmap(1, 0);
 	player->incomingPacket = new_queue(0, 1);
 	player->outgoingPacket = new_queue(0, 1);
 	player->defunct = 0;
@@ -136,7 +136,6 @@ void kickPlayer(struct player* player, char* message) {
 	pkt->data.play_client.disconnect.reason = xmalloc(sl + 512);
 	snprintf(pkt->data.play_client.disconnect.reason, sl + 512, "{\"text\": \"%s\", \"color\": \"red\"}", message);
 	add_queue(player->outgoingPacket, pkt);
-	flush_outgoing(player);
 	if (player->conn != NULL) player->conn->disconnect = 1;
 	broadcastf("red", "Kicked Player %s for reason: %s", player->name, message);
 }
@@ -164,6 +163,7 @@ void teleportPlayer(struct player* player, double x, double y, double z) {
 	player->entity->ly = y;
 	player->entity->lz = z;
 	player->triggerRechunk = 1;
+	player->spawnedIn = 0;
 	struct packet* pkt = xmalloc(sizeof(struct packet));
 	pkt->id = PKT_PLAY_CLIENT_ENTITYVELOCITY;
 	pkt->data.play_client.entityvelocity.entity_id = player->entity->id;
@@ -171,7 +171,6 @@ void teleportPlayer(struct player* player, double x, double y, double z) {
 	pkt->data.play_client.entityvelocity.velocity_y = 0;
 	pkt->data.play_client.entityvelocity.velocity_z = 0;
 	add_queue(player->outgoingPacket, pkt);
-	flush_outgoing(player);
 	pkt = xmalloc(sizeof(struct packet));
 	pkt->id = PKT_PLAY_CLIENT_PLAYERPOSITIONANDLOOK;
 	pkt->data.play_client.playerpositionandlook.x = player->entity->x;
@@ -182,15 +181,17 @@ void teleportPlayer(struct player* player, double x, double y, double z) {
 	pkt->data.play_client.playerpositionandlook.flags = 0x0;
 	pkt->data.play_client.playerpositionandlook.teleport_id = 0;
 	add_queue(player->outgoingPacket, pkt);
-	flush_outgoing(player);
 	if (player->tps > 0) player->tps--;
 }
 
 struct player* getPlayerByName(char* name) {
-	for (size_t i = 0; i < players->size; i++) {
-		struct player* player = players->data[i];
-		if (player != NULL && streq_nocase(name, player->name)) return player;
+	BEGIN_HASHMAP_ITERATION (players)
+	struct player* player = (struct player*) value;
+	if (player != NULL && streq_nocase(name, player->name)) {
+		BREAK_HASHMAP_ITERATION(players);
+		return player;
 	}
+	END_HASHMAP_ITERATION (players)
 	return NULL;
 }
 
@@ -230,15 +231,14 @@ void player_closeWindow(struct player* player, uint16_t windowID) {
 				pkt->data.play_client.blockaction.location.y = inv->te->y;
 				pkt->data.play_client.blockaction.location.z = inv->te->z;
 				pkt->data.play_client.blockaction.action_id = 1;
-				pkt->data.play_client.blockaction.action_param = inv->players->count - 1;
+				pkt->data.play_client.blockaction.action_param = inv->players->entry_count - 1;
 				pkt->data.play_client.blockaction.block_type = getBlockWorld(player->world, inv->te->x, inv->te->y, inv->te->z) >> 4;
 				add_queue(bc_player->outgoingPacket, pkt);
-				flush_outgoing (bc_player);
-				END_BROADCAST
+				END_BROADCAST(player->world->players)
 			}
 		}
 	}
-	if (inv != NULL && inv->type != INVTYPE_PLAYERINVENTORY) rem_collection(inv->players, player);
+	if (inv != NULL && inv->type != INVTYPE_PLAYERINVENTORY) put_hashmap(inv->players, player->entity->id, NULL);
 	player->openInv = NULL; // TODO: free sometimes?
 
 }
@@ -251,7 +251,6 @@ void setPlayerGamemode(struct player* player, int gamemode) {
 		pkt->data.play_client.changegamestate.reason = 3;
 		pkt->data.play_client.changegamestate.value = gamemode;
 		add_queue(player->outgoingPacket, pkt);
-		flush_outgoing(player);
 	}
 	struct packet* pkt = xmalloc(sizeof(struct packet));
 	pkt->id = PKT_PLAY_CLIENT_PLAYERABILITIES;
@@ -259,25 +258,26 @@ void setPlayerGamemode(struct player* player, int gamemode) {
 	pkt->data.play_client.playerabilities.flying_speed = .05;
 	pkt->data.play_client.playerabilities.field_of_view_modifier = .1;
 	add_queue(player->outgoingPacket, pkt);
-	flush_outgoing(player);
 }
 
 void freePlayer(struct player* player) {
 	struct packet* pkt = NULL;
 	while ((pkt = pop_nowait_queue(player->incomingPacket)) != NULL) {
 		freePacket(STATE_PLAY, 0, pkt);
+		xfree(pkt);
 	}
 	del_queue(player->incomingPacket);
 	while ((pkt = pop_nowait_queue(player->outgoingPacket)) != NULL) {
 		freePacket(STATE_PLAY, 1, pkt);
+		xfree(pkt);
 	}
+	del_queue(player->outgoingPacket);
 	if (player->inHand != NULL) {
 		freeSlot(player->inHand);
 		xfree(player->inHand);
 	}
-	del_queue(player->outgoingPacket);
-	del_collection(player->loadedChunks);
-	del_collection(player->loadedEntities);
+	del_hashmap(player->loadedChunks);
+	del_hashmap(player->loadedEntities);
 	freeInventory(player->inventory);
 	xfree(player->inventory);
 	xfree(player->name);

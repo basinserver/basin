@@ -380,14 +380,14 @@ struct entity {
 		float fallDistance;
 		union entity_data data;
 		struct world* world;
-		struct collection* loadingPlayers;
+		struct hashmap* loadingPlayers;
 		uint64_t age;
 		uint8_t invincibilityTicks;
 		uint8_t inWater;
 		uint8_t inLava;
 };
 
-void damageEntityWithItem(struct entity* attacked, struct entity* attacker, struct slot* item);
+void damageEntityWithItem(struct entity* attacked, struct entity* attacker, uint8_t slot_index, struct slot* item);
 
 void damageEntity(struct entity* attacked, float damage, int armorable);
 
@@ -413,7 +413,7 @@ struct entity* newEntity(int32_t id, float x, float y, float z, uint8_t type, fl
 
 void getEntityCollision(struct entity* ent, struct boundingbox* bb);
 
-int moveEntity(struct entity* entity, double mx, double my, double mz);
+int moveEntity(struct entity* entity, double mx, double my, double mz, float shrink);
 
 void freeEntity(struct entity* entity);
 

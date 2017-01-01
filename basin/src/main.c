@@ -45,6 +45,37 @@ void main_tick() {
 		if (worlds->data[i] == NULL) continue;
 		tick_world((struct world*) worlds->data[i]);
 	}
+	BEGIN_HASHMAP_ITERATION (players)
+	flush_outgoing (value);
+	END_HASHMAP_ITERATION(players);
+	if (tick_counter % 20 == 0) {
+		pthread_rwlock_wrlock(&defunctPlayers->data_mutex);
+		for (size_t i = 0; i < defunctPlayers->size; i++) {
+			struct player* def = defunctPlayers->data[i];
+			if (def == NULL) continue;
+			if (def->defunct++ >= 21) {
+				freeEntity(def->entity);
+				freePlayer(def);
+				defunctPlayers->data[i] = NULL;
+				defunctPlayers->count--;
+				if (i == defunctPlayers->size - 1) defunctPlayers->size--;
+			}
+		}
+		pthread_rwlock_unlock(&defunctPlayers->data_mutex);
+		pthread_rwlock_wrlock(&defunctChunks->data_mutex);
+		for (size_t i = 0; i < defunctChunks->size; i++) {
+			struct chunk* def = defunctChunks->data[i];
+			if (def == NULL) continue;
+			if (def->defunct++ >= 21) {
+				freeChunk(def);
+				defunctChunks->data[i] = NULL;
+				defunctChunks->count--;
+				if (i == defunctChunks->size - 1) defunctChunks->size--;
+			}
+		}
+		pthread_rwlock_unlock(&defunctChunks->data_mutex);
+
+	}
 	tick_counter++;
 }
 
@@ -141,14 +172,23 @@ int main(int argc, char* argv[]) {
 		errlog(delog, "Only one server block is supported at this time.");
 		return -1;
 	}
-	players = new_collection(0, 1);
+	players = new_hashmap(1, 1);
+	defunctPlayers = new_collection(16, 1);
+	defunctChunks = new_collection(16, 1);
 	init_materials();
+	printf("Materials Initialized\n");
 	init_blocks();
+	printf("Blocks Initialized\n");
 	init_crafting();
+	printf("Crafting Initialized\n");
 	init_tools();
+	printf("Tools Initialized\n");
 	init_items();
+	printf("Items Initialized\n");
 	init_smelting();
+	printf("Smelting Initialized\n");
 	init_base_commands();
+	printf("Commands Initialized\n");
 	for (int i = 0; i < servsl; i++) {
 		struct cnode* serv = servs[i];
 		const char* bind_mode = getConfigValue(serv, "bind-mode");
@@ -328,8 +368,9 @@ int main(int argc, char* argv[]) {
 			close (sfd);
 			continue;
 		}
-		overworld = newWorld();
+		overworld = newWorld(8);
 		loadWorld(overworld, ovr);
+		printf("Overworld Loaded\n");
 		nether = newWorld();
 		//loadWorld(nether, neth);
 		//endworld = newWorld();
@@ -389,6 +430,10 @@ int main(int argc, char* argv[]) {
 	}
 	pthread_t tt;
 	pthread_create(&tt, NULL, &main_tick_thread, NULL);
+	chunk_input = new_queue(0, 1);
+	for (int i = 0; i < overworld->chl_count; i++) {
+		pthread_create(&tt, NULL, &chunkloadthr, (size_t) i);
+	}
 	char line[4096];
 	while (sr > 0) {
 		if (readLine(STDIN_FILENO, line, 4096) < 0) {

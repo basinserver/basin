@@ -39,21 +39,7 @@ void closeConn(struct work_param* param, struct conn* conn) {
 		errlog(param->logsess, "Failed to delete connection properly! This is bad!");
 	}
 	if (conn->player != NULL) {
-		rem_collection(players, conn->player);
 		broadcastf("yellow", "%s has left the server!", conn->player->name);
-		for (size_t i = 0; i < players->size; i++) {
-			struct player* plx = (struct player*) players->data[i];
-			if (plx != NULL) {
-				struct packet* pkt = xmalloc(sizeof(struct packet));
-				pkt->id = PKT_PLAY_CLIENT_PLAYERLISTITEM;
-				pkt->data.play_client.playerlistitem.action_id = 4;
-				pkt->data.play_client.playerlistitem.number_of_players = 1;
-				pkt->data.play_client.playerlistitem.players = xmalloc(sizeof(struct listitem_player));
-				memcpy(&pkt->data.play_client.playerlistitem.players->uuid, &conn->player->uuid, sizeof(struct uuid));
-				add_queue(plx->outgoingPacket, pkt);
-				flush_outgoing(plx);
-			}
-		}
 		conn->player->defunct = 1;
 		conn->player->conn = NULL;
 	}
@@ -95,7 +81,7 @@ int handleRead(struct conn* conn, struct work_param* param, int fd) {
 				rep.id = PKT_STATUS_CLIENT_RESPONSE;
 				rep.data.status_client.response.json_response = xmalloc(1000);
 				rep.data.status_client.response.json_response[999] = 0;
-				snprintf(rep.data.status_client.response.json_response, 999, "{\"version\":{\"name\":\"1.11.2\",\"protocol\":%i},\"players\":{\"max\":%i,\"online\":%i},\"description\":{\"text\":\"%s\"}}", MC_PROTOCOL_VERSION_MIN, max_players, players->count, motd);
+				snprintf(rep.data.status_client.response.json_response, 999, "{\"version\":{\"name\":\"1.11.2\",\"protocol\":%i},\"players\":{\"max\":%i,\"online\":%i},\"description\":{\"text\":\"%s\"}}", MC_PROTOCOL_VERSION_MIN, max_players, players->entry_count, motd);
 				if (writePacket(conn, &rep) < 0) goto rete;
 				xfree(rep.data.status_client.response.json_response);
 			} else if (inp->id == PKT_STATUS_SERVER_PING) {
@@ -110,13 +96,13 @@ int handleRead(struct conn* conn, struct work_param* param, int fd) {
 					return -1;
 				} else {
 					int bn = 0;
-					for (size_t i = 0; i < players->size; i++) {
-						struct player* player = players->data[i];
-						if (player != NULL && streq_nocase(inp->data.login_server.loginstart.name, player->name)) {
-							bn = 1;
-							break;
-						}
+					BEGIN_HASHMAP_ITERATION (players)
+					struct player* player = (struct player*) value;
+					if (streq_nocase(inp->data.login_server.loginstart.name, player->name)) {
+						bn = 1;
+						break;
 					}
+					END_HASHMAP_ITERATION (players)
 					if (bn) {
 						rep.id = PKT_LOGIN_CLIENT_DISCONNECT;
 						rep.data.login_client.disconnect.reason = xstrdup("{\"text\", \"You are already in the server!\"}", 0);
@@ -146,7 +132,7 @@ int handleRead(struct conn* conn, struct work_param* param, int fd) {
 					struct player* player = newPlayer(ep, xstrdup(rep.data.login_client.loginsuccess.username, 1), uuid, conn, 0); // TODO default gamemode
 					player->protocolVersion = conn->protocolVersion;
 					conn->player = player;
-					add_collection(players, player);
+					put_hashmap(players, player->entity->id, player);
 					rep.id = PKT_PLAY_CLIENT_JOINGAME;
 					rep.data.play_client.joingame.entity_id = ep->id;
 					rep.data.play_client.joingame.gamemode = player->gamemode;
@@ -186,53 +172,61 @@ int handleRead(struct conn* conn, struct work_param* param, int fd) {
 					if (writePacket(conn, &rep) < 0) goto rete;
 					rep.id = PKT_PLAY_CLIENT_PLAYERLISTITEM;
 					rep.data.play_client.playerlistitem.action_id = 0;
-					rep.data.play_client.playerlistitem.number_of_players = players->count;
+					rep.data.play_client.playerlistitem.number_of_players = players->entry_count + 1;
 					rep.data.play_client.playerlistitem.players = xmalloc(rep.data.play_client.playerlistitem.number_of_players * sizeof(struct listitem_player));
 					size_t px = 0;
-					for (size_t i = 0; i < players->size; i++) {
-						struct player* plx = (struct player*) players->data[i];
-						if (plx != NULL) {
-							if (px < rep.data.play_client.playerlistitem.number_of_players) {
-								memcpy(&rep.data.play_client.playerlistitem.players[px].uuid, &plx->uuid, sizeof(struct uuid));
-								rep.data.play_client.playerlistitem.players[px].action.addplayer.name = xstrdup(plx->name, 0);
-								rep.data.play_client.playerlistitem.players[px].action.addplayer.number_of_properties = 0;
-								rep.data.play_client.playerlistitem.players[px].action.addplayer.properties = NULL;
-								rep.data.play_client.playerlistitem.players[px].action.addplayer.gamemode = plx->gamemode;
-								rep.data.play_client.playerlistitem.players[px].action.addplayer.ping = 0; // TODO
-								rep.data.play_client.playerlistitem.players[px].action.addplayer.has_display_name = 0;
-								rep.data.play_client.playerlistitem.players[px].action.addplayer.display_name = NULL;
-								px++;
-							}
-							if (player == plx) continue;
-							struct packet* pkt = xmalloc(sizeof(struct packet));
-							pkt->id = PKT_PLAY_CLIENT_PLAYERLISTITEM;
-							pkt->data.play_client.playerlistitem.action_id = 0;
-							pkt->data.play_client.playerlistitem.number_of_players = 1;
-							pkt->data.play_client.playerlistitem.players = xmalloc(sizeof(struct listitem_player));
-							memcpy(&pkt->data.play_client.playerlistitem.players->uuid, &player->uuid, sizeof(struct uuid));
-							pkt->data.play_client.playerlistitem.players->action.addplayer.name = xstrdup(player->name, 0);
-							pkt->data.play_client.playerlistitem.players->action.addplayer.number_of_properties = 0;
-							pkt->data.play_client.playerlistitem.players->action.addplayer.properties = NULL;
-							pkt->data.play_client.playerlistitem.players->action.addplayer.gamemode = player->gamemode;
-							pkt->data.play_client.playerlistitem.players->action.addplayer.ping = 0; // TODO
-							pkt->data.play_client.playerlistitem.players->action.addplayer.has_display_name = 0;
-							pkt->data.play_client.playerlistitem.players->action.addplayer.display_name = NULL;
-							add_queue(plx->outgoingPacket, pkt);
-							flush_outgoing(plx);
-						}
+					BEGIN_HASHMAP_ITERATION (players)
+					struct player* plx = (struct player*) value;
+					if (px < rep.data.play_client.playerlistitem.number_of_players) {
+						memcpy(&rep.data.play_client.playerlistitem.players[px].uuid, &plx->uuid, sizeof(struct uuid));
+						rep.data.play_client.playerlistitem.players[px].action.addplayer.name = xstrdup(plx->name, 0);
+						rep.data.play_client.playerlistitem.players[px].action.addplayer.number_of_properties = 0;
+						rep.data.play_client.playerlistitem.players[px].action.addplayer.properties = NULL;
+						rep.data.play_client.playerlistitem.players[px].action.addplayer.gamemode = plx->gamemode;
+						rep.data.play_client.playerlistitem.players[px].action.addplayer.ping = 0; // TODO
+						rep.data.play_client.playerlistitem.players[px].action.addplayer.has_display_name = 0;
+						rep.data.play_client.playerlistitem.players[px].action.addplayer.display_name = NULL;
+						px++;
 					}
+					if (player == plx) continue;
+					struct packet* pkt = xmalloc(sizeof(struct packet));
+					pkt->id = PKT_PLAY_CLIENT_PLAYERLISTITEM;
+					pkt->data.play_client.playerlistitem.action_id = 0;
+					pkt->data.play_client.playerlistitem.number_of_players = 1;
+					pkt->data.play_client.playerlistitem.players = xmalloc(sizeof(struct listitem_player));
+					memcpy(&pkt->data.play_client.playerlistitem.players->uuid, &player->uuid, sizeof(struct uuid));
+					pkt->data.play_client.playerlistitem.players->action.addplayer.name = xstrdup(player->name, 0);
+					pkt->data.play_client.playerlistitem.players->action.addplayer.number_of_properties = 0;
+					pkt->data.play_client.playerlistitem.players->action.addplayer.properties = NULL;
+					pkt->data.play_client.playerlistitem.players->action.addplayer.gamemode = player->gamemode;
+					pkt->data.play_client.playerlistitem.players->action.addplayer.ping = 0; // TODO
+					pkt->data.play_client.playerlistitem.players->action.addplayer.has_display_name = 0;
+					pkt->data.play_client.playerlistitem.players->action.addplayer.display_name = NULL;
+					add_queue(plx->outgoingPacket, pkt);
+					flush_outgoing(plx);
+					END_HASHMAP_ITERATION (players)
+					memcpy(&rep.data.play_client.playerlistitem.players[px].uuid, &player->uuid, sizeof(struct uuid));
+					rep.data.play_client.playerlistitem.players[px].action.addplayer.name = xstrdup(player->name, 0);
+					rep.data.play_client.playerlistitem.players[px].action.addplayer.number_of_properties = 0;
+					rep.data.play_client.playerlistitem.players[px].action.addplayer.properties = NULL;
+					rep.data.play_client.playerlistitem.players[px].action.addplayer.gamemode = player->gamemode;
+					rep.data.play_client.playerlistitem.players[px].action.addplayer.ping = 0; // TODO
+					rep.data.play_client.playerlistitem.players[px].action.addplayer.has_display_name = 0;
+					rep.data.play_client.playerlistitem.players[px].action.addplayer.display_name = NULL;
+					px++;
 					if (writePacket(conn, &rep) < 0) goto rete;
 					spawnPlayer(overworld, player);
-					for (size_t i = 0; i < player->world->entities->size; i++) {
-						struct entity* ent = (struct entity*) player->world->entities->data[i];
-						if (ent == NULL || entity_distsq(ent, player->entity) > 16384.) continue;
-						if (ent->type == ENT_PLAYER) {
-							if (ent->data.player.player != player) {
-								loadPlayer(player, ent->data.player.player);
-								loadPlayer(ent->data.player.player, player);
-							}
-						}
-					}
+					/*
+					 for (size_t i = 0; i < player->world->entities->size; i++) {
+					 struct entity* ent = (struct entity*) player->world->entities->data[i];
+					 if (ent == NULL || entity_distsq(ent, player->entity) > 16384.) continue;
+					 if (ent->type == ENT_PLAYER) {
+					 if (ent->data.player.player != player) {
+					 loadPlayer(player, ent->data.player.player);
+					 loadPlayer(ent->data.player.player, player);
+					 }
+					 }
+					 }*/
 					rep.id = PKT_PLAY_CLIENT_TIMEUPDATE;
 					rep.data.play_client.timeupdate.time_of_day = player->world->time;
 					rep.data.play_client.timeupdate.world_age = player->world->age;
@@ -265,7 +259,6 @@ int handleRead(struct conn* conn, struct work_param* param, int fd) {
 					 pkt->data.play_client.chunkdata.number_of_block_entities = 0;
 					 pkt->data.play_client.chunkdata.block_entities = NULL;
 					 add_queue(player->conn->outgoingPacket, pkt);
-					 flush_outgoing(player);
 					 }
 					 }
 					 }*/
@@ -432,7 +425,6 @@ void run_work(struct work_param* param) {
 			if (conn != NULL && conn->disconnect) {
 				closeConn(param, conn);
 				conn = NULL;
-				goto cont;
 			}
 			if (--cp == 0) break;
 		}

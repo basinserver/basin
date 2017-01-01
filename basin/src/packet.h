@@ -318,6 +318,7 @@ struct pkt_play_client_explosion {
 struct pkt_play_client_unloadchunk {
 		int32_t chunk_x;
 		int32_t chunk_z;
+		struct chunk* ch;
 };
 
 #define PKT_PLAY_CLIENT_CHANGEGAMESTATE 30

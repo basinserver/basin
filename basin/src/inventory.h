@@ -9,6 +9,7 @@
 #define INVENTORY_H_
 
 #include <stdint.h>
+#include "hashmap.h"
 
 #define INVTYPE_PLAYERINVENTORY 0
 #define INVTYPE_CHEST 1
@@ -46,7 +47,7 @@ struct inventory {
 		int16_t** props;
 		size_t prop_count;
 		int windowID;
-		struct collection* players;
+		struct hashmap* players;
 		uint16_t* dragSlot;
 		uint16_t dragSlot_count;
 		struct tile_entity* te;

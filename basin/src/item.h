@@ -241,10 +241,11 @@ struct item_info {
 		float attackSpeed;
 		float toolProficiency;
 		uint8_t harvestLevel;
-		void (*onItemUse)(struct world* world, struct player* player, struct slot* slot, uint16_t ticks); // not in-world usage
-		void (*onItemInteract)(struct world* world, struct player* player, struct slot* slot, int32_t x, uint8_t y, int32_t z, uint8_t face); // in-world usage
-		void (*onItemBreakBlock)(struct world* world, struct player* player, struct slot* slot, int32_t x, uint8_t y, int32_t z); // in-world usage
-		void (*onItemAttacked)(struct world* world, struct player* player, struct slot* slot, struct entity* entity); // entity may be NULL
+		void (*onItemUse)(struct world* world, struct player* player, uint8_t slot_index, struct slot* slot, uint16_t ticks); // not in-world usage
+		int (*onItemInteract)(struct world* world, struct player* player, uint8_t slot_index, struct slot* slot, int32_t x, uint8_t y, int32_t z, uint8_t face); // in-world usage
+		int (*onItemBreakBlock)(struct world* world, struct player* player, uint8_t slot_index, struct slot* slot, int32_t x, uint8_t y, int32_t z); // in-world usage
+		float (*onItemAttacked)(struct world* world, struct player* player, uint8_t slot_index, struct slot* slot, struct entity* entity); // entity may be NULL
+		float (*onEntityHitWhileWearing)(struct world* world, struct player* player, uint8_t slot_index, struct slot* slot, float damage); // only called for armor/shields
 };
 
 struct item_info* getItemInfo(item id);

@@ -44,8 +44,8 @@ struct player {
 		float digspeed;
 		struct inventory* inventory;
 		struct inventory* openInv;
-		struct collection* loadedChunks;
-		struct collection* loadedEntities;
+		struct hashmap* loadedChunks;
+		struct hashmap* loadedEntities;
 		struct queue* outgoingPacket;
 		struct queue* incomingPacket;
 		uint8_t defunct;

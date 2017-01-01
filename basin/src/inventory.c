@@ -20,6 +20,7 @@
 #include <stdint.h>
 #include "tileentity.h"
 #include "inventory.h"
+#include "hashmap.h"
 
 void newInventory(struct inventory* inv, int type, int id, int slots) {
 	inv->title = NULL;
@@ -29,7 +30,7 @@ void newInventory(struct inventory* inv, int type, int id, int slots) {
 	inv->prop_count = 0;
 	inv->type = type;
 	inv->windowID = id;
-	inv->players = new_collection(0, 0);
+	inv->players = new_hashmap(1, 0);
 	inv->dragSlot = xcalloc(2 * inv->slot_count);
 	inv->dragSlot_count = 0;
 	inv->te = NULL;
@@ -62,8 +63,7 @@ void setSlot(struct player* player, struct inventory* inv, int index, struct slo
 		pkt->data.play_client.setslot.slot = index;
 		duplicateSlot(inv->slots[index], &pkt->data.play_client.setslot.slot_data);
 		add_queue(bc_player->outgoingPacket, pkt);
-		flush_outgoing (bc_player);
-		END_BROADCAST
+		END_BROADCAST(inv->players)
 	} else {
 		BEGIN_BROADCAST_EXCEPT(inv->players, player)
 		struct packet* pkt = xmalloc(sizeof(struct packet));
@@ -72,8 +72,7 @@ void setSlot(struct player* player, struct inventory* inv, int index, struct slo
 		pkt->data.play_client.setslot.slot = index;
 		duplicateSlot(inv->slots[index], &pkt->data.play_client.setslot.slot_data);
 		add_queue(bc_player->outgoingPacket, pkt);
-		flush_outgoing (bc_player);
-		END_BROADCAST
+		END_BROADCAST(inv->players)
 	}
 	//printf("set %i = %i broadcast=%i pc=%i\n", index, slot == NULL ? -1 : slot->item, broadcast, inv->players->count);
 }
@@ -123,7 +122,7 @@ void freeInventory(struct inventory* inv) {
 		}
 		xfree(inv->props);
 	}
-	del_collection(inv->players);
+	del_hashmap(inv->players);
 
 	_freeInventorySlots(inv);
 	xfree(inv->dragSlot);

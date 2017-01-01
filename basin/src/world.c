@@ -5,6 +5,7 @@
  *      Author: root
  */
 
+#include "hashmap.h"
 #include "entity.h"
 #include <stdlib.h>
 #include <stdint.h>
@@ -33,6 +34,7 @@
 #include "entity.h"
 #include "world.h"
 #include "globals.h"
+#include "profile.h"
 
 int __boundingbox_intersects(struct boundingbox* bb1, struct boundingbox* bb2, int inv) {
 	return (((bb1->minX >= bb2->minX && bb1->minX <= bb2->maxX) || (bb1->maxX >= bb2->minX && bb1->maxX <= bb2->maxX)) && ((bb1->minY >= bb2->minY && bb1->minY <= bb2->maxY) || (bb1->maxY >= bb2->minY && bb1->maxY <= bb2->maxY)) && ((bb1->minZ >= bb2->minZ && bb1->minZ <= bb2->maxZ) || (bb1->maxZ >= bb2->minZ && bb1->maxZ <= bb2->maxZ))) || (inv ? 0 : __boundingbox_intersects(bb2, bb1, 1)); // the second intersects handles if bb2 is contained within bb1
@@ -42,25 +44,35 @@ int boundingbox_intersects(struct boundingbox* bb1, struct boundingbox* bb2) {
 	return __boundingbox_intersects(bb1, bb2, 0);
 }
 
-struct chunk* loadRegionChunk(struct region* region, int8_t lchx, int8_t lchz) {
-	if (region->fd < 0) {
-		region->fd = open(region->file, O_RDWR);
-		if (region->fd < 0) return NULL;
-		region->mapping = mmap(NULL, 67108864, PROT_READ | PROT_WRITE, MAP_SHARED, region->fd, 0); // 64 MB is the theoretical limit of an uncompressed region file
+uint64_t getChunkKey(struct chunk* ch) {
+	return (uint64_t)(((int64_t) ch->x << 32) | (int64_t) ch->z);
+}
+
+uint64_t getChunkKey2(int32_t cx, int32_t cz) {
+	return (uint64_t)(((int64_t) cx << 32) | (int64_t) cz);
+}
+
+struct chunk* loadRegionChunk(struct region* region, int8_t lchx, int8_t lchz, size_t chri) {
+	beginProfilerSection("chunkLoading_getChunk_regionLoad");
+	if (region->fd[chri] < 0) {
+		region->fd[chri] = open(region->file, O_RDWR);
+		if (region->fd[chri] < 0) return NULL;
+		region->mapping[chri] = mmap(NULL, 67108864, PROT_READ | PROT_WRITE, MAP_SHARED, region->fd[chri], 0); // 64 MB is the theoretical limit of an uncompressed region file
 	}
-	uint32_t* hf = region->mapping + 4 * ((lchx & 31) + (lchz & 31) * 32);
+	uint32_t* hf = region->mapping[chri] + 4 * ((lchx & 31) + (lchz & 31) * 32);
 	uint32_t rhf = *hf;
 	swapEndian(&rhf, 4);
 	uint32_t off = ((rhf & 0xFFFFFF00) >> 8) * 4096;
 	uint32_t size = ((rhf & 0x000000FF)) * 4096;
 	if (off == 0 || size == 0) return NULL;
-	void* chk = region->mapping + (off);
+	void* chk = region->mapping[chri] + (off);
 	uint32_t rsize = ((uint32_t*) chk)[0];
 	swapEndian(&rsize, 4);
 	uint8_t comptype = ((uint8_t*) chk)[4];
 	chk += 5;
-	void* rtbuf = xmalloc(4096);
-	size_t rtc = 4096;
+	beginProfilerSection("chunkLoading_getChunk_regionLoad_decomp");
+	void* rtbuf = xmalloc(65536);
+	size_t rtc = 65536;
 	z_stream strm;
 	strm.zalloc = Z_NULL;
 	strm.zfree = Z_NULL;
@@ -76,8 +88,8 @@ struct chunk* loadRegionChunk(struct region* region, int8_t lchx, int8_t lchz) {
 	strm.avail_out = rtc;
 	strm.next_out = rtbuf;
 	do {
-		if (rtc - strm.total_out < 2048) {
-			rtc += 4096;
+		if (rtc - strm.total_out < 32768) {
+			rtc += 65536;
 			rtbuf = xrealloc(rtbuf, rtc);
 		}
 		strm.avail_out = rtc - strm.total_out;
@@ -92,12 +104,19 @@ struct chunk* loadRegionChunk(struct region* region, int8_t lchx, int8_t lchz) {
 	} while (strm.avail_out == 0);
 	inflateEnd(&strm);
 	size_t rts = strm.total_out;
+	endProfilerSection("chunkLoading_getChunk_regionLoad_decomp");
+	beginProfilerSection("chunkLoading_getChunk_regionLoad_nbt");
 	struct nbt_tag* nbt = NULL;
 	if (readNBT(&nbt, rtbuf, rts) < 0) {
 		xfree(rtbuf);
 		return NULL;
 	}
+
+	endProfilerSection("chunkLoading_getChunk_regionLoad_nbt");
 	xfree(rtbuf);
+
+	endProfilerSection("chunkLoading_getChunk_regionLoad");
+	beginProfilerSection("chunkLoading_getChunk_nbtdata");
 	struct nbt_tag* level = getNBTChild(nbt, "Level");
 	if (level == NULL || level->id != NBT_TAG_COMPOUND) goto rerx;
 	struct nbt_tag* tmp = getNBTChild(level, "xPos");
@@ -131,10 +150,12 @@ struct chunk* loadRegionChunk(struct region* region, int8_t lchx, int8_t lchz) {
 		struct tile_entity* te = parseTileEntity(ten);
 		add_collection(rch->tileEntities, te);
 	}
+	endProfilerSection("chunkLoading_getChunk_nbtdata");
 	//TODO: tileticks
 	struct nbt_tag* sections = getNBTChild(level, "Sections");
 	for (size_t i = 0; i < sections->children_count; i++) {
 		struct nbt_tag* section = sections->children[i];
+		beginProfilerSection("chunkLoading_getChunk_sections_dataload");
 		tmp = getNBTChild(section, "Y");
 		if (tmp == NULL || tmp->id != NBT_TAG_BYTE) continue;
 		uint8_t y = tmp->data.nbt_byte;
@@ -172,6 +193,8 @@ struct chunk* loadRegionChunk(struct region* region, int8_t lchx, int8_t lchz) {
 				} else sx &= 0x0f;
 				rbl[i] |= sx;
 			}
+			endProfilerSection("chunkLoading_getChunk_sections_dataload");
+			beginProfilerSection("chunkLoading_getChunk_sections_compression_palettegen");
 			struct chunk_section* cs = xmalloc(sizeof(struct chunk_section));
 			cs->palette = xmalloc(256 * sizeof(block));
 			cs->palette_count = 0;
@@ -200,6 +223,8 @@ struct chunk* loadRegionChunk(struct region* region, int8_t lchx, int8_t lchz) {
 				if (cs->bpb < 4) cs->bpb = 4;
 				cs->palette = xrealloc(cs->palette, cs->palette_count * sizeof(block));
 			}
+			endProfilerSection("chunkLoading_getChunk_sections_compression_palettegen");
+			beginProfilerSection("chunkLoading_getChunk_sections_compression_doComp");
 			int32_t bi = 0;
 			cs->blocks = xmalloc(512 * cs->bpb + 4);
 			cs->block_size = 512 * cs->bpb;
@@ -214,6 +239,8 @@ struct chunk* loadRegionChunk(struct region* region, int8_t lchx, int8_t lchz) {
 				*((int32_t*) &cs->blocks[bi / 8]) = cv;
 				bi += cs->bpb;
 			}
+			endProfilerSection("chunkLoading_getChunk_sections_compression_doComp");
+			beginProfilerSection("chunkLoading_getChunk_sections_lighting");
 			tmp = getNBTChild(section, "BlockLight");
 			if (tmp != NULL) {
 				if (tmp->id != NBT_TAG_BYTEARRAY || tmp->data.nbt_bytearray.len != 2048) continue;
@@ -225,13 +252,12 @@ struct chunk* loadRegionChunk(struct region* region, int8_t lchx, int8_t lchz) {
 				cs->skyLight = xmalloc(2048);
 				memcpy(cs->skyLight, tmp->data.nbt_bytearray.data, 2048);
 			}
+			endProfilerSection("chunkLoading_getChunk_sections_lighting");
 			rch->sections[y] = cs;
-		}
+		} else endProfilerSection("chunkLoading_getChunk_sections_dataload");
 		xfree(rbl);
 	}
-	//TODO: entities, tileentities, and tileticks.
-	region->chunks[lchz][lchx] = rch;
-	region->loaded[lchz][lchx] = 1;
+	//TODO: entities and tileticks.
 	freeNBT(nbt);
 	return rch;
 	rerx: ;
@@ -260,77 +286,107 @@ void generateChunk(struct world* world, struct chunk* chunk) {
 	}
 }
 
-struct chunk* getChunk(struct world* world, int16_t x, int16_t z) {
+struct chunk* getChunkWithLoad(struct world* world, int32_t x, int32_t z, size_t chri) {
+	struct chunk* ch = get_hashmap(world->chunks, getChunkKey2(x, z));
+	if (ch != NULL) return ch;
 	int16_t rx = x >> 5;
 	int16_t rz = z >> 5;
-	pthread_rwlock_rdlock(&world->regions->data_mutex);
-	struct region* ar = NULL;
-	for (size_t i = 0; i < world->regions->size; i++) {
-		if (world->regions->data[i] != NULL && ((struct region*) world->regions->data[i])->x == rx && ((struct region*) world->regions->data[i])->z == rz) {
-			ar = world->regions->data[i];
-			struct region* r = ((struct region*) world->regions->data[i]);
-			struct chunk* chk = NULL;
-			if (r->loaded[z & 0x1F][x & 0x1F]) {
-				chk = r->chunks[z & 0x1F][x & 0x1F];
-			} else {
-				chk = loadRegionChunk(r, x & 0x1F, z & 0x1F);
-				add_collection(world->loadedChunks, chk);
-			}
-			if (chk == NULL) goto gen;
-			pthread_rwlock_unlock(&world->regions->data_mutex);
-			return chk;
-		}
+	struct region* ar = get_hashmap(world->regions, (uint64_t)(((int64_t) rx << 16) | (int64_t) rz));
+	if (ar == NULL) {
+		char lp[PATH_MAX];
+		snprintf(lp, PATH_MAX, "%s/region/r.%i.%i.mca", world->lpa, rx, rz);
+		ar = newRegion(lp, rx, rz, world->chl_count);
+		put_hashmap(world->regions, (uint64_t)(((int64_t) rx << 16) | (int64_t) rz), ar);
+		//TODO: populate region
 	}
+	struct chunk* chk = NULL;
+	chk = loadRegionChunk(ar, x & 0x1F, z & 0x1F, chri);
+	if (chk != NULL) put_hashmap(world->chunks, getChunkKey(chk), chk);
+	else goto gen;
+	return chk;
 	gen: ;
-	pthread_rwlock_unlock(&world->regions->data_mutex);
 	struct chunk* gc = newChunk(x, z);
 	generateChunk(world, gc);
+	if (gc != NULL) put_hashmap(world->chunks, getChunkKey(gc), gc);
 	if (!ar) {
 		char lp[PATH_MAX];
 		snprintf(lp, PATH_MAX, "%s/region/r.%i.%i.mca", world->lpa, rx, rz);
-		ar = newRegion(lp, rx, rz);
-		add_collection(world->regions, ar);
+		ar = newRegion(lp, rx, rz, world->chl_count);
+		put_hashmap(world->regions, (uint64_t)(((int64_t) rx << 16) | (int64_t) rz), ar);
 	}
-	ar->chunks[z & 0x1F][x & 0x1F] = gc;
-	ar->loaded[z & 0x1F][x & 0x1F] = 1;
 	return gc;
 }
 
-int isChunkLoaded(struct world* world, int16_t x, int16_t z) {
-	int16_t rx = x >> 5;
-	int16_t rz = z >> 5;
-	pthread_rwlock_rdlock(&world->regions->data_mutex);
-	for (size_t i = 0; i < world->regions->size; i++) {
-		if (world->regions->data[i] != NULL && ((struct region*) world->regions->data[i])->x == rx && ((struct region*) world->regions->data[i])->z == rz) {
-			struct region* r = ((struct region*) world->regions->data[i]);
-			int l = r->loaded[z & 0x1F][x & 0x1F];
-			pthread_rwlock_unlock(&world->regions->data_mutex);
-			return l;
+void chunkloadthr(size_t b) {
+	while (1) {
+		struct chunk_req* chr = pop_queue(chunk_input);
+		if (chr->pl->defunct) {
+			xfree(chr);
+			continue;
 		}
+		if (chr->load) {
+			beginProfilerSection("chunkLoading_getChunk");
+			struct chunk* ch = getChunkWithLoad(chr->pl->world, chr->cx, chr->cz, b);
+			endProfilerSection("chunkLoading_getChunk");
+			if (ch != NULL) {
+				ch->playersLoaded++;
+				beginProfilerSection("chunkLoading_sendChunk_add");
+				put_hashmap(chr->pl->loadedChunks, getChunkKey(ch), ch);
+				endProfilerSection("chunkLoading_sendChunk_add");
+				beginProfilerSection("chunkLoading_sendChunk_malloc");
+				struct packet* pkt = xmalloc(sizeof(struct packet));
+				pkt->id = PKT_PLAY_CLIENT_CHUNKDATA;
+				pkt->data.play_client.chunkdata.data = ch;
+				pkt->data.play_client.chunkdata.cx = ch->x;
+				pkt->data.play_client.chunkdata.cz = ch->z;
+				pkt->data.play_client.chunkdata.ground_up_continuous = 1;
+				pkt->data.play_client.chunkdata.number_of_block_entities = ch->tileEntities->count;
+				endProfilerSection("chunkLoading_sendChunk_malloc");
+				beginProfilerSection("chunkLoading_sendChunk_tileEntities");
+				pkt->data.play_client.chunkdata.block_entities = ch->tileEntities->count == 0 ? NULL : xmalloc(sizeof(struct nbt_tag*) * ch->tileEntities->count);
+				size_t ri = 0;
+				for (size_t i = 0; i < ch->tileEntities->size; i++) {
+					if (ch->tileEntities->data[i] == NULL) continue;
+					struct tile_entity* te = ch->tileEntities->data[i];
+					pkt->data.play_client.chunkdata.block_entities[ri++] = serializeTileEntity(te, 1);
+				}
+				endProfilerSection("chunkLoading_sendChunk_tileEntities");
+				beginProfilerSection("chunkLoading_sendChunk_dispatch");
+				add_queue(chr->pl->outgoingPacket, pkt);
+				flush_outgoing(chr->pl);
+				endProfilerSection("chunkLoading_sendChunk_dispatch");
+			}
+		} else {
+			beginProfilerSection("unchunkLoading");
+			struct packet* pkt = xmalloc(sizeof(struct packet));
+			pkt->id = PKT_PLAY_CLIENT_UNLOADCHUNK;
+			pkt->data.play_client.unloadchunk.chunk_x = chr->cx;
+			pkt->data.play_client.unloadchunk.chunk_z = chr->cz;
+			pkt->data.play_client.unloadchunk.ch = getChunk(chr->pl->world, chr->cx, chr->cz);
+			put_hashmap(chr->pl->loadedChunks, getChunkKey2(chr->cx, chr->cz), NULL);
+			if (pkt->data.play_client.unloadchunk.ch != NULL) pkt->data.play_client.unloadchunk.ch->playersLoaded--;
+			add_queue(chr->pl->outgoingPacket, pkt);
+			flush_outgoing(chr->pl);
+			endProfilerSection("unchunkLoading");
+		}
+		xfree(chr);
 	}
-	pthread_rwlock_unlock(&world->regions->data_mutex);
-	return 0;
+}
+
+struct chunk* getChunk(struct world* world, int32_t x, int32_t z) {
+	struct chunk* ch = get_hashmap(world->chunks, getChunkKey2(x, z));
+	return ch;
+}
+
+int isChunkLoaded(struct world* world, int32_t x, int32_t z) {
+	return contains_hashmap(world->chunks, getChunkKey2(x, z));
 }
 
 void unloadChunk(struct world* world, struct chunk* chunk) {
 //TODO: save chunk
 	pthread_rwlock_wrlock(&world->chl);
-	int16_t rx = chunk->x >> 5;
-	int16_t rz = chunk->z >> 5;
-	rem_collection(world->loadedChunks, chunk);
-	pthread_rwlock_rdlock(&world->regions->data_mutex);
-	for (size_t i = 0; i < world->regions->size; i++) {
-		if (world->regions->data[i] != NULL && ((struct region*) world->regions->data[i])->x == rx && ((struct region*) world->regions->data[i])->z == rz) {
-			struct region* r = ((struct region*) world->regions->data[i]);
-			r->loaded[chunk->z & 0x1F][chunk->x & 0x1F] = 0;
-			r->chunks[chunk->z & 0x1F][chunk->x & 0x1F] = 0;
-			freeChunk(chunk);
-			pthread_rwlock_unlock(&world->regions->data_mutex);
-			pthread_rwlock_unlock(&world->chl);
-			return;
-		}
-	}
-	pthread_rwlock_unlock(&world->regions->data_mutex);
+	put_hashmap(world->chunks, getChunkKey(chunk), NULL);
+	add_collection(defunctChunks, chunk);
 	pthread_rwlock_unlock(&world->chl);
 }
 
@@ -428,6 +484,8 @@ struct chunk* newChunk(int16_t x, int16_t z) {
 	chunk->playersLoaded = 0;
 	chunk->tileEntities = new_collection(0, 0);
 	chunk->tileEntitiesTickable = new_collection(0, 0);
+	chunk->defunct = 0;
+	//chunk->entities = new_hashmap(1, 0);
 	return chunk;
 }
 
@@ -447,20 +505,28 @@ void freeChunk(struct chunk* chunk) {
 	}
 	del_collection(chunk->tileEntities);
 	del_collection(chunk->tileEntitiesTickable);
+	//BEGIN_HASHMAP_ITERATION(chunk->entities)
+	//freeEntity (value);
+	//END_HASHMAP_ITERATION(chunk->entities)
+	//del_hashmap(chunk->entities);
 	xfree(chunk);
 }
 
-struct region* newRegion(char* path, int16_t x, int16_t z) {
-	struct region* reg = xmalloc(sizeof(struct region));
-	memset(reg, 0, sizeof(struct region));
+struct region* newRegion(char* path, int16_t x, int16_t z, size_t chr_count) {
+	struct region* reg = xcalloc(sizeof(struct region));
 	reg->x = x;
 	reg->z = z;
 	reg->file = xstrdup(path, 0);
-	reg->fd = -1;
+	reg->fd = xmalloc(chr_count * sizeof(int));
+	for (int i = 0; i < chr_count; i++)
+		reg->fd[i] = -1;
+	reg->mapping = xcalloc(chr_count * sizeof(void*));
 	return reg;
 }
 
 void freeRegion(struct region* region) {
+	xfree(region->fd);
+	xfree(region->mapping);
 	xfree(region->file);
 	xfree(region);
 }
@@ -546,20 +612,20 @@ void setBlockWorld(struct world* world, block blk, int32_t x, int32_t y, int32_t
 	pkt->data.play_client.blockchange.location.z = z;
 	pkt->data.play_client.blockchange.block_id = blk;
 	add_queue(bc_player->outgoingPacket, pkt);
-	flush_outgoing (bc_player);
-	END_BROADCAST
+	END_BROADCAST(world->players)
 	struct block_info* bi = getBlockInfo(ob);
 	if (bi != NULL && bi->onBlockDestroyed != NULL) (*bi->onBlockDestroyed)(world, ob, x, y, z);
 }
 
-struct world* newWorld() {
+struct world* newWorld(size_t chl_count) {
 	struct world* world = xmalloc(sizeof(struct world));
 	memset(world, 0, sizeof(struct world));
-	world->regions = new_collection(0, 1);
-	world->entities = new_collection(0, 0);
-	world->players = new_collection(0, 0);
-	world->loadedChunks = new_collection(0, 0);
+	world->regions = new_hashmap(1, 1);
+	world->entities = new_hashmap(1, 0);
+	world->players = new_hashmap(1, 0);
+	world->chunks = new_hashmap(1, 0);
 	pthread_rwlock_init(&world->chl, NULL);
+	world->chl_count = chl_count;
 	return world;
 }
 
@@ -611,8 +677,8 @@ int loadWorld(struct world* world, char* path) {
 			char* xs = strstr(lp, "/r.") + 3;
 			char* zs = strchr(xs, '.') + 1;
 			if (zs == NULL) continue;
-			struct region* reg = newRegion(lp, strtol(xs, NULL, 10), strtol(zs, NULL, 10));
-			add_collection(world->regions, reg);
+			struct region* reg = newRegion(lp, strtol(xs, NULL, 10), strtol(zs, NULL, 10), world->chl_count);
+			put_hashmap(world->regions, (uint64_t)(((int64_t) reg->x << 16) | (int64_t) reg->z), reg);
 		}
 		closedir(dir);
 	}
@@ -625,27 +691,17 @@ int saveWorld(struct world* world, char* path) {
 }
 
 void freeWorld(struct world* world) { // assumes all chunks are unloaded
-	pthread_rwlock_wrlock(&world->regions->data_mutex);
-	for (size_t i = 0; i < world->regions->size; i++) {
-		if (world->regions->data[i] != NULL) {
-			freeRegion(world->regions->data[i]);
-		}
-	}
-	pthread_rwlock_unlock(&world->regions->data_mutex);
+	BEGIN_HASHMAP_ITERATION(world->regions)
+	freeRegion (value);
+	END_HASHMAP_ITERATION(world->regions)
 	pthread_rwlock_destroy(&world->chl);
-	del_collection(world->regions);
-	for (size_t i = 0; i < world->entities->size; i++) {
-		if (world->entities->data[i] != NULL) {
-			freeEntity(world->entities->data[i]);
-		}
-	}
-	del_collection(world->entities);
-	for (size_t i = 0; i < world->players->size; i++) {
-		if (world->players->data[i] != NULL) {
-			freePlayer(world->players->data[i]);
-		}
-	}
-	del_collection(world->players);
+	del_hashmap(world->regions);
+	del_hashmap(world->entities);
+	del_hashmap(world->chunks);
+	BEGIN_HASHMAP_ITERATION(world->players)
+	freePlayer(value);
+	END_HASHMAP_ITERATION(world->players)
+	del_hashmap(world->players);
 	if (world->level != NULL) {
 		freeNBT(world->level);
 		xfree(world->level);
@@ -654,40 +710,50 @@ void freeWorld(struct world* world) { // assumes all chunks are unloaded
 	xfree(world);
 }
 
+struct chunk* getEntityChunk(struct entity* entity) {
+	return getChunk(entity->world, ((int32_t) entity->x) >> 4, ((int32_t) entity->z) >> 4);
+}
+
 void spawnEntity(struct world* world, struct entity* entity) {
 	entity->world = world;
-	add_collection(world->entities, entity);
+	if (entity->loadingPlayers == NULL) entity->loadingPlayers = new_hashmap(1, 0);
+	put_hashmap(world->entities, entity->id, entity);
+	//struct chunk* ch = getEntityChunk(entity);
+	//if (ch != NULL) {
+	//	put_hashmap(ch->entities, entity->id, entity);
+	//}
 }
 
 void spawnPlayer(struct world* world, struct player* player) {
 	player->world = world;
-	add_collection(world->players, player);
+	if (player->loadedEntities == NULL) player->loadedEntities = new_hashmap(1, 0);
+	if (player->loadedChunks == NULL) player->loadedChunks = new_hashmap(1, 1);
+	put_hashmap(world->players, player->entity->id, player);
 	spawnEntity(world, player->entity);
 }
 
 void despawnPlayer(struct world* world, struct player* player) {
 	despawnEntity(world, player->entity);
-	for (size_t i = 0; i < player->loadedEntities->size; i++) {
-		struct entity* pl = (struct entity*) player->loadedEntities->data[i];
-		if (pl == NULL || pl == player->entity) continue;
-		rem_collection(pl->loadingPlayers, player);
-		player->loadedEntities->data[i] = NULL;
-		player->loadedEntities->count--;
-	}
-	for (size_t i = 0; i < player->loadedChunks->size; i++) {
-		struct chunk* pl = (struct chunk*) player->loadedChunks->data[i];
-		if (pl == NULL) continue;
-		if (--pl->playersLoaded == 0) {
-			unloadChunk(player->world, pl);
-		}
-		player->loadedChunks->data[i] = NULL;
-		player->loadedChunks->count--;
-	}
-	rem_collection(world->players, player);
+	BEGIN_HASHMAP_ITERATION(player->loadedEntities)
+	if (value == NULL || value == player->entity) continue;
+	struct entity* ent = (struct entity*) value;
+	put_hashmap(ent->loadingPlayers, player->entity->id, NULL);
+	END_HASHMAP_ITERATION(player->loadedEntities)
+	del_hashmap(player->loadedEntities);
+	player->loadedEntities = NULL;
+	BEGIN_HASHMAP_ITERATION(player->loadedChunks)
+	struct chunk* pl = (struct chunk*) value;
+	pl->playersLoaded--;
+	END_HASHMAP_ITERATION(player->loadedChunks)
+	del_hashmap(player->loadedChunks);
+	player->loadedChunks = NULL;
+	put_hashmap(world->players, player->entity->id, NULL);
 }
 
 void despawnEntity(struct world* world, struct entity* entity) {
-	rem_collection(world->entities, entity);
+	//struct chunk* ch = getEntityChunk(entity);
+	put_hashmap(world->entities, entity->id, NULL);
+	//put_hashmap(ch->entities, entity->id, NULL);
 	BEGIN_BROADCAST(entity->loadingPlayers)
 	struct packet* pkt = xmalloc(sizeof(struct packet));
 	pkt->id = PKT_PLAY_CLIENT_DESTROYENTITIES;
@@ -695,24 +761,14 @@ void despawnEntity(struct world* world, struct entity* entity) {
 	pkt->data.play_client.destroyentities.entity_ids = xmalloc(sizeof(int32_t));
 	pkt->data.play_client.destroyentities.entity_ids[0] = entity->id;
 	add_queue(bc_player->outgoingPacket, pkt);
-	flush_outgoing (bc_player);
-	END_BROADCAST
-	for (size_t i = 0; i < entity->loadingPlayers->size; i++) {
-		struct player* pl = (struct player*) entity->loadingPlayers->data[i];
-		if (pl == NULL) continue;
-		rem_collection(pl->loadedEntities, entity);
-		entity->loadingPlayers->data[i] = NULL;
-		entity->loadingPlayers->count--;
-	}
+	put_hashmap(bc_player->loadedEntities, entity->id, NULL);
+	END_BROADCAST(entity->loadingPlayers)
+	del_hashmap(entity->loadingPlayers);
+	entity->loadingPlayers = NULL;
 }
 
 struct entity* getEntity(struct world* world, int32_t id) {
-	for (size_t i = 0; i < world->entities->size; i++) {
-		if (world->entities->data[i] != NULL && ((struct entity*) world->entities->data[i])->id == id) {
-			return world->entities->data[i];
-		}
-	}
-	return NULL;
+	return get_hashmap(world->entities, id);
 }
 
 void onBlockDestroyed(struct world* world, int32_t x, int32_t y, int32_t z) {

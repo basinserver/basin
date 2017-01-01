@@ -454,7 +454,7 @@ struct entity* newEntity(int32_t id, float x, float y, float z, uint8_t type, fl
 	e->inWater = 0;
 	e->inLava = 0;
 	e->invincibilityTicks = 0;
-	e->loadingPlayers = new_collection(0, 0);
+	e->loadingPlayers = new_hashmap(1, 0);
 	memset(&e->data, 0, sizeof(union entity_data));
 	return e;
 }
@@ -742,7 +742,7 @@ int getSwingTime(struct entity* ent) {
 	return 6;
 }
 
-int moveEntity(struct entity* entity, double mx, double my, double mz) {
+int moveEntity(struct entity* entity, double mx, double my, double mz, float shrink) {
 	struct boundingbox obb;
 	getEntityCollision(entity, &obb);
 	if (obb.minX == obb.maxX || obb.minZ == obb.maxZ || obb.minY == obb.maxY) {
@@ -751,6 +751,12 @@ int moveEntity(struct entity* entity, double mx, double my, double mz) {
 		entity->z += mz;
 		return 0;
 	}
+	obb.minX += shrink;
+	obb.maxX -= shrink;
+	obb.minY += shrink;
+	obb.maxY -= shrink;
+	obb.minZ += shrink;
+	obb.maxZ -= shrink;
 	if (mx < 0.) {
 		obb.minX += mx;
 	} else {
@@ -768,6 +774,12 @@ int moveEntity(struct entity* entity, double mx, double my, double mz) {
 	}
 	struct boundingbox pbb;
 	getEntityCollision(entity, &pbb);
+	pbb.minX += shrink;
+	pbb.maxX -= shrink;
+	pbb.minY += shrink;
+	pbb.maxY -= shrink;
+	pbb.minZ += shrink;
+	pbb.maxZ -= shrink;
 	double ny = my;
 	for (int32_t x = floor(obb.minX); x < floor(obb.maxX + 1.); x++) {
 		for (int32_t z = floor(obb.minZ); z < floor(obb.maxZ + 1.); z++) {
@@ -924,18 +936,24 @@ void applyKnockback(struct entity* entity, float yaw, float strength) {
 		pkt->data.play_client.entityvelocity.velocity_y = (int16_t)(entity->motY * 8000.);
 		pkt->data.play_client.entityvelocity.velocity_z = (int16_t)(entity->motZ * 8000.);
 		add_queue(bc_player->outgoingPacket, pkt);
-		flush_outgoing (bc_player);
-		END_BROADCAST
+		END_BROADCAST(entity->world->players)
 	}
 }
 
-void damageEntityWithItem(struct entity* attacked, struct entity* attacker, struct slot* item) {
+void damageEntityWithItem(struct entity* attacked, struct entity* attacker, uint8_t slot_index, struct slot* item) {
 	if (attacked == NULL || attacked->invincibilityTicks > 0 || !isLiving(attacked->type) || attacked->health <= 0.) return;
 	if (attacked->type == ENT_PLAYER && attacked->data.player.player->gamemode == 1) return;
 	float damage = 1.;
 	if (item != NULL) {
 		struct item_info* ii = getItemInfo(item->item);
-		if (ii != NULL) damage = ii->damage;
+		if (ii != NULL) {
+			damage = ii->damage;
+			if (attacker->type == ENT_PLAYER) {
+				if (ii->onItemAttacked != NULL) {
+					damage = (*ii->onItemAttacked)(attacker->world, attacker->data.player.player, attacker->data.player.player->currentItem + 36, item, attacked);
+				}
+			}
+		}
 	}
 	float knockback_strength = 1.;
 	if (attacker->sprinting) knockback_strength++;
@@ -975,6 +993,19 @@ void damageEntity(struct entity* attacked, float damage, int armorable) {
 	if (f < armor * .2) f = armor * .2;
 	if (f > 20.) f = 20.;
 	damage *= 1. - (f) / 25.;
+	if (attacked->type == ENT_PLAYER) {
+		struct player* player = attacked->data.player.player;
+		if (player->gamemode == 1) return;
+		for (int i = 5; i <= 8; i++) {
+			struct slot* sl = getSlot(player, player->inventory, i);
+			if (sl != NULL) {
+				struct item_info* ii = getItemInfo(sl->item);
+				if (ii != NULL && ii->onEntityHitWhileWearing != NULL) {
+					damage = (*ii->onEntityHitWhileWearing)(player->world, player, i, sl, damage);
+				}
+			}
+		}
+	}
 	attacked->health -= damage;
 	attacked->invincibilityTicks = 10;
 	if (attacked->type == ENT_PLAYER) {
@@ -984,7 +1015,6 @@ void damageEntity(struct entity* attacked, float damage, int armorable) {
 		pkt->data.play_client.updatehealth.food = attacked->data.player.player->food;
 		pkt->data.play_client.updatehealth.food_saturation = attacked->data.player.player->saturation;
 		add_queue(attacked->data.player.player->outgoingPacket, pkt);
-		flush_outgoing(attacked->data.player.player);
 	}
 	if (attacked->health <= 0.) {
 		if (attacked->type == ENT_PLAYER) {
@@ -1009,16 +1039,14 @@ void damageEntity(struct entity* attacked, float damage, int armorable) {
 	pkt->data.play_client.animation.entity_id = attacked->id;
 	pkt->data.play_client.animation.animation = 1;
 	add_queue(bc_player->outgoingPacket, pkt);
-	flush_outgoing (bc_player);
 	if (attacked->health <= 0.) {
 		pkt = xmalloc(sizeof(struct packet));
 		pkt->id = PKT_PLAY_CLIENT_ENTITYMETADATA;
 		pkt->data.play_client.entitymetadata.entity_id = attacked->id;
 		writeMetadata(attacked, &pkt->data.play_client.entitymetadata.metadata.metadata, &pkt->data.play_client.entitymetadata.metadata.metadata_size);
 		add_queue(bc_player->outgoingPacket, pkt);
-		flush_outgoing(bc_player);
 	}
-	END_BROADCAST
+	END_BROADCAST(attacked->world->players)
 	if (attacked->type == ENT_PLAYER) playSound(attacked->world, 316, 8, attacked->x, attacked->y, attacked->z, 1., 1.);
 }
 
@@ -1034,12 +1062,11 @@ void healEntity(struct entity* healed, float amount) {
 		pkt->data.play_client.updatehealth.food = healed->data.player.player->food;
 		pkt->data.play_client.updatehealth.food_saturation = healed->data.player.player->saturation;
 		add_queue(healed->data.player.player->outgoingPacket, pkt);
-		flush_outgoing(healed->data.player.player);
 	}
 }
 
 void freeEntity(struct entity* entity) {
-	del_collection(entity->loadingPlayers);
+	del_hashmap(entity->loadingPlayers);
 	if (entity->type == ENT_ITEMSTACK) {
 		if (entity->data.itemstack.slot != NULL) {
 			freeSlot(entity->data.itemstack.slot);

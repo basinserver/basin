@@ -1,7 +1,3 @@
-################################################################################
-# Automatically-generated file. Do not edit!
-################################################################################
-
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
 ../src/accept.c \
@@ -30,6 +26,8 @@ C_SRCS += \
 ../src/work.c \
 ../src/world.c \
 ../src/worldmanager.c \
+../src/hashmap.c \
+../src/profile.c \
 ../src/xstring.c 
 
 OBJS += \
@@ -59,6 +57,8 @@ OBJS += \
 ./src/work.o \
 ./src/world.o \
 ./src/worldmanager.o \
+./src/hashmap.o \
+./src/profile.o \
 ./src/xstring.o 
 
 C_DEPS += \
@@ -88,6 +88,8 @@ C_DEPS += \
 ./src/work.d \
 ./src/world.d \
 ./src/worldmanager.d \
+./src/hashmap.d \
+./src/profile.d \
 ./src/xstring.d 
 
 

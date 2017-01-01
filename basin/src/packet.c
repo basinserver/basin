@@ -1079,6 +1079,7 @@ ssize_t writePacket(struct conn* conn, struct packet* packet) {
 			memcpy(pktbuf + pi, &packet->data.play_client.unloadchunk.chunk_z, 4);
 			swapEndian(pktbuf + pi, 4);
 			pi += 4;
+			//packet->data.play_client.unloadchunk.ch->playersLoaded--;
 		} else if (id == PKT_PLAY_CLIENT_CHANGEGAMESTATE) {
 			//reason
 			ENS(1)

@@ -8,7 +8,8 @@
 		"liquid": false,
 		"solid": false,
 		"blocksLight": false,
-		"blocksMovement": false
+		"blocksMovement": false,
+		"opaque": false
 	},
 	"grass": {
 		"flammable": false,
@@ -19,7 +20,8 @@
 		"liquid": false,
 		"solid": true,
 		"blocksLight": true,
-		"blocksMovement": true
+		"blocksMovement": true,
+		"opaque": true
 	},
 	"ground": {
 		"flammable": false,
@@ -30,7 +32,8 @@
 		"liquid": false,
 		"solid": true,
 		"blocksLight": true,
-		"blocksMovement": true
+		"blocksMovement": true,
+		"opaque": true
 	},
 	"wood": {
 		"flammable": true,
@@ -41,7 +44,8 @@
 		"liquid": false,
 		"solid": true,
 		"blocksLight": true,
-		"blocksMovement": true
+		"blocksMovement": true,
+		"opaque": true
 	},
 	"rock": {
 		"flammable": false,
@@ -52,7 +56,8 @@
 		"liquid": false,
 		"solid": true,
 		"blocksLight": true,
-		"blocksMovement": true
+		"blocksMovement": true,
+		"opaque": true
 	},
 	"iron": {
 		"flammable": false,
@@ -63,7 +68,8 @@
 		"liquid": false,
 		"solid": true,
 		"blocksLight": true,
-		"blocksMovement": true
+		"blocksMovement": true,
+		"opaque": true
 	},
 	"anvil": {
 		"flammable": false,
@@ -74,7 +80,8 @@
 		"liquid": false,
 		"solid": true,
 		"blocksLight": true,
-		"blocksMovement": true
+		"blocksMovement": true,
+		"opaque": true
 	},
 	"water": {
 		"flammable": false,
@@ -85,7 +92,8 @@
 		"liquid": true,
 		"solid": false,
 		"blocksLight": true,
-		"blocksMovement": false
+		"blocksMovement": false,
+		"opaque": false
 	},
 	"lava": {
 		"flammable": false,
@@ -96,7 +104,8 @@
 		"liquid": true,
 		"solid": false,
 		"blocksLight": true,
-		"blocksMovement": false
+		"blocksMovement": false,
+		"opaque": false
 	},
 	"leaves": {
 		"flammable": true,
@@ -107,7 +116,8 @@
 		"liquid": false,
 		"solid": true,
 		"blocksLight": true,
-		"blocksMovement": true
+		"blocksMovement": true,
+		"opaque": false
 	},
 	"plants": {
 		"flammable": false,
@@ -118,7 +128,8 @@
 		"liquid": false,
 		"solid": false,
 		"blocksLight": false,
-		"blocksMovement": false
+		"blocksMovement": false,
+		"opaque": false
 	},
 	"vine": {
 		"flammable": true,
@@ -129,7 +140,8 @@
 		"liquid": false,
 		"solid": false,
 		"blocksLight": false,
-		"blocksMovement": false
+		"blocksMovement": false,
+		"opaque": false
 	},
 	"sponge": {
 		"flammable": false,
@@ -140,7 +152,8 @@
 		"liquid": false,
 		"solid": true,
 		"blocksLight": true,
-		"blocksMovement": true
+		"blocksMovement": true,
+		"opaque": true
 	},
 	"cloth": {
 		"flammable": true,
@@ -151,7 +164,8 @@
 		"liquid": false,
 		"solid": true,
 		"blocksLight": true,
-		"blocksMovement": true
+		"blocksMovement": true,
+		"opaque": true
 	},
 	"fire": {
 		"flammable": false,
@@ -162,7 +176,8 @@
 		"liquid": false,
 		"solid": false,
 		"blocksLight": false,
-		"blocksMovement": false
+		"blocksMovement": false,
+		"opaque": false
 	},
 	"sand": {
 		"flammable": false,
@@ -173,7 +188,8 @@
 		"liquid": false,
 		"solid": true,
 		"blocksLight": true,
-		"blocksMovement": true
+		"blocksMovement": true,
+		"opaque": true
 	},
 	"circuits": {
 		"flammable": false,
@@ -184,7 +200,8 @@
 		"liquid": false,
 		"solid": false,
 		"blocksLight": false,
-		"blocksMovement": false
+		"blocksMovement": false,
+		"opaque": false
 	},
 	"carpet": {
 		"flammable": true,
@@ -195,7 +212,8 @@
 		"liquid": false,
 		"solid": false,
 		"blocksLight": false,
-		"blocksMovement": false
+		"blocksMovement": false,
+		"opaque": false
 	},
 	"glass": {
 		"flammable": false,
@@ -206,7 +224,8 @@
 		"liquid": false,
 		"solid": true,
 		"blocksLight": true,
-		"blocksMovement": true
+		"blocksMovement": true,
+		"opaque": false
 	},
 	"redstone_light": {
 		"flammable": false,
@@ -217,7 +236,8 @@
 		"liquid": false,
 		"solid": true,
 		"blocksLight": true,
-		"blocksMovement": true
+		"blocksMovement": true,
+		"opaque": true
 	},
 	"tnt": {
 		"flammable": true,
@@ -228,7 +248,8 @@
 		"liquid": false,
 		"solid": true,
 		"blocksLight": true,
-		"blocksMovement": true
+		"blocksMovement": true,
+		"opaque": false
 	},
 	"coral": {
 		"flammable": false,
@@ -239,7 +260,8 @@
 		"liquid": false,
 		"solid": true,
 		"blocksLight": true,
-		"blocksMovement": true
+		"blocksMovement": true,
+		"opaque": true
 	},
 	"ice": {
 		"flammable": false,
@@ -250,7 +272,8 @@
 		"liquid": false,
 		"solid": true,
 		"blocksLight": true,
-		"blocksMovement": true
+		"blocksMovement": true,
+		"opaque": false
 	},
 	"packed_ice": {
 		"flammable": false,
@@ -261,7 +284,8 @@
 		"liquid": false,
 		"solid": true,
 		"blocksLight": true,
-		"blocksMovement": true
+		"blocksMovement": true,
+		"opaque": true
 	},
 	"snow": {
 		"flammable": false,
@@ -272,7 +296,8 @@
 		"liquid": false,
 		"solid": false,
 		"blocksLight": false,
-		"blocksMovement": false
+		"blocksMovement": false,
+		"opaque": false
 	},
 	"crafted_snow": {
 		"flammable": false,
@@ -283,7 +308,8 @@
 		"liquid": false,
 		"solid": true,
 		"blocksLight": true,
-		"blocksMovement": true
+		"blocksMovement": true,
+		"opaque": true
 	},
 	"cactus": {
 		"flammable": false,
@@ -294,7 +320,8 @@
 		"liquid": false,
 		"solid": true,
 		"blocksLight": true,
-		"blocksMovement": true
+		"blocksMovement": true,
+		"opaque": false
 	},
 	"clay": {
 		"flammable": false,
@@ -305,7 +332,8 @@
 		"liquid": false,
 		"solid": true,
 		"blocksLight": true,
-		"blocksMovement": true
+		"blocksMovement": true,
+		"opaque": true
 	},
 	"gourd": {
 		"flammable": false,
@@ -316,7 +344,8 @@
 		"liquid": false,
 		"solid": true,
 		"blocksLight": true,
-		"blocksMovement": true
+		"blocksMovement": true,
+		"opaque": true
 	},
 	"dragon_egg": {
 		"flammable": false,
@@ -327,7 +356,8 @@
 		"liquid": false,
 		"solid": true,
 		"blocksLight": true,
-		"blocksMovement": true
+		"blocksMovement": true,
+		"opaque": true
 	},
 	"portal": {
 		"flammable": false,
@@ -338,7 +368,8 @@
 		"liquid": false,
 		"solid": false,
 		"blocksLight": false,
-		"blocksMovement": false
+		"blocksMovement": false,
+		"opaque": false
 	},
 	"cake": {
 		"flammable": false,
@@ -349,7 +380,8 @@
 		"liquid": false,
 		"solid": true,
 		"blocksLight": true,
-		"blocksMovement": true
+		"blocksMovement": true,
+		"opaque": true
 	},
 	"web": {
 		"flammable": false,
@@ -360,7 +392,8 @@
 		"liquid": false,
 		"solid": true,
 		"blocksLight": true,
-		"blocksMovement": false
+		"blocksMovement": false,
+		"opaque": false
 	},
 	"piston": {
 		"flammable": false,
@@ -371,7 +404,8 @@
 		"liquid": false,
 		"solid": true,
 		"blocksLight": true,
-		"blocksMovement": true
+		"blocksMovement": true,
+		"opaque": true
 	},
 	"barrier": {
 		"flammable": false,
@@ -382,7 +416,8 @@
 		"liquid": false,
 		"solid": true,
 		"blocksLight": true,
-		"blocksMovement": true
+		"blocksMovement": true,
+		"opaque": true
 	},
 	"structure_void": {
 		"flammable": false,
@@ -393,6 +428,7 @@
 		"liquid": false,
 		"solid": false,
 		"blocksLight": false,
-		"blocksMovement": false
+		"blocksMovement": false,
+		"opaque": false
 	}
 }

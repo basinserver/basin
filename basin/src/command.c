@@ -12,6 +12,7 @@
 #include "xstring.h"
 #include "util.h"
 #include "command.h"
+#include "profile.h"
 
 void command_gamemode(struct player* player, char** args, size_t args_count) {
 	if (player != NULL) return;
@@ -86,6 +87,16 @@ void command_spawn(struct player* player, char** args, size_t args_count) {
 	teleportPlayer(player, (double) player->world->spawnpos.x + .5, (double) player->world->spawnpos.y, (double) player->world->spawnpos.z + .5);
 }
 
+void command_printprofile(struct player* player, char** args, size_t args_count) {
+	if (player != NULL) return;
+	printProfiler();
+}
+
+void command_clearprofile(struct player* player, char** args, size_t args_count) {
+	if (player != NULL) return;
+	clearProfiler();
+}
+
 void init_base_commands() {
 	registerCommand("gamemode", &command_gamemode);
 	registerCommand("gm", &command_gamemode);
@@ -93,6 +104,10 @@ void init_base_commands() {
 	registerCommand("spawn", &command_spawn);
 	registerCommand("kick", &command_kick);
 	registerCommand("say", &command_say);
+	registerCommand("printprofile", &command_printprofile);
+	registerCommand("pp", &command_printprofile);
+	registerCommand("clearprofile", &command_clearprofile);
+	registerCommand("cp", &command_clearprofile);
 }
 
 struct command {
