@@ -13,6 +13,7 @@
 #include "util.h"
 #include "command.h"
 #include "profile.h"
+#include "server.h"
 
 void command_gamemode(struct player* player, char** args, size_t args_count) {
 	if (player != NULL) return;
@@ -34,6 +35,7 @@ void command_gamemode(struct player* player, char** args, size_t args_count) {
 		sendMessageToPlayer(target, "[ERROR] No such gamemode found.", "red");
 		return;
 	}
+	sendMessageToPlayer(NULL, "Done.", "default");
 }
 
 void command_tp(struct player* player, char** args, size_t args_count) {
@@ -62,7 +64,7 @@ void command_kick(struct player* player, char** args, size_t args_count) {
 		return;
 	}
 	struct player* from = getPlayerByName(args[0]);
-	char* reason = args_count == 1 ? "You Have Been Kicked" : args[1];
+	char* reason = args_count == 1 ? "You have been kicked" : args[1];
 	kickPlayer(from, reason);
 }
 
@@ -75,13 +77,24 @@ void command_say(struct player* player, char** args, size_t args_count) {
 	broadcastf("light_purple", "CONSOLE: %s", args[0]);
 }
 
+void command_motd(struct player* player, char** args, size_t args_count) {
+	if (player != NULL) return;
+	if (args_count != 1) {
+		sendMessageToPlayer(NULL, "Usage: /motd \"<message>\"", "red");
+		return;
+	}
+	sendMessageToPlayer(NULL, "Done.", "default");
+	xfree (motd);
+	motd = xstrdup(args[0], 0);
+}
+
 void command_spawn(struct player* player, char** args, size_t args_count) {
 	if (player->entity->health < player->entity->maxHealth) {
 		sendMsgToPlayerf(player, "You must have full health to teleport to spawn!", "red");
 		return;
 	}
 	if (args_count > 0) {
-		sendMessageToPlayer(player, "Usage: /spawn", "red");
+		sendMessageToPlayer(player, "red", "Usage: /spawn");
 		return;
 	}
 	teleportPlayer(player, (double) player->world->spawnpos.x + .5, (double) player->world->spawnpos.y, (double) player->world->spawnpos.z + .5);
@@ -108,16 +121,19 @@ void init_base_commands() {
 	registerCommand("pp", &command_printprofile);
 	registerCommand("clearprofile", &command_clearprofile);
 	registerCommand("cp", &command_clearprofile);
+	registerCommand("motd", &command_motd);
 }
+
+typedef void (*command_callback)(struct player* player, char** args, size_t args_count);
 
 struct command {
 		char* command;
-		void (*callback)(struct player* player, char** args, size_t args_count);
+		command_callback callback;
 };
 
 struct collection* registered_commands;
 
-void registerCommand(char* command, void (*callback)(struct player* player, char** args, size_t args_count)) {
+void registerCommand(char* command, command_callback callback) {
 	if (registered_commands == NULL) registered_commands = new_collection(16, 0);
 	struct command* com = xmalloc(sizeof(struct command));
 	com->command = xstrdup(command, 0);
