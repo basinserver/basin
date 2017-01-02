@@ -81,6 +81,7 @@ struct player* newPlayer(struct entity* entity, char* name, struct uuid uuid, st
 	player->spawnedIn = 0;
 	player->llTick = 0;
 	player->triggerRechunk = 0;
+	player->chunksSent = 0;
 	return player;
 }
 

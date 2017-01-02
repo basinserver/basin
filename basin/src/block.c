@@ -353,17 +353,17 @@ void dropItems_crops(struct world* world, block blk, int32_t x, int32_t y, int32
 			drop.damage = 0;
 			drop.nbt = NULL;
 			dropBlockDrop(world, &drop, x, y, z);
-			seed = ITM_CARROTS;
 		}
+		seed = ITM_CARROTS;
 	} else if ((blk >> 4) == (BLK_POTATOES >> 4)) {
 		maxAge = 7;
+		seed = ITM_POTATO;
 		if (age >= maxAge) {
 			drop.item = ITM_POTATO;
 			drop.itemCount = 1;
 			drop.damage = 0;
 			drop.nbt = NULL;
 			dropBlockDrop(world, &drop, x, y, z);
-			seed = ITM_POTATO;
 			if (rand() % 50 == 0) {
 				drop.item = ITM_POTATOPOISONOUS;
 				drop.itemCount = 1;
@@ -393,8 +393,8 @@ void dropItems_crops(struct world* world, block blk, int32_t x, int32_t y, int32
 			drop.damage = 0;
 			drop.nbt = NULL;
 			dropBlockDrop(world, &drop, x, y, z);
-			seed = ITM_BEETROOT_SEEDS;
 		}
+		seed = ITM_BEETROOT_SEEDS;
 	} else if ((blk >> 4) == (BLK_COCOA >> 4)) {
 		int rc = 1;
 		if (age >= 2) rc = 3;
@@ -406,15 +406,18 @@ void dropItems_crops(struct world* world, block blk, int32_t x, int32_t y, int32
 			dropBlockDrop(world, &drop, x, y, z);
 		return;
 	}
-	if (age >= maxAge) {
-		int rct = 3 + fortune;
+	if (seed > 0) {
 		drop.item = seed;
 		drop.itemCount = 1;
 		drop.damage = 0;
 		drop.nbt = NULL;
-		for (int i = 0; i < rct; i++) {
-			if (rand() % (2 * maxAge) <= age) dropBlockDrop(world, &drop, x, y, z);
+		if (age >= maxAge) {
+			int rct = 3 + fortune;
+			for (int i = 0; i < rct; i++) {
+				if (rand() % (2 * maxAge) <= age) dropBlockDrop(world, &drop, x, y, z);
+			}
 		}
+		dropBlockDrop(world, &drop, x, y, z);
 	}
 }
 

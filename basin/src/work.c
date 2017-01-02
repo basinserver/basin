@@ -63,6 +63,12 @@ int handleRead(struct conn* conn, struct work_param* param, int fd) {
 		struct packet* inp = xmalloc(sizeof(struct packet));
 		ssize_t rx = readPacket(conn, conn->readBuffer + ls, length, inp);
 		if (rx == -1) goto rete;
+		//printf("State = %i, ID = %i, Data = ", conn->state, inp->id);
+		//for (size_t i = 0; i < length + ls; i++) {
+		//	uint8_t ch = ((uint8_t*) conn->readBuffer)[i];
+		//	printf("%02X", ch);
+		//}
+		//printf("\n");
 		int os = conn->state;
 		struct packet rep;
 		int df = 0;
@@ -171,6 +177,7 @@ int handleRead(struct conn* conn, struct work_param* param, int fd) {
 					rep.data.play_client.playerpositionandlook.teleport_id = 0;
 					if (writePacket(conn, &rep) < 0) goto rete;
 					rep.id = PKT_PLAY_CLIENT_PLAYERLISTITEM;
+					pthread_rwlock_rdlock(&players->data_mutex);
 					rep.data.play_client.playerlistitem.action_id = 0;
 					rep.data.play_client.playerlistitem.number_of_players = players->entry_count + 1;
 					rep.data.play_client.playerlistitem.players = xmalloc(rep.data.play_client.playerlistitem.number_of_players * sizeof(struct listitem_player));
@@ -205,6 +212,7 @@ int handleRead(struct conn* conn, struct work_param* param, int fd) {
 					add_queue(plx->outgoingPacket, pkt);
 					flush_outgoing(plx);
 					END_HASHMAP_ITERATION (players)
+					pthread_rwlock_unlock(&players->data_mutex);
 					memcpy(&rep.data.play_client.playerlistitem.players[px].uuid, &player->uuid, sizeof(struct uuid));
 					rep.data.play_client.playerlistitem.players[px].action.addplayer.name = xstrdup(player->name, 0);
 					rep.data.play_client.playerlistitem.players[px].action.addplayer.number_of_properties = 0;

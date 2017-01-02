@@ -24,6 +24,7 @@ struct chunk_req {
 };
 
 struct queue* chunk_input;
+struct queue* chunk_backlog;
 
 struct entity;
 
@@ -69,6 +70,8 @@ struct chunk {
 void chunkloadthr(size_t b);
 
 uint64_t getChunkKey(struct chunk* ch);
+
+uint64_t getChunkKey2(int32_t cx, int32_t cz);
 
 struct region {
 		int16_t x;

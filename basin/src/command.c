@@ -105,6 +105,13 @@ void command_printprofile(struct player* player, char** args, size_t args_count)
 	printProfiler();
 }
 
+#ifdef MEM_LEAK_DEBUG
+void command_printalloc(struct player* player, char** args, size_t args_count) {
+	if (player != NULL) return;
+	printAlloced();
+}
+#endif
+
 void command_clearprofile(struct player* player, char** args, size_t args_count) {
 	if (player != NULL) return;
 	clearProfiler();
@@ -122,6 +129,10 @@ void init_base_commands() {
 	registerCommand("clearprofile", &command_clearprofile);
 	registerCommand("cp", &command_clearprofile);
 	registerCommand("motd", &command_motd);
+#ifdef MEM_LEAK_DEBUG
+	registerCommand("pa", &command_printalloc);
+	registerCommand("printalloc", &command_printalloc);
+#endif
 }
 
 typedef void (*command_callback)(struct player* player, char** args, size_t args_count);

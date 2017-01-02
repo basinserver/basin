@@ -31,7 +31,7 @@ void run_accept(struct accept_param* param) {
 	spfd.revents = 0;
 	spfd.fd = param->server_fd;
 	while (1) {
-		struct conn* c = xmalloc(sizeof(struct conn));
+		struct conn * c = xmalloc(sizeof(struct conn));
 		memset(&c->addr, 0, sizeof(struct sockaddr_in6));
 		c->addrlen = sizeof(struct sockaddr_in6);
 		c->readBuffer = NULL;

@@ -627,7 +627,7 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 		if (!player->spawnedIn && d3 > 0.00000001) player->spawnedIn = 1;
 		if (d3 > 5. * 5. * 5.) {
 			teleportPlayer(player, player->entity->lx, player->entity->ly, player->entity->lz);
-			printf("Player '%s' attempted to move too fast!\n", player->name);
+			kickPlayer(player, "You attempted to move too fast!");
 		} else {
 			BEGIN_BROADCAST(player->entity->loadingPlayers)
 			sendEntityMove(bc_player, player->entity);
@@ -846,6 +846,12 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 				struct entity* ent = (struct entity*) value;
 				if (ent == NULL || entity_distsq_block(ent, x, y, z) > 8. * 8. || !isLiving(ent->type)) continue;
 				getEntityCollision(ent, &pbb);
+				pbb.minX += .01;
+				pbb.minY += .01;
+				pbb.minZ += .01;
+				pbb.maxX -= .001;
+				pbb.maxY -= .001;
+				pbb.maxZ -= .001;
 				for (size_t i = 0; i < tbi->boundingBox_count; i++) {
 					struct boundingbox* bb = &tbi->boundingBoxes[i];
 					if (bb == NULL) continue;
@@ -1369,6 +1375,7 @@ void tick_player(struct world* world, struct player* player) {
 		add_collection(defunctPlayers, player);
 		return;
 	}
+	player->chunksSent = 0;
 	if (tick_counter % 200 == 0) {
 		if (player->nextKeepAlive != 0) {
 			player->conn->disconnect = 1;
@@ -1420,65 +1427,66 @@ void tick_player(struct world* world, struct player* player) {
 	int32_t lpcz = ((int32_t) player->entity->lz >> 4);
 	if (player->loadedChunks->entry_count == 0 || player->triggerRechunk) {
 		beginProfilerSection("chunkLoading_tick");
+		pthread_mutex_lock(&chunk_input->data_mutex);
 		if (player->triggerRechunk) {
 			BEGIN_HASHMAP_ITERATION(player->loadedChunks)
 			struct chunk* ch = (struct chunk*) value;
-			struct chunk_req* cr = xmalloc(sizeof(struct chunk_req));
-			cr->pl = player;
-			cr->cx = ch->x;
-			cr->cz = ch->z;
-			cr->load = 0;
-			add_queue(chunk_input, cr);
+			if (ch->x < pcx - CHUNK_VIEW_DISTANCE || ch->x > pcx + CHUNK_VIEW_DISTANCE || ch->z < pcz - CHUNK_VIEW_DISTANCE || ch->z > pcz + CHUNK_VIEW_DISTANCE) {
+				struct chunk_req* cr = xmalloc(sizeof(struct chunk_req));
+				cr->pl = player;
+				cr->cx = ch->x;
+				cr->cz = ch->z;
+				cr->load = 0;
+				add_queue(chunk_input, cr);
+			}
 			END_HASHMAP_ITERATION(player->loadedChunks)
 		}
-		player->triggerRechunk = 0;
 		for (int r = 0; r <= CHUNK_VIEW_DISTANCE; r++) {
 			int32_t x = pcx - r;
 			int32_t z = pcz - r;
 			for (int i = 0; i < ((r == 0) ? 1 : (r * 8)); i++) {
-				struct chunk_req* cr = xmalloc(sizeof(struct chunk_req));
-				cr->pl = player;
-				cr->cx = x;
-				cr->cz = z;
-				cr->load = 1;
-				add_queue(chunk_input, cr);
+				if (!player->triggerRechunk || !contains_hashmap(player->loadedChunks, getChunkKey2(x, z))) {
+					struct chunk_req* cr = xmalloc(sizeof(struct chunk_req));
+					cr->pl = player;
+					cr->cx = x;
+					cr->cz = z;
+					cr->load = 1;
+					add_queue(chunk_input, cr);
+				}
 				if (i < 2 * r) x++;
 				else if (i < 4 * r) z++;
 				else if (i < 6 * r) x--;
 				else if (i < 8 * r) z--;
 			}
 		}
+		pthread_mutex_unlock(&chunk_input->data_mutex);
+		player->triggerRechunk = 0;
 		endProfilerSection("chunkLoading_tick");
 	}
 	if (lpcx != pcx || lpcz != pcz) {
 		for (int32_t fx = lpcx; lpcx < pcx ? (fx < pcx) : (fx > pcx); lpcx < pcx ? fx++ : fx--) {
 			for (int32_t fz = lpcz - CHUNK_VIEW_DISTANCE; fz <= lpcz + CHUNK_VIEW_DISTANCE; fz++) {
 				beginProfilerSection("chunkUnloading_live");
-				//printf("unl %i, %i\n", ch->x, ch->z);
 				struct chunk_req* cr = xmalloc(sizeof(struct chunk_req));
 				cr->pl = player;
 				cr->cx = lpcx < pcx ? (fx - CHUNK_VIEW_DISTANCE) : (fx + CHUNK_VIEW_DISTANCE);
 				cr->cz = fz;
 				cr->load = 0;
 				add_queue(chunk_input, cr);
-				pc1: ;
 				endProfilerSection("chunkUnloading_live");
 				beginProfilerSection("chunkLoading_live");
-				//printf("l %i, %i\n", ch->x, ch->z);
 				cr = xmalloc(sizeof(struct chunk_req));
 				cr->pl = player;
 				cr->cx = lpcx < pcx ? (fx + CHUNK_VIEW_DISTANCE) : (fx - CHUNK_VIEW_DISTANCE);
 				cr->cz = fz;
 				cr->load = 1;
 				add_queue(chunk_input, cr);
-				fc1: ;
 				endProfilerSection("chunkLoading_live");
 			}
 		}
 		for (int32_t fz = lpcz; lpcz < pcz ? (fz < pcz) : (fz > pcz); lpcz < pcz ? fz++ : fz--) {
 			for (int32_t fx = lpcx - CHUNK_VIEW_DISTANCE; fx <= lpcx + CHUNK_VIEW_DISTANCE; fx++) {
 				beginProfilerSection("chunkUnloading_live");
-				//printf("unl %i, %i\n", ch->x, ch->z);
 				struct chunk_req* cr = xmalloc(sizeof(struct chunk_req));
 				cr->pl = player;
 				cr->cx = fx;
@@ -1568,7 +1576,7 @@ void tick_player(struct world* world, struct player* player) {
 	//if (ch != NULL) {
 	BEGIN_HASHMAP_ITERATION(player->world->entities)
 	struct entity* ent = (struct entity*) value;
-	if (ent == player->entity || contains_hashmap(player->loadedEntities, ent->id)) continue;
+	if (ent == player->entity || contains_hashmap(player->loadedEntities, ent->id) || entity_distsq(player->entity, ent) > (CHUNK_VIEW_DISTANCE * 16.) * (CHUNK_VIEW_DISTANCE * 16.)) continue;
 	if (ent->type == ENT_PLAYER) loadPlayer(player, ent->data.player.player);
 	else loadEntity(player, ent);
 	END_HASHMAP_ITERATION(player->world->entities)

@@ -155,6 +155,21 @@ int onItemInteract_hoe(struct world* world, struct player* player, uint8_t slot_
 	return 0;
 }
 
+int onItemInteract_shovel(struct world* world, struct player* player, uint8_t slot_index, struct slot* slot, int32_t x, uint8_t y, int32_t z, uint8_t face) {
+	if (slot == NULL) return 0;
+	struct item_info* ii = getItemInfo(slot->item);
+	if (ii == NULL) return 0;
+	block b = getBlockWorld(world, x, y, z);
+	if (b == BLK_GRASS) {
+		if (player->gamemode != 1 && ++slot->damage >= ii->maxDamage) {
+			slot = NULL;
+		}
+		setSlot(player, player->inventory, slot_index, slot, 1, 1);
+		setBlockWorld(world, BLK_GRASSPATH, x, y, z);
+	}
+	return 0;
+}
+
 float onEntityHitWhileWearing_armor(struct world* world, struct player* player, uint8_t slot_index, struct slot* slot, float damage) {
 	if (slot == NULL) return damage;
 	struct item_info* ii = getItemInfo(slot->item);
@@ -274,6 +289,11 @@ void init_items() {
 	getItemInfo(ITM_NETHERSTALKSEEDS)->onItemInteract = &onItemInteract_seeds;
 	getItemInfo(ITM_BEETROOT_SEEDS)->onItemInteract = &onItemInteract_seeds;
 	getItemInfo(ITM_DYEPOWDER_BLACK)->onItemInteract = &onItemInteract_seeds;
+	getItemInfo(ITM_SHOVELWOOD)->onItemInteract = &onItemInteract_shovel;
+	getItemInfo(ITM_SHOVELGOLD)->onItemInteract = &onItemInteract_shovel;
+	getItemInfo(ITM_SHOVELSTONE)->onItemInteract = &onItemInteract_shovel;
+	getItemInfo(ITM_SHOVELIRON)->onItemInteract = &onItemInteract_shovel;
+	getItemInfo(ITM_SHOVELDIAMOND)->onItemInteract = &onItemInteract_shovel;
 }
 
 void add_item(item id, struct item_info* info) {

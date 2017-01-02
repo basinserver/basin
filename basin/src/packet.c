@@ -1780,8 +1780,10 @@ ssize_t writePacket(struct conn* conn, struct packet* packet) {
 			ENS(4)
 			pi += writeVarInt(packet->data.play_client.collectitem.collector_entity_id, pktbuf + pi);
 			//pickup_item_count
-			ENS(4)
-			pi += writeVarInt(packet->data.play_client.collectitem.pickup_item_count, pktbuf + pi);
+			if (conn->protocolVersion > 210) {
+				ENS(4)
+				pi += writeVarInt(packet->data.play_client.collectitem.pickup_item_count, pktbuf + pi);
+			}
 		} else if (id == PKT_PLAY_CLIENT_ENTITYTELEPORT) {
 			//entity_id
 			ENS(4)

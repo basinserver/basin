@@ -23,7 +23,10 @@ struct queue* new_queue(size_t capacity, int mt) {
 	queue->size = 0;
 	queue->mt = mt;
 	if (mt) {
-		if (pthread_mutex_init(&queue->data_mutex, NULL)) {
+		pthread_mutexattr_t attr;
+		pthread_mutexattr_init(&attr);
+		pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE_NP);
+		if (pthread_mutex_init(&queue->data_mutex, &attr)) {
 			xfree(queue->data);
 			queue->data = NULL;
 			xfree(queue);

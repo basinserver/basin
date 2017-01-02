@@ -11,6 +11,7 @@
 #include <pthread.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include "util.h"
 
 struct hashmap {
 		struct hashmap_entry** buckets;
@@ -25,6 +26,11 @@ struct hashmap_entry {
 		void* value;
 		struct hashmap_entry* next;
 };
+
+#ifdef MEM_LEAK_DEBUG
+void put_hashmap_memsafe(struct hashmap* map, uint64_t key, void* value);
+struct hashmap* new_hashmap_memsafe(uint8_t bucket_count_bytes, uint8_t mc);
+#endif
 
 struct hashmap* new_hashmap(uint8_t bucket_count_bytes, uint8_t mc); // bucket_count_bytes must be 1 or 2.
 

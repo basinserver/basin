@@ -64,6 +64,7 @@ struct player {
 		size_t llTick;
 		uint8_t triggerRechunk;
 		uint32_t protocolVersion;
+		uint16_t chunksSent;
 };
 
 struct player* newPlayer(struct entity* entity, char* name, struct uuid, struct conn* conn, uint8_t gamemode);

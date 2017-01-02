@@ -45,11 +45,11 @@ int boundingbox_intersects(struct boundingbox* bb1, struct boundingbox* bb2) {
 }
 
 uint64_t getChunkKey(struct chunk* ch) {
-	return (uint64_t)(((int64_t) ch->x << 32) | (int64_t) ch->z);
+	return (uint64_t)(((int64_t) ch->x) << 32) | (((int64_t) ch->z) & 0xFFFFFFFF);
 }
 
 uint64_t getChunkKey2(int32_t cx, int32_t cz) {
-	return (uint64_t)(((int64_t) cx << 32) | (int64_t) cz);
+	return (uint64_t)(((int64_t) cx) << 32) | (((int64_t) cz) & 0xFFFFFFFF);
 }
 
 struct chunk* loadRegionChunk(struct region* region, int8_t lchx, int8_t lchz, size_t chri) {
@@ -291,12 +291,13 @@ struct chunk* getChunkWithLoad(struct world* world, int32_t x, int32_t z, size_t
 	if (ch != NULL) return ch;
 	int16_t rx = x >> 5;
 	int16_t rz = z >> 5;
-	struct region* ar = get_hashmap(world->regions, (uint64_t)(((int64_t) rx << 16) | (int64_t) rz));
+	uint64_t ri = (((uint64_t)(rx) & 0xFFFF) << 16) | (((uint64_t) rz) & 0xFFFF);
+	struct region* ar = get_hashmap(world->regions, ri);
 	if (ar == NULL) {
 		char lp[PATH_MAX];
 		snprintf(lp, PATH_MAX, "%s/region/r.%i.%i.mca", world->lpa, rx, rz);
 		ar = newRegion(lp, rx, rz, world->chl_count);
-		put_hashmap(world->regions, (uint64_t)(((int64_t) rx << 16) | (int64_t) rz), ar);
+		put_hashmap(world->regions, ri, ar);
 		//TODO: populate region
 	}
 	struct chunk* chk = NULL;
@@ -312,7 +313,7 @@ struct chunk* getChunkWithLoad(struct world* world, int32_t x, int32_t z, size_t
 		char lp[PATH_MAX];
 		snprintf(lp, PATH_MAX, "%s/region/r.%i.%i.mca", world->lpa, rx, rz);
 		ar = newRegion(lp, rx, rz, world->chl_count);
-		put_hashmap(world->regions, (uint64_t)(((int64_t) rx << 16) | (int64_t) rz), ar);
+		put_hashmap(world->regions, ri, ar);
 	}
 	return gc;
 }
@@ -324,9 +325,20 @@ void chunkloadthr(size_t b) {
 			xfree(chr);
 			continue;
 		}
+		if (chr->pl->chunksSent >= 2) {
+			add_queue(chunk_backlog, chr);
+			continue;
+		}
+		if (chr->load) {
+			chr->pl->chunksSent++;
+		}
 		if (chr->load) {
 			beginProfilerSection("chunkLoading_getChunk");
 			struct chunk* ch = getChunkWithLoad(chr->pl->world, chr->cx, chr->cz, b);
+			if (chr->pl->loadedChunks == NULL) {
+				xfree(chr);
+				continue;
+			}
 			endProfilerSection("chunkLoading_getChunk");
 			if (ch != NULL) {
 				ch->playersLoaded++;
@@ -678,7 +690,8 @@ int loadWorld(struct world* world, char* path) {
 			char* zs = strchr(xs, '.') + 1;
 			if (zs == NULL) continue;
 			struct region* reg = newRegion(lp, strtol(xs, NULL, 10), strtol(zs, NULL, 10), world->chl_count);
-			put_hashmap(world->regions, (uint64_t)(((int64_t) reg->x << 16) | (int64_t) reg->z), reg);
+			uint64_t ri = (((uint64_t)(reg->x) & 0xFFFF) << 16) | (((uint64_t) reg->z) & 0xFFFF);
+			put_hashmap(world->regions, ri, reg);
 		}
 		closedir(dir);
 	}

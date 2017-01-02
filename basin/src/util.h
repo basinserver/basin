@@ -12,6 +12,28 @@
 #include <stdlib.h>
 #include <stdarg.h>
 
+//#define MEM_LEAK_DEBUG
+
+#ifdef MEM_LEAK_DEBUG
+
+void* xmalloc_real(size_t size, char* file, int line);
+
+void xfree_real(void* ptr, char* file, int line);
+
+void* xcalloc_real(size_t size, char* file, int line);
+
+void* xrealloc_real(void* ptr, size_t size, char* file, int line);
+
+#define xmalloc(size) xmalloc_real(size, __FILE__ , __LINE__)
+
+#define xfree(ptr) xfree_real(ptr, __FILE__ , __LINE__)
+
+#define xcalloc(size) xcalloc_real(size, __FILE__ , __LINE__)
+
+#define xrealloc(ptr, size) xrealloc_real(ptr, size, __FILE__ , __LINE__)
+
+#else
+
 void* xmalloc(size_t size);
 
 void xfree(void* ptr);
@@ -20,7 +42,9 @@ void* xcalloc(size_t size);
 
 void* xrealloc(void* ptr, size_t size);
 
-void* xcopy(void* ptr, size_t size, size_t expand);
+#endif
+
+void* xcopy(const void* ptr, size_t size, size_t expand);
 
 char* xstrdup(const char* str, size_t expand);
 

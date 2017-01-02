@@ -11,7 +11,7 @@
 #include "util.h"
 #include <stdio.h>
 
-//#define ENABLE_PROFILER
+#define ENABLE_PROFILER
 //#define ENABLE_PROFILER_MT
 
 struct collection* psec;
@@ -99,7 +99,7 @@ void endProfilerSection(char* name) {
 			goto epsr;
 		}
 	}
-	epsr:;
+	epsr: ;
 #ifdef ENABLE_PROFILER_MT
 	pthread_rwlock_unlock(&psec->data_mutex);
 #endif
