@@ -23,6 +23,8 @@ set(SOURCE_FILES
         basin/src/game.c
         basin/src/game.h
         basin/src/globals.h
+        basin/src/hashmap.c
+        basin/src/hashmap.h
         basin/src/inventory.c
         basin/src/inventory.h
         basin/src/item.c
@@ -40,6 +42,8 @@ set(SOURCE_FILES
         basin/src/packet.h
         basin/src/player.c
         basin/src/player.h
+        basin/src/profile.c
+        basin/src/profile.h
         basin/src/queue.c
         basin/src/queue.h
         basin/src/server.h

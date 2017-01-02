@@ -9,6 +9,7 @@
 #include "collection.h"
 #include "game.h"
 #include "player.h"
+#include "globals.h"
 #include "xstring.h"
 #include "util.h"
 #include "command.h"
@@ -88,6 +89,18 @@ void command_motd(struct player* player, char** args, size_t args_count) {
 	motd = xstrdup(args[0], 0);
 }
 
+void command_list(struct player* player, char** args, size_t args_count) {
+	char* plist = xmalloc(players->entry_count * 16 + 32);
+	char* cptr = plist;
+	BEGIN_HASHMAP_ITERATION(players)
+	struct player* player = (struct player*)value;
+	cptr = xstrncat(cptr, 16, player->name);
+	END_HASHMAP_ITERATION(players)
+	snprintf(cptr, 32, " (%lu players total)", players->entry_count);
+	sendMessageToPlayer(player, plist, "gray");
+	xfree(plist);
+}
+
 void command_spawn(struct player* player, char** args, size_t args_count) {
 	if (player->entity->health < player->entity->maxHealth) {
 		sendMsgToPlayerf(player, "You must have full health to teleport to spawn!", "red");
@@ -129,6 +142,8 @@ void init_base_commands() {
 	registerCommand("clearprofile", &command_clearprofile);
 	registerCommand("cp", &command_clearprofile);
 	registerCommand("motd", &command_motd);
+	registerCommand("list", &command_list);
+	registerCommand("ls", &command_list);
 #ifdef MEM_LEAK_DEBUG
 	registerCommand("pa", &command_printalloc);
 	registerCommand("printalloc", &command_printalloc);

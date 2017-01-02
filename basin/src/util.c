@@ -187,6 +187,16 @@ char* xstrdup(const char* str, size_t expand) {
 	return str == NULL ? NULL : xcopy(str, strlen(str) + 1, expand);
 }
 
+// copies up the maxsize bytes from src to dst, until a null byte is reached.
+// does not copy the null byte. returns pointer to byte after the last byte of the dst after copying
+char* xstrncat(char* dst, size_t maxsize, char* src) {
+	const char *maxcdst = dst + maxsize;
+	char *cdst = dst;
+	for (char *csrc = src; *csrc && cdst < maxcdst; ++cdst, ++csrc)
+		*cdst = *csrc;
+	return cdst;
+}
+
 int recur_mkdir(const char* path, mode_t mode) {
 	char rp[PATH_MAX];
 	realpath(path, rp);

@@ -48,6 +48,8 @@ void* xcopy(const void* ptr, size_t size, size_t expand);
 
 char* xstrdup(const char* str, size_t expand);
 
+char* xstrncat(char* dst, size_t maxsize, char* src);
+
 int recur_mkdir(const char* path, mode_t mode);
 
 int memeq(const unsigned char* mem1, size_t mem1_size, const unsigned char* mem2, size_t mem2_size);
