@@ -1019,7 +1019,7 @@ void damageEntity(struct entity* attacked, float damage, int armorable) {
 	if (attacked->health <= 0.) {
 		if (attacked->type == ENT_PLAYER) {
 			struct player* player = attacked->data.player.player;
-			broadcastf("%s died.", player->name);
+			broadcastf("default", "%s died", player->name);
 			for (size_t i = 0; i < player->inventory->slot_count; i++) {
 				struct slot* slot = getSlot(player, player->inventory, i);
 				if (slot != NULL) dropPlayerItem_explode(player, slot);

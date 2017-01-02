@@ -64,9 +64,13 @@ void command_kick(struct player* player, char** args, size_t args_count) {
 		sendMessageToPlayer(player, "Usage: /kick <player> OR /kick <player> \"<reason>\"", "red");
 		return;
 	}
-	struct player* from = getPlayerByName(args[0]);
+	struct player* target = getPlayerByName(args[0]);
+	if (target == NULL) {
+		sendMessageToPlayer(player, "[ERROR] No such player found.", "red");
+		return;
+	}
 	char* reason = args_count == 1 ? "You have been kicked" : args[1];
-	kickPlayer(from, reason);
+	kickPlayer(target, reason);
 }
 
 void command_say(struct player* player, char** args, size_t args_count) {
@@ -106,8 +110,13 @@ void command_list(struct player* player, char** args, size_t args_count) {
 }
 
 void command_spawn(struct player* player, char** args, size_t args_count) {
+	if (!player) {
+		sendMsgToPlayerf(player, "red", "Must be run as player");
+		return;
+	}
+
 	if (player->entity->health < player->entity->maxHealth) {
-		sendMsgToPlayerf(player, "You must have full health to teleport to spawn!", "red");
+		sendMsgToPlayerf(player, "red", "You must have full health to teleport to spawn!");
 		return;
 	}
 	if (args_count > 0) {
@@ -134,6 +143,22 @@ void command_clearprofile(struct player* player, char** args, size_t args_count)
 	clearProfiler();
 }
 
+void command_kill(struct player* player, char** args, size_t args_count) {
+	if (!player) {
+		if (args_count != 1) {
+			sendMsgToPlayerf(player, "red", "Usage: /kill <player>");
+			return;
+		}
+		player = getPlayerByName(args[0]);
+		if (player == NULL) {
+			sendMessageToPlayer(player, "[ERROR] No such player found.", "red");
+			return;
+		}
+	}
+	for (int i = 0; i < 10 && player->entity->health > 0; i++)
+		damageEntity(player->entity, player->entity->maxHealth, 0);
+}
+
 void init_base_commands() {
 	registerCommand("gamemode", &command_gamemode);
 	registerCommand("gm", &command_gamemode);
@@ -148,6 +173,7 @@ void init_base_commands() {
 	registerCommand("motd", &command_motd);
 	registerCommand("list", &command_list);
 	registerCommand("ls", &command_list);
+	registerCommand("kill", &command_kill);
 #ifdef MEM_LEAK_DEBUG
 	registerCommand("pa", &command_printalloc);
 	registerCommand("printalloc", &command_printalloc);
