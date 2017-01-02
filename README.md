@@ -1,26 +1,26 @@
 # Basin
-A Minecraft Server written in C.
+A high performance Minecraft server implementation written in C.
 
 # Features
-* Breakneck Performance
-* Low Memory Footprint (13 MB for a 400-chunk spawn and one player on a 64-bit system)
-* Block Breaking & Placing
+* Low memory footprint (13 MB for a 400-chunk spawn and one player on a 64-bit system)
+* Block placing/breaking
+* Survival mode
+* Creative mode
 * Inventories
 * Players, Chat, and Tab menu
-* Item Entities from Block Drops and Player Throwing
-* Entities
+* Item entities
 * Chests, Furnaces, Crafting
 * PvP
 
 # Planned Features
 * Natural Mob Spawning & AI
 * Lua & C Plugin Systems
-* Comprehensive Permissions & Commands System
-* Ultra-low Memory Mode - Sacrifice CPU Cycles for Further Memory Use Reduction
-* Entities-by-chunk Logic - Hold Millions of Entities in a World
-* Block Physics & Updates
-* Fall Damage
-* World Generation
+* Comprehensive permissions & commands system
+* Ultra-low memory mode - Sacrifice CPU Cycles for further memory use reduction
+* Entities-by-chunk logic - Hold millions of entities in a world
+* Block physics & updates
+* Fall damage
+* World generation
 * Lighting
-* Comprehensive Opt-in Anticheat
-* GPU Acceleration
+* Comprehensive opt-in Anticheat
+* GPU accelerated world generation, AI, and more(?).
