@@ -90,9 +90,13 @@ void command_motd(struct player* player, char** args, size_t args_count) {
 }
 
 void command_list(struct player* player, char** args, size_t args_count) {
-	char* plist = xmalloc(players->entry_count * 16 + 32);
+	char* plist = xmalloc(players->entry_count * 18 + 30);
 	char* cptr = plist;
 	BEGIN_HASHMAP_ITERATION(players)
+	if (cptr > plist) {
+		*cptr++ = ',';
+		*cptr++ = ' ';
+	}
 	struct player* player = (struct player*)value;
 	cptr = xstrncat(cptr, 16, player->name);
 	END_HASHMAP_ITERATION(players)
