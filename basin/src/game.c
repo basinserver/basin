@@ -5,9 +5,7 @@
  *      Author: root
  */
 
-#include "block.h"
-#include "world.h"
-#include "globals.h"
+#include "basin.h"
 #include "util.h"
 #include "queue.h"
 #include "collection.h"
@@ -16,22 +14,20 @@
 #include <stdint.h>
 #include "xstring.h"
 #include <stdio.h>
-#include "entity.h"
 #include "game.h"
 #include <math.h>
 #include "crafting.h"
-#include "inventory.h"
-#include "item.h"
-#include "network.h"
 #include "smelting.h"
+#include "tileentity.h"
+#include "network.h"
 #include "server.h"
 #include "command.h"
 #include <unistd.h>
-#include "tileentity.h"
 #include <stdarg.h>
 #include "xstring.h"
-#include "profile.h"
 #include "hashmap.h"
+#include "profile.h"
+#include "anticheat.h"
 
 void flush_outgoing(struct player* player) {
 	if (player->conn == NULL) return;

@@ -8,6 +8,8 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/basin/Debug)
 set(SOURCE_FILES
         basin/src/accept.c
         basin/src/accept.h
+        basin/src/anticheat.c
+        basin/src/anticheat.h
         basin/src/block.c
         basin/src/block.h
         basin/src/collection.c
@@ -65,7 +67,8 @@ set(SOURCE_FILES
         basin/src/worldmanager.c
         basin/src/worldmanager.h
         basin/src/xstring.c
-        basin/src/xstring.h)
+        basin/src/xstring.h
+        basin/src/basin.h)
 
 add_executable(Basin ${SOURCE_FILES})
 
