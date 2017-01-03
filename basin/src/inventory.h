@@ -10,6 +10,7 @@
 
 #include <stdint.h>
 #include "hashmap.h"
+#include <pthread.h>
 
 #define INVTYPE_PLAYERINVENTORY 0
 #define INVTYPE_CHEST 1
@@ -51,6 +52,7 @@ struct inventory {
 		uint16_t* dragSlot;
 		uint16_t dragSlot_count;
 		struct tile_entity* te;
+		pthread_mutex_t mut;
 };
 
 struct player;

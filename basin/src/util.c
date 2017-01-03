@@ -14,53 +14,10 @@
 #include <stdio.h>
 #include "util.h"
 #include "hashmap.h"
+#include <sys/syscall.h>
 
-#ifdef MEM_LEAK_DEBUG
-
-struct alloc {
-	size_t size;
-	char* file;
-	int line;
-};
-
-struct hashmap* mem_alloced;
-
-uint64_t mem_key(char* file, uint16_t line) {
-	uint64_t dkey = 0;
-	size_t fl = strlen(file);
-	memcpy(&dkey, file, fl < 6 ? fl : 6);
-	memcpy(((uint8_t*)&dkey) + 6, &line, 2);
-	return dkey;
-}
-
-void printAlloced() {
-	struct hashmap* proc = new_hashmap_memsafe(1,0);
-	BEGIN_HASHMAP_ITERATION(mem_alloced)
-	struct alloc* al = (struct alloc*)value;
-	uint64_t dkey = mem_key(al->file, al->line);
-	struct alloc* nal = get_hashmap(proc, dkey);
-	if(nal == NULL) {
-		nal = xmalloc_real(sizeof(struct alloc), NULL, 0);
-		nal->size = al->size;
-		nal->line = al->line;
-		nal->file = al->file;
-		put_hashmap_memsafe(proc, dkey, nal);
-	} else {
-		nal->size += al->size;
-	}
-	END_HASHMAP_ITERATION(mem_alloced)
-	BEGIN_HASHMAP_ITERATION(proc)
-	struct alloc* al = (struct alloc*)value;
-	if(al->size >1024) printf("%s:%i using %lu kB\n", al->file, al->line, al->size / 1024);
-	xfree_real(al, NULL, 0);
-	END_HASHMAP_ITERATION(proc)
-	del_hashmap(proc);
-}
-
-void* xmalloc_real(size_t size, char* file, int line) {
-#else
+#ifndef MEM_LEAK_DEBUG
 void* xmalloc(size_t size) {
-#endif
 	if (size > 10485760) {
 		//printf("Big malloc %u!\n", size);
 	}
@@ -69,42 +26,18 @@ void* xmalloc(size_t size) {
 		printf("Out of Memory! @ malloc size %u\n", size);
 		exit(1);
 	}
-#ifdef MEM_LEAK_DEBUG
-	if (file != NULL) {
-		if (mem_alloced == NULL) mem_alloced = new_hashmap_memsafe(1, 1);
-		struct alloc* al = xmalloc_real(sizeof(struct alloc), NULL, 0);
-		al->file = file;
-		al->line = line;
-		al->size = size;
-		put_hashmap_memsafe(mem_alloced, (uint64_t) m, al);
-	}
-#endif
 	return m;
 }
+#endif
 
-#ifdef MEM_LEAK_DEBUG
-void xfree_real(void* ptr, char* file, int line) {
-#else
+#ifndef MEM_LEAK_DEBUG
 void xfree(void* ptr) {
-#endif
-#ifdef MEM_LEAK_DEBUG
-	if (file != NULL) {
-		if (mem_alloced == NULL) mem_alloced = new_hashmap_memsafe(1, 1);
-		struct alloc* al = (struct alloc*) get_hashmap(mem_alloced, (uint64_t) ptr);
-		if (al != NULL) {
-			put_hashmap_memsafe(mem_alloced, (uint64_t) ptr, NULL);
-			xfree_real(al, NULL, 0);
-		}
-	}
-#endif
 	free(ptr);
 }
-
-#ifdef MEM_LEAK_DEBUG
-void* xcalloc_real(size_t size, char* file, int line) {
-#else
-void* xcalloc(size_t size) {
 #endif
+
+#ifndef MEM_LEAK_DEBUG
+void* xcalloc(size_t size) {
 	if (size > 10485760) {
 		//printf("Big calloc %u!\n", size);
 	}
@@ -113,38 +46,18 @@ void* xcalloc(size_t size) {
 		printf("Out of Memory! @ calloc size %u\n", size);
 		exit(1);
 	}
-#ifdef MEM_LEAK_DEBUG
-	if (file != NULL) {
-		if (mem_alloced == NULL) mem_alloced = new_hashmap_memsafe(1, 1);
-		struct alloc* al = xmalloc_real(sizeof(struct alloc), NULL, 0);
-		al->file = file;
-		al->line = line;
-		al->size = size;
-		put_hashmap_memsafe(mem_alloced, (uint64_t) m, al);
-	}
-#endif
 	return m;
 }
+#endif
 
-#ifdef MEM_LEAK_DEBUG
-void* xrealloc_real(void* ptr, size_t size, char* file, int line) {
-#else
+#ifndef MEM_LEAK_DEBUG
 void* xrealloc(void* ptr, size_t size) {
-#endif
 	if (size == 0) {
-#ifdef MEM_LEAK_DEBUG
-		xfree_real(ptr, file, line);
-#else
 		xfree(ptr);
-#endif
 		return NULL;
 	}
 	if (ptr == NULL) {
-#ifdef MEM_LEAK_DEBUG
-		return xmalloc_real(size, file, line);
-#else
 		return xmalloc(ptr);
-#endif
 	}
 	if (size > 10485760) {
 		//printf("Big realloc %u!\n", size);
@@ -154,28 +67,9 @@ void* xrealloc(void* ptr, size_t size) {
 		printf("Out of Memory! @ realloc size %u\n", size);
 		exit(1);
 	}
-#ifdef MEM_LEAK_DEBUG
-	if (file != NULL) {
-		if (mem_alloced == NULL) mem_alloced = new_hashmap(1, 1);
-		struct alloc* al = (struct alloc*) get_hashmap(mem_alloced, (uint64_t) ptr);
-		if (al == NULL) {
-			al = xmalloc_real(sizeof(struct alloc), NULL, 0);
-			al->file = file;
-			al->line = line;
-			al->size = size;
-			put_hashmap_memsafe(mem_alloced, (uint64_t) m, al);
-			printf("nall\n");
-		} else {
-			al->size = size;
-			if (ptr != m) {
-				put_hashmap_memsafe(mem_alloced, (uint64_t) ptr, NULL);
-				put_hashmap_memsafe(mem_alloced, (uint64_t) m, al);
-			}
-		}
-	}
-#endif
 	return m;
 }
+#endif
 
 void* xcopy(const void* ptr, size_t size, size_t expand) {
 	void* alloc = xmalloc(size + expand);
@@ -245,4 +139,8 @@ int memseq(const unsigned char* mem, size_t mem_size, const unsigned char c) {
 		}
 	}
 	return 1;
+}
+
+pid_t gettid() {
+	return syscall(SYS_gettid);
 }

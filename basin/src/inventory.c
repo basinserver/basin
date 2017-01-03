@@ -21,6 +21,7 @@
 #include "tileentity.h"
 #include "inventory.h"
 #include "hashmap.h"
+#include <unistd.h>
 
 void newInventory(struct inventory* inv, int type, int id, int slots) {
 	inv->title = NULL;
@@ -30,13 +31,14 @@ void newInventory(struct inventory* inv, int type, int id, int slots) {
 	inv->prop_count = 0;
 	inv->type = type;
 	inv->windowID = id;
-	inv->players = new_hashmap(1, 0);
+	inv->players = new_hashmap(1, 1);
 	inv->dragSlot = xcalloc(2 * inv->slot_count);
 	inv->dragSlot_count = 0;
 	inv->te = NULL;
+	pthread_mutex_init(&inv->mut, NULL);
 }
 
-void setSlot(struct player* player, struct inventory* inv, int index, struct slot* slot, int broadcast, int free) {
+void setSlot(struct player* player, struct inventory* inv, int index, struct slot* slot, int broadcast, int frx) {
 	if (inv == NULL) return;
 	if (inv->type != INVTYPE_PLAYERINVENTORY && player != NULL && index >= inv->slot_count) {
 		index -= inv->slot_count;
@@ -44,7 +46,7 @@ void setSlot(struct player* player, struct inventory* inv, int index, struct slo
 		inv = player->inventory;
 	}
 	if (index >= inv->slot_count || index < 0) return;
-	if (inv->slots[index] != slot && inv->slots[index] != NULL && free) {
+	if (inv->slots[index] != slot && inv->slots[index] != NULL && frx) {
 		freeSlot(inv->slots[index]);
 		xfree(inv->slots[index]);
 	}
@@ -123,9 +125,9 @@ void freeInventory(struct inventory* inv) {
 		xfree(inv->props);
 	}
 	del_hashmap(inv->players);
-
 	_freeInventorySlots(inv);
 	xfree(inv->dragSlot);
+	pthread_mutex_destroy(&inv->mut);
 }
 
 void freeSlot(struct slot* slot) {

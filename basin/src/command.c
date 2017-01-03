@@ -96,14 +96,14 @@ void command_motd(struct player* player, char** args, size_t args_count) {
 void command_list(struct player* player, char** args, size_t args_count) {
 	char* plist = xmalloc(players->entry_count * 18 + 30);
 	char* cptr = plist;
-	BEGIN_HASHMAP_ITERATION(players)
+	BEGIN_HASHMAP_ITERATION (players)
 	if (cptr > plist) {
 		*cptr++ = ',';
 		*cptr++ = ' ';
 	}
-	struct player* player = (struct player*)value;
+	struct player* player = (struct player*) value;
 	cptr = xstrncat(cptr, 16, player->name);
-	END_HASHMAP_ITERATION(players)
+	END_HASHMAP_ITERATION (players)
 	snprintf(cptr, 32, " (%lu players total)", players->entry_count);
 	sendMessageToPlayer(player, plist, "gray");
 	xfree(plist);
@@ -131,13 +131,6 @@ void command_printprofile(struct player* player, char** args, size_t args_count)
 	printProfiler();
 }
 
-#ifdef MEM_LEAK_DEBUG
-void command_printalloc(struct player* player, char** args, size_t args_count) {
-	if (player != NULL) return;
-	printAlloced();
-}
-#endif
-
 void command_clearprofile(struct player* player, char** args, size_t args_count) {
 	if (player != NULL) return;
 	clearProfiler();
@@ -155,8 +148,7 @@ void command_kill(struct player* player, char** args, size_t args_count) {
 			return;
 		}
 	}
-	for (int i = 0; i < 10 && player->entity->health > 0; i++)
-		damageEntity(player->entity, player->entity->maxHealth, 0);
+	damageEntity(player->entity, player->entity->maxHealth * 10., 0);
 }
 
 void init_base_commands() {
@@ -174,10 +166,6 @@ void init_base_commands() {
 	registerCommand("list", &command_list);
 	registerCommand("ls", &command_list);
 	registerCommand("kill", &command_kill);
-#ifdef MEM_LEAK_DEBUG
-	registerCommand("pa", &command_printalloc);
-	registerCommand("printalloc", &command_printalloc);
-#endif
 }
 
 typedef void (*command_callback)(struct player* player, char** args, size_t args_count);

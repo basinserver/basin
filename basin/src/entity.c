@@ -22,6 +22,7 @@
 #include "queue.h"
 #include "entity.h"
 #include <unistd.h>
+#include <pthread.h>
 
 void getEntityCollision(struct entity* ent, struct boundingbox* bb) {
 	float width = .3;
@@ -454,7 +455,7 @@ struct entity* newEntity(int32_t id, float x, float y, float z, uint8_t type, fl
 	e->inWater = 0;
 	e->inLava = 0;
 	e->invincibilityTicks = 0;
-	e->loadingPlayers = new_hashmap(1, 0);
+	e->loadingPlayers = new_hashmap(1, 1);
 	memset(&e->data, 0, sizeof(union entity_data));
 	return e;
 }
@@ -531,7 +532,7 @@ int isLiving(int type) {
 	return type == ENT_PLAYER || type == ENT_SKELETON || type == ENT_SPIDER || type == ENT_GIANT || type == ENT_ZOMBIE || type == ENT_SLIME || type == ENT_GHAST || type == ENT_ZPIGMAN || type == ENT_ENDERMAN || type == ENT_CAVESPIDER || type == ENT_SILVERFISH || type == ENT_BLAZE || type == ENT_MAGMACUBE || type == ENT_ENDERDRAGON || type == ENT_WITHER || type == ENT_BAT || type == ENT_WITCH || type == ENT_ENDERMITE || type == ENT_GUARDIAN || type == ENT_SHULKER || type == ENT_PIG || type == ENT_SHEEP || type == ENT_COW || type == ENT_CHICKEN || type == ENT_SQUID || type == ENT_WOLF || type == ENT_MOOSHROOM || type == ENT_SNOWMAN || type == ENT_OCELOT || type == ENT_IRONGOLEM || type == ENT_HORSE || type == ENT_RABBIT || type == ENT_VILLAGER || type == ENT_BOAT;
 }
 
-int entity_inBlock(struct entity* entity, uint16_t blk, float ydown, int meta_check) {
+int entity_inFluid(struct entity* entity, uint16_t blk, float ydown, int meta_check) {
 	struct boundingbox pbb;
 	getEntityCollision(entity, &pbb);
 	if (pbb.minX == pbb.maxX || pbb.minZ == pbb.maxZ || pbb.minY == pbb.maxY) return 0;
@@ -566,7 +567,7 @@ int entity_inBlock(struct entity* entity, uint16_t blk, float ydown, int meta_ch
 }
 
 void outputMetaByte(struct entity* ent, unsigned char** loc, size_t* size) {
-	*loc = xrealloc(*loc, *size + 3);
+	*loc = xrealloc(*loc, (*size) + 3);
 	(*loc)[(*size)++] = 0;
 	(*loc)[(*size)++] = 0;
 	(*loc)[*size] = ent->sneaking ? 0x02 : 0;
@@ -1064,6 +1065,267 @@ void healEntity(struct entity* healed, float amount) {
 		pkt->data.play_client.updatehealth.food_saturation = healed->data.player.player->saturation;
 		add_queue(healed->data.player.player->outgoingPacket, pkt);
 	}
+}
+
+int tick_itemstack(struct world* world, struct entity* entity) {
+	if (entity->data.itemstack.delayBeforeCanPickup > 0) {
+		entity->data.itemstack.delayBeforeCanPickup--;
+		return 0;
+	}
+	if (entity->age >= 6000) {
+		despawnEntity(world, entity);
+		freeEntity(entity);
+		return 1;
+	}
+	if (tick_counter % 10 != 0) return 0;
+	struct boundingbox cebb;
+	getEntityCollision(entity, &cebb);
+	cebb.minX -= .625;
+	cebb.maxX += .625;
+	cebb.maxY += .75;
+	cebb.minZ -= .625;
+	cebb.maxZ += .625;
+	struct boundingbox oebb;
+	//int32_t cx = ((int32_t) entity->x) >> 4;
+	//int32_t cz = ((int32_t) entity->z) >> 4;
+	//for (int32_t icx = cx - 1; icx <= cx + 1; icx++)
+	//for (int32_t icz = cz - 1; icz <= cz + 1; icz++) {
+	//struct chunk* ch = getChunk(entity->world, icx, icz);
+	//if (ch != NULL) {
+	BEGIN_HASHMAP_ITERATION(entity->world->entities)
+	struct entity* oe = (struct entity*) value;
+	if (oe == entity || entity_distsq(entity, oe) > 16. * 16.) continue;
+	if (oe->type == ENT_PLAYER && oe->health > 0.) {
+		getEntityCollision(oe, &oebb);
+		//printf("%f, %f, %f vs %f, %f, %f\n", entity->x, entity->y, entity->z, oe->x, oe->y, oe->z);
+		if (boundingbox_intersects(&oebb, &cebb)) {
+			int os = entity->data.itemstack.slot->itemCount;
+			pthread_mutex_lock(&oe->data.player.player->inventory->mut);
+			int r = addInventoryItem_PI(oe->data.player.player, oe->data.player.player->inventory, entity->data.itemstack.slot, 1);
+			pthread_mutex_unlock(&oe->data.player.player->inventory->mut);
+			if (r <= 0) {
+				BEGIN_BROADCAST_DIST(entity, 32.)
+				struct packet* pkt = xmalloc(sizeof(struct packet));
+				pkt->id = PKT_PLAY_CLIENT_COLLECTITEM;
+				pkt->data.play_client.collectitem.collected_entity_id = entity->id;
+				pkt->data.play_client.collectitem.collector_entity_id = oe->id;
+				pkt->data.play_client.collectitem.pickup_item_count = os - r;
+				add_queue(bc_player->outgoingPacket, pkt);
+				END_BROADCAST(entity->world->players)
+				pthread_rwlock_unlock(&world->entities->data_mutex);
+				pthread_rwlock_unlock(&world->entities->data_mutex);
+				despawnEntity(world, entity);
+				pthread_rwlock_rdlock(&world->entities->data_mutex);
+				pthread_rwlock_rdlock(&world->entities->data_mutex);
+				freeEntity(entity);
+				BREAK_HASHMAP_ITERATION(world->entities)
+				return 1;
+			} else {
+				BEGIN_BROADCAST_DIST(entity, 128.)
+				struct packet* pkt = xmalloc(sizeof(struct packet));
+				pkt->id = PKT_PLAY_CLIENT_ENTITYMETADATA;
+				pkt->data.play_client.entitymetadata.entity_id = entity->id;
+				writeMetadata(entity, &pkt->data.play_client.entitymetadata.metadata.metadata, &pkt->data.play_client.entitymetadata.metadata.metadata_size);
+				add_queue(bc_player->outgoingPacket, pkt);
+				END_BROADCAST(entity->world->players)
+			}
+			break;
+		}
+	} else if (oe->type == ENT_ITEMSTACK) {
+		if (oe->data.itemstack.slot->item == entity->data.itemstack.slot->item && oe->data.itemstack.slot->damage == entity->data.itemstack.slot->damage && oe->data.itemstack.slot->itemCount + entity->data.itemstack.slot->itemCount <= maxStackSize(entity->data.itemstack.slot)) {
+			getEntityCollision(oe, &oebb);
+			oebb.minX -= .625;
+			oebb.maxX += .625;
+			cebb.maxY += .75;
+			oebb.minZ -= .625;
+			oebb.maxZ += .625;
+			if (boundingbox_intersects(&oebb, &cebb)) {
+				pthread_rwlock_unlock(&world->entities->data_mutex);
+				pthread_rwlock_unlock(&world->entities->data_mutex);
+				despawnEntity(world, entity);
+				pthread_rwlock_rdlock(&world->entities->data_mutex);
+				pthread_rwlock_rdlock(&world->entities->data_mutex);
+				oe->data.itemstack.slot->itemCount += entity->data.itemstack.slot->itemCount;
+				freeEntity(entity);
+				BEGIN_BROADCAST_DIST(oe, 128.)
+				struct packet* pkt = xmalloc(sizeof(struct packet));
+				pkt->id = PKT_PLAY_CLIENT_ENTITYMETADATA;
+				pkt->data.play_client.entitymetadata.entity_id = oe->id;
+				writeMetadata(oe, &pkt->data.play_client.entitymetadata.metadata.metadata, &pkt->data.play_client.entitymetadata.metadata.metadata_size);
+				add_queue(bc_player->outgoingPacket, pkt);
+				END_BROADCAST(oe->world->players)
+				BREAK_HASHMAP_ITERATION(world->entities)
+				return 1;
+			}
+		}
+	}
+	END_HASHMAP_ITERATION(entity->world->entities)
+	return 0;
+}
+
+int entity_inBlock(struct entity* ent, block blk) { // blk = 0 for any block
+	struct boundingbox obb;
+	getEntityCollision(ent, &obb);
+	if (obb.minX == obb.maxX || obb.minY == obb.maxY || obb.minZ == obb.maxZ) return 0;
+	obb.minX += .01;
+	obb.minY += .01;
+	obb.minZ += .01;
+	obb.maxX -= .01;
+	obb.maxY -= .01;
+	obb.maxZ -= .01;
+	for (int32_t x = floor(obb.minX); x < floor(obb.maxX + 1.); x++) {
+		for (int32_t z = floor(obb.minZ); z < floor(obb.maxZ + 1.); z++) {
+			for (int32_t y = floor(obb.minY); y < floor(obb.maxY + 1.); y++) {
+				block b = getBlockWorld(ent->world, x, y, z);
+				if (b == 0 || (blk != 0 && blk != b)) continue;
+				struct block_info* bi = getBlockInfo(b);
+				if (bi == NULL) continue;
+				for (size_t i = 0; i < bi->boundingBox_count; i++) {
+					struct boundingbox* bb = &bi->boundingBoxes[i];
+					struct boundingbox nbb;
+					nbb.minX = bb->minX + (double) x;
+					nbb.maxX = bb->maxX + (double) x;
+					nbb.minY = bb->minY + (double) y;
+					nbb.maxY = bb->maxY + (double) y;
+					nbb.minZ = bb->minZ + (double) z;
+					nbb.maxZ = bb->maxZ + (double) z;
+					if (boundingbox_intersects(&nbb, &obb)) {
+						return 1;
+					}
+				}
+			}
+		}
+	}
+	return 0;
+}
+
+void pushOutOfBlocks(struct entity* ent) {
+	if (!entity_inBlock(ent, 0)) return;
+	struct boundingbox ebb;
+	getEntityCollision(ent, &ebb);
+	double x = ent->x;
+	double y = (ebb.maxY + ebb.minY) / 2.;
+	double z = ent->z;
+	int32_t bx = (int32_t) x;
+	int32_t by = (int32_t) y;
+	int32_t bz = (int32_t) z;
+	double dx = x - (double) bx;
+	double dy = y - (double) by;
+	double dz = z - (double) bz;
+	double ld = 100.;
+	float fbx = 0.;
+	float fby = 0.;
+	float fbz = 0.;
+	if (dx < ld && !isNormalCube(getBlockInfo(getBlockWorld(ent->world, bx - 1, by, bz)))) {
+		ld = dx;
+		fbx = -1.;
+		fby = 0.;
+		fbz = 0.;
+	}
+	if ((1. - dx) < ld && !isNormalCube(getBlockInfo(getBlockWorld(ent->world, bx + 1, by, bz)))) {
+		ld = 1. - dx;
+		fbx = 1.;
+		fby = 0.;
+		fbz = 0.;
+	}
+	if (dz < ld && !isNormalCube(getBlockInfo(getBlockWorld(ent->world, bx, by, bz - 1)))) {
+		ld = dx;
+		fbx = 0.;
+		fby = 0.;
+		fbz = -1.;
+	}
+	if ((1. - dz) < ld && !isNormalCube(getBlockInfo(getBlockWorld(ent->world, bx, by, bz + 1)))) {
+		ld = 1. - dz;
+		fbx = 0.;
+		fby = 0.;
+		fbz = 1.;
+	}
+	if ((1. - dy) < ld && !isNormalCube(getBlockInfo(getBlockWorld(ent->world, bx, by + 1, bz)))) {
+		ld = 1. - dy;
+		fbx = 0.;
+		fby = 1.;
+		fbz = 0.;
+	}
+	float mag = randFloat() * .2 + .1;
+	if (fbx == 0. && fbz == 0.) {
+		ent->motX *= .75;
+		ent->motY = mag * fby;
+		ent->motZ *= .75;
+	} else if (fbx == 0. && fby == 0.) {
+		ent->motX *= .75;
+		ent->motY *= .75;
+		ent->motZ = mag * fbz;
+	} else if (fbz == 0. && fby == 0.) {
+		ent->motX = mag * fbx;
+		ent->motY *= .75;
+		ent->motZ *= .75;
+	}
+}
+
+void tick_entity(struct world* world, struct entity* entity) {
+	if (entity->type != ENT_PLAYER) {
+		entity->lx = entity->x;
+		entity->ly = entity->y;
+		entity->lz = entity->z;
+		entity->lyaw = entity->yaw;
+		entity->lpitch = entity->pitch;
+	}
+	entity->age++;
+	if (entity->invincibilityTicks > 0) entity->invincibilityTicks--;
+	if (entity->type > ENT_PLAYER) {
+		if (entity->type == ENT_ITEMSTACK) entity->motY -= 0.04;
+		if (entity->motX != 0. || entity->motY != 0. || entity->motZ != 0.) moveEntity(entity, entity->motX, entity->motY, entity->motZ, 0.);
+		double friction = .98;
+		if (entity->onGround) {
+			struct block_info* bi = getBlockInfo(getBlockWorld(entity->world, (int32_t) floor(entity->x), (int32_t) floor(entity->y) - 1, (int32_t) floor(entity->z)));
+			if (bi != NULL) friction = bi->slipperiness * .98;
+		}
+		entity->motX *= friction;
+		entity->motY *= .98;
+		entity->motZ *= friction;
+		if (fabs(entity->motX) < .0001) entity->motX = 0.;
+		if (fabs(entity->motY) < .0001) entity->motY = 0.;
+		if (fabs(entity->motZ) < .0001) entity->motZ = 0.;
+		if (entity->onGround && entity->motX == 0. && entity->motY == 0. && entity->motZ == 0.) entity->motY *= -.5;
+	}
+	if (entity->type == ENT_ITEMSTACK) {
+		if (tick_itemstack(world, entity)) return;
+	}
+	if (entity->type == ENT_ITEMSTACK || entity->type == ENT_EXPERIENCEORB) pushOutOfBlocks(entity);
+	if (isLiving(entity->type)) {
+		entity->inWater = entity_inFluid(entity, BLK_WATER, .4, 0) || entity_inFluid(entity, BLK_WATER_1, .4, 0);
+		entity->inLava = entity_inFluid(entity, BLK_LAVA, .4, 0) || entity_inFluid(entity, BLK_LAVA_1, .4, 0);
+		if ((entity->inWater || entity->inLava) && entity->type == ENT_PLAYER) entity->data.player.player->llTick = tick_counter;
+		//TODO: ladders
+		if (entity->type == ENT_PLAYER && entity->data.player.player->gamemode == 1) goto bfd;
+		if (entity->inLava) {
+			damageEntity(entity, 4., 1);
+//TODO: fire
+		}
+		if (!entity->onGround) {
+			float dy = entity->ly - entity->y;
+			if (dy > 0.) {
+				entity->fallDistance += dy;
+			}
+		} else if (entity->fallDistance > 0.) {
+			if (entity->fallDistance > 3. && !entity->inWater && !entity->inLava) {
+				damageEntity(entity, entity->fallDistance - 3., 0);
+				playSound(entity->world, 312, 8, entity->x, entity->y, entity->z, 1., 1.);
+			}
+			entity->fallDistance = 0.;
+		}
+		bfd: ;
+	}
+	/*int32_t cx = ((int32_t) entity->x) >> 4;
+	 int32_t cz = ((int32_t) entity->z) >> 4;
+	 int32_t lcx = ((int32_t) entity->lx) >> 4;
+	 int32_t lcz = ((int32_t) entity->lz) >> 4;
+	 if (cx != lcx || cz != lcz) {
+	 struct chunk* lch = getChunk(entity->world, lcx, lcz);
+	 struct chunk* cch = getChunk(entity->world, cx, cz);
+	 put_hashmap(lch->entities, entity->id, NULL);
+	 put_hashmap(cch->entities, entity->id, entity);
+	 }*/
 }
 
 void freeEntity(struct entity* entity) {

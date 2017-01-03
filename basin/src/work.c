@@ -39,7 +39,7 @@ void closeConn(struct work_param* param, struct conn* conn) {
 		errlog(param->logsess, "Failed to delete connection properly! This is bad!");
 	}
 	if (conn->player != NULL) {
-		broadcastf("yellow", "%s has left the server!", conn->player->name);
+		//broadcastf("yellow", "%s has left the server!", conn->player->name);
 		conn->player->defunct = 1;
 		conn->player->conn = NULL;
 	}
@@ -102,27 +102,32 @@ int handleRead(struct conn* conn, struct work_param* param, int fd) {
 					return -1;
 				} else {
 					int bn = 0;
-					BEGIN_HASHMAP_ITERATION (players)
-					struct player* player = (struct player*) value;
-					if (streq_nocase(inp->data.login_server.loginstart.name, player->name)) {
-						bn = 1;
-						break;
+					char* rna = trim(inp->data.login_server.loginstart.name);
+					size_t rnal = strlen(rna);
+					if (rnal > 16 || rnal < 2) bn = 2;
+					if (!bn) {
+						BEGIN_HASHMAP_ITERATION (players)
+						struct player* player = (struct player*) value;
+						if (streq_nocase(rna, player->name)) {
+							bn = 1;
+							break;
+						}
+						END_HASHMAP_ITERATION (players)
 					}
-					END_HASHMAP_ITERATION (players)
 					if (bn) {
 						rep.id = PKT_LOGIN_CLIENT_DISCONNECT;
-						rep.data.login_client.disconnect.reason = xstrdup("{\"text\", \"You are already in the server!\"}", 0);
+						rep.data.login_client.disconnect.reason = xstrdup(bn == 2 ? "{\"text\": \"Invalid name!\"}" : "{\"text\", \"You are already in the server!\"}", 0);
 						if (writePacket(conn, &rep) < 0) goto rete;
 						conn->disconnect = 1;
 						return 0;
 					}
 					rep.id = PKT_LOGIN_CLIENT_LOGINSUCCESS;
-					rep.data.login_client.loginsuccess.username = inp->data.login_server.loginstart.name;
+					rep.data.login_client.loginsuccess.username = rna;
 					struct uuid uuid;
 					unsigned char* uuidx = (unsigned char*) &uuid;
 					MD5_CTX context;
 					MD5_Init(&context);
-					MD5_Update(&context, rep.data.login_client.loginsuccess.username, strlen(rep.data.login_client.loginsuccess.username));
+					MD5_Update(&context, rna, strlen(rna));
 					MD5_Final(uuidx, &context);
 					rep.data.login_client.loginsuccess.uuid = xmalloc(38);
 					snprintf(rep.data.login_client.loginsuccess.uuid, 10, "%08X-", ((uint32_t*) uuidx)[0]);
@@ -223,23 +228,12 @@ int handleRead(struct conn* conn, struct work_param* param, int fd) {
 					rep.data.play_client.playerlistitem.players[px].action.addplayer.display_name = NULL;
 					px++;
 					if (writePacket(conn, &rep) < 0) goto rete;
-					spawnPlayer(overworld, player);
-					/*
-					 for (size_t i = 0; i < player->world->entities->size; i++) {
-					 struct entity* ent = (struct entity*) player->world->entities->data[i];
-					 if (ent == NULL || entity_distsq(ent, player->entity) > 16384.) continue;
-					 if (ent->type == ENT_PLAYER) {
-					 if (ent->data.player.player != player) {
-					 loadPlayer(player, ent->data.player.player);
-					 loadPlayer(ent->data.player.player, player);
-					 }
-					 }
-					 }*/
 					rep.id = PKT_PLAY_CLIENT_TIMEUPDATE;
-					rep.data.play_client.timeupdate.time_of_day = player->world->time;
-					rep.data.play_client.timeupdate.world_age = player->world->age;
+					rep.data.play_client.timeupdate.time_of_day = overworld->time;
+					rep.data.play_client.timeupdate.world_age = overworld->age;
 					if (writePacket(conn, &rep) < 0) goto rete;
-					broadcastf("yellow", "%s has joined the server!", player->name);
+					add_collection(playersToLoad, player);
+					//broadcastf("yellow", "%s has joined the server!", player->name);
 					const char* mip = NULL;
 					char tip[48];
 					if (conn->addr.sin6_family == AF_INET) {
@@ -403,6 +397,7 @@ void run_work(struct work_param* param) {
 						xfree(wp);
 						wp = pop_nowait_queue(conn->player->outgoingPacket);
 					}
+					//printf("%s WBS: %lu\n", conn->player->name, conn->writeBuffer_size);
 				}
 				ssize_t mtr = write(fds[i].fd, conn->writeBuffer, conn->writeBuffer_size);
 				if (mtr < 0 && errno != EAGAIN) {

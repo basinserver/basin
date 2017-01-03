@@ -22,6 +22,12 @@ struct crafting_recipe {
 
 void init_crafting();
 
+void craftOnce(struct player* player, struct inventory* inv);
+
+int craftAll(struct player* player, struct inventory* inv);
+
+struct slot* getCraftResult(struct slot** slots, size_t slot_count);
+
 void add_crafting(struct crafting_recipe* recipe);
 
 #endif /* CRAFTING_H_ */

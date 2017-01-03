@@ -399,7 +399,7 @@ void writeMetadata(struct entity* ent, unsigned char** data, size_t* size);
 
 void load_entities();
 
-int entity_inBlock(struct entity* entity, uint16_t blk, float ydown, int meta_check);
+int entity_inFluid(struct entity* entity, uint16_t blk, float ydown, int meta_check);
 
 double entity_dist(struct entity* ent1, struct entity* ent2);
 
@@ -414,6 +414,10 @@ struct entity* newEntity(int32_t id, float x, float y, float z, uint8_t type, fl
 void getEntityCollision(struct entity* ent, struct boundingbox* bb);
 
 int moveEntity(struct entity* entity, double mx, double my, double mz, float shrink);
+
+int tick_itemstack(struct world* world, struct entity* entity);
+
+void tick_entity(struct world* world, struct entity* entity);
 
 void freeEntity(struct entity* entity);
 

@@ -65,9 +65,14 @@ struct player {
 		uint8_t triggerRechunk;
 		uint32_t protocolVersion;
 		uint16_t chunksSent;
+		struct subworld* subworld;
 };
 
 struct player* newPlayer(struct entity* entity, char* name, struct uuid, struct conn* conn, uint8_t gamemode);
+
+void player_receive_packet(struct player* player, struct packet* inp);
+
+void tick_player(struct world* world, struct player* player);
 
 void kickPlayer(struct player* player, char* message);
 

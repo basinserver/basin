@@ -11,6 +11,7 @@
 #include <stdint.h>
 #include "network.h"
 #include "inventory.h"
+#include <pthread.h>
 
 typedef uint16_t block;
 
@@ -24,7 +25,9 @@ struct chunk_req {
 };
 
 struct queue* chunk_input;
-struct queue* chunk_backlog;
+
+pthread_cond_t chunk_wake;
+pthread_mutex_t chunk_wake_mut;
 
 struct entity;
 
@@ -93,9 +96,19 @@ struct world {
 		uint64_t age;
 		struct nbt_tag* level;
 		char* lpa;
-		pthread_rwlock_t chl;
+		pthread_mutex_t tick_mut;
+		pthread_cond_t tick_cond;
 		size_t chl_count;
+		struct hashmap* subworlds;
 };
+
+struct subworld { // subworld for players thread
+		struct world* world;
+		struct hashmap* players;
+		uint8_t defunct;
+};
+
+void tick_world(struct world* world);
 
 struct chunk* getEntityChunk(struct entity* entity);
 
@@ -153,14 +166,6 @@ void despawnPlayer(struct world* world, struct player* player);
 
 struct entity* getEntity(struct world* world, int32_t id);
 
-void onBlockDestroyed(struct world* world, int32_t x, int32_t y, int32_t z);
-
-void onBlockPlaced(struct world* world, int32_t x, int32_t y, int32_t z);
-
-void onBlockInteract(struct world* world, int32_t x, int32_t y, int32_t z, struct player* player);
-
-void onBlockCollide(struct world* world, int32_t x, int32_t y, int32_t z, struct entity* entity);
-
-void onBlockUpdate(struct world* world, int32_t x, int32_t y, int32_t z);
+void updateBlockWorld(struct world* world, int32_t x, int32_t y, int32_t z);
 
 #endif /* WORLD_H_ */

@@ -49,6 +49,7 @@ void offsetCoordByFace(int32_t* x, uint8_t* y, int32_t* z, uint8_t face) {
 int onItemInteract_flintandsteel(struct world* world, struct player* player, uint8_t slot_index, struct slot* slot, int32_t x, uint8_t y, int32_t z, uint8_t face) {
 	if (slot == NULL) return 0;
 	offsetCoordByFace(&x, &y, &z, face);
+	if (getBlockWorld(world, x, y, z) != 0) return 0;
 	struct item_info* ii = getItemInfo(slot->item);
 	if (ii == NULL) return 0;
 	if (player->gamemode != 1 && ++slot->damage >= ii->maxDamage) {
@@ -56,6 +57,21 @@ int onItemInteract_flintandsteel(struct world* world, struct player* player, uin
 	}
 	setSlot(player, player->inventory, slot_index, slot, 1, 1);
 	setBlockWorld(world, BLK_FIRE, x, y, z);
+	return 0;
+}
+
+int onItemInteract_reeds(struct world* world, struct player* player, uint8_t slot_index, struct slot* slot, int32_t x, uint8_t y, int32_t z, uint8_t face) {
+	if (slot == NULL) return 0;
+	offsetCoordByFace(&x, &y, &z, face);
+	if (getBlockWorld(world, x, y, z) != 0) return 0;
+	if (!canBePlaced_reeds(world, BLK_REEDS, x, y, z)) return 0;
+	struct item_info* ii = getItemInfo(slot->item);
+	if (ii == NULL) return 0;
+	if (player->gamemode != 1 && --slot->itemCount <= 0) {
+		slot = NULL;
+	}
+	setSlot(player, player->inventory, slot_index, slot, 1, 1);
+	setBlockWorld(world, BLK_REEDS, x, y, z);
 	return 0;
 }
 
@@ -170,6 +186,19 @@ int onItemInteract_shovel(struct world* world, struct player* player, uint8_t sl
 	return 0;
 }
 
+int onItemUse_armor(struct world* world, struct player* player, uint8_t slot_index, struct slot* slot, uint16_t ticks) {
+	if (slot == NULL) return 0;
+	uint16_t sli = 5;
+	struct item_info* ii = getItemInfo(slot->item);
+	if (ii->armorType == ARMOR_HELMET) sli = 5;
+	else if (ii->armorType == ARMOR_CHESTPLATE) sli = 6;
+	else if (ii->armorType == ARMOR_LEGGINGS) sli = 7;
+	else if (ii->armorType == ARMOR_BOOTS) sli = 8;
+	if (getSlot(player, player->inventory, sli) != NULL) return 0;
+	setSlot(player, player->inventory, sli, slot, 1, 1);
+	setSlot(player, player->inventory, slot_index, NULL, 1, 0);
+}
+
 float onEntityHitWhileWearing_armor(struct world* world, struct player* player, uint8_t slot_index, struct slot* slot, float damage) {
 	if (slot == NULL) return damage;
 	struct item_info* ii = getItemInfo(slot->item);
@@ -280,6 +309,7 @@ void init_items() {
 	}
 	for (item i = ITM_HELMETCLOTH; i <= ITM_BOOTSGOLD; i++) {
 		getItemInfo(i)->onEntityHitWhileWearing = &onEntityHitWhileWearing_armor;
+		getItemInfo(i)->onItemUse = &onItemUse_armor;
 	}
 	getItemInfo(ITM_SEEDS)->onItemInteract = &onItemInteract_seeds;
 	getItemInfo(ITM_SEEDS_PUMPKIN)->onItemInteract = &onItemInteract_seeds;
@@ -294,6 +324,7 @@ void init_items() {
 	getItemInfo(ITM_SHOVELSTONE)->onItemInteract = &onItemInteract_shovel;
 	getItemInfo(ITM_SHOVELIRON)->onItemInteract = &onItemInteract_shovel;
 	getItemInfo(ITM_SHOVELDIAMOND)->onItemInteract = &onItemInteract_shovel;
+	getItemInfo(ITM_REEDS)->onItemInteract = &onItemInteract_reeds;
 }
 
 void add_item(item id, struct item_info* info) {

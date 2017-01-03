@@ -2299,6 +2299,38 @@
 		"id": 496,
 		"collision": {
 		},
+		"dropItem": 280,
+		"dropDamage": 0,
+		"dropAmountMin": 0,
+		"dropAmountMax": 3,
+		"hardness": 0.0,
+		"material": "vine",
+		"slipperiness": 0.6,
+		"isFullCube": false,
+		"canProvidePower": false,
+		"lightOpacity": 0,
+		"lightEmission": 0
+	},
+	"tallgrass_grass": {
+		"id": 497,
+		"collision": {
+		},
+		"dropItem": -1,
+		"dropDamage": 0,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 0.0,
+		"material": "vine",
+		"slipperiness": 0.6,
+		"isFullCube": false,
+		"canProvidePower": false,
+		"lightOpacity": 0,
+		"lightEmission": 0
+	},
+	"tallgrass_fern": {
+		"id": 498,
+		"collision": {
+		},
 		"dropItem": -1,
 		"dropDamage": 0,
 		"dropAmountMin": 1,

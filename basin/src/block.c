@@ -294,6 +294,72 @@ void dropItems_tallgrass(struct world* world, block blk, int32_t x, int32_t y, i
 	}
 }
 
+int canBePlaced_requiredirt(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
+	block b = getBlockWorld(world, x, y - 1, z);
+	return b == BLK_DIRT || b == BLK_GRASS;
+}
+
+int canBePlaced_doubleplant(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
+	block b = getBlockWorld(world, x, y - 1, z);
+	block b2 = getBlockWorld(world, x, y + 1, z);
+	if ((b == blk && b2 != 0) || (b2 == blk && b != BLK_GRASS && b != BLK_DIRT)) {
+		return 0;
+	}
+	return 1;
+}
+
+int canBePlaced_requiresand(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
+	block b = getBlockWorld(world, x, y - 1, z);
+	return b == BLK_SAND;
+}
+
+int canBePlaced_cactus(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
+	block b = getBlockWorld(world, x, y - 1, z);
+	if (b != BLK_SAND && b != BLK_CACTUS) return 0;
+	b = getBlockWorld(world, x, y, z + 1);
+	if (b != 0) return 0;
+	b = getBlockWorld(world, x, y, z - 1);
+	if (b != 0) return 0;
+	b = getBlockWorld(world, x + 1, y, z);
+	if (b != 0) return 0;
+	b = getBlockWorld(world, x - 1, y, z);
+	if (b != 0) return 0;
+	return 1;
+}
+
+int canBePlaced_reeds(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
+	block b = getBlockWorld(world, x, y - 1, z);
+	if (b == BLK_REEDS) return 1;
+	if (b != BLK_DIRT && b != BLK_GRASS && b != BLK_SAND) return 0;
+	b = getBlockWorld(world, x, y - 1, z + 1);
+	if ((b >> 4) == (BLK_WATER >> 4) || (b >> 4) == (BLK_WATER_1 >> 4)) return 1;
+	b = getBlockWorld(world, x, y - 1, z - 1);
+	if ((b >> 4) == (BLK_WATER >> 4) || (b >> 4) == (BLK_WATER_1 >> 4)) return 1;
+	b = getBlockWorld(world, x + 1, y - 1, z);
+	if ((b >> 4) == (BLK_WATER >> 4) || (b >> 4) == (BLK_WATER_1 >> 4)) return 1;
+	b = getBlockWorld(world, x - 1, y - 1, z);
+	if ((b >> 4) == (BLK_WATER >> 4) || (b >> 4) == (BLK_WATER_1 >> 4)) return 1;
+	return 0;
+}
+
+int canBePlaced_requirefarmland(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
+	block b = getBlockWorld(world, x, y - 1, z);
+	return b == BLK_FARMLAND;
+}
+
+int canBePlaced_requiresoulsand(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
+	block b = getBlockWorld(world, x, y - 1, z);
+	return b == BLK_HELLSAND;
+}
+
+void onBlockUpdate_checkPlace(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
+	struct block_info* bi = getBlockInfo(blk);
+	if (bi != NULL && bi->canBePlaced != NULL && !(*bi->canBePlaced)(world, blk, x, y, z)) {
+		setBlockWorld(world, 0, x, y, z);
+		dropBlockDrops(world, blk, NULL, x, y, z);
+	}
+}
+
 void dropItems_hugemushroom(struct world* world, block blk, int32_t x, int32_t y, int32_t z, int fortune) {
 	int ct = rand() % 10 - 7;
 	if (ct > 0) {
@@ -672,15 +738,68 @@ void init_blocks() {
 	getBlockInfo(BLK_LEAVES_JUNGLE)->dropItems = &dropItems_leaves;
 	getBlockInfo(BLK_LEAVES_ACACIA)->dropItems = &dropItems_leaves;
 	getBlockInfo(BLK_LEAVES_BIG_OAK)->dropItems = &dropItems_leaves;
-	getBlockInfo(BLK_TALLGRASS_GRASS)->dropItems = &dropItems_tallgrass;
+	tmp = getBlockInfo(BLK_TALLGRASS_GRASS);
+	tmp->dropItems = &dropItems_tallgrass;
+	tmp->canBePlaced = &canBePlaced_requiredirt;
+	tmp->onBlockUpdate = &onBlockUpdate_checkPlace;
+	tmp = getBlockInfo(BLK_TALLGRASS_FERN);
+	tmp->canBePlaced = &canBePlaced_requiredirt;
+	tmp->onBlockUpdate = &onBlockUpdate_checkPlace;
+	tmp = getBlockInfo(BLK_TALLGRASS_SHRUB);
+	tmp->canBePlaced = &canBePlaced_requiresand;
+	tmp->onBlockUpdate = &onBlockUpdate_checkPlace;
+	tmp = getBlockInfo(BLK_CACTUS);
+	tmp->canBePlaced = &canBePlaced_cactus;
+	tmp->onBlockUpdate = &onBlockUpdate_checkPlace;
+	tmp = getBlockInfo(BLK_REEDS);
+	tmp->canBePlaced = &canBePlaced_reeds;
+	tmp->onBlockUpdate = &onBlockUpdate_checkPlace;
 	getBlockInfo(BLK_MUSHROOM_2)->dropItems = &dropItems_hugemushroom;
 	getBlockInfo(BLK_MUSHROOM_3)->dropItems = &dropItems_hugemushroom;
-	getBlockInfo(BLK_CROPS)->dropItems = &dropItems_crops;
-	getBlockInfo(BLK_PUMPKINSTEM)->dropItems = &dropItems_crops;
-	getBlockInfo(BLK_PUMPKINSTEM_1)->dropItems = &dropItems_crops;
-	getBlockInfo(BLK_CARROTS)->dropItems = &dropItems_crops;
-	getBlockInfo(BLK_POTATOES)->dropItems = &dropItems_crops;
-	getBlockInfo(BLK_NETHERSTALK)->dropItems = &dropItems_crops;
-	getBlockInfo(BLK_BEETROOTS)->dropItems = &dropItems_crops;
-	getBlockInfo(BLK_COCOA)->dropItems = &dropItems_crops;
+	tmp = getBlockInfo(BLK_CROPS);
+	tmp->dropItems = &dropItems_crops;
+	tmp->canBePlaced = &canBePlaced_requirefarmland;
+	tmp->onBlockUpdate = &onBlockUpdate_checkPlace;
+	tmp = getBlockInfo(BLK_PUMPKINSTEM);
+	tmp->dropItems = &dropItems_crops;
+	tmp->canBePlaced = &canBePlaced_requirefarmland;
+	tmp->onBlockUpdate = &onBlockUpdate_checkPlace;
+	tmp = getBlockInfo(BLK_PUMPKINSTEM_1);
+	tmp->dropItems = &dropItems_crops;
+	tmp->canBePlaced = &canBePlaced_requirefarmland;
+	tmp->onBlockUpdate = &onBlockUpdate_checkPlace;
+	tmp = getBlockInfo(BLK_CARROTS);
+	tmp->dropItems = &dropItems_crops;
+	tmp->canBePlaced = &canBePlaced_requirefarmland;
+	tmp->onBlockUpdate = &onBlockUpdate_checkPlace;
+	tmp = getBlockInfo(BLK_POTATOES);
+	tmp->dropItems = &dropItems_crops;
+	tmp->canBePlaced = &canBePlaced_requirefarmland;
+	tmp->onBlockUpdate = &onBlockUpdate_checkPlace;
+	tmp = getBlockInfo(BLK_NETHERSTALK);
+	tmp->dropItems = &dropItems_crops;
+	tmp->canBePlaced = &canBePlaced_requiresoulsand;
+	tmp->onBlockUpdate = &onBlockUpdate_checkPlace;
+	tmp = getBlockInfo(BLK_BEETROOTS);
+	tmp->dropItems = &dropItems_crops;
+	tmp->canBePlaced = &canBePlaced_requirefarmland;
+	tmp->onBlockUpdate = &onBlockUpdate_checkPlace;
+	tmp = getBlockInfo(BLK_COCOA);
+	tmp->dropItems = &dropItems_crops;
+//tmp->onBlockUpdate = &onBlockUpdate_cocoa;
+	for (block b = BLK_FLOWER1_DANDELION; b <= BLK_FLOWER2_OXEYEDAISY; b++) {
+		tmp = getBlockInfo(b);
+		tmp->canBePlaced = &canBePlaced_requiredirt;
+		tmp->onBlockUpdate = &onBlockUpdate_checkPlace;
+	}
+	for (block b = BLK_SAPLING_OAK; b <= BLK_SAPLING_OAK_5; b++) {
+		tmp = getBlockInfo(b);
+		tmp->canBePlaced = &canBePlaced_requiredirt;
+		tmp->onBlockUpdate = &onBlockUpdate_checkPlace;
+	}
+	for (block b = BLK_DOUBLEPLANT_SUNFLOWER; b <= BLK_DOUBLEPLANT_SUNFLOWER_8; b++) {
+		tmp = getBlockInfo(b);
+		tmp->canBePlaced = &canBePlaced_doubleplant;
+		tmp->onBlockUpdate = &onBlockUpdate_checkPlace;
+	}
 }
