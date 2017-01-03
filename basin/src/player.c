@@ -388,7 +388,13 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 				setSlot(player, player->inventory, 36 + player->currentItem, ci, 1, 1);
 			}
 			pthread_mutex_unlock(&player->inventory->mut);
-		}
+		} else if (inp->data.play_server.playerdigging.status == 5) {
+			//TODO
+			pthread_mutex_unlock(&player->inventory->mut);
+		} else if (inp->data.play_server.playerdigging.status == 6) {
+			swapSlots(player, player->inventory, 45, 36 + player->currentItem, 1);
+			pthread_mutex_unlock(&player->inventory->mut);
+		} else pthread_mutex_unlock(&player->inventory->mut);
 	} else if (inp->id == PKT_PLAY_SERVER_CREATIVEINVENTORYACTION) {
 		if (player->gamemode == 1) {
 			struct inventory* inv = NULL;
@@ -1210,7 +1216,9 @@ void tick_player(struct world* world, struct player* player) {
 		pkt->data.play_client.destroyentities.entity_ids = xmalloc(sizeof(int32_t));
 		pkt->data.play_client.destroyentities.entity_ids[0] = ent->id;
 		add_queue(player->outgoingPacket, pkt);
+		pthread_rwlock_unlock(&player->loadedEntities->data_mutex);
 		put_hashmap(player->loadedEntities, ent->id, NULL);
+		pthread_rwlock_rdlock(&player->loadedEntities->data_mutex);
 		put_hashmap(ent->loadingPlayers, player->entity->id, NULL);
 	}
 	if (ent->type != ENT_PLAYER) {
