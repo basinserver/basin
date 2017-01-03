@@ -43,26 +43,23 @@
 #include "profile.h"
 
 void main_tick() {
-	for (size_t i = 0; i < worlds->size; i++) {
-		if (worlds->data[i] == NULL) continue;
-		tick_world((struct world*) worlds->data[i]);
+	pthread_cond_broadcast (&glob_tick_cond);
+	pthread_rwlock_wrlock(&playersToLoad->data_mutex);
+	for (size_t i = 0; i < playersToLoad->size; i++) {
+		struct player* player = (struct player*) playersToLoad->data[i];
+		if (player == NULL) continue;
+		spawnPlayer(overworld, player);
+		playersToLoad->data[i] = NULL;
+		playersToLoad->count--;
+		if (i == playersToLoad->size - 1) playersToLoad->size--;
 	}
-	beginProfilerSection("rechunk");
-	pthread_mutex_lock(&chunk_backlog->data_mutex);
-	pthread_mutex_lock(&chunk_input->data_mutex);
-	struct chunk_req* chr = pop_nowait_queue(chunk_backlog);
-	while (chr != NULL) {
-		if (chr->pl->defunct) xfree(chr);
-		else add_queue(chunk_input, chr);
-		chr = pop_nowait_queue(chunk_backlog);
-	}
-	pthread_mutex_unlock(&chunk_input->data_mutex);
-	pthread_mutex_unlock(&chunk_backlog->data_mutex);
-	endProfilerSection("rechunk");
+	pthread_rwlock_unlock(&playersToLoad->data_mutex);
+	pthread_cond_broadcast (&chunk_wake);
 	BEGIN_HASHMAP_ITERATION (players)
 	flush_outgoing (value);
 	END_HASHMAP_ITERATION (players)
 	if (tick_counter % 20 == 0) {
+		//printf("defr %i\n", defunctChunks->count);
 		pthread_rwlock_wrlock(&defunctPlayers->data_mutex);
 		for (size_t i = 0; i < defunctPlayers->size; i++) {
 			struct player* def = defunctPlayers->data[i];
@@ -81,6 +78,7 @@ void main_tick() {
 			struct chunk* def = defunctChunks->data[i];
 			if (def == NULL) continue;
 			if (def->defunct++ >= 21) {
+				//printf("frch\n");
 				freeChunk(def);
 				defunctChunks->data[i] = NULL;
 				defunctChunks->count--;
@@ -188,6 +186,7 @@ int main(int argc, char* argv[]) {
 	players = new_hashmap(1, 1);
 	defunctPlayers = new_collection(16, 1);
 	defunctChunks = new_collection(16, 1);
+	playersToLoad = new_collection(16, 1);
 	init_materials();
 	printf("Materials Initialized\n");
 	init_blocks();
@@ -443,7 +442,14 @@ int main(int argc, char* argv[]) {
 	}
 	pthread_t tt;
 	chunk_input = new_queue(0, 1);
-	chunk_backlog = new_queue(0, 1);
+	pthread_cond_init(&chunk_wake, NULL);
+	pthread_mutex_init(&chunk_wake_mut, NULL);
+	pthread_mutex_init(&glob_tick_mut, NULL);
+	pthread_cond_init(&glob_tick_cond, NULL);
+	for (size_t i = 0; i < worlds->size; i++) {
+		if (worlds->data[i] == NULL) continue;
+		pthread_create(&tt, NULL, &tick_world, worlds->data[i]);
+	}
 	pthread_create(&tt, NULL, &main_tick_thread, NULL);
 	for (int i = 0; i < overworld->chl_count; i++) {
 		pthread_create(&tt, NULL, &chunkloadthr, (size_t) i);

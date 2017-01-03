@@ -17,6 +17,7 @@
 #include "json.h"
 #include "player.h"
 #include <unistd.h>
+#include "game.h"
 
 void init_crafting() {
 	crafting_recipies = new_collection(128, 0);
@@ -82,6 +83,166 @@ void init_crafting() {
 	}
 	freeJSON(&json);
 	xfree(jsf);
+}
+
+void craftOnce(struct player* player, struct inventory* inv) {
+	int cs = inv->type == INVTYPE_PLAYERINVENTORY ? 4 : 9;
+	for (int i = 1; i <= cs; i++) {
+		struct slot* invi = getSlot(player, inv, i);
+		if (invi == NULL) continue;
+		if (--invi->itemCount <= 0) {
+			freeSlot(invi);
+			xfree(invi);
+			invi = NULL;
+		}
+		inv->slots[i] = invi;
+	}
+	onInventoryUpdate(player, inv, 1);
+}
+
+int craftAll(struct player* player, struct inventory* inv) {
+	int cs = inv->type == INVTYPE_PLAYERINVENTORY ? 4 : 9;
+	uint8_t ct = 64;
+	for (int i = 1; i <= cs; i++) {
+		struct slot* invi = getSlot(player, inv, i);
+		if (invi == NULL) continue;
+		if (invi->itemCount < ct) ct = invi->itemCount;
+	}
+	for (int i = 1; i <= cs; i++) {
+		struct slot* invi = getSlot(player, inv, i);
+		if (invi == NULL) continue;
+		invi->itemCount -= ct;
+		if (invi->itemCount <= 0) {
+			freeSlot(invi);
+			xfree(invi);
+			invi = NULL;
+		}
+		inv->slots[i] = invi;
+	}
+	return ct;
+}
+
+struct slot* getCraftResult(struct slot** slots, size_t slot_count) { // 012/345/678 or 01/23
+	struct slot** os = xmalloc(sizeof(struct slot*) * slot_count);
+	memcpy(os, slots, slot_count * sizeof(struct slot*));
+	if (slot_count == 4) {
+		if (os[0] == NULL && os[1] == NULL) {
+			os[0] = os[2];
+			os[1] = os[3];
+			os[2] = NULL;
+			os[3] = NULL;
+		}
+		if (os[0] == NULL && os[2] == NULL) {
+			os[0] = os[1];
+			os[2] = os[3];
+			os[1] = NULL;
+			os[3] = NULL;
+		}
+	} else if (slot_count == 9) {
+		if (!os[3] && !os[4] && !os[5]) {
+			memmove(os + 3, os + 6, 3 * sizeof(struct slot*));
+			memset(os + 6, 0, 3 * sizeof(struct slot*));
+		}
+		if (!os[0] && !os[1] && !os[2]) {
+			memmove(os, os + 3, 6 * sizeof(struct slot*));
+			memset(os + 6, 0, 3 * sizeof(struct slot*));
+		}
+		if (!os[0] && !os[3] && !os[6]) {
+			os[0] = os[1];
+			os[3] = os[4];
+			os[6] = os[7];
+			os[1] = os[2];
+			os[4] = os[5];
+			os[7] = os[8];
+			os[2] = NULL;
+			os[5] = NULL;
+			os[8] = NULL;
+			if (!os[0] && !os[3] && !os[6]) {
+				os[0] = os[1];
+				os[3] = os[4];
+				os[6] = os[7];
+				os[1] = NULL;
+				os[4] = NULL;
+				os[7] = NULL;
+			}
+		}
+	}
+//for (int x = 0; x < slot_count; x++) {
+//	printf("post %i = %i\n", x, os[x] != NULL);
+//}
+	for (size_t i = 0; i < crafting_recipies->size; i++) {
+		struct crafting_recipe* cr = (struct crafting_recipe*) crafting_recipies->data[i];
+		if (cr == NULL || (cr->width > 2 && slot_count <= 4) || (slot_count == 4 && (cr->slot[6] != NULL || cr->slot[7] != NULL || cr->slot[8] != NULL))) continue;
+		if (cr->shapeless) { // TODO: optimize
+			int gs = 1;
+			for (int ls = 0; ls <= slot_count; ls++) {
+				struct slot* iv = slots[ls];
+				if (iv == NULL) continue;
+				int m = 0;
+				for (int ri = 0; ri < 9; ri++) {
+					struct slot* cv = cr->slot[ri];
+					if (itemsStackable2(cv, iv)) {
+						m = 1;
+						break;
+					}
+				}
+				if (!m) {
+					gs = 0;
+					break;
+				}
+			}
+			if (gs) for (int ri = 0; ri < 9; ri++) {
+				struct slot* cv = cr->slot[ri];
+				if (cv == NULL) continue;
+				int m = 0;
+				for (int ls = 1; ls <= 4; ls++) {
+					struct slot* iv = slots[ls];
+					if (itemsStackable2(cv, iv)) {
+						m = 1;
+						break;
+					}
+				}
+				if (!m) {
+					gs = 0;
+					break;
+				}
+			}
+			if (gs) {
+				return &cr->output;
+			}
+		} else {
+			int gs = 1;
+			for (int x = 0; x < 3; x++) {
+				for (int y = 0; y < 3; y++) {
+					struct slot* cri = cr->slot[y * 3 + x];
+					struct slot* oi = (slot_count == 4 && (x > 1 || y > 1)) ? NULL : os[y * (slot_count == 4 ? 2 : 3) + x];
+					if (!itemsStackable2(cri, oi) && (cri != oi)) {
+						gs = 0;
+						goto ppbx;
+					}
+				}
+			}
+			ppbx: ;
+			if (!gs) {
+				gs = 1;
+				for (int x = 0; x < 3; x++) {
+					for (int y = 0; y < 3; y++) {
+						struct slot* cri = x >= cr->width ? NULL : cr->slot[y * 3 + ((cr->width - 1) - x)];
+						struct slot* oi = (slot_count == 4 && (x > 1 || y > 1)) ? NULL : os[y * (slot_count == 4 ? 2 : 3) + x];
+						if (!itemsStackable2(cri, oi) && (cri != oi)) {
+							gs = 0;
+							goto pbx;
+						}
+					}
+				}
+			}
+			pbx: ;
+			if (gs) {
+				return &cr->output;
+			}
+		}
+	}
+	return NULL;
 }
 
 void add_crafting(struct crafting_recipe* recipe) {

@@ -584,6 +584,7 @@ struct block_info {
 		void (*onBlockCollide)(struct world* world, block blk, int32_t x, int32_t y, int32_t z, struct entity* entity);
 		void (*onBlockUpdate)(struct world* world, block blk, int32_t x, int32_t y, int32_t z);
 		void (*dropItems)(struct world* world, block blk, int32_t x, int32_t y, int32_t z, int fortune);
+		int (*canBePlaced)(struct world* world, block blk, int32_t x, int32_t y, int32_t z);
 		struct boundingbox* boundingBoxes;
 		size_t boundingBox_count;
 		float hardness;
@@ -622,5 +623,7 @@ void update_furnace(struct world* world, struct tile_entity* te);
 void onBlockDestroyed_chest(struct world* world, block blk, int32_t x, int32_t y, int32_t z);
 
 void onBlockDestroyed_furnace(struct world* world, block blk, int32_t x, int32_t y, int32_t z);
+
+int canBePlaced_reeds(struct world* world, block blk, int32_t x, int32_t y, int32_t z);
 
 #endif /* BLOCK_H_ */

@@ -67,9 +67,14 @@ struct player {
 	uint16_t chunksSent;
 	float reachDistance;
 	acstate_t acstate;
+	struct subworld* subworld;
 };
 
 struct player* newPlayer(struct entity* entity, char* name, struct uuid, struct conn* conn, uint8_t gamemode);
+
+void player_receive_packet(struct player* player, struct packet* inp);
+
+void tick_player(struct world* world, struct player* player);
 
 void kickPlayer(struct player* player, char* message);
 

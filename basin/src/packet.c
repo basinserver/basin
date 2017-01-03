@@ -467,20 +467,41 @@ ssize_t readPacket(struct conn* conn, unsigned char* buf, size_t buflen, struct 
 			rx = readVarInt(&packet->data.play_server.playerblockplacement.hand, pbuf, ps);
 			ADRX
 			//cursor_position_x
-			CPS(4)
-			memcpy(&packet->data.play_server.playerblockplacement.cursor_position_x, pbuf, 4);
-			swapEndian(&packet->data.play_server.playerblockplacement.cursor_position_x, 4);
-			ADX(4)
+			if (conn->protocolVersion > 210) {
+				CPS(4)
+				memcpy(&packet->data.play_server.playerblockplacement.cursor_position_x, pbuf, 4);
+				swapEndian(&packet->data.play_server.playerblockplacement.cursor_position_x, 4);
+				ADX(4)
+			} else {
+				CPS(1)
+				uint8_t tmp = (uint8_t)(packet->data.play_server.playerblockplacement.cursor_position_x * 15.);
+				memcpy(&tmp, pbuf, 1);
+				ADX(1)
+			}
 			//cursor_position_y
-			CPS(4)
-			memcpy(&packet->data.play_server.playerblockplacement.cursor_position_y, pbuf, 4);
-			swapEndian(&packet->data.play_server.playerblockplacement.cursor_position_y, 4);
-			ADX(4)
+			if (conn->protocolVersion > 210) {
+				CPS(4)
+				memcpy(&packet->data.play_server.playerblockplacement.cursor_position_y, pbuf, 4);
+				swapEndian(&packet->data.play_server.playerblockplacement.cursor_position_y, 4);
+				ADX(4)
+			} else {
+				CPS(1)
+				uint8_t tmp = (uint8_t)(packet->data.play_server.playerblockplacement.cursor_position_y * 15.);
+				memcpy(&tmp, pbuf, 1);
+				ADX(1)
+			}
 			//cursor_position_z
-			CPS(4)
-			memcpy(&packet->data.play_server.playerblockplacement.cursor_position_z, pbuf, 4);
-			swapEndian(&packet->data.play_server.playerblockplacement.cursor_position_z, 4);
-			ADX(4)
+			if (conn->protocolVersion > 210) {
+				CPS(4)
+				memcpy(&packet->data.play_server.playerblockplacement.cursor_position_z, pbuf, 4);
+				swapEndian(&packet->data.play_server.playerblockplacement.cursor_position_z, 4);
+				ADX(4)
+			} else {
+				CPS(1)
+				uint8_t tmp = (uint8_t)(packet->data.play_server.playerblockplacement.cursor_position_z * 15.);
+				memcpy(&tmp, pbuf, 1);
+				ADX(1)
+			}
 		} else if (id == PKT_PLAY_SERVER_USEITEM) {
 			//hand
 			rx = readVarInt(&packet->data.play_server.useitem.hand, pbuf, ps);
@@ -530,11 +551,7 @@ ssize_t readPacket(struct conn* conn, unsigned char* buf, size_t buflen, struct 
 
 ssize_t writePacket(struct conn* conn, struct packet* packet) {
 	if (conn->state == STATE_PLAY && packet->id == PKT_PLAY_CLIENT_CHUNKDATA) {
-		pthread_rwlock_rdlock(&conn->player->world->chl);
-		if (!isChunkLoaded(conn->player->world, packet->data.play_client.chunkdata.cx, packet->data.play_client.chunkdata.cz)) {
-			pthread_rwlock_unlock(&conn->player->world->chl);
-			return 0;
-		}
+		if (!isChunkLoaded(conn->player->world, packet->data.play_client.chunkdata.cx, packet->data.play_client.chunkdata.cz)) return 0;
 	}
 	unsigned char* pktbuf = xmalloc(1024);
 	size_t ps = 1024;
@@ -660,8 +677,14 @@ ssize_t writePacket(struct conn* conn, struct packet* packet) {
 			swapEndian(pktbuf + pi, 16);
 			pi += 16;
 			//type
-			ENS(4)
-			pi += writeVarInt(packet->data.play_client.spawnmob.type, pktbuf + pi);
+			if (conn->protocolVersion > 210) {
+				ENS(4)
+				pi += writeVarInt(packet->data.play_client.spawnmob.type, pktbuf + pi);
+			} else {
+				ENS(1)
+				memcpy(pktbuf + pi, &packet->data.play_client.spawnmob.type, 1);
+				pi += 1;
+			}
 			//x
 			ENS(8)
 			memcpy(pktbuf + pi, &packet->data.play_client.spawnmob.x, 8);
@@ -1175,7 +1198,6 @@ ssize_t writePacket(struct conn* conn, struct packet* packet) {
 				ENS(512)
 				pi += writeNBT(packet->data.play_client.chunkdata.block_entities[i], pktbuf + pi, ps - pi);
 			}
-			pthread_rwlock_unlock(&conn->player->world->chl);
 		} else if (id == PKT_PLAY_CLIENT_EFFECT) {
 			//effect_id
 			ENS(4)

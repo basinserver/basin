@@ -11,6 +11,7 @@
 #include "world.h"
 #include "entity.h"
 #include "hashmap.h"
+#include <pthread.h>
 
 void player_openInventory(struct player* player, struct inventory* inv);
 

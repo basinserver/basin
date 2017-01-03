@@ -11,26 +11,19 @@
 #include <sys/stat.h>
 #include <stdlib.h>
 #include <stdarg.h>
+#include <unistd.h>
 
-//#define MEM_LEAK_DEBUG
+#define MEM_LEAK_DEBUG
 
 #ifdef MEM_LEAK_DEBUG
 
-void* xmalloc_real(size_t size, char* file, int line);
+#define xmalloc(size) malloc(size)
 
-void xfree_real(void* ptr, char* file, int line);
+#define xfree(ptr) free(ptr)
 
-void* xcalloc_real(size_t size, char* file, int line);
+#define xcalloc(size) calloc(1, size)
 
-void* xrealloc_real(void* ptr, size_t size, char* file, int line);
-
-#define xmalloc(size) xmalloc_real(size, __FILE__ , __LINE__)
-
-#define xfree(ptr) xfree_real(ptr, __FILE__ , __LINE__)
-
-#define xcalloc(size) xcalloc_real(size, __FILE__ , __LINE__)
-
-#define xrealloc(ptr, size) xrealloc_real(ptr, size, __FILE__ , __LINE__)
+#define xrealloc(ptr, size) realloc(ptr, size)
 
 #else
 
@@ -55,5 +48,7 @@ int recur_mkdir(const char* path, mode_t mode);
 int memeq(const unsigned char* mem1, size_t mem1_size, const unsigned char* mem2, size_t mem2_size);
 
 int memseq(const unsigned char* mem, size_t mem_size, const unsigned char c);
+
+pid_t gettid();
 
 #endif /* UTIL_H_ */
