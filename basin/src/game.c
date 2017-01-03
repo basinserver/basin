@@ -5,9 +5,7 @@
  *      Author: root
  */
 
-#include "block.h"
-#include "world.h"
-#include "globals.h"
+#include "basin.h"
 #include "util.h"
 #include "queue.h"
 #include "collection.h"
@@ -16,22 +14,20 @@
 #include <stdint.h>
 #include "xstring.h"
 #include <stdio.h>
-#include "entity.h"
 #include "game.h"
 #include <math.h>
 #include "crafting.h"
-#include "inventory.h"
-#include "item.h"
-#include "network.h"
 #include "smelting.h"
+#include "tileentity.h"
+#include "network.h"
 #include "server.h"
 #include "command.h"
 #include <unistd.h>
-#include "tileentity.h"
 #include <stdarg.h>
 #include "xstring.h"
-#include "profile.h"
 #include "hashmap.h"
+#include "profile.h"
+#include "anticheat.h"
 
 void flush_outgoing(struct player* player) {
 	if (player->conn == NULL) return;
@@ -595,31 +591,38 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 			xfree(rs);
 		}
 	} else if (inp->id == PKT_PLAY_SERVER_PLAYER) {
-		player->tps++;
+		struct pkt_play_server_player pkt = inp->data.play_server.player;
+		if (ac_tick(player, pkt.on_ground))
+			goto cont;
 		player->entity->lx = player->entity->x;
 		player->entity->ly = player->entity->y;
 		player->entity->lz = player->entity->z;
 		player->entity->lyaw = player->entity->yaw;
 		player->entity->lpitch = player->entity->pitch;
-		player->entity->onGround = inp->data.play_server.player.on_ground;
+		player->entity->onGround = pkt.on_ground;
 		BEGIN_BROADCAST(player->entity->loadingPlayers)
 		sendEntityMove(bc_player, player->entity);
 		END_BROADCAST(player->entity->loadingPlayers)
 	} else if (inp->id == PKT_PLAY_SERVER_PLAYERPOSITION) {
-		player->tps++;
+		struct pkt_play_server_playerposition pkt = inp->data.play_server.playerposition;
+		if (ac_tick(player, pkt.on_ground))
+			goto cont;
+		if (ac_tickpos(player, pkt.x, pkt.feet_y, pkt.z))
+			goto cont;
+
 		double lx = player->entity->x;
 		double ly = player->entity->y;
 		double lz = player->entity->z;
 		player->entity->lyaw = player->entity->yaw;
 		player->entity->lpitch = player->entity->pitch;
-		if (moveEntity(player->entity, inp->data.play_server.playerposition.x - lx, inp->data.play_server.playerposition.feet_y - ly, inp->data.play_server.playerposition.z - lz, .05)) {
+		if (moveEntity(player->entity, pkt.x - lx, pkt.feet_y - ly, pkt.z - lz, .05)) {
 			teleportPlayer(player, lx, ly, lz);
 		} else {
 			player->entity->lx = lx;
 			player->entity->ly = ly;
 			player->entity->lz = lz;
 		}
-		player->entity->onGround = inp->data.play_server.playerposition.on_ground;
+		player->entity->onGround = pkt.on_ground;
 		float dx = player->entity->x - player->entity->lx;
 		float dy = player->entity->y - player->entity->ly;
 		float dz = player->entity->z - player->entity->lz;
@@ -634,35 +637,46 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 			END_BROADCAST(player->entity->loadingPlayers)
 		}
 	} else if (inp->id == PKT_PLAY_SERVER_PLAYERLOOK) {
-		player->tps++;
+		struct pkt_play_server_playerlook pkt = inp->data.play_server.playerlook;
+		if (ac_tick(player, pkt.on_ground))
+			goto cont;
+		if (ac_ticklook(player, pkt.yaw, pkt.pitch))
+			goto cont;
+
 		player->entity->lx = player->entity->x;
 		player->entity->ly = player->entity->y;
 		player->entity->lz = player->entity->z;
 		player->entity->lyaw = player->entity->yaw;
 		player->entity->lpitch = player->entity->pitch;
-		player->entity->onGround = inp->data.play_server.playerlook.on_ground;
-		player->entity->yaw = inp->data.play_server.playerlook.yaw;
-		player->entity->pitch = inp->data.play_server.playerlook.pitch;
+		player->entity->onGround = pkt.on_ground;
+		player->entity->yaw = pkt.yaw;
+		player->entity->pitch = pkt.pitch;
 		BEGIN_BROADCAST(player->entity->loadingPlayers)
 		sendEntityMove(bc_player, player->entity);
 		END_BROADCAST(player->entity->loadingPlayers)
 	} else if (inp->id == PKT_PLAY_SERVER_PLAYERPOSITIONANDLOOK) {
-		player->tps++;
+		struct pkt_play_server_playerpositionandlook pkt = inp->data.play_server.playerpositionandlook;
+		if (ac_tick(player, pkt.on_ground))
+			goto cont;
+		if (ac_tickpos(player, pkt.x, pkt.feet_y, pkt.z))
+			goto cont;
+		if (ac_ticklook(player, pkt.yaw, pkt.pitch))
+			goto cont;
 		double lx = player->entity->x;
 		double ly = player->entity->y;
 		double lz = player->entity->z;
 		player->entity->lyaw = player->entity->yaw;
 		player->entity->lpitch = player->entity->pitch;
-		if (moveEntity(player->entity, inp->data.play_server.playerpositionandlook.x - lx, inp->data.play_server.playerpositionandlook.feet_y - ly, inp->data.play_server.playerpositionandlook.z - lz, .05)) {
+		if (moveEntity(player->entity, pkt.x - lx, pkt.feet_y - ly, pkt.z - lz, .05)) {
 			teleportPlayer(player, lx, ly, lz);
 		} else {
 			player->entity->lx = lx;
 			player->entity->ly = ly;
 			player->entity->lz = lz;
 		}
-		player->entity->onGround = inp->data.play_server.playerpositionandlook.on_ground;
-		player->entity->yaw = inp->data.play_server.playerpositionandlook.yaw;
-		player->entity->pitch = inp->data.play_server.playerpositionandlook.pitch;
+		player->entity->onGround = pkt.on_ground;
+		player->entity->yaw = pkt.yaw;
+		player->entity->pitch = pkt.pitch;
 		float dx = player->entity->x - player->entity->lx;
 		float dy = player->entity->y - player->entity->ly;
 		float dz = player->entity->z - player->entity->lz;
@@ -1392,18 +1406,6 @@ void tick_player(struct world* world, struct player* player) {
 		pkt->data.play_client.timeupdate.world_age = player->world->age;
 		add_queue(player->outgoingPacket, pkt);
 	}
-	struct timespec ts;
-	clock_gettime(CLOCK_MONOTONIC, &ts);
-	double ct = (double) ts.tv_nsec / 1000000. + (double) ts.tv_sec * 1000.;
-	if (player->lastTPSCalculation + 1000. <= ct) {
-		float time = (float) (ct - player->lastTPSCalculation) / 1000.;
-		player->lastTPSCalculation = ct;
-		if ((float) player->tps / 20. > (time + .25)) {
-			kickPlayer(player, "Ticks per second Too high! (FastHeal, Teleport, or Lag?)");
-			return;
-		}
-		player->tps = 0;
-	}
 	if (player->saturation > 0. && player->food >= 20) {
 		if (++player->foodTimer >= 10) {
 			healEntity(player->entity, player->saturation > 6. ? player->saturation / 6. : 1.);
@@ -1549,6 +1551,7 @@ void tick_player(struct world* world, struct player* player) {
 		add_queue(bc_player->outgoingPacket, pkt);
 		END_BROADCAST(player->world->players)
 	}
+
 	beginProfilerSection("entity_transmission");
 	BEGIN_HASHMAP_ITERATION(player->loadedEntities)
 	struct entity* ent = (struct entity*) value;
@@ -1567,6 +1570,7 @@ void tick_player(struct world* world, struct player* player) {
 	}
 	END_HASHMAP_ITERATION(player->loadedEntities)
 	endProfilerSection("entity_transmission");
+
 	beginProfilerSection("player_transmission");
 	//int32_t cx = ((int32_t) player->entity->x) >> 4;
 	//int32_t cz = ((int32_t) player->entity->z) >> 4;
@@ -1584,48 +1588,6 @@ void tick_player(struct world* world, struct player* player) {
 	//}
 	endProfilerSection("player_transmission");
 	//printf("%i\n", player->loadedChunks->size);
-	beginProfilerSection("player_anticheat");
-	if (player->spawnedIn && !player->entity->inWater && !player->entity->inLava && (player->llTick + 5 < tick_counter) && player->gamemode != 1 && player->entity->health > 0.) {
-		int nrog = player_onGround(player);
-		float dy = player->entity->ly - player->entity->y;
-		if (dy >= 0.) {
-			if (!player->real_onGround) player->offGroundTime++;
-			else player->offGroundTime = 0;
-		} else player->offGroundTime = 0.;
-		float edy = .0668715 * (float) (player->offGroundTime - .5) + .0357839;
-		//printf("dy = %f ogt = %i edy = %f, %f, %f\n", dy, player->offGroundTime, pedy, edy, nedy);
-		if (dy >= 0.) {
-			float edd = fabs(edy - dy);
-			if (!nrog && !player->real_onGround) {
-				if (edd > .1) {
-					player->flightInfraction += 2;
-					//printf("slowfall\n");
-				}
-			}
-		}
-		if (dy < player->ldy && !player->real_onGround) { // todo: cobwebs
-			if (fabs(dy + .42) < .001 && player->real_onGround) {
-				player->lastJump = tick_counter;
-				//printf("jump\n");
-			} else {
-				if (!nrog) {
-					//printf("inf\n");
-					player->flightInfraction += 2;
-				} // else printf("nrog\n");
-
-			}
-		}
-		player->real_onGround = nrog;
-		player->ldy = dy;
-		if (player->real_onGround != player->entity->onGround) {
-			player->flightInfraction += 2;
-			//printf("nog %i %i\n", player->real_onGround, player->entity->onGround);
-		}
-		if (player->flightInfraction > 0) if (player->flightInfraction-- > 25) {
-			kickPlayer(player, "Flying is not enabled on this server");
-		}
-	}
-	endProfilerSection("player_anticheat");
 }
 
 int32_t floor_int(double f) {

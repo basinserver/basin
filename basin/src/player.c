@@ -68,16 +68,14 @@ struct player* newPlayer(struct entity* entity, char* name, struct uuid uuid, st
 	player->defunct = 0;
 	player->lastSwing = tick_counter;
 	player->foodTimer = 0;
-	player->tps = 0;
 	struct timespec ts;
 	clock_gettime(CLOCK_MONOTONIC, &ts);
-	player->lastTPSCalculation = (double) ts.tv_nsec / 1000000. + (double) ts.tv_sec * 1000.;
-	player->real_onGround = 1;
-	player->reachDistance = 6.;
-	player->flightInfraction = 0;
-	player->ldy = 0.;
-	player->lastJump = 0;
-	player->offGroundTime = 0;
+	player->reachDistance = 6.f;
+	player->acstate.real_onGround = 1;
+	player->acstate.flightInfraction = 0;
+	player->acstate.ldy = 0.;
+	player->acstate.lastJump = 0;
+	player->acstate.offGroundTime = 0;
 	player->spawnedIn = 0;
 	player->llTick = 0;
 	player->triggerRechunk = 0;
@@ -182,7 +180,7 @@ void teleportPlayer(struct player* player, double x, double y, double z) {
 	pkt->data.play_client.playerpositionandlook.flags = 0x0;
 	pkt->data.play_client.playerpositionandlook.teleport_id = 0;
 	add_queue(player->outgoingPacket, pkt);
-	if (player->tps > 0) player->tps--;
+//	if (player->tps > 0) player->tps--;
 }
 
 struct player* getPlayerByName(char* name) {
