@@ -38,12 +38,12 @@ float onItemAttacked_tool(struct world* world, struct player* player, uint8_t sl
 }
 
 void offsetCoordByFace(int32_t* x, uint8_t* y, int32_t* z, uint8_t face) {
-	if (face == 0) (*y)--;
-	else if (face == 1) (*y)++;
-	else if (face == 2) (*z)--;
-	else if (face == 3) (*z)++;
-	else if (face == 4) (*x)--;
-	else if (face == 5) (*x)++;
+	if (face == YN) (*y)--;
+	else if (face == YP) (*y)++;
+	else if (face == ZN) (*z)--;
+	else if (face == ZP) (*z)++;
+	else if (face == XN) (*x)--;
+	else if (face == XP) (*x)++;
 }
 
 int onItemInteract_flintandsteel(struct world* world, struct player* player, uint8_t slot_index, struct slot* slot, int32_t x, uint8_t y, int32_t z, uint8_t face) {

@@ -34,7 +34,7 @@ void onBlockInteract_workbench(struct world* world, block blk, int32_t x, int32_
 	player_openInventory(player, wb);
 }
 
-block onBlockPlaced_chest(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
+block onBlockPlaced_chest(struct player* player, struct world* world, block blk, int32_t x, int32_t y, int32_t z, uint8_t face) {
 	int16_t meta = blk & 0x0f;
 	if (meta < 2 || meta > 5) meta = 2;
 	struct tile_entity* te = newTileEntity("minecraft:chest", x, y, z);
@@ -47,7 +47,7 @@ block onBlockPlaced_chest(struct world* world, block blk, int32_t x, int32_t y, 
 	return (blk & ~0x0f) | meta;
 }
 
-block onBlockPlaced_furnace(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
+block onBlockPlaced_furnace(struct player* player, struct world* world, block blk, int32_t x, int32_t y, int32_t z, uint8_t face) {
 	int16_t meta = blk & 0x0f;
 	if (meta < 2 || meta > 5) meta = 2;
 	struct tile_entity* te = newTileEntity("minecraft:furnace", x, y, z);
@@ -73,7 +73,7 @@ void onBlockDestroyed_chest(struct world* world, block blk, int32_t x, int32_t y
 void onBlockInteract_chest(struct world* world, block blk, int32_t x, int32_t y, int32_t z, struct player* player, uint8_t face, float curPosX, float curPosY, float curPosZ) {
 	struct tile_entity* te = getTileEntityWorld(world, x, y, z);
 	if (te == NULL || !streq_nocase(te->id, "minecraft:chest")) {
-		onBlockPlaced_chest(world, blk, x, y, z);
+		onBlockPlaced_chest(player, world, blk, x, y, z, YP);
 		te = getTileEntityWorld(world, x, y, z);
 	}
 	//TODO: impl locks, loot
@@ -104,7 +104,7 @@ void onBlockDestroyed_furnace(struct world* world, block blk, int32_t x, int32_t
 void onBlockInteract_furnace(struct world* world, block blk, int32_t x, int32_t y, int32_t z, struct player* player, uint8_t face, float curPosX, float curPosY, float curPosZ) {
 	struct tile_entity* te = getTileEntityWorld(world, x, y, z);
 	if (te == NULL || !streq_nocase(te->id, "minecraft:furnace")) {
-		onBlockPlaced_furnace(world, blk, x, y, z);
+		onBlockPlaced_furnace(player, world, blk, x, y, z, YP);
 		te = getTileEntityWorld(world, x, y, z);
 	}
 	//TODO: impl locks, loot
@@ -487,6 +487,36 @@ void dropItems_crops(struct world* world, block blk, int32_t x, int32_t y, int32
 	}
 }
 
+void randomTick_grass(struct world* world, struct chunk* chunk, block blk, int32_t x, int32_t y, int32_t z) {
+	struct block_info* ni = getBlockInfo(getBlockWorld_guess(world, chunk, x, y + 1, z));
+	uint8_t lwu = getLightWorld(world, x, y, z, 1);
+	if (lwu < 4 && ni != NULL && ni->lightOpacity > 2) {
+		setBlockWorld_guess(world, chunk, BLK_DIRT, x, y, z);
+	} else if (lwu >= 9) {
+		for (int i = 0; i < 4; i++) {
+			int32_t gx = x + rand() % 3 - 1;
+			int32_t gy = y + rand() % 5 - 3;
+			int32_t gz = z + rand() % 3 - 1;
+			block up = getBlockWorld_guess(world, chunk, gx, gy + 1, gz);
+			block blk = getBlockWorld_guess(world, chunk, gx, gy, gz);
+			ni = getBlockInfo(up);
+			if (blk == BLK_DIRT && (ni == NULL || ni->lightOpacity <= 2) && getLightWorld(world, gx, gy + 1, gz, 1) >= 4) {
+				setBlockWorld_guess(world, chunk, BLK_GRASS, gx, gy, gz);
+			}
+		}
+	}
+}
+
+block onBlockPlaced_log(struct player* player, struct world* world, block blk, int32_t x, int32_t y, int32_t z, uint8_t face) {
+	block nb = blk & ~0xC;
+	if (face == XP || face == XN) {
+		nb |= 0x4;
+	} else if (face == ZP || face == ZN) {
+		nb |= 0x8;
+	}
+	return nb;
+}
+
 //
 
 struct block_info* getBlockInfo(block b) {
@@ -802,4 +832,9 @@ void init_blocks() {
 		tmp->canBePlaced = &canBePlaced_doubleplant;
 		tmp->onBlockUpdate = &onBlockUpdate_checkPlace;
 	}
+	for (block b = BLK_LOG_OAK; b < BLK_LOG_OAK_8; b++)
+		getBlockInfo(b)->onBlockPlaced = &onBlockPlaced_log;
+	for (block b = BLK_LOG_ACACIA_1; b < BLK_LOG_OAK_14; b++)
+		getBlockInfo(b)->onBlockPlaced = &onBlockPlaced_log;
+	getBlockInfo(BLK_GRASS)->randomTick = &randomTick_grass;
 }

@@ -18,6 +18,15 @@ typedef int16_t item;
 #include "inventory.h"
 #include "tools.h"
 
+void offsetCoordByFace(int32_t* x, uint8_t* y, int32_t* z, uint8_t face);
+
+#define YN 0
+#define YP 1
+#define ZN 2
+#define ZP 3
+#define XN 4
+#define XP 5
+
 #define ITM_SHOVELIRON 256
 #define ITM_PICKAXEIRON 257
 #define ITM_HATCHETIRON 258

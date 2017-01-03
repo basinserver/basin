@@ -175,8 +175,7 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 		}
 	} else if (inp->id == PKT_PLAY_SERVER_PLAYER) {
 		struct pkt_play_server_player pkt = inp->data.play_server.player;
-		if (ac_tick(player, pkt.on_ground))
-			goto cont;
+		if (ac_tick(player, pkt.on_ground)) goto cont;
 		player->entity->lx = player->entity->x;
 		player->entity->ly = player->entity->y;
 		player->entity->lz = player->entity->z;
@@ -188,10 +187,8 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 		END_BROADCAST(player->entity->loadingPlayers)
 	} else if (inp->id == PKT_PLAY_SERVER_PLAYERPOSITION) {
 		struct pkt_play_server_playerposition pkt = inp->data.play_server.playerposition;
-		if (ac_tick(player, pkt.on_ground))
-			goto cont;
-		if (ac_tickpos(player, pkt.x, pkt.feet_y, pkt.z))
-			goto cont;
+		if (ac_tick(player, pkt.on_ground)) goto cont;
+		if (ac_tickpos(player, pkt.x, pkt.feet_y, pkt.z)) goto cont;
 
 		double lx = player->entity->x;
 		double ly = player->entity->y;
@@ -216,15 +213,13 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 			kickPlayer(player, "You attempted to move too fast!");
 		} else {
 			BEGIN_BROADCAST(player->entity->loadingPlayers)
-						sendEntityMove(bc_player, player->entity);
+			sendEntityMove(bc_player, player->entity);
 			END_BROADCAST(player->entity->loadingPlayers)
 		}
 	} else if (inp->id == PKT_PLAY_SERVER_PLAYERLOOK) {
 		struct pkt_play_server_playerlook pkt = inp->data.play_server.playerlook;
-		if (ac_tick(player, pkt.on_ground))
-			goto cont;
-		if (ac_ticklook(player, pkt.yaw, pkt.pitch))
-			goto cont;
+		if (ac_tick(player, pkt.on_ground)) goto cont;
+		if (ac_ticklook(player, pkt.yaw, pkt.pitch)) goto cont;
 
 		player->entity->lx = player->entity->x;
 		player->entity->ly = player->entity->y;
@@ -235,16 +230,13 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 		player->entity->yaw = pkt.yaw;
 		player->entity->pitch = pkt.pitch;
 		BEGIN_BROADCAST(player->entity->loadingPlayers)
-					sendEntityMove(bc_player, player->entity);
+		sendEntityMove(bc_player, player->entity);
 		END_BROADCAST(player->entity->loadingPlayers)
 	} else if (inp->id == PKT_PLAY_SERVER_PLAYERPOSITIONANDLOOK) {
 		struct pkt_play_server_playerpositionandlook pkt = inp->data.play_server.playerpositionandlook;
-		if (ac_tick(player, pkt.on_ground))
-			goto cont;
-		if (ac_tickpos(player, pkt.x, pkt.feet_y, pkt.z))
-			goto cont;
-		if (ac_ticklook(player, pkt.yaw, pkt.pitch))
-			goto cont;
+		if (ac_tick(player, pkt.on_ground)) goto cont;
+		if (ac_tickpos(player, pkt.x, pkt.feet_y, pkt.z)) goto cont;
+		if (ac_ticklook(player, pkt.yaw, pkt.pitch)) goto cont;
 		double lx = player->entity->x;
 		double ly = player->entity->y;
 		double lz = player->entity->z;
@@ -270,7 +262,7 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 			printf("Player '%s' attempted to move too fast!\n", player->name);
 		} else {
 			BEGIN_BROADCAST(player->entity->loadingPlayers)
-						sendEntityMove(bc_player, player->entity);
+			sendEntityMove(bc_player, player->entity);
 			END_BROADCAST(player->entity->loadingPlayers)
 		}
 	} else if (inp->id == PKT_PLAY_SERVER_ANIMATION) {
@@ -510,7 +502,7 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 				//}
 				//}
 				if (!bad) {
-					if (getBlockInfo(tbb)->onBlockPlaced != NULL) tbb = (*getBlockInfo(tbb)->onBlockPlaced)(player->world, tbb, x, y, z);
+					if (getBlockInfo(tbb)->onBlockPlaced != NULL) tbb = (*getBlockInfo(tbb)->onBlockPlaced)(player, player->world, tbb, x, y, z, face);
 					setBlockWorld(player->world, tbb, x, y, z);
 					if (player->gamemode != 1) {
 						if (--ci->itemCount <= 0) {
@@ -1382,8 +1374,8 @@ void player_closeWindow(struct player* player, uint16_t windowID) {
 					setSlot(player, inv, i, NULL, 0, 1);
 				}
 			}
-			freeInventory(inv);
 			pthread_mutex_unlock(&inv->mut);
+			freeInventory(inv);
 			inv = NULL;
 		} else if (inv->type == INVTYPE_CHEST) {
 			if (inv->te != NULL) {

@@ -48,9 +48,10 @@ struct chunk_section {
 		size_t palette_count;
 		block* palette;
 		uint8_t bpb;
-		unsigned char blockLight[16][16][8]; // y, z, x(4-bit)
+		unsigned char blockLight[2048]; // y, z, x(4-bit)
 		unsigned char* skyLight; // if non-NULL, points to a 2048-byte nibble-array.
 		int32_t mvs;
+		uint16_t randomTickables;
 };
 
 struct chunk {
@@ -100,6 +101,7 @@ struct world {
 		pthread_cond_t tick_cond;
 		size_t chl_count;
 		struct hashmap* subworlds;
+		uint8_t skylightSubtracted;
 };
 
 struct subworld { // subworld for players thread
@@ -128,6 +130,8 @@ block getBlockChunk(struct chunk* chunk, uint8_t x, uint8_t y, uint8_t z);
 
 block getBlockWorld(struct world* world, int32_t x, uint8_t y, int32_t z);
 
+block getBlockWorld_guess(struct world* world, struct chunk* ch, int32_t x, uint8_t y, int32_t z);
+
 struct chunk* newChunk(int16_t x, int16_t z);
 
 void freeChunk(struct chunk* chunk);
@@ -139,6 +143,8 @@ void freeRegion(struct region* region);
 void setBlockChunk(struct chunk* chunk, block blk, uint8_t x, uint8_t y, uint8_t z, int skylight);
 
 void setBlockWorld(struct world* world, block blk, int32_t x, int32_t y, int32_t z);
+
+void setBlockWorld_guess(struct world* world, struct chunk* chunk, block blk, int32_t x, int32_t y, int32_t z);
 
 struct tile_entity* getTileEntityChunk(struct chunk* chunk, int32_t x, uint8_t y, int32_t z);
 
@@ -167,5 +173,13 @@ void despawnPlayer(struct world* world, struct player* player);
 struct entity* getEntity(struct world* world, int32_t id);
 
 void updateBlockWorld(struct world* world, int32_t x, int32_t y, int32_t z);
+
+void updateBlockWorld_guess(struct world* world, struct chunk* chunk, int32_t x, int32_t y, int32_t z);
+
+uint8_t getLightChunk(struct chunk* chunk, uint8_t x, uint8_t y, uint8_t z, uint8_t subt);
+
+uint8_t getLightWorld_guess(struct world* world, struct chunk* ch, int32_t x, int32_t y, int32_t z);
+
+uint8_t getLightWorld(struct world* world, int32_t x, int32_t y, int32_t z, uint8_t checkNeighbors);
 
 #endif /* WORLD_H_ */
