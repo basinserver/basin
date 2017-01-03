@@ -1100,9 +1100,13 @@ int tick_itemstack(struct world* world, struct entity* entity) {
 		//printf("%f, %f, %f vs %f, %f, %f\n", entity->x, entity->y, entity->z, oe->x, oe->y, oe->z);
 		if (boundingbox_intersects(&oebb, &cebb)) {
 			int os = entity->data.itemstack.slot->itemCount;
+			pthread_rwlock_unlock(&world->entities->data_mutex);
+			pthread_rwlock_unlock(&world->entities->data_mutex);
 			pthread_mutex_lock(&oe->data.player.player->inventory->mut);
 			int r = addInventoryItem_PI(oe->data.player.player, oe->data.player.player->inventory, entity->data.itemstack.slot, 1);
 			pthread_mutex_unlock(&oe->data.player.player->inventory->mut);
+			pthread_rwlock_rdlock(&world->entities->data_mutex);
+			pthread_rwlock_rdlock(&world->entities->data_mutex);
 			if (r <= 0) {
 				BEGIN_BROADCAST_DIST(entity, 32.)
 				struct packet* pkt = xmalloc(sizeof(struct packet));
@@ -1116,9 +1120,7 @@ int tick_itemstack(struct world* world, struct entity* entity) {
 				pthread_rwlock_unlock(&world->entities->data_mutex);
 				despawnEntity(world, entity);
 				pthread_rwlock_rdlock(&world->entities->data_mutex);
-				pthread_rwlock_rdlock(&world->entities->data_mutex);
 				freeEntity(entity);
-				BREAK_HASHMAP_ITERATION(world->entities)
 				return 1;
 			} else {
 				BEGIN_BROADCAST_DIST(entity, 128.)
@@ -1144,7 +1146,6 @@ int tick_itemstack(struct world* world, struct entity* entity) {
 				pthread_rwlock_unlock(&world->entities->data_mutex);
 				despawnEntity(world, entity);
 				pthread_rwlock_rdlock(&world->entities->data_mutex);
-				pthread_rwlock_rdlock(&world->entities->data_mutex);
 				oe->data.itemstack.slot->itemCount += entity->data.itemstack.slot->itemCount;
 				freeEntity(entity);
 				BEGIN_BROADCAST_DIST(oe, 128.)
@@ -1154,7 +1155,6 @@ int tick_itemstack(struct world* world, struct entity* entity) {
 				writeMetadata(oe, &pkt->data.play_client.entitymetadata.metadata.metadata, &pkt->data.play_client.entitymetadata.metadata.metadata_size);
 				add_queue(bc_player->outgoingPacket, pkt);
 				END_BROADCAST(oe->world->players)
-				BREAK_HASHMAP_ITERATION(world->entities)
 				return 1;
 			}
 		}

@@ -67,7 +67,7 @@ struct player* newPlayer(struct entity* entity, char* name, struct uuid uuid, st
 	player->openInv = NULL;
 	put_hashmap(player->inventory->players, player->entity->id, player);
 	player->loadedChunks = new_hashmap(1, 1);
-	player->loadedEntities = new_hashmap(1, 0);
+	player->loadedEntities = new_hashmap(1, 1);
 	player->incomingPacket = new_queue(0, 1);
 	player->outgoingPacket = new_queue(0, 1);
 	player->defunct = 0;
