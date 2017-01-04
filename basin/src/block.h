@@ -579,12 +579,13 @@ item getItemFromName(const char* name);
 
 struct block_info {
 		void (*onBlockDestroyed)(struct world* world, block blk, int32_t x, int32_t y, int32_t z);
-		block (*onBlockPlaced)(struct world* world, block blk, int32_t x, int32_t y, int32_t z);
+		block (*onBlockPlaced)(struct player* player, struct world* world, block blk, int32_t x, int32_t y, int32_t z, uint8_t face);
 		void (*onBlockInteract)(struct world* world, block blk, int32_t x, int32_t y, int32_t z, struct player* player, uint8_t face, float curPosX, float curPosY, float curPosZ);
 		void (*onBlockCollide)(struct world* world, block blk, int32_t x, int32_t y, int32_t z, struct entity* entity);
 		void (*onBlockUpdate)(struct world* world, block blk, int32_t x, int32_t y, int32_t z);
 		void (*dropItems)(struct world* world, block blk, int32_t x, int32_t y, int32_t z, int fortune);
 		int (*canBePlaced)(struct world* world, block blk, int32_t x, int32_t y, int32_t z);
+		void (*randomTick)(struct world* world, struct chunk* ch, block blk, int32_t x, int32_t y, int32_t z);
 		struct boundingbox* boundingBoxes;
 		size_t boundingBox_count;
 		float hardness;

@@ -15,6 +15,7 @@
 #include "command.h"
 #include "profile.h"
 #include "server.h"
+#include "item.h"
 
 void command_gamemode(struct player* player, char** args, size_t args_count) {
 	if (player != NULL) return;

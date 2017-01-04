@@ -28,6 +28,7 @@ C_SRCS += \
 ../src/worldmanager.c \
 ../src/hashmap.c \
 ../src/profile.c \
+../src/anticheat.c \
 ../src/xstring.c 
 
 OBJS += \
@@ -59,6 +60,7 @@ OBJS += \
 ./src/worldmanager.o \
 ./src/hashmap.o \
 ./src/profile.o \
+./src/anticheat.o \
 ./src/xstring.o 
 
 C_DEPS += \
@@ -90,6 +92,7 @@ C_DEPS += \
 ./src/worldmanager.d \
 ./src/hashmap.d \
 ./src/profile.d \
+./src/anticheat.d \
 ./src/xstring.d 
 
 
