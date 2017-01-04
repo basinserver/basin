@@ -87,6 +87,8 @@ int onItemInteract_bonemeal(struct world* world, struct player* player, uint8_t 
 		age += grow;
 		if (age > maxAge) age = maxAge;
 		setBlockWorld(world, (ba << 4) | age, x, y, z);
+	} else if (ba == (BLK_SAPLING_OAK >> 4)) {
+		randomTick_sapling(world, getChunk(world, x >> 4, z >> 4), b, x, y, z);
 	} else if (b == BLK_GRASS || b == BLK_DIRT) {
 		for (int i = 0; i < 128; i++) {
 			int j = 0;

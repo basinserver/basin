@@ -227,7 +227,7 @@ void enableTileEntityTickable(struct world* world, struct tile_entity* te);
 
 void disableTileEntityTickable(struct world* world, struct tile_entity* te);
 
-struct world* newWorld();
+struct world* newWorld(size_t chl_count);
 
 void freeWorld(struct world* world);
 

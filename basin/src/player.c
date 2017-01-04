@@ -152,8 +152,7 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 		}
 	} else if (inp->id == PKT_PLAY_SERVER_CHATMESSAGE) {
 		char* msg = inp->data.play_server.chatmessage.message;
-		if (ac_chat(player, msg))
-			goto cont;
+		if (ac_chat(player, msg)) goto cont;
 		if (startsWith(msg, "/")) {
 			callCommand(player, msg + 1);
 		} else {
@@ -460,12 +459,6 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 				block tbb = (ci->item << 4) | (ci->damage & 0x0f);
 				struct block_info* tbi = getBlockInfo(tbb);
 				if (tbi == NULL) goto pbp_cont;
-				if (tbi != NULL && tbi->canBePlaced != NULL) {
-					if (!(*tbi->canBePlaced)(player->world, tbb, x, y, z)) {
-						setBlockWorld(player->world, b2, x, y, z);
-						goto pbp_cont;
-					}
-				}
 				struct boundingbox pbb;
 				int bad = 0;
 				//int32_t cx = x >> 4;
@@ -506,6 +499,10 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 				//}
 				if (!bad) {
 					if (getBlockInfo(tbb)->onBlockPlaced != NULL) tbb = (*getBlockInfo(tbb)->onBlockPlaced)(player, player->world, tbb, x, y, z, face);
+					if (tbi->canBePlaced != NULL && !(*tbi->canBePlaced)(player->world, tbb, x, y, z)) {
+						setBlockWorld(player->world, b2, x, y, z);
+						goto pbp_cont;
+					}
 					setBlockWorld(player->world, tbb, x, y, z);
 					if (player->gamemode != 1) {
 						if (--ci->itemCount <= 0) {

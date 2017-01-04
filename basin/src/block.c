@@ -297,10 +297,10 @@ void dropItems_tallgrass(struct world* world, block blk, int32_t x, int32_t y, i
 int canBePlaced_ladder(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
 	uint8_t m = blk & 0x0f;
 	block b = 0;
-	if (m == 3) b = getBlockWorld(world, x, y, z + 1);
-	else if (m == 4) b = getBlockWorld(world, x - 1, y, z);
-	else if (m == 5) b = getBlockWorld(world, x + 1, y, z);
-	else b = getBlockWorld(world, x, y, z - 1);
+	if (m == 3) b = getBlockWorld(world, x, y, z - 1);
+	else if (m == 4) b = getBlockWorld(world, x + 1, y, z);
+	else if (m == 5) b = getBlockWorld(world, x - 1, y, z);
+	else b = getBlockWorld(world, x, y, z + 1);
 	return isNormalCube(getBlockInfo(b));
 }
 
@@ -309,10 +309,10 @@ block onBlockPlaced_ladder(struct player* player, struct world* world, block blk
 	int zng = 0;
 	int xng = 0;
 	int xpg = 0;
-	if (face == ZP && (zpg = isNormalCube(getBlockInfo(getBlockWorld(world, x, y, z - 1))))) return (blk & ~0xf) | 2;
-	else if (face == ZN && (zng = isNormalCube(getBlockInfo(getBlockWorld(world, x, y, z + 1))))) return (blk & ~0xf) | 3;
-	else if (face == XN && (xpg = isNormalCube(getBlockInfo(getBlockWorld(world, x - 1, y, z))))) return (blk & ~0xf) | 4;
-	else if (face == XP && (xng = isNormalCube(getBlockInfo(getBlockWorld(world, x + 1, y, z))))) return (blk & ~0xf) | 5;
+	if ((zpg = isNormalCube(getBlockInfo(getBlockWorld(world, x, y, z - 1)))) && face == ZP) return (blk & ~0xf) | 3;
+	else if ((zng = isNormalCube(getBlockInfo(getBlockWorld(world, x, y, z + 1)))) && face == ZN) return (blk & ~0xf) | 2;
+	else if ((xpg = isNormalCube(getBlockInfo(getBlockWorld(world, x + 1, y, z)))) && face == XN) return (blk & ~0xf) | 4;
+	else if ((xng = isNormalCube(getBlockInfo(getBlockWorld(world, x - 1, y, z)))) && face == XP) return (blk & ~0xf) | 5;
 	else if (zpg) return (blk & ~0xf) | 2;
 	else if (zng) return (blk & ~0xf) | 3;
 	else if (xng) return (blk & ~0xf) | 4;
@@ -336,7 +336,9 @@ block onBlockPlaced_vine(struct player* player, struct world* world, block blk, 
 	if (bi != NULL && bi->fullCube && bi->material->blocksMovement) out |= 0x8;
 	b = getBlockWorld(world, x, y + 1, z);
 	bi = getBlockInfo(b);
-	if ((b >> 4) != (BLK_VINE >> 4) && !(bi != NULL && bi->fullCube && bi->material->blocksMovement) && (out & 0x0f) == 0) {
+	if ((b >> 4) == (BLK_VINE >> 4)) {
+		return b;
+	} else if (!(bi != NULL && bi->fullCube && bi->material->blocksMovement) && (out & 0x0f) == 0) {
 		return 0;
 	}
 	return out;
@@ -1049,7 +1051,6 @@ void init_blocks() {
 	for (block b = BLK_LOG_ACACIA_1; b < BLK_LOG_OAK_14; b++)
 		getBlockInfo(b)->onBlockPlaced = &onBlockPlaced_log;
 	getBlockInfo(BLK_GRASS)->randomTick = &randomTick_grass;
-
 	tmp = getBlockInfo(BLK_VINE);
 	tmp->onBlockPlaced = &onBlockPlaced_vine;
 	tmp->onBlockUpdate = &onBlockUpdate_vine;
@@ -1058,4 +1059,5 @@ void init_blocks() {
 	tmp = getBlockInfo(BLK_LADDER);
 	tmp->onBlockPlaced = &onBlockPlaced_ladder;
 	tmp->canBePlaced = &canBePlaced_ladder;
+	tmp->onBlockUpdate = &onBlockUpdate_checkPlace;
 }

@@ -383,7 +383,7 @@ int main(int argc, char* argv[]) {
 		overworld = newWorld(8);
 		loadWorld(overworld, ovr);
 		printf("Overworld Loaded\n");
-		nether = newWorld();
+		//nether = newWorld();
 		//loadWorld(nether, neth);
 		//endworld = newWorld();
 		//loadWorld(endworld, ed);

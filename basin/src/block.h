@@ -629,4 +629,6 @@ void onBlockDestroyed_furnace(struct world* world, block blk, int32_t x, int32_t
 
 int canBePlaced_reeds(struct world* world, block blk, int32_t x, int32_t y, int32_t z);
 
+void randomTick_sapling(struct world* world, struct chunk* chunk, block blk, int32_t x, int32_t y, int32_t z);
+
 #endif /* BLOCK_H_ */
