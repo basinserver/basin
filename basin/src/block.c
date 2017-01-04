@@ -517,6 +517,14 @@ block onBlockPlaced_log(struct player* player, struct world* world, block blk, i
 	return nb;
 }
 
+void onBlockInteract_fencegate(struct world* world, block blk, int32_t x, int32_t y, int32_t z, struct player* player, uint8_t face, float curPosX, float curPosY, float curPosZ) {
+	printf("%x ", blk);
+	blk ^= (block)0b0100;
+	printf("%x\n", blk);
+	printf("%d %d %d\n", x, y, z);
+	setBlockWorld_guess(world, NULL, blk, x, y, z);
+}
+
 //
 
 struct block_info* getBlockInfo(block b) {
@@ -837,4 +845,6 @@ void init_blocks() {
 	for (block b = BLK_LOG_ACACIA_1; b < BLK_LOG_OAK_14; b++)
 		getBlockInfo(b)->onBlockPlaced = &onBlockPlaced_log;
 	getBlockInfo(BLK_GRASS)->randomTick = &randomTick_grass;
+	for (block b = BLK_FENCEGATE; b < BLK_FENCEGATE + 16; b++)
+		getBlockInfo(b)->onBlockInteract = &onBlockInteract_fencegate;
 }

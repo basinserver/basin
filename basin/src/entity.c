@@ -787,6 +787,11 @@ int moveEntity(struct entity* entity, double mx, double my, double mz, float shr
 				if (bi == NULL) continue;
 				for (size_t i = 0; i < bi->boundingBox_count; i++) {
 					struct boundingbox* bb = &bi->boundingBoxes[i];
+					if (!bi->fullCube) {
+						for (double *d = (double *) &bi->boundingBoxes[0], idx = 0; idx < 6; idx++, d++)
+							printf("%f ", *d);
+						printf("\n");
+					}
 					if (bb != NULL && bb->minX != bb->maxX && bb->minY != bb->maxY && bb->minZ != bb->maxZ) {
 						if (bb->maxX + x > obb.minX && bb->minX + x < obb.maxX ? (bb->maxY + y > obb.minY && bb->minY + y < obb.maxY ? bb->maxZ + z > obb.minZ && bb->minZ + z < obb.maxZ : 0) : 0) {
 							if (pbb.maxX > bb->minX + x && pbb.minX < bb->maxX + x && pbb.maxZ > bb->minZ + z && pbb.minZ < bb->maxZ + z) {

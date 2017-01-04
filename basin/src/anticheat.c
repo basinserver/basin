@@ -4,7 +4,7 @@
 #include "anticheat.h"
 
 #define AC_BEGIN beginProfilerSection("player_anticheat");
-#define AC_END(ret) { endProfilerSection("player_anticheat"); return ret; }
+#define AC_END(ret) { endProfilerSection("player_anticheat"); if (ret) printf("[AC] Player %s infraction at %s (%d)\n", player->name, __func__, ret); return ret; }
 
 int ac_chat(struct player* player, char* msg) {
 	AC_BEGIN
@@ -19,7 +19,6 @@ int ac_chat(struct player* player, char* msg) {
 
 int ac_tick(struct player* player, int onground) {
 	AC_BEGIN
-
 	AC_END(0)
 }
 
