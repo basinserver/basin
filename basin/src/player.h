@@ -11,11 +11,6 @@
 #include "network.h"
 
 typedef struct _acstate {
-	uint8_t real_onGround;
-	uint8_t flightInfraction;
-	double ldy;
-	size_t lastJump;
-	uint32_t offGroundTime;
 } acstate_t;
 
 struct player {
