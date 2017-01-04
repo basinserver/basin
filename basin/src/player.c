@@ -71,11 +71,6 @@ struct player* newPlayer(struct entity* entity, char* name, struct uuid uuid, st
 	struct timespec ts;
 	clock_gettime(CLOCK_MONOTONIC, &ts);
 	player->reachDistance = 6.f;
-	player->acstate.real_onGround = 1;
-	player->acstate.flightInfraction = 0;
-	player->acstate.ldy = 0.;
-	player->acstate.lastJump = 0;
-	player->acstate.offGroundTime = 0;
 	player->spawnedIn = 0;
 	player->llTick = 0;
 	player->triggerRechunk = 0;
@@ -157,6 +152,8 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 		}
 	} else if (inp->id == PKT_PLAY_SERVER_CHATMESSAGE) {
 		char* msg = inp->data.play_server.chatmessage.message;
+		if (ac_chat(player, msg))
+			goto cont;
 		if (startsWith(msg, "/")) {
 			callCommand(player, msg + 1);
 		} else {
