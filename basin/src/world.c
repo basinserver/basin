@@ -685,8 +685,14 @@ void setBlockWorld(struct world* world, block blk, int32_t x, int32_t y, int32_t
 	setBlockWorld_guess(world, ch, blk, x, y, z);
 }
 
+void setBlockWorld_noupdate(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
+	struct chunk* ch = getChunk(world, x >> 4, z >> 4);
+	if (ch == NULL) return;
+	setBlockWorld_guess_noupdate(world, ch, blk, x, y, z);
+}
+
 void setBlockWorld_guess(struct world* world, struct chunk* chunk, block blk, int32_t x, int32_t y, int32_t z) {
-	if ((x >> 4) != chunk->x || ((z >> 4) != chunk->z)) {
+	if (chunk == NULL || (x >> 4) != chunk->x || ((z >> 4) != chunk->z)) {
 		chunk = getChunk(world, x >> 4, z >> 4);
 	}
 	if (chunk == NULL) return;
@@ -710,6 +716,26 @@ void setBlockWorld_guess(struct world* world, struct chunk* chunk, block blk, in
 	updateBlockWorld_guess(world, chunk, x, y, z - 1);
 	updateBlockWorld_guess(world, chunk, x, y + 1, z);
 	updateBlockWorld_guess(world, chunk, x, y - 1, z);
+}
+
+void setBlockWorld_guess_noupdate(struct world* world, struct chunk* chunk, block blk, int32_t x, int32_t y, int32_t z) {
+	if (chunk == NULL || (x >> 4) != chunk->x || ((z >> 4) != chunk->z)) {
+		chunk = getChunk(world, x >> 4, z >> 4);
+	}
+	if (chunk == NULL) return;
+	block ob = getBlockChunk(chunk, x & 0x0f, y, z & 0x0f);
+	setBlockChunk(chunk, blk, x & 0x0f, y, z & 0x0f, world->dimension == 0);
+	BEGIN_BROADCAST_DISTXYZ((double) x + .5, (double) y + .5, (double) z + .5, world->players, CHUNK_VIEW_DISTANCE * 16.)
+	struct packet* pkt = xmalloc(sizeof(struct packet));
+	pkt->id = PKT_PLAY_CLIENT_BLOCKCHANGE;
+	pkt->data.play_client.blockchange.location.x = x;
+	pkt->data.play_client.blockchange.location.y = y;
+	pkt->data.play_client.blockchange.location.z = z;
+	pkt->data.play_client.blockchange.block_id = blk;
+	add_queue(bc_player->outgoingPacket, pkt);
+	END_BROADCAST(world->players)
+	struct block_info* bi = getBlockInfo(ob);
+	if (bi != NULL && bi->onBlockDestroyed != NULL) (*bi->onBlockDestroyed)(world, ob, x, y, z);
 }
 
 struct world* newWorld(size_t chl_count) {

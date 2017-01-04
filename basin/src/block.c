@@ -336,7 +336,7 @@ block onBlockPlaced_vine(struct player* player, struct world* world, block blk, 
 	if (bi != NULL && bi->fullCube && bi->material->blocksMovement) out |= 0x8;
 	b = getBlockWorld(world, x, y + 1, z);
 	bi = getBlockInfo(b);
-	if (!(bi != NULL && bi->fullCube && bi->material->blocksMovement) && (out & 0x0f) == 0) {
+	if ((b >> 4) != (BLK_VINE >> 4) && !(bi != NULL && bi->fullCube && bi->material->blocksMovement) && (out & 0x0f) == 0) {
 		return 0;
 	}
 	return out;
@@ -344,7 +344,7 @@ block onBlockPlaced_vine(struct player* player, struct world* world, block blk, 
 
 void onBlockUpdate_vine(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
 	block b = onBlockPlaced_vine(NULL, world, blk, x, y, z, -1);
-	if (b != blk) setBlockWorld(world, blk, x, y, z);
+	if (b != blk) setBlockWorld(world, b, x, y, z);
 }
 
 int canBePlaced_vine(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
@@ -361,6 +361,7 @@ int canBePlaced_vine(struct world* world, block blk, int32_t x, int32_t y, int32
 	bi = getBlockInfo(b);
 	if (bi != NULL && bi->fullCube && bi->material->blocksMovement) return 1;
 	b = getBlockWorld(world, x, y + 1, z);
+	if ((b >> 4) == (BLK_VINE >> 4)) return 1;
 	bi = getBlockInfo(b);
 	if (bi != NULL && bi->fullCube && bi->material->blocksMovement) return 1;
 	return 0;
@@ -370,7 +371,7 @@ void randomTick_vine(struct world* world, struct chunk* ch, block blk, int32_t x
 	if (rand() % 4 != 0) return;
 	block below = getBlockWorld_guess(world, ch, x, y - 1, z);
 	if (below == 0) {
-		setBlockWorld_guess(world, ch, blk, x, y - 1, z);
+		setBlockWorld_guess(world, ch, onBlockPlaced_vine(NULL, world, BLK_VINE, x, y, z, -1), x, y - 1, z);
 	}
 }
 
@@ -1048,6 +1049,7 @@ void init_blocks() {
 	for (block b = BLK_LOG_ACACIA_1; b < BLK_LOG_OAK_14; b++)
 		getBlockInfo(b)->onBlockPlaced = &onBlockPlaced_log;
 	getBlockInfo(BLK_GRASS)->randomTick = &randomTick_grass;
+
 	tmp = getBlockInfo(BLK_VINE);
 	tmp->onBlockPlaced = &onBlockPlaced_vine;
 	tmp->onBlockUpdate = &onBlockUpdate_vine;
@@ -1056,5 +1058,4 @@ void init_blocks() {
 	tmp = getBlockInfo(BLK_LADDER);
 	tmp->onBlockPlaced = &onBlockPlaced_ladder;
 	tmp->canBePlaced = &canBePlaced_ladder;
-
 }

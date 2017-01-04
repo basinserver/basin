@@ -175,6 +175,10 @@ struct subworld { // subworld for players thread
 		uint8_t defunct;
 };
 
+void setBlockWorld_noupdate(struct world* world, block blk, int32_t x, int32_t y, int32_t z);
+
+void setBlockWorld_guess_noupdate(struct world* world, struct chunk* chunk, block blk, int32_t x, int32_t y, int32_t z);
+
 void tick_world(struct world* world);
 
 struct chunk* getEntityChunk(struct entity* entity);
