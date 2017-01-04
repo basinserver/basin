@@ -383,7 +383,7 @@ int main(int argc, char* argv[]) {
 		overworld = newWorld(8);
 		loadWorld(overworld, ovr);
 		printf("Overworld Loaded\n");
-		nether = newWorld();
+		//nether = newWorld();
 		//loadWorld(nether, neth);
 		//endworld = newWorld();
 		//loadWorld(endworld, ed);
@@ -446,6 +446,7 @@ int main(int argc, char* argv[]) {
 	pthread_mutex_init(&chunk_wake_mut, NULL);
 	pthread_mutex_init(&glob_tick_mut, NULL);
 	pthread_cond_init(&glob_tick_cond, NULL);
+	if (worlds == NULL) return -1;
 	for (size_t i = 0; i < worlds->size; i++) {
 		if (worlds->data[i] == NULL) continue;
 		pthread_create(&tt, NULL, &tick_world, worlds->data[i]);

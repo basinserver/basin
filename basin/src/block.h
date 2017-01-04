@@ -71,12 +71,14 @@
 #define BLK_LEAVES_SPRUCE 289
 #define BLK_LEAVES_BIRCH 290
 #define BLK_LEAVES_JUNGLE 291
+#define BLK_LEAVES_OAK_2 292
 #define BLK_LEAVES_SPRUCE_1 293
 #define BLK_LEAVES_BIRCH_1 294
 #define BLK_LEAVES_JUNGLE_1 295
 #define BLK_LEAVES_SPRUCE_2 297
 #define BLK_LEAVES_BIRCH_2 298
 #define BLK_LEAVES_JUNGLE_2 299
+#define BLK_LEAVES_OAK_3 300
 #define BLK_LEAVES_SPRUCE_3 301
 #define BLK_LEAVES_BIRCH_3 302
 #define BLK_LEAVES_JUNGLE_3 303
@@ -627,5 +629,7 @@ void onBlockDestroyed_chest(struct world* world, block blk, int32_t x, int32_t y
 void onBlockDestroyed_furnace(struct world* world, block blk, int32_t x, int32_t y, int32_t z);
 
 int canBePlaced_reeds(struct world* world, block blk, int32_t x, int32_t y, int32_t z);
+
+void randomTick_sapling(struct world* world, struct chunk* chunk, block blk, int32_t x, int32_t y, int32_t z);
 
 #endif /* BLOCK_H_ */
