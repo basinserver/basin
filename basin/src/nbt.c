@@ -77,7 +77,7 @@ int __recurReadNBT(struct nbt_tag** root, unsigned char* buffer, size_t buflen, 
 		buffer++;
 		r++;
 		buflen--;
-		if (cur->id > 0) {
+		if (cur->id) {
 			uint16_t sl;
 			if (buflen < 2) {
 				free(cur);
@@ -293,16 +293,19 @@ int __recurReadNBT(struct nbt_tag** root, unsigned char* buffer, size_t buflen, 
 	return r;
 }
 
+#define DECOMPRESS_BUF_SIZE 16384
 ssize_t decompressNBT(void* data, size_t size, void** dest) {
-	void* rtbuf = xmalloc(16384);
-	size_t rtc = 16384;
+	void* rtbuf = xmalloc(DECOMPRESS_BUF_SIZE);
+	size_t rtc = DECOMPRESS_BUF_SIZE;
 	z_stream strm;
 	strm.zalloc = Z_NULL;
 	strm.zfree = Z_NULL;
 	strm.opaque = Z_NULL;
+	strm.avail_in = 0;
+	strm.next_in = Z_NULL;
 	int dr = 0;
-	if ((dr = inflateInit2(&strm, (32 + MAX_WBITS))) != Z_OK) { //
-		//printf("Compression initialization error!\n");
+	if ((dr = inflateInit2(&strm, (32 + MAX_WBITS))) != Z_OK) {
+		printf("Compression initialization error!\n");
 		xfree(rtbuf);
 		return -1;
 	}
@@ -311,15 +314,15 @@ ssize_t decompressNBT(void* data, size_t size, void** dest) {
 	strm.avail_out = rtc;
 	strm.next_out = rtbuf;
 	do {
-		if (rtc - strm.total_out < 8192) {
-			rtc += 16384;
+		if (rtc - strm.total_out < DECOMPRESS_BUF_SIZE / 2) {
+			rtc += DECOMPRESS_BUF_SIZE;
 			rtbuf = realloc(rtbuf, rtc);
 		}
 		strm.avail_out = rtc - strm.total_out;
 		strm.next_out = rtbuf + strm.total_out;
 		dr = inflate(&strm, Z_FINISH);
 		if (dr == Z_STREAM_ERROR) {
-			//printf("Compression Read Error!\n");
+			printf("Compression Read Error!\n");
 			inflateEnd(&strm);
 			xfree(rtbuf);
 			return -1;

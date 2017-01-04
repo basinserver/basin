@@ -737,11 +737,10 @@ int loadWorld(struct world* world, char* path) {
 	size_t ldi = 0;
 	ssize_t i = 0;
 	while ((i = read(fd, ld + ldi, ldc - ldi)) > 0) {
-		if (ldc - ldi < 512) {
+		if (ldc - (ldi += i) < 512) {
 			ldc += 1024;
 			ld = xrealloc(ld, ldc);
 		}
-		ldi += i;
 	}
 	close(fd);
 	if (i < 0) {
@@ -756,7 +755,7 @@ int loadWorld(struct world* world, char* path) {
 	}
 	if (readNBT(&world->level, nld, ds) < 0) return -1;
 	xfree(nld);
-	struct nbt_tag* data = world->level->children[0];
+	struct nbt_tag* data = getNBTChild(world->level, "Data");
 	world->levelType = getNBTChild(data, "generatorName")->data.nbt_string;
 	world->spawnpos.x = getNBTChild(data, "SpawnX")->data.nbt_int;
 	world->spawnpos.y = getNBTChild(data, "SpawnY")->data.nbt_int;

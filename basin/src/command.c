@@ -166,6 +166,7 @@ void init_base_commands() {
 	registerCommand("motd", &command_motd);
 	registerCommand("list", &command_list);
 	registerCommand("ls", &command_list);
+	registerCommand("who", &command_list);
 	registerCommand("kill", &command_kill);
 }
 

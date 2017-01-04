@@ -9,7 +9,7 @@
 int ac_chat(struct player* player, char* msg) {
 	AC_BEGIN
 	for (char* p = msg; *p; p++) {
-		if (*p < 32 || *p == 127 || *p == '\u00A7') {
+		if (*p < 32 || *p == 127 || *p == 0xA7) {
 			kickPlayer(player, "Invalid chat message");
 			AC_END(1);
 		}
