@@ -732,10 +732,7 @@ block onBlockPlaced_log(struct player* player, struct world* world, block blk, i
 }
 
 void onBlockInteract_fencegate(struct world* world, block blk, int32_t x, int32_t y, int32_t z, struct player* player, uint8_t face, float curPosX, float curPosY, float curPosZ) {
-	printf("%x ", blk);
-	blk ^= (block)0b0100;
-	printf("%x\n", blk);
-	printf("%d %d %d\n", x, y, z);
+	blk ^= (block)0b0100; // toggle opened bit
 	setBlockWorld_guess(world, NULL, blk, x, y, z);
 }
 
