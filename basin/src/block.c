@@ -885,6 +885,38 @@ int fluid_canFlowInto(int water, block b) {
 	return fluid_isUnblocked(water, b, bi);
 }
 
+int lava_checkForMixing(struct world* world, struct chunk* ch, block blk, int32_t x, uint8_t y, int32_t z) {
+	int cww = 0;
+	block b = getBlockWorld_guess(world, ch, x + 1, y, z);
+	if (b >> 4 == BLK_WATER >> 4 || b >> 4 == BLK_WATER_1 >> 4) cww = 1;
+	if (!cww) {
+		b = getBlockWorld_guess(world, ch, x - 1, y, z);
+		if (b >> 4 == BLK_WATER >> 4 || b >> 4 == BLK_WATER_1 >> 4) cww = 1;
+	}
+	if (!cww) {
+		b = getBlockWorld_guess(world, ch, x, y, z + 1);
+		if (b >> 4 == BLK_WATER >> 4 || b >> 4 == BLK_WATER_1 >> 4) cww = 1;
+	}
+	if (!cww) {
+		b = getBlockWorld_guess(world, ch, x, y, z - 1);
+		if (b >> 4 == BLK_WATER >> 4 || b >> 4 == BLK_WATER_1 >> 4) cww = 1;
+	}
+	if (!cww) {
+		b = getBlockWorld_guess(world, ch, x, y + 1, z);
+		if (b >> 4 == BLK_WATER >> 4 || b >> 4 == BLK_WATER_1 >> 4) cww = 1;
+	}
+	if (cww) {
+		if ((blk & 0x0f) == 0) {
+			setBlockWorld_guess(world, ch, BLK_OBSIDIAN, x, y, z);
+			return 1;
+		} else if ((blk & 0x0f) <= 4) {
+			setBlockWorld_guess(world, ch, BLK_COBBLESTONE, x, y, z);
+			return 1;
+		}
+	}
+	return 0;
+}
+
 void fluid_doFlowInto(int water, struct world* world, struct chunk* ch, int32_t x, uint8_t y, int32_t z, int level, block b) {
 	// potentially triggerMixEffects
 	struct block_info* bi = getBlockInfo(b);
@@ -892,11 +924,77 @@ void fluid_doFlowInto(int water, struct world* world, struct chunk* ch, int32_t 
 		dropBlockDrops(world, b, NULL, x, y, z);
 	}
 	setBlockWorld_guess(world, ch, (water ? BLK_WATER : BLK_LAVA) | level, x, y, z);
+	scheduleBlockTick(world, x, y, z, water ? 5 : (world->dimension == -1 ? 10 : 30));
 }
 
-void onBlockUpdate_fluid(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
+void onBlockUpdate_staticfluid(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
+	int water = (blk >> 4) == (BLK_WATER >> 4) || (blk >> 4) == (BLK_WATER_1 >> 4);
+	if (water || !lava_checkForMixing(world, NULL, blk, x, y, z)) {
+		scheduleBlockTick(world, x, y, z, water ? 5 : (world->dimension == -1 ? 10 : 30));
+		if (water) setBlockWorld_noupdate(world, BLK_WATER | (blk & 0x0f), x, y, z);
+		else if (!water) setBlockWorld_noupdate(world, BLK_LAVA | (blk & 0x0f), x, y, z);
+	}
+}
+
+void randomTick_staticlava(struct world* world, struct chunk* ch, block blk, int32_t x, int32_t y, int32_t z) {
+	int t = rand() % 3;
+	if (t == 0) {
+		for (int i = 0; i < 3; i++) {
+			int32_t nx = x + rand() % 3 - 1;
+			int32_t nz = z + rand() % 3 - 1;
+			if (getBlockWorld_guess(world, ch, nx, y + 1, nz) == 0) {
+				struct block_info* bi = getBlockInfo(getBlockWorld_guess(world, ch, nx, y, nz));
+				if (bi != NULL && bi->material->flammable) {
+					setBlockWorld_guess(world, ch, BLK_FIRE, nx, y + 1, nz);
+				}
+			}
+		}
+	} else {
+		for (int i = 0; i < t; i++) {
+			int32_t nx = x + rand() % 3 - 1;
+			int32_t nz = z + rand() % 3 - 1;
+			block mb = getBlockWorld_guess(world, ch, nx, y + 1, nz);
+			struct block_info* bi = getBlockInfo(mb);
+			if (mb == 0 || bi == NULL) {
+				int g = 0;
+				bi = getBlockInfo(getBlockWorld_guess(world, ch, nx + 1, y + 1, nz));
+				if (bi != NULL && bi->material->flammable) g = 1;
+				if (!g) {
+					bi = getBlockInfo(getBlockWorld_guess(world, ch, nx - 1, y + 1, nz));
+					if (bi != NULL && bi->material->flammable) g = 1;
+				}
+				if (!g) {
+					bi = getBlockInfo(getBlockWorld_guess(world, ch, nx, y + 1, nz - 1));
+					if (bi != NULL && bi->material->flammable) g = 1;
+				}
+				if (!g) {
+					bi = getBlockInfo(getBlockWorld_guess(world, ch, nx, y + 1, nz + 1));
+					if (bi != NULL && bi->material->flammable) g = 1;
+				}
+				if (!g) {
+					bi = getBlockInfo(getBlockWorld_guess(world, ch, nx, y, nz - 1));
+					if (bi != NULL && bi->material->flammable) g = 1;
+				}
+				if (!g) {
+					bi = getBlockInfo(getBlockWorld_guess(world, ch, nx, y + 2, nz - 1));
+					if (bi != NULL && bi->material->flammable) g = 1;
+				}
+				if (g) {
+					setBlockWorld_guess(world, ch, BLK_FIRE, nx, y + 1, nz);
+					return;
+				}
+			} else if (bi->material->blocksMovement) return;
+		}
+	}
+}
+
+void onBlockUpdate_flowinglava(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
+	lava_checkForMixing(world, NULL, blk, x, y, z);
+}
+
+int scheduledTick_flowingfluid(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
 	struct chunk* ch = getChunk(world, x >> 4, z >> 4);
-	if (ch == NULL) return;
+	if (ch == NULL) return 0;
 	int level = blk & 0x0f;
 	int resistance = 1;
 	if (((blk >> 4) == (BLK_LAVA >> 4) || (blk >> 4) == (BLK_LAVA_1 >> 4)) && world->dimension != -1) resistance++;
@@ -929,7 +1027,9 @@ void onBlockUpdate_fluid(struct world* world, block blk, int32_t x, int32_t y, i
 			tickRate *= 4;
 		}
 		if (i1 == level) {
-			// set static
+			if (water) setBlockWorld_noupdate(world, BLK_WATER_1 | (i1), x, y, z);
+			else if (!water) setBlockWorld_noupdate(world, BLK_LAVA_1 | (i1), x, y, z);
+			tickRate = 0;
 		} else {
 			level = i1;
 			if (i1 < 0) setBlockWorld_guess(world, ch, 0, x, y, z);
@@ -938,21 +1038,23 @@ void onBlockUpdate_fluid(struct world* world, block blk, int32_t x, int32_t y, i
 			}
 		}
 	} else {
-		//set static
+		if (water) setBlockWorld_noupdate(world, BLK_WATER_1 | (level), x, y, z);
+		else if (!water) setBlockWorld_noupdate(world, BLK_LAVA_1 | (level), x, y, z);
+		tickRate = 0;
 	}
 	block down = getBlockWorld_guess(world, ch, x, y - 1, z);
 	if (fluid_canFlowInto(water, down)) {
 		if (!water && ((down >> 4) == (BLK_WATER >> 4) || (down >> 4) == (BLK_WATER_1 >> 4))) {
 			setBlockWorld_guess(world, ch, BLK_STONE, x, y - 1, z);
 			//trigger mix effects
-			return;
+			return tickRate;
 		}
 		fluid_doFlowInto(water, world, ch, x, y - 1, z, level >= 8 ? level : (level + 8), down);
 	} else if (level >= 0) {
 		if (level == 0 || !fluid_isUnblocked(water, down, getBlockInfo(down))) {
 			int k1 = level + resistance;
 			if (level >= 8) k1 = 1;
-			if (k1 >= 8) return;
+			if (k1 >= 8) return tickRate;
 			block b = getBlockWorld_guess(world, ch, x + 1, y, z);
 			if (fluid_canFlowInto(water, b)) fluid_doFlowInto(water, world, ch, x + 1, y, z, k1, b);
 			b = getBlockWorld_guess(world, ch, x - 1, y, z);
@@ -963,6 +1065,7 @@ void onBlockUpdate_fluid(struct world* world, block blk, int32_t x, int32_t y, i
 			if (fluid_canFlowInto(water, b)) fluid_doFlowInto(water, world, ch, x, y, z - 1, k1, b);
 		}
 	}
+	return tickRate;
 }
 
 //
@@ -1296,8 +1399,13 @@ void init_blocks() {
 	tmp->onBlockUpdate = &onBlockUpdate_checkPlace;
 	for (block b = BLK_FENCEGATE; b < BLK_FENCEGATE + 16; b++)
 		getBlockInfo(b)->onBlockInteract = &onBlockInteract_fencegate;
-	getBlockInfo(BLK_WATER)->onBlockUpdate = &onBlockUpdate_fluid;
-	getBlockInfo(BLK_WATER_1)->onBlockUpdate = &onBlockUpdate_fluid;
-	getBlockInfo(BLK_LAVA)->onBlockUpdate = &onBlockUpdate_fluid;
-	getBlockInfo(BLK_LAVA_1)->onBlockUpdate = &onBlockUpdate_fluid;
+	getBlockInfo(BLK_WATER)->scheduledTick = &scheduledTick_flowingfluid;
+	getBlockInfo(BLK_WATER_1)->onBlockUpdate = &onBlockUpdate_staticfluid;
+	tmp = getBlockInfo(BLK_LAVA);
+	tmp->scheduledTick = &scheduledTick_flowingfluid;
+	tmp->onBlockUpdate = &onBlockUpdate_flowinglava;
+	tmp = getBlockInfo(BLK_LAVA_1);
+	tmp->onBlockUpdate = &onBlockUpdate_staticfluid;
+	tmp->randomTick = &randomTick_staticlava;
+
 }

@@ -84,14 +84,14 @@ int onItemInteract_bucket(struct world* world, struct player* player, uint8_t sl
 	uint16_t ba = b >> 4;
 	if (slot->item == ITM_BUCKETWATER) {
 		if (b != 0 && !bi->material->replacable && ba != BLK_WATER >> 4 && ba != BLK_WATER_1 >> 4) return 0;
-		setBlockWorld(world, BLK_WATER, x, y, z);
+		setBlockWorld(world, BLK_WATER_1, x, y, z);
 		if (player->gamemode != 1) {
 			slot->item = ITM_BUCKET;
 			setSlot(player, player->inventory, slot_index, slot, 1, 1);
 		}
 	} else if (slot->item == ITM_BUCKETLAVA) {
 		if (b != 0 && !bi->material->replacable && ba != BLK_LAVA >> 4 && ba != BLK_LAVA_1 >> 4) return 0;
-		setBlockWorld(world, BLK_LAVA, x, y, z);
+		setBlockWorld(world, BLK_LAVA_1, x, y, z);
 		if (player->gamemode != 1) {
 			slot->item = ITM_BUCKET;
 			setSlot(player, player->inventory, slot_index, slot, 1, 1);

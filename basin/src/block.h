@@ -24,7 +24,7 @@
 #define BLK_DIRT 48
 #define BLK_DIRT_COARSE 49
 #define BLK_DIRT_PODZOL 50
-#define BLK_STONEBRICK 64
+#define BLK_COBBLESTONE 64
 #define BLK_WOOD_OAK 80
 #define BLK_WOOD_SPRUCE 81
 #define BLK_WOOD_BIRCH 82
@@ -592,6 +592,7 @@ struct block_info {
 		void (*dropItems)(struct world* world, block blk, int32_t x, int32_t y, int32_t z, int fortune);
 		int (*canBePlaced)(struct world* world, block blk, int32_t x, int32_t y, int32_t z);
 		void (*randomTick)(struct world* world, struct chunk* ch, block blk, int32_t x, int32_t y, int32_t z);
+		int (*scheduledTick)(struct world* world, block blk, int32_t x, int32_t y, int32_t z);
 		struct boundingbox* boundingBoxes;
 		size_t boundingBox_count;
 		float hardness;

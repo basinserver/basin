@@ -497,7 +497,7 @@ block getBlockWorld(struct world* world, int32_t x, int32_t y, int32_t z) {
 
 block getBlockWorld_guess(struct world* world, struct chunk* ch, int32_t x, int32_t y, int32_t z) {
 	if (y < 0 || y > 255) return 0;
-	if ((x >> 4) == ch->x && ((z >> 4) == ch->z)) return getBlockChunk(ch, x & 0x0f, y, z & 0x0f);
+	if (ch != NULL && (x >> 4) == ch->x && ((z >> 4) == ch->z)) return getBlockChunk(ch, x & 0x0f, y, z & 0x0f);
 	else return getBlockWorld(world, x, y, z);
 }
 
@@ -598,6 +598,16 @@ void freeChunk(struct chunk* chunk) {
 	//END_HASHMAP_ITERATION(chunk->entities)
 	//del_hashmap(chunk->entities);
 	xfree(chunk);
+}
+
+void scheduleBlockTick(struct world* world, int32_t x, int32_t y, int32_t z, int32_t ticksFromNow) {
+	if (y < 0 || y > 255) return;
+	struct scheduled_tick* st = xmalloc(sizeof(struct scheduled_tick));
+	st->x = x;
+	st->y = y;
+	st->z = z;
+	st->ticksLeft = ticksFromNow;
+	put_hashmap(world->scheduledTicks, (uint64_t) st, st);
 }
 
 struct region* newRegion(char* path, int16_t x, int16_t z, size_t chr_count) {
@@ -760,6 +770,7 @@ struct world* newWorld(size_t chl_count) {
 	world->chl_count = chl_count;
 	world->subworlds = new_hashmap(1, 1);
 	world->skylightSubtracted = 0;
+	world->scheduledTicks = new_hashmap(1, 1);
 	return world;
 }
 
@@ -911,6 +922,23 @@ void tick_world(struct world* world) {
 		}
 		//endProfilerSection("tick_chunk_tileentity");
 		END_HASHMAP_ITERATION(world->chunks)
+		BEGIN_HASHMAP_ITERATION(world->scheduledTicks)
+		struct scheduled_tick* st = value;
+		if (--st->ticksLeft <= 0) {
+			block b = getBlockWorld(world, st->x, st->y, st->z);
+			struct block_info* bi = getBlockInfo(b);
+			int k = 0;
+			pthread_rwlock_unlock(&world->scheduledTicks->data_mutex);
+			if (bi->scheduledTick != NULL) k = (*bi->scheduledTick)(world, b, st->x, st->y, st->z);
+			if (k > 0) {
+				st->ticksLeft = k;
+			} else {
+				put_hashmap(world->scheduledTicks, (uint64_t) st, NULL);
+				xfree(st);
+			}
+			pthread_rwlock_rdlock(&world->scheduledTicks->data_mutex);
+		}
+		END_HASHMAP_ITERATION(world->scheduledTicks)
 		endProfilerSection("tick_chunks");
 	}
 }
@@ -932,6 +960,10 @@ void freeWorld(struct world* world) { // assumes all chunks are unloaded
 	freePlayer(value);
 	END_HASHMAP_ITERATION(world->players)
 	del_hashmap(world->players);
+	BEGIN_HASHMAP_ITERATION(world->scheduledTicks)
+	xfree(value);
+	END_HASHMAP_ITERATION(world->scheduledTicks)
+	del_hashmap(world->scheduledTicks);
 	if (world->level != NULL) {
 		freeNBT(world->level);
 		xfree(world->level);

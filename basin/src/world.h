@@ -150,6 +150,13 @@ struct region {
 		char* file;
 };
 
+struct scheduled_tick {
+		int32_t x;
+		int32_t y;
+		int32_t z;
+		int32_t ticksLeft;
+};
+
 struct world {
 		struct hashmap* entities;
 		struct hashmap* players;
@@ -167,6 +174,7 @@ struct world {
 		size_t chl_count;
 		struct hashmap* subworlds;
 		uint8_t skylightSubtracted;
+		struct hashmap* scheduledTicks;
 };
 
 struct subworld { // subworld for players thread
@@ -174,6 +182,8 @@ struct subworld { // subworld for players thread
 		struct hashmap* players;
 		uint8_t defunct;
 };
+
+void scheduleBlockTick(struct world* world, int32_t x, int32_t y, int32_t z, int32_t ticksFromNow);
 
 void setBlockWorld_noupdate(struct world* world, block blk, int32_t x, int32_t y, int32_t z);
 
