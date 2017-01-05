@@ -11,15 +11,16 @@ A high performance Minecraft server implementation written in C.
 * Item entities
 * Chests, Furnaces, Crafting
 * PvP
+* Fall damage
+* Block physics & updates
+* C Plugin System
 
 # Planned Features
 * Natural Mob Spawning & AI
-* Lua & C Plugin Systems
+* Lua Plugin Systems
 * Comprehensive permissions & commands system
 * Ultra-low memory mode - Sacrifice CPU Cycles for further memory use reduction
 * Entities-by-chunk logic - Hold millions of entities in a world
-* Block physics & updates
-* Fall damage
 * World generation
 * Lighting
 * Comprehensive opt-in Anticheat
