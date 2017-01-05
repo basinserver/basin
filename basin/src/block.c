@@ -610,62 +610,188 @@ void tree_addHangingVine(struct world* world, struct chunk* chunk, block b, int3
 	}
 }
 
+int tree_checkAndPlaceLeaf(struct world* world, struct chunk* chunk, block b, int32_t x, int32_t y, int32_t z) {
+	struct block_info* bi = getBlockInfo(getBlockWorld_guess(world, chunk, x, y, z));
+	if (bi == NULL || streq_nocase(bi->material->name, "air") || streq_nocase(bi->material->name, "leaves")) {
+		setBlockWorld_guess(world, chunk, b, x, y, z);
+		return 1;
+	}
+	return 0;
+}
+
 void randomTick_sapling(struct world* world, struct chunk* chunk, block blk, int32_t x, int32_t y, int32_t z) {
 	uint8_t lwu = getLightWorld(world, x, y + 1, z, 1);
 	if (lwu >= 9 && rand() % 7 == 0) {
 		if ((blk & 0x8) == 0x8) {
 			uint8_t type = blk & 0x7;
-			if (type == 0 || type == 2 || type == 3) { //oak
-				block log = BLK_LOG_OAK;
-				block leaf = BLK_LEAVES_OAK_2;
-				if (type == 2) {
-					log = BLK_LOG_BIRCH;
-					leaf = BLK_LEAVES_BIRCH_2;
-				} else if (type == 3) {
-					log = BLK_LOG_JUNGLE;
-					leaf = BLK_LEAVES_JUNGLE_2;
+			block log = BLK_LOG_OAK;
+			block leaf = BLK_LEAVES_OAK_2;
+			if (type == 1) {
+				log = BLK_LOG_SPRUCE;
+				leaf = BLK_LEAVES_SPRUCE_2;
+			} else if (type == 2) {
+				log = BLK_LOG_BIRCH;
+				leaf = BLK_LEAVES_BIRCH_2;
+			} else if (type == 3) {
+				log = BLK_LOG_JUNGLE;
+				leaf = BLK_LEAVES_JUNGLE_2;
+			} else if (type == 4) {
+				log = BLK_LOG_ACACIA_1;
+				leaf = BLK_LEAVES_ACACIA_2;
+			} else if (type == 5) {
+				log = BLK_LOG_BIG_OAK_1;
+				leaf = BLK_LEAVES_BIG_OAK_2;
+			}
+			uint8_t biome = getBiome(world, x, z);
+			uint8_t vines = type == 0 && (biome == BIOME_SWAMPLAND || biome == BIOME_SWAMPLANDM);
+			uint8_t cocoa = type == 3;
+			int big = type == 0 && rand() % 10 == 0;
+			if (!big) {
+				uint8_t height = 0;
+				if (type == 0) height = rand() % 3 + 4;
+				else if (type == 1) height = 6 + rand() % 4;
+				else if (type == 2) height = rand() % 3 + 5;
+				else if (type == 3) height = 3 + rand() % 10;
+				else if (type == 4) height = 5 + rand() % 6;
+				if (y < 1 || y + height + 1 > 256) return;
+				for (int ty = y; ty <= y + height + 1; ty++) {
+					if (ty < 0 || ty >= 256) return;
+					int width = 1;
+					if (ty == y) width = 0;
+					if (ty >= y + 1 + height - 2) width = 2;
+					for (int tx = x - width; tx <= x + width; tx++) {
+						for (int tz = z - width; tz <= z + width; tz++) {
+							if (!tree_canGrowInto(getBlockWorld_guess(world, chunk, tx, ty, tz))) return;
+						}
+					}
 				}
-				uint8_t biome = getBiome(world, x, z);
-				uint8_t vines = type == 0 && (biome == BIOME_SWAMPLAND || biome == BIOME_SWAMPLANDM);
-				uint8_t cocoa = type == 3;
-				int big = type == 0 && rand() % 10 == 0;
-				if (!big) {
-					uint8_t height = rand() % 3;
-					if (type == 0) height += 4;
-					else if (type == 2) height += 5;
-					else if (type == 3) height += 3 + rand() % 7;
-					if (y < 1 || y + height + 1 > 256) return;
-					for (int ty = y; ty <= y + height + 1; ty++) {
-						if (ty < 0 || ty >= 256) return;
-						int width = 1;
-						if (ty == y) width = 0;
-						if (ty >= y + 1 + height - 2) width = 2;
-						for (int tx = x - width; tx <= x + width; tx++) {
-							for (int tz = z - width; tz <= z + width; tz++) {
-								if (!tree_canGrowInto(getBlockWorld_guess(world, chunk, tx, ty, tz))) return;
+				block down = getBlockWorld_guess(world, chunk, x, y - 1, z);
+				if ((down != BLK_GRASS && down != BLK_DIRT && down != BLK_FARMLAND) || y >= 256 - height - 1) return;
+				if (down == BLK_FARMLAND && type == 4) return;
+				setBlockWorld_guess(world, chunk, BLK_DIRT, x, y - 1, z);
+				if (type == 4) {
+					int k2 = height - rand() % 4 - 1;
+					int l2 = 3 - rand() % 3;
+					int i3 = x;
+					int j1 = z;
+					int k1 = 0;
+					int rx = rand() % 4;
+					int ox = 0;
+					int oz = 0;
+					if (rx == 0) ox++;
+					else if (rx == 1) ox--;
+					else if (rx == 2) oz++;
+					else if (rx == 3) oz--;
+					for (int l1 = 0; l1 < height; l1++) {
+						int i2 = y + l1;
+						if (l1 >= k2 && l2 > 0) {
+							i3 += ox;
+							j1 += oz;
+							l2--;
+						}
+						struct block_info* bi = getBlockInfo(getBlockWorld_guess(world, chunk, i3, i2, j1));
+						if (bi != NULL && (streq_nocase(bi->material->name, "air") || streq_nocase(bi->material->name, "leaves") || streq_nocase(bi->material->name, "vine") || streq_nocase(bi->material->name, "plants"))) {
+							setBlockWorld_guess(world, chunk, log, i3, i2, j1);
+							k1 = i2;
+						}
+					}
+					for (int j3 = -3; j3 <= 3; j3++) {
+						for (int i4 = -3; i4 <= +3; i4++) {
+							if (abs(j3) != 3 || abs(i4) != 3) {
+								tree_checkAndPlaceLeaf(world, chunk, leaf, i3 + j3, k1, j1 + i4);
+							}
+							if (abs(j3) <= 1 || abs(i4) <= 1) {
+								tree_checkAndPlaceLeaf(world, chunk, leaf, i3 + j3, k1 + 1, j1 + i4);
 							}
 						}
 					}
-					block down = getBlockWorld_guess(world, chunk, x, y - 1, z);
-					if ((down != BLK_GRASS && down != BLK_DIRT && down != BLK_FARMLAND) || y >= 256 - height - 1) return;
-					setBlockWorld_guess(world, chunk, BLK_DIRT, x, y - 1, z);
-					for (int ty = y - 3 + height; ty <= y + height; ty++) {
-						int dist_from_top = ty - y - height;
-						int width = 1 - dist_from_top / 2;
-						for (int tx = x - width; tx <= x + width; tx++) {
-							int tx2 = tx - x;
-							for (int tz = z - width; tz <= z + width; tz++) {
-								int tz2 = tz - z;
-								if (abs(tx2) != width || abs(tz2) != width || (rand() % 2 == 0 && dist_from_top != 0)) {
-									struct block_info* bi = getBlockInfo(getBlockWorld_guess(world, chunk, tx, ty, tz));
-									if (bi != NULL && (streq_nocase(bi->material->name, "air") || streq_nocase(bi->material->name, "leaves") || streq_nocase(bi->material->name, "vine"))) {
-										setBlockWorld_guess(world, chunk, leaf, tx, ty, tz);
+					tree_checkAndPlaceLeaf(world, chunk, leaf, i3 - 2, k1 + 1, j1);
+					tree_checkAndPlaceLeaf(world, chunk, leaf, i3 + 2, k1 + 1, j1);
+					tree_checkAndPlaceLeaf(world, chunk, leaf, i3, k1 + 1, j1 - 2);
+					tree_checkAndPlaceLeaf(world, chunk, leaf, i3, k1 + 1, j1 + 1);
+					i3 = x;
+					j1 = z;
+					int nrx = rand() % 4;
+					if (rx == nrx) return;
+					rx = nrx;
+					ox = 0;
+					oz = 0;
+					if (rx == 0) ox++;
+					else if (rx == 1) ox--;
+					else if (rx == 2) oz++;
+					else if (rx == 3) oz--;
+					int l3 = k2 - rand() % 2 - 1;
+					int k4 = 1 + rand() % 3;
+					k1 = 0;
+					for (int l4 = l3; l4 < height && k4 > 0; k4--) {
+						if (l4 >= 1) {
+							int j2 = y + l4;
+							i3 += ox;
+							j1 += oz;
+							if (tree_checkAndPlaceLeaf(world, chunk, log, i3, j2, j1)) {
+								k1 = j2;
+							}
+						}
+						l4++;
+					}
+					if (k1 > 0) {
+						for (int i5 = -2; i5 <= 2; i5++) {
+							for (int k5 = -2; k5 <= 2; k5++) {
+								if (abs(i5) != 2 || abs(k5) != 2) tree_checkAndPlaceLeaf(world, chunk, leaf, i3 + i5, k1, j1 + k5);
+								if (abs(i5) <= 1 && abs(k5) <= 1) tree_checkAndPlaceLeaf(world, chunk, leaf, i3 + i5, k1 + 1, j1 + k5);
+							}
+						}
+					}
+				} else if (type == 1) {
+					int32_t j = 1 + rand() % 2;
+					int k = height - j;
+					int l = 2 + rand() % 2;
+					int i3 = rand() % 2;
+					int j3 = 1;
+					int k3 = 0;
+					for (int l3 = 0; l3 <= k; l3++) {
+						int yoff = y + height - l3;
+						for (int i2 = x - i3; i2 <= x + i3; i2++) {
+							int xoff = i2 - x;
+							for (int k2 = z - i3; k2 <= z + i3; k2++) {
+								int zoff = k2 - z;
+								if (abs(xoff) != i3 || abs(zoff) != i3 || i3 <= 0) {
+									struct block_info* bi = getBlockInfo(getBlockWorld_guess(world, chunk, i2, yoff, k2));
+									if (bi == NULL || !bi->fullCube) {
+										setBlockWorld_guess(world, chunk, leaf, i2, yoff, k2);
 									}
 								}
 							}
 						}
+						if (i3 >= j3) {
+							i3 = j3;
+							k3 = 1;
+							j3++;
+							if (j3 > l) {
+								j3 = l;
+							}
+						} else {
+							i3++;
+						}
 					}
-					for (int th = 0; th < height; th++) {
+				} else for (int ty = y - 3 + height; ty <= y + height; ty++) {
+					int dist_from_top = ty - y - height;
+					int width = 1 - dist_from_top / 2;
+					for (int tx = x - width; tx <= x + width; tx++) {
+						int tx2 = tx - x;
+						for (int tz = z - width; tz <= z + width; tz++) {
+							int tz2 = tz - z;
+							if (abs(tx2) != width || abs(tz2) != width || (rand() % 2 == 0 && dist_from_top != 0)) {
+								struct block_info* bi = getBlockInfo(getBlockWorld_guess(world, chunk, tx, ty, tz));
+								if (bi != NULL && (streq_nocase(bi->material->name, "air") || streq_nocase(bi->material->name, "leaves") || streq_nocase(bi->material->name, "vine"))) {
+									setBlockWorld_guess(world, chunk, leaf, tx, ty, tz);
+								}
+							}
+						}
+					}
+				}
+				if (type != 4) {
+					for (int th = 0; th < height - (type == 1 ? (rand() % 3) : 0); th++) {
 						struct block_info* bi = getBlockInfo(getBlockWorld_guess(world, chunk, x, y + th, z));
 						if (bi != NULL && (streq_nocase(bi->material->name, "air") || streq_nocase(bi->material->name, "leaves") || streq_nocase(bi->material->name, "vine") || streq_nocase(bi->material->name, "plants"))) {
 							setBlockWorld_guess(world, chunk, log, x, y + th, z);
@@ -701,18 +827,8 @@ void randomTick_sapling(struct world* world, struct chunk* chunk, block blk, int
 							}
 						}
 					}
-				} else {
-
 				}
-			} else if (type == 1) { // spruce
-
-			} else if (type == 2) { // birch
-
-			} else if (type == 3) { // jungle
-
-			} else if (type == 4) { // acacia
-
-			} else if (type == 5) { // darkoak
+			} else {
 
 			}
 		} else {
@@ -732,8 +848,121 @@ block onBlockPlaced_log(struct player* player, struct world* world, block blk, i
 }
 
 void onBlockInteract_fencegate(struct world* world, block blk, int32_t x, int32_t y, int32_t z, struct player* player, uint8_t face, float curPosX, float curPosY, float curPosZ) {
-	blk ^= (block)0b0100; // toggle opened bit
+	blk ^= (block) 0b0100; // toggle opened bit
 	setBlockWorld_guess(world, NULL, blk, x, y, z);
+}
+
+int fluid_getDepth(int water, block b) {
+	uint16_t ba = b >> 4;
+	if (water && (ba != BLK_WATER >> 4 && ba != BLK_WATER_1 >> 4)) return -1;
+	else if (!water && (ba != BLK_LAVA >> 4 && ba != BLK_LAVA_1 >> 4)) return -1;
+	return b & 0x0f;
+}
+
+int fluid_checkAdjacentBlock(int water, struct world* world, struct chunk* ch, int32_t x, uint8_t y, int32_t z, int cmin, int* adj) {
+	block b = getBlockWorld_guess(world, ch, x, y, z);
+	int m = fluid_getDepth(water, b);
+	if (m < 0) return cmin;
+	else {
+		if (m == 0) (*adj)++;
+		if (m >= 8) m = 0;
+		return cmin >= 0 && m >= cmin ? cmin : m;
+	}
+}
+
+int fluid_isUnblocked(int water, block b, struct block_info* bi) {
+	uint16_t ba = b >> 4;
+	if (ba == BLK_DOOROAK >> 4 || ba == BLK_DOORIRON >> 4 || ba == BLK_SIGN >> 4 || ba == BLK_LADDER >> 4 || ba == BLK_REEDS >> 4) return 0;
+	if (bi == NULL) return 0;
+	if (!streq_nocase(bi->material->name, "portal") && !streq_nocase(bi->material->name, "structure_void") ? bi->material->blocksMovement : 1) return 0;
+	return 1;
+}
+
+int fluid_canFlowInto(int water, block b) {
+	struct block_info* bi = getBlockInfo(b);
+	if (bi == NULL) return 1;
+	if (!((water ? !streq_nocase(bi->material->name, "water") : 1) && !streq_nocase(bi->material->name, "lava"))) return 0;
+	return fluid_isUnblocked(water, b, bi);
+}
+
+void fluid_doFlowInto(int water, struct world* world, struct chunk* ch, int32_t x, uint8_t y, int32_t z, int level, block b) {
+	// potentially triggerMixEffects
+	struct block_info* bi = getBlockInfo(b);
+	if (bi != NULL && !streq_nocase(bi->material->name, "air") && !streq_nocase(bi->material->name, "lava")) {
+		dropBlockDrops(world, b, NULL, x, y, z);
+	}
+	setBlockWorld_guess(world, ch, (water ? BLK_WATER : BLK_LAVA) | level, x, y, z);
+}
+
+void onBlockUpdate_fluid(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
+	struct chunk* ch = getChunk(world, x >> 4, z >> 4);
+	if (ch == NULL) return;
+	int level = blk & 0x0f;
+	int resistance = 1;
+	if (((blk >> 4) == (BLK_LAVA >> 4) || (blk >> 4) == (BLK_LAVA_1 >> 4)) && world->dimension != -1) resistance++;
+	int adjSource = 0;
+	int water = (blk >> 4) == (BLK_WATER >> 4) || (blk >> 4) == (BLK_WATER_1 >> 4);
+	int tickRate = water ? 5 : (world->dimension == -1 ? 10 : 30);
+	if (level > 0) {
+		int l = -100;
+		l = fluid_checkAdjacentBlock(water, world, ch, x + 1, y, z, l, &adjSource);
+		l = fluid_checkAdjacentBlock(water, world, ch, x - 1, y, z, l, &adjSource);
+		l = fluid_checkAdjacentBlock(water, world, ch, x, y, z + 1, l, &adjSource);
+		l = fluid_checkAdjacentBlock(water, world, ch, x, y, z - 1, l, &adjSource);
+		int i1 = l + resistance;
+		if (i1 >= 8 || l < 0) i1 = -1;
+		int ha = fluid_getDepth(water, getBlockWorld_guess(world, ch, x, y + 1, z));
+		if (ha >= 0) {
+			if (ha >= 8) i1 = ha;
+			else i1 = ha + 8;
+		}
+		if (adjSource >= 2 && water) {
+			block below = getBlockWorld_guess(world, ch, x, y - 1, z);
+			if ((below >> 4) == (BLK_WATER >> 4) || (below >> 4) == (BLK_WATER_1 >> 4)) {
+				i1 = 0;
+			} else {
+				struct block_info* bi = getBlockInfo(below);
+				if (bi != NULL && bi->material->solid) i1 = 0;
+			}
+		}
+		if (!water && level < 8 && i1 < 8 && i1 > level && rand() % 4 > 0) {
+			tickRate *= 4;
+		}
+		if (i1 == level) {
+			// set static
+		} else {
+			level = i1;
+			if (i1 < 0) setBlockWorld_guess(world, ch, 0, x, y, z);
+			else {
+				setBlockWorld_guess(world, ch, (blk & ~0x0f) | i1, x, y, z);
+			}
+		}
+	} else {
+		//set static
+	}
+	block down = getBlockWorld_guess(world, ch, x, y - 1, z);
+	if (fluid_canFlowInto(water, down)) {
+		if (!water && ((down >> 4) == (BLK_WATER >> 4) || (down >> 4) == (BLK_WATER_1 >> 4))) {
+			setBlockWorld_guess(world, ch, BLK_STONE, x, y - 1, z);
+			//trigger mix effects
+			return;
+		}
+		fluid_doFlowInto(water, world, ch, x, y - 1, z, level >= 8 ? level : (level + 8), down);
+	} else if (level >= 0) {
+		if (level == 0 || !fluid_isUnblocked(water, down, getBlockInfo(down))) {
+			int k1 = level + resistance;
+			if (level >= 8) k1 = 1;
+			if (k1 >= 8) return;
+			block b = getBlockWorld_guess(world, ch, x + 1, y, z);
+			if (fluid_canFlowInto(water, b)) fluid_doFlowInto(water, world, ch, x + 1, y, z, k1, b);
+			b = getBlockWorld_guess(world, ch, x - 1, y, z);
+			if (fluid_canFlowInto(water, b)) fluid_doFlowInto(water, world, ch, x - 1, y, z, k1, b);
+			b = getBlockWorld_guess(world, ch, x, y, z + 1);
+			if (fluid_canFlowInto(water, b)) fluid_doFlowInto(water, world, ch, x, y, z + 1, k1, b);
+			b = getBlockWorld_guess(world, ch, x, y, z - 1);
+			if (fluid_canFlowInto(water, b)) fluid_doFlowInto(water, world, ch, x, y, z - 1, k1, b);
+		}
+	}
 }
 
 //
@@ -1067,4 +1296,8 @@ void init_blocks() {
 	tmp->onBlockUpdate = &onBlockUpdate_checkPlace;
 	for (block b = BLK_FENCEGATE; b < BLK_FENCEGATE + 16; b++)
 		getBlockInfo(b)->onBlockInteract = &onBlockInteract_fencegate;
+	getBlockInfo(BLK_WATER)->onBlockUpdate = &onBlockUpdate_fluid;
+	getBlockInfo(BLK_WATER_1)->onBlockUpdate = &onBlockUpdate_fluid;
+	getBlockInfo(BLK_LAVA)->onBlockUpdate = &onBlockUpdate_fluid;
+	getBlockInfo(BLK_LAVA_1)->onBlockUpdate = &onBlockUpdate_fluid;
 }

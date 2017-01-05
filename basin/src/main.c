@@ -41,6 +41,7 @@
 #include "command.h"
 #include "queue.h"
 #include "profile.h"
+#include "plugin.h"
 
 void main_tick() {
 	pthread_cond_broadcast (&glob_tick_cond);
@@ -201,6 +202,8 @@ int main(int argc, char* argv[]) {
 	printf("Smelting Initialized\n");
 	init_base_commands();
 	printf("Commands Initialized\n");
+	init_plugins();
+	printf("Plugins Initialized\n");
 	for (int i = 0; i < servsl; i++) {
 		struct cnode* serv = servs[i];
 		const char* bind_mode = getConfigValue(serv, "bind-mode");

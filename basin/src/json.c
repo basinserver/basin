@@ -135,11 +135,12 @@ int __recurJSON(struct json_object* cur, size_t* i, char* json) {
 	size_t sl = strlen(json);
 	int cs = 0;
 	struct json_object* nchild = NULL;
+	char ck = cur->type == JSON_OBJECT ? '}' : ']';
 	for (; *i < sl; (*i)++) {
 		if (cs == 0) {
 			if (json[*i] == '{') cs = 1;
 		} else if (cs == 1) {
-			if (json[*i] == '}') break;
+			if (json[*i] == ck) break;
 			else if (json[*i] == '\"') {
 				nchild = xmalloc(sizeof(struct json_object));
 				memset(nchild, 0, sizeof(struct json_object));
@@ -170,7 +171,7 @@ int __recurJSON(struct json_object* cur, size_t* i, char* json) {
 			cs = 4;
 		} else if (cs == 4) {
 			if (json[*i] == ',') cs = 1;
-			else if (json[*i] == '}') break;
+			else if (json[*i] == ck) break;
 		}
 	}
 	if (nchild != NULL) {
@@ -181,12 +182,13 @@ int __recurJSON(struct json_object* cur, size_t* i, char* json) {
 }
 
 ssize_t parseJSON(struct json_object* root, char* json) {
-	if (strlen(json) < 2 || json[0] != '{') {
+	if (strlen(json) < 2 || (json[0] != '{' && json[0] != '[')) {
+		memset(root, 0, sizeof(struct json_object));
 		errno = EINVAL;
 		return -1;
 	}
 	root->name = NULL;
-	root->type = JSON_OBJECT;
+	root->type = json[0] == '{' ? JSON_OBJECT : JSON_ARRAY;
 	root->children = NULL;
 	root->child_count = 0;
 	root->data.string = NULL;

@@ -462,11 +462,13 @@ uint8_t getLightChunk(struct chunk* chunk, uint8_t x, uint8_t y, uint8_t z, uint
 }
 
 uint8_t getLightWorld_guess(struct world* world, struct chunk* ch, int32_t x, int32_t y, int32_t z) {
+	if (y < 0 || y > 255) return 0;
 	if ((x >> 4) == ch->x && ((z >> 4) == ch->z)) return getLightChunk(ch, x & 0x0f, y, z & 0x0f, world->skylightSubtracted);
 	else return getLightWorld(world, x, y, z, 0);
 }
 
 uint8_t getLightWorld(struct world* world, int32_t x, int32_t y, int32_t z, uint8_t checkNeighbors) {
+	if (y < 0 || y > 255) return 0;
 	struct chunk* chunk = getChunk(world, x >> 4, z >> 4);
 	if (chunk == NULL) return 15;
 	if (checkNeighbors) {
@@ -486,18 +488,20 @@ uint8_t getLightWorld(struct world* world, int32_t x, int32_t y, int32_t z, uint
 	}
 }
 
-block getBlockWorld(struct world* world, int32_t x, uint8_t y, int32_t z) {
+block getBlockWorld(struct world* world, int32_t x, int32_t y, int32_t z) {
+	if (y < 0 || y > 255) return 0;
 	struct chunk* chunk = getChunk(world, x >> 4, z >> 4);
 	if (chunk == NULL) return 0;
 	return getBlockChunk(chunk, x & 0x0f, y, z & 0x0f);
 }
 
-block getBlockWorld_guess(struct world* world, struct chunk* ch, int32_t x, uint8_t y, int32_t z) {
+block getBlockWorld_guess(struct world* world, struct chunk* ch, int32_t x, int32_t y, int32_t z) {
+	if (y < 0 || y > 255) return 0;
 	if ((x >> 4) == ch->x && ((z >> 4) == ch->z)) return getBlockChunk(ch, x & 0x0f, y, z & 0x0f);
 	else return getBlockWorld(world, x, y, z);
 }
 
-struct tile_entity* getTileEntityChunk(struct chunk* chunk, int32_t x, uint8_t y, int32_t z) { // TODO: optimize
+struct tile_entity* getTileEntityChunk(struct chunk* chunk, int32_t x, int32_t y, int32_t z) { // TODO: optimize
 	if (y > 255 || y < 0) return NULL;
 	for (size_t i = 0; i < chunk->tileEntities->size; i++) {
 		struct tile_entity* te = (struct tile_entity*) chunk->tileEntities->data[i];
@@ -545,13 +549,15 @@ void disableTileEntityTickable(struct world* world, struct tile_entity* te) {
 	rem_collection(chunk->tileEntitiesTickable, te);
 }
 
-struct tile_entity* getTileEntityWorld(struct world* world, int32_t x, uint8_t y, int32_t z) {
+struct tile_entity* getTileEntityWorld(struct world* world, int32_t x, int32_t y, int32_t z) {
+	if (y < 0 || y > 255) return NULL;
 	struct chunk* chunk = getChunk(world, x >> 4, z >> 4);
 	if (chunk == NULL) return NULL;
 	return getTileEntityChunk(chunk, x, y, z);
 }
 
-void setTileEntityWorld(struct world* world, int32_t x, uint8_t y, int32_t z, struct tile_entity* te) {
+void setTileEntityWorld(struct world* world, int32_t x, int32_t y, int32_t z, struct tile_entity* te) {
+	if (y < 0 || y > 255) return;
 	struct chunk* chunk = getChunk(world, x >> 4, z >> 4);
 	if (chunk == NULL) return;
 	setTileEntityChunk(chunk, te);
@@ -680,18 +686,21 @@ void setBlockChunk(struct chunk* chunk, block blk, uint8_t x, uint8_t y, uint8_t
 }
 
 void setBlockWorld(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
+	if (y < 0 || y > 255) return;
 	struct chunk* ch = getChunk(world, x >> 4, z >> 4);
 	if (ch == NULL) return;
 	setBlockWorld_guess(world, ch, blk, x, y, z);
 }
 
 void setBlockWorld_noupdate(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
+	if (y < 0 || y > 255) return;
 	struct chunk* ch = getChunk(world, x >> 4, z >> 4);
 	if (ch == NULL) return;
 	setBlockWorld_guess_noupdate(world, ch, blk, x, y, z);
 }
 
 void setBlockWorld_guess(struct world* world, struct chunk* chunk, block blk, int32_t x, int32_t y, int32_t z) {
+	if (y < 0 || y > 255) return;
 	if (chunk == NULL || (x >> 4) != chunk->x || ((z >> 4) != chunk->z)) {
 		chunk = getChunk(world, x >> 4, z >> 4);
 	}
@@ -719,6 +728,7 @@ void setBlockWorld_guess(struct world* world, struct chunk* chunk, block blk, in
 }
 
 void setBlockWorld_guess_noupdate(struct world* world, struct chunk* chunk, block blk, int32_t x, int32_t y, int32_t z) {
+	if (y < 0 || y > 255) return;
 	if (chunk == NULL || (x >> 4) != chunk->x || ((z >> 4) != chunk->z)) {
 		chunk = getChunk(world, x >> 4, z >> 4);
 	}
@@ -962,6 +972,7 @@ void spawnPlayer(struct world* world, struct player* player) {
 	struct subworld* sw = xmalloc(sizeof(struct subworld));
 	sw->world = world;
 	sw->players = new_hashmap(1, 1);
+	sw->defunct = 0;
 	player->subworld = sw;
 	put_hashmap(world->subworlds, (uint64_t) sw, sw);
 	pthread_t swt;
@@ -1017,12 +1028,14 @@ struct entity* getEntity(struct world* world, int32_t id) {
 }
 
 void updateBlockWorld_guess(struct world* world, struct chunk* ch, int32_t x, int32_t y, int32_t z) {
+	if (y < 0 || y > 255) return;
 	block b = getBlockWorld_guess(world, ch, x, y, z);
 	struct block_info* bi = getBlockInfo(b);
 	if (bi != NULL && bi->onBlockUpdate != NULL) bi->onBlockUpdate(world, b, x, y, z);
 }
 
 void updateBlockWorld(struct world* world, int32_t x, int32_t y, int32_t z) {
+	if (y < 0 || y > 255) return;
 	block b = getBlockWorld(world, x, y, z);
 	struct block_info* bi = getBlockInfo(b);
 	if (bi != NULL && bi->onBlockUpdate != NULL) bi->onBlockUpdate(world, b, x, y, z);

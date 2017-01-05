@@ -29,6 +29,7 @@ C_SRCS += \
 ../src/hashmap.c \
 ../src/profile.c \
 ../src/anticheat.c \
+../src/plugin.c \
 ../src/xstring.c 
 
 OBJS += \
@@ -61,6 +62,7 @@ OBJS += \
 ./src/hashmap.o \
 ./src/profile.o \
 ./src/anticheat.o \
+./src/plugin.o \
 ./src/xstring.o 
 
 C_DEPS += \
@@ -93,6 +95,7 @@ C_DEPS += \
 ./src/hashmap.d \
 ./src/profile.d \
 ./src/anticheat.d \
+./src/plugin.d \
 ./src/xstring.d 
 
 

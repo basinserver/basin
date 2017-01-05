@@ -197,9 +197,9 @@ int getBiome(struct world* world, int32_t x, int32_t z);
 
 block getBlockChunk(struct chunk* chunk, uint8_t x, uint8_t y, uint8_t z);
 
-block getBlockWorld(struct world* world, int32_t x, uint8_t y, int32_t z);
+block getBlockWorld(struct world* world, int32_t x, int32_t y, int32_t z);
 
-block getBlockWorld_guess(struct world* world, struct chunk* ch, int32_t x, uint8_t y, int32_t z);
+block getBlockWorld_guess(struct world* world, struct chunk* ch, int32_t x, int32_t y, int32_t z);
 
 struct chunk* newChunk(int16_t x, int16_t z);
 
@@ -215,13 +215,13 @@ void setBlockWorld(struct world* world, block blk, int32_t x, int32_t y, int32_t
 
 void setBlockWorld_guess(struct world* world, struct chunk* chunk, block blk, int32_t x, int32_t y, int32_t z);
 
-struct tile_entity* getTileEntityChunk(struct chunk* chunk, int32_t x, uint8_t y, int32_t z);
+struct tile_entity* getTileEntityChunk(struct chunk* chunk, int32_t x, int32_t y, int32_t z);
 
 void setTileEntityChunk(struct chunk* chunk, struct tile_entity* te);
 
-struct tile_entity* getTileEntityWorld(struct world* world, int32_t x, uint8_t y, int32_t z);
+struct tile_entity* getTileEntityWorld(struct world* world, int32_t x, int32_t y, int32_t z);
 
-void setTileEntityWorld(struct world* world, int32_t x, uint8_t y, int32_t z, struct tile_entity* te);
+void setTileEntityWorld(struct world* world, int32_t x, int32_t y, int32_t z, struct tile_entity* te);
 
 void enableTileEntityTickable(struct world* world, struct tile_entity* te);
 

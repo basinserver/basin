@@ -75,6 +75,46 @@ int onItemInteract_reeds(struct world* world, struct player* player, uint8_t slo
 	return 0;
 }
 
+int onItemInteract_bucket(struct world* world, struct player* player, uint8_t slot_index, struct slot* slot, int32_t x, uint8_t y, int32_t z, uint8_t face) {
+	if (slot == NULL) return 0;
+	offsetCoordByFace(&x, &y, &z, face);
+	block b = getBlockWorld(world, x, y, z);
+	struct block_info* bi = getBlockInfo(b);
+	if (bi == NULL) return 0;
+	uint16_t ba = b >> 4;
+	if (slot->item == ITM_BUCKETWATER) {
+		if (b != 0 && !bi->material->replacable && ba != BLK_WATER >> 4 && ba != BLK_WATER_1 >> 4) return 0;
+		setBlockWorld(world, BLK_WATER, x, y, z);
+		if (player->gamemode != 1) {
+			slot->item = ITM_BUCKET;
+			setSlot(player, player->inventory, slot_index, slot, 1, 1);
+		}
+	} else if (slot->item == ITM_BUCKETLAVA) {
+		if (b != 0 && !bi->material->replacable && ba != BLK_LAVA >> 4 && ba != BLK_LAVA_1 >> 4) return 0;
+		setBlockWorld(world, BLK_LAVA, x, y, z);
+		if (player->gamemode != 1) {
+			slot->item = ITM_BUCKET;
+			setSlot(player, player->inventory, slot_index, slot, 1, 1);
+		}
+	} else if (slot->item == ITM_BUCKET) {
+		if ((b & 0x0f) != 0) return 0;
+		if (ba == BLK_WATER >> 4 || ba == BLK_WATER_1 >> 4) {
+			setBlockWorld(world, 0, x, y, z);
+			if (player->gamemode != 1) {
+				slot->item = ITM_BUCKETWATER;
+				setSlot(player, player->inventory, slot_index, slot, 1, 1);
+			}
+		} else if (ba == BLK_LAVA >> 4 || ba == BLK_LAVA_1 >> 4) {
+			setBlockWorld(world, 0, x, y, z);
+			if (player->gamemode != 1) {
+				slot->item = ITM_BUCKETLAVA;
+				setSlot(player, player->inventory, slot_index, slot, 1, 1);
+			}
+		}
+	}
+	return 0;
+}
+
 int onItemInteract_bonemeal(struct world* world, struct player* player, uint8_t slot_index, struct slot* slot, int32_t x, uint8_t y, int32_t z, uint8_t face) {
 	if (slot == NULL) return 0;
 	block b = getBlockWorld(world, x, y, z);
@@ -327,6 +367,10 @@ void init_items() {
 	getItemInfo(ITM_SHOVELIRON)->onItemInteract = &onItemInteract_shovel;
 	getItemInfo(ITM_SHOVELDIAMOND)->onItemInteract = &onItemInteract_shovel;
 	getItemInfo(ITM_REEDS)->onItemInteract = &onItemInteract_reeds;
+	getItemInfo(ITM_BUCKET)->onItemInteract = &onItemInteract_bucket;
+	getItemInfo(ITM_BUCKETWATER)->onItemInteract = &onItemInteract_bucket;
+	getItemInfo(ITM_BUCKETLAVA)->onItemInteract = &onItemInteract_bucket;
+
 }
 
 void add_item(item id, struct item_info* info) {
