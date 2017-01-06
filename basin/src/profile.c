@@ -11,7 +11,7 @@
 #include <stdio.h>
 #include "hashmap.h"
 
-#define ENABLE_PROFILER
+//#define ENABLE_PROFILER
 //#define ENABLE_PROFILER_MT
 
 struct hashmap* psec;

@@ -183,6 +183,8 @@ struct subworld { // subworld for players thread
 		uint8_t defunct;
 };
 
+struct chunk_section* newChunkSection(struct chunk* chunk, int ymj, int skylight);
+
 void scheduleBlockTick(struct world* world, int32_t x, int32_t y, int32_t z, int32_t ticksFromNow);
 
 void setBlockWorld_noupdate(struct world* world, block blk, int32_t x, int32_t y, int32_t z);

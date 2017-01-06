@@ -247,7 +247,20 @@ struct chunk* loadRegionChunk(struct region* region, int8_t lchx, int8_t lchz, s
 		}
 		xfree(rbl);
 	}
-	//TODO: entities and tileticks.
+	for (int z = 0; z < 16; z++) {
+		for (int x = 0; x < 16; x++) {
+			if (rch->heightMap[z][x] <= 0) {
+				for (int y = 255; y >= 0; y--) {
+					block b = getBlockChunk(rch, x, y, z);
+					struct block_info* bi = getBlockInfo(b);
+					if (bi == NULL || bi->lightOpacity <= 0) continue;
+					rch->heightMap[z][x] = y + 1;
+					break;
+				}
+			}
+		}
+	}
+//TODO: entities and tileticks.
 	freeNBT(nbt);
 	return rch;
 	rerx: ;
@@ -257,21 +270,10 @@ struct chunk* loadRegionChunk(struct region* region, int8_t lchx, int8_t lchz, s
 
 void generateChunk(struct world* world, struct chunk* chunk) {
 	memset(chunk->sections, 0, sizeof(struct chunk_section*) * 16);
-	chunk->sections[0] = xcalloc(sizeof(struct chunk_section));
-	chunk->sections[0]->bpb = 13;
-	chunk->sections[0]->block_size = 512 * 13;
-	chunk->sections[0]->blocks = xcalloc(512 * 13);
-	chunk->sections[0]->palette = NULL;
-	chunk->sections[0]->palette_count = 0;
-	chunk->sections[0]->mvs = 0x1FFF;
-	if (world->dimension == OVERWORLD) {
-		chunk->sections[0]->skyLight = xmalloc(2048);
-		memset(chunk->sections[0]->skyLight, 0xFF, 2048);
-	}
-	memset(chunk->sections[0]->blockLight, 0xFF, 2048);
 	for (int x = 0; x < 16; x++) {
 		for (int z = 0; z < 16; z++) {
-			setBlockChunk(chunk, 1 << 4, x, 0, z, world->dimension == 0);
+			for (int y = 0; y < 64; y++)
+				setBlockChunk(chunk, y < 5 ? BLK_BEDROCK : (y == 63 ? BLK_GRASS : (y >= 60 ? BLK_DIRT : BLK_STONE)), x, y, z, world->dimension == OVERWORLD);
 		}
 	}
 }
@@ -330,7 +332,7 @@ void chunkloadthr(size_t b) {
 			pthread_mutex_unlock(&chunk_input->data_mutex);
 			continue;
 		}
-		if (chr->pl->chunksSent >= 2 || (chr->pl->conn != NULL && chr->pl->conn->writeBuffer_size > 1024 * 1024 * 128)) {
+		if (chr->pl->chunksSent >= 3 || (chr->pl->conn != NULL && chr->pl->conn->writeBuffer_size > 1024 * 1024 * 128)) {
 			add_queue(chunk_input, chr);
 			pthread_mutex_unlock(&chunk_input->data_mutex);
 			continue;
@@ -342,13 +344,13 @@ void chunkloadthr(size_t b) {
 				xfree(chr);
 				continue;
 			}
-			//beginProfilerSection("chunkLoading_getChunk");
+			beginProfilerSection("chunkLoading_getChunk");
 			struct chunk* ch = getChunkWithLoad(chr->pl->world, chr->cx, chr->cz, b);
 			if (chr->pl->loadedChunks == NULL) {
 				xfree(chr);
 				continue;
 			}
-			//endProfilerSection("chunkLoading_getChunk");
+			endProfilerSection("chunkLoading_getChunk");
 			if (ch != NULL) {
 				ch->playersLoaded++;
 				//beginProfilerSection("chunkLoading_sendChunk_add");
@@ -410,10 +412,10 @@ int isChunkLoaded(struct world* world, int32_t x, int32_t z) {
 
 void unloadChunk(struct world* world, struct chunk* chunk) {
 //TODO: save chunk
-	//pthread_rwlock_wrlock(&world->chl);
+//pthread_rwlock_wrlock(&world->chl);
 	put_hashmap(world->chunks, getChunkKey(chunk), NULL);
 	add_collection(defunctChunks, chunk);
-	//pthread_rwlock_unlock(&world->chl);
+//pthread_rwlock_unlock(&world->chl);
 }
 
 int getBiome(struct world* world, int32_t x, int32_t z) {
@@ -476,10 +478,12 @@ uint8_t getRawLightChunk(struct chunk* chunk, uint8_t x, uint8_t y, uint8_t z, u
 	return bl;
 }
 
-void setLightChunk(struct chunk* chunk, uint8_t light, uint8_t x, uint8_t y, uint8_t z, uint8_t blocklight) {
+void setLightChunk(struct chunk* chunk, uint8_t light, uint8_t x, uint8_t y, uint8_t z, uint8_t blocklight, uint8_t skylight) { // skylight is only for making new chunk sections, not related to set!
 	if (x > 15 || z > 15 || y > 255 || x < 0 || z < 0 || y < 0) return;
 	struct chunk_section* cs = chunk->sections[y >> 4];
-	if (cs == NULL) return;
+	if (cs == NULL) {
+		cs = newChunkSection(chunk, y >> 4, skylight);
+	}
 	uint32_t i = ((y & 0x0f) << 8) | (z << 4) | x;
 	uint32_t bi = 4 * i;
 	uint8_t* target = blocklight ? cs->blockLight : cs->skyLight;
@@ -506,9 +510,16 @@ uint8_t getRawLightWorld_guess(struct world* world, struct chunk* ch, int32_t x,
 	else return getRawLightWorld(world, x, y, z, blocklight);
 }
 
+uint16_t getHeightMapWorld_guess(struct world* world, struct chunk* ch, int32_t x, int32_t z) {
+	if (world->dimension != OVERWORLD) return 0;
+	if (ch == NULL || (x >> 4) != ch->x || ((z >> 4) != ch->z)) ch = getChunk(world, x >> 4, z >> 4);
+	if (ch == NULL) return 0;
+	return ch->heightMap[z & 0x0f][x & 0x0f];
+}
+
 void setLightWorld_guess(struct world* world, struct chunk* ch, uint8_t light, int32_t x, int32_t y, int32_t z, uint8_t blocklight) {
 	if (y < 0 || y > 255) return;
-	if (ch != NULL && (x >> 4) == ch->x && ((z >> 4) == ch->z)) return setLightChunk(ch, light & 0x0f, x & 0x0f, y, z & 0x0f, blocklight);
+	if (ch != NULL && (x >> 4) == ch->x && ((z >> 4) == ch->z)) return setLightChunk(ch, light & 0x0f, x & 0x0f, y, z & 0x0f, blocklight, world->dimension == 0);
 	else return setLightWorld(world, light & 0x0f, x, y, z, blocklight);
 }
 
@@ -516,7 +527,7 @@ void setLightWorld(struct world* world, uint8_t light, int32_t x, int32_t y, int
 	if (y < 0 || y > 255) return;
 	struct chunk* chunk = getChunk(world, x >> 4, z >> 4);
 	if (chunk == NULL) return;
-	setLightChunk(chunk, light & 0x0f, x & 0x0f, y > 255 ? 255 : y, z & 0x0f, blocklight);
+	setLightChunk(chunk, light & 0x0f, x & 0x0f, y > 255 ? 255 : y, z & 0x0f, blocklight, world->dimension == 0);
 }
 
 uint8_t getLightWorld(struct world* world, int32_t x, int32_t y, int32_t z, uint8_t checkNeighbors) {
@@ -688,24 +699,36 @@ void freeRegion(struct region* region) {
 	xfree(region);
 }
 
+struct chunk_section* newChunkSection(struct chunk* chunk, int ymj, int skylight) {
+	chunk->sections[ymj] = xcalloc(sizeof(struct chunk_section));
+	struct chunk_section* cs = chunk->sections[ymj];
+	cs->bpb = 4;
+	cs->block_size = 512 * 4;
+	cs->blocks = xcalloc(512 * 4 + 4);
+	cs->palette_count = 1;
+	cs->palette = xmalloc(sizeof(block));
+	cs->palette[0] = BLK_AIR;
+	cs->mvs = 0xf;
+	memset(cs->blockLight, 0, 2048);
+	if (skylight) {
+		cs->skyLight = xmalloc(2048);
+		memset(cs->skyLight, 0xFF, 2048);
+	}
+	return cs;
+}
+
 void setBlockChunk(struct chunk* chunk, block blk, uint8_t x, uint8_t y, uint8_t z, int skylight) {
 	if (x > 15 || z > 15 || y > 255 || x < 0 || z < 0 || y < 0) return;
 	struct chunk_section* cs = chunk->sections[y >> 4];
 	if (cs == NULL && blk != 0) {
-		chunk->sections[y >> 4] = xcalloc(sizeof(struct chunk_section));
-		cs = chunk->sections[y >> 4];
-		cs->bpb = 13;
-		cs->block_size = 512 * 13;
-		cs->blocks = xcalloc(512 * 13 + 4);
-		cs->mvs = 0x1FFF;
-		memset(cs->blockLight, 0xFF, 2048);
-		if (skylight) {
-			cs->skyLight = xmalloc(2048);
-			memset(cs->skyLight, 0xFF, 2048);
-		}
+		cs = newChunkSection(chunk, y >> 4, skylight);
 	} else if (cs == NULL) return;
-	struct block_info* bii = getBlockInfo(blk);
-	if (bii != NULL && bii->lightOpacity > 1) if (chunk->heightMap[z][x] <= y) chunk->heightMap[z][x] = y + 1;
+	if (skylight) {
+		struct block_info* bii = getBlockInfo(blk);
+		if (bii != NULL && bii->lightOpacity > 1) {
+			if (chunk->heightMap[z][x] <= y) chunk->heightMap[z][x] = y + 1;
+		}
+	}
 	block ts = blk;
 	if (cs->bpb < 9) {
 		for (int i = 0; i < cs->palette_count; i++) {
@@ -714,7 +737,7 @@ void setBlockChunk(struct chunk* chunk, block blk, uint8_t x, uint8_t y, uint8_t
 				goto pp;
 			}
 		}
-		uint32_t room = pow(2, ceil(log2(cs->palette_count))) - cs->palette_count;
+		uint32_t room = pow(2, cs->bpb) - cs->palette_count;
 		if (room < 1) {
 			uint8_t nbpb = cs->bpb + 1;
 			if (nbpb >= 9) nbpb = 13;
@@ -781,59 +804,64 @@ struct world_lightpos {
 		int32_t z;
 };
 
-void blocklight_floodfill(struct world* world, struct chunk* chunk, struct world_lightpos* lp) {
+void light_floodfill(struct world* world, struct chunk* chunk, struct world_lightpos* lp, int skylight) {
+	if (lp->y < 0 || lp->y > 255) return;
 	struct block_info* bi = getBlockInfo(getBlockWorld_guess(world, chunk, lp->x, lp->y, lp->z));
 	int lo = bi == NULL ? 1 : bi->lightOpacity;
 	if (lo < 1) lo = 1;
 	int le = bi == NULL ? 0 : bi->lightEmission;
-	uint8_t xpl = getRawLightWorld_guess(world, chunk, lp->x + 1, lp->y, lp->z, 1);
-	uint8_t xnl = getRawLightWorld_guess(world, chunk, lp->x - 1, lp->y, lp->z, 1);
-	uint8_t ypl = getRawLightWorld_guess(world, chunk, lp->x, lp->y + 1, lp->z, 1);
-	uint8_t ynl = getRawLightWorld_guess(world, chunk, lp->x, lp->y - 1, lp->z, 1);
-	uint8_t zpl = getRawLightWorld_guess(world, chunk, lp->x, lp->y, lp->z + 1, 1);
-	uint8_t znl = getRawLightWorld_guess(world, chunk, lp->x, lp->y, lp->z - 1, 1);
-	int16_t maxl = xpl;
-	if (xnl > maxl) maxl = xnl;
-	if (ypl > maxl) maxl = ypl;
-	if (ynl > maxl) maxl = ynl;
-	if (zpl > maxl) maxl = zpl;
-	if (znl > maxl) maxl = znl;
+	int16_t maxl = 0;
+	uint8_t xpl = getRawLightWorld_guess(world, chunk, lp->x + 1, lp->y, lp->z, !skylight);
+	uint8_t xnl = getRawLightWorld_guess(world, chunk, lp->x - 1, lp->y, lp->z, !skylight);
+	uint8_t ypl = getRawLightWorld_guess(world, chunk, lp->x, lp->y + 1, lp->z, !skylight);
+	uint8_t ynl = getRawLightWorld_guess(world, chunk, lp->x, lp->y - 1, lp->z, !skylight);
+	uint8_t zpl = getRawLightWorld_guess(world, chunk, lp->x, lp->y, lp->z + 1, !skylight);
+	uint8_t znl = getRawLightWorld_guess(world, chunk, lp->x, lp->y, lp->z - 1, !skylight);
+	if (skylight && lp->y >= getHeightMapWorld_guess(world, chunk, lp->x, lp->z)) maxl = 15;
+	else {
+		maxl = xpl;
+		if (xnl > maxl) maxl = xnl;
+		if (ypl > maxl) maxl = ypl;
+		if (ynl > maxl) maxl = ynl;
+		if (zpl > maxl) maxl = zpl;
+		if (znl > maxl) maxl = znl;
+	}
 	maxl -= lo;
 	if (maxl < le) maxl = le;
 	if (maxl < 0) maxl = 0;
 	if (maxl > 15) maxl = 15;
-	uint8_t pl = getRawLightWorld_guess(world, chunk, lp->x, lp->y, lp->z, 1);
+	uint8_t pl = getRawLightWorld_guess(world, chunk, lp->x, lp->y, lp->z, !skylight);
 	if (pl == maxl) return;
-	setLightWorld_guess(world, chunk, maxl, lp->x, lp->y, lp->z, 1);
+	setLightWorld_guess(world, chunk, maxl, lp->x, lp->y, lp->z, !skylight);
 	if (maxl > 0) {
 		if (xpl < maxl) {
 			lp->x++;
-			blocklight_floodfill(world, chunk, lp);
+			light_floodfill(world, chunk, lp, skylight ? skylight + 1 : 0);
 			lp->x--;
 		}
 		if (xnl < maxl) {
 			lp->x--;
-			blocklight_floodfill(world, chunk, lp);
+			light_floodfill(world, chunk, lp, skylight ? skylight + 1 : 0);
 			lp->x++;
 		}
-		if (ypl < maxl) {
-			lp->y++;
-			blocklight_floodfill(world, chunk, lp);
-			lp->y--;
-		}
+		/*if (ypl < maxl) {
+		 lp->y++;
+		 light_floodfill(world, chunk, lp, skylight ? skylight + 1 : 0);
+		 lp->y--;
+		 }*/
 		if (ynl < maxl) {
 			lp->y--;
-			blocklight_floodfill(world, chunk, lp);
+			light_floodfill(world, chunk, lp, skylight ? skylight + 1 : 0);
 			lp->y++;
 		}
 		if (zpl < maxl) {
 			lp->z++;
-			blocklight_floodfill(world, chunk, lp);
+			light_floodfill(world, chunk, lp, skylight ? skylight + 1 : 0);
 			lp->z--;
 		}
 		if (znl < maxl) {
 			lp->z--;
-			blocklight_floodfill(world, chunk, lp);
+			light_floodfill(world, chunk, lp, skylight ? skylight + 1 : 0);
 			lp->z++;
 		}
 	}
@@ -846,7 +874,9 @@ void setBlockWorld_guess(struct world* world, struct chunk* chunk, block blk, in
 	}
 	if (chunk == NULL) return;
 	block ob = getBlockChunk(chunk, x & 0x0f, y, z & 0x0f);
+	uint16_t ohm = world->dimension == OVERWORLD ? chunk->heightMap[z & 0x0f][x & 0x0f] : 0;
 	setBlockChunk(chunk, blk, x & 0x0f, y, z & 0x0f, world->dimension == 0);
+	uint16_t nhm = world->dimension == OVERWORLD ? chunk->heightMap[z & 0x0f][x & 0x0f] : 0;
 	BEGIN_BROADCAST_DISTXYZ((double) x + .5, (double) y + .5, (double) z + .5, world->players, CHUNK_VIEW_DISTANCE * 16.)
 	struct packet* pkt = xmalloc(sizeof(struct packet));
 	pkt->id = PKT_PLAY_CLIENT_BLOCKCHANGE;
@@ -867,6 +897,37 @@ void setBlockWorld_guess(struct world* world, struct chunk* chunk, block blk, in
 	updateBlockWorld_guess(world, chunk, x, y - 1, z);
 	struct block_info* nbi = getBlockInfo(blk);
 	if (nbi == NULL || bi == NULL) return;
+	if (world->dimension == OVERWORLD) {
+		if (nhm != ohm || (bi->lightOpacity != nbi->lightOpacity && abs(y - ohm) <= 16)) {
+			for (int32_t lx = x - 16; lx <= x + 16; lx++) {
+				for (int32_t ly = ohm - 16; ly <= ohm + 16; ly++) {
+					for (int32_t lz = z - 16; lz <= z + 16; lz++) {
+						setLightWorld_guess(world, chunk, 0, lx, ly, lz, 0);
+					}
+				}
+			}
+			//TODO: pillar lighting?
+			for (int32_t lz = z - 16; lz <= z + 16; lz++) {
+				for (int32_t lx = x - 16; lx <= x + 16; lx++) {
+					uint16_t hm = getHeightMapWorld_guess(world, chunk, lx, lz);
+					if (hm > 255) continue;
+					setLightWorld_guess(world, chunk, 15, lx, hm, lz, 0);
+				}
+			}
+
+			for (int32_t lz = z - 16; lz <= z + 16; lz++) {
+				for (int32_t lx = x - 16; lx <= x + 16; lx++) {
+					uint16_t hm = getHeightMapWorld_guess(world, chunk, lx, lz);
+					if (hm > 255) continue;
+					struct world_lightpos lp;
+					lp.x = lx;
+					lp.y = hm;
+					lp.z = lz;
+					light_floodfill(world, chunk, &lp, 1);
+				}
+			}
+		}
+	}
 	if (bi->lightEmission != nbi->lightEmission || bi->lightOpacity != nbi->lightOpacity) {
 		if (bi->lightEmission == nbi->lightEmission) {
 			uint8_t xpl = getRawLightWorld_guess(world, chunk, x + 1, y, z, 1);
@@ -891,7 +952,7 @@ void setBlockWorld_guess(struct world* world, struct chunk* chunk, block blk, in
 			lp.x = x;
 			lp.y = y;
 			lp.z = z;
-			blocklight_floodfill(world, chunk, &lp);
+			light_floodfill(world, chunk, &lp, 0);
 		} else {
 			for (int32_t lx = x - 16; lx <= x + 16; lx++) {
 				for (int32_t ly = y - 16; ly <= y + 16; ly++) {
@@ -906,9 +967,9 @@ void setBlockWorld_guess(struct world* world, struct chunk* chunk, block blk, in
 					lp.x = lx;
 					lp.y = ly;
 					lp.z = z - 16;
-					blocklight_floodfill(world, chunk, &lp);
+					light_floodfill(world, chunk, &lp, 0);
 					lp.z = z + 16;
-					blocklight_floodfill(world, chunk, &lp);
+					light_floodfill(world, chunk, &lp, 0);
 				}
 			}
 			for (int32_t lz = z - 16; lz <= z + 16; lz++) {
@@ -917,9 +978,9 @@ void setBlockWorld_guess(struct world* world, struct chunk* chunk, block blk, in
 					lp.x = x - 16;
 					lp.y = ly;
 					lp.z = lz;
-					blocklight_floodfill(world, chunk, &lp);
+					light_floodfill(world, chunk, &lp, 0);
 					lp.x = x + 16;
-					blocklight_floodfill(world, chunk, &lp);
+					light_floodfill(world, chunk, &lp, 0);
 				}
 			}
 			for (int32_t lz = z - 16; lz <= z + 16; lz++) {
@@ -928,12 +989,11 @@ void setBlockWorld_guess(struct world* world, struct chunk* chunk, block blk, in
 					lp.x = lx;
 					lp.y = y - 16;
 					lp.z = lz;
-					blocklight_floodfill(world, chunk, &lp);
+					light_floodfill(world, chunk, &lp, 0);
 					lp.y = y + 16;
-					blocklight_floodfill(world, chunk, &lp);
+					light_floodfill(world, chunk, &lp, 0);
 				}
 			}
-
 		}
 	}
 }
@@ -1100,12 +1160,14 @@ void tick_world(struct world* world) {
 		beginProfilerSection("tick_chunks");
 		BEGIN_HASHMAP_ITERATION(world->chunks)
 		struct chunk* chunk = (struct chunk*) value;
-		//beginProfilerSection("tick_chunk_tileentity");
+		beginProfilerSection("tick_chunk_tileentity");
 		for (size_t x = 0; x < chunk->tileEntitiesTickable->size; x++) {
 			struct tile_entity* te = (struct tile_entity*) chunk->tileEntitiesTickable->data[x];
 			if (te == NULL) continue;
 			(*te->tick)(world, te);
 		}
+		endProfilerSection("tick_chunk_tileentity");
+		beginProfilerSection("tick_chunk_randomticks");
 		if (RANDOM_TICK_SPEED > 0) for (int t = 0; t < 16; t++) {
 			struct chunk_section* cs = chunk->sections[t];
 			if (cs != NULL) {
@@ -1121,8 +1183,9 @@ void tick_world(struct world* world) {
 				}
 			}
 		}
-		//endProfilerSection("tick_chunk_tileentity");
+		endProfilerSection("tick_chunk_randomticks");
 		END_HASHMAP_ITERATION(world->chunks)
+		beginProfilerSection("tick_chunk_scheduledticks");
 		BEGIN_HASHMAP_ITERATION(world->scheduledTicks)
 		struct scheduled_tick* st = value;
 		if (--st->ticksLeft <= 0) {
@@ -1140,6 +1203,7 @@ void tick_world(struct world* world) {
 			pthread_rwlock_rdlock(&world->scheduledTicks->data_mutex);
 		}
 		END_HASHMAP_ITERATION(world->scheduledTicks)
+		endProfilerSection("tick_chunk_scheduledticks");
 		endProfilerSection("tick_chunks");
 	}
 }
