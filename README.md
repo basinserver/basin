@@ -14,7 +14,7 @@ A high performance Minecraft server implementation written in C.
 * Fall damage
 * Block physics & updates
 * C Plugin System
-* Block Lighting
+* Block & Sky Lighting
 
 # Planned Features
 * Natural Mob Spawning & AI
@@ -23,6 +23,5 @@ A high performance Minecraft server implementation written in C.
 * Ultra-low memory mode - Sacrifice CPU Cycles for further memory use reduction
 * Entities-by-chunk logic - Hold millions of entities in a world
 * World generation
-* Sky Lighting
 * Comprehensive opt-in Anticheat
 * GPU accelerated world generation, AI, and more(?).
