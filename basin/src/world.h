@@ -132,6 +132,10 @@ struct chunk {
 		struct collection* tileEntitiesTickable;
 		uint32_t playersLoaded;
 		uint8_t defunct;
+		struct chunk* xp;
+		struct chunk* xn;
+		struct chunk* zp;
+		struct chunk* zn;
 		//struct hashmap* entities;
 		//TODO: tileTicks
 };

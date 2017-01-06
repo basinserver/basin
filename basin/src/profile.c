@@ -11,7 +11,7 @@
 #include <stdio.h>
 #include "hashmap.h"
 
-//#define ENABLE_PROFILER
+#define ENABLE_PROFILER
 //#define ENABLE_PROFILER_MT
 
 struct hashmap* psec;
@@ -27,7 +27,7 @@ void beginProfilerSection(char* name) {
 #ifdef ENABLE_PROFILER
 	if (psec == NULL) {
 #ifdef ENABLE_PROFILER_MT
-		psec = new_collection(1, 1);
+		psec = new_hashmap(1, 1);
 #else
 		psec = new_hashmap(1, 0);
 #endif
