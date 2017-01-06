@@ -1074,7 +1074,9 @@ int tick_itemstack(struct world* world, struct entity* entity) {
 		return 0;
 	}
 	if (entity->age >= 6000) {
+		pthread_rwlock_unlock(&world->entities->data_mutex);
 		despawnEntity(world, entity);
+		pthread_rwlock_rdlock(&world->entities->data_mutex);
 		freeEntity(entity);
 		return 1;
 	}
