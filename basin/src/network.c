@@ -23,6 +23,31 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include "network.h"
+#include <openssl/rsa.h>
+#include <openssl/x509.h>
+#include <openssl/ssl.h>
+
+void init_encryption() {
+	public_rsa = RSA_new();
+	BIGNUM* pn = BN_new();
+	if (BN_set_word(pn, RSA_F4) != 1) {
+		printf("Error generating RSA BIGNUM!\n");
+		return;
+	}
+	if (RSA_generate_key_ex(public_rsa, 1024, pn, NULL) != 1) {
+		printf("Error generating RSA keypair!\n");
+		return;
+	}
+	size_t s = i2d_RSA_PUBKEY(public_rsa, &public_rsa_publickey);
+	if (s != 162) {
+		printf("[WARNING] RSA Public Key size was not 162! Size = %lu\n", s);
+	}
+	OpenSSL_add_all_algorithms();
+	SSL_load_error_strings();
+	SSL_library_init();
+	const SSL_METHOD* method = SSLv23_client_method();
+	mojang_ctx = SSL_CTX_new(method);
+}
 
 void swapEndian(void* dou, size_t ss) {
 	uint8_t* pxs = (uint8_t*) dou;

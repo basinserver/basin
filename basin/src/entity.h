@@ -13,6 +13,94 @@
 #include <stdlib.h>
 #include "world.h"
 
+/*
+
+ #define ENT_PLAYER 0
+ #define ENT_ITEM 1
+ #define ENT_XP_ORB 2
+ #define ENT_AREA_EFFECT_CLOUD 3
+ #define ENT_ELDER_GUARDIAN 4
+ #define ENT_WITHER_SKELETON 5
+ #define ENT_STRAY 6
+ #define ENT_EGG 7
+ #define ENT_LEASH_KNOT 8
+ #define ENT_PAINTING 9
+ #define ENT_ARROW 10
+ #define ENT_SNOWBALL 11
+ #define ENT_FIREBALL 12
+ #define ENT_SMALL_FIREBALL 13
+ #define ENT_ENDER_PEARL 14
+ #define ENT_EYE_OF_ENDER_SIGNAL 15
+ #define ENT_POTION 16
+ #define ENT_XP_BOTTLE 17
+ #define ENT_ITEM_FRAME 18
+ #define ENT_WITHER_SKULL 19
+ #define ENT_TNT 20
+ #define ENT_FALLING_BLOCK 21
+ #define ENT_FIREWORKS_ROCKET 22
+ #define ENT_HUSK 23
+ #define ENT_SPECTRAL_ARROW 24
+ #define ENT_SHULKER_BULLET 25
+ #define ENT_DRAGON_FIREBALL 26
+ #define ENT_ZOMBIE_VILLAGER 27
+ #define ENT_SKELETON_HORSE 28
+ #define ENT_ZOMBIE_HORSE 29
+ #define ENT_ARMOR_STAND 30
+ #define ENT_DONKEY 31
+ #define ENT_MULE 32
+ #define ENT_EVOCATION_FANGS 33
+ #define ENT_EVOCATION_ILLAGER 34
+ #define ENT_VEX 35
+ #define ENT_VINDICATION_ILLAGER 36
+ #define ENT_COMMANDBLOCK_MINECART 40
+ #define ENT_BOAT 41
+ #define ENT_MINECART 42
+ #define ENT_CHEST_MINECART 43
+ #define ENT_FURNACE_MINECART 44
+ #define ENT_TNT_MINECART 45
+ #define ENT_HOPPER_MINECART 46
+ #define ENT_SPAWNER_MINECART 47
+ #define ENT_CREEPER 50
+ #define ENT_SKELETON 51
+ #define ENT_SPIDER 52
+ #define ENT_GIANT 53
+ #define ENT_ZOMBIE 54
+ #define ENT_SLIME 55
+ #define ENT_GHAST 56
+ #define ENT_ZOMBIE_PIGMAN 57
+ #define ENT_ENDERMAN 58
+ #define ENT_CAVE_SPIDER 59
+ #define ENT_SILVERFISH 60
+ #define ENT_BLAZE 61
+ #define ENT_MAGMA_CUBE 62
+ #define ENT_ENDER_DRAGON 63
+ #define ENT_WITHER 64
+ #define ENT_BAT 65
+ #define ENT_WITCH 66
+ #define ENT_ENDERMITE 67
+ #define ENT_GUARDIAN 68
+ #define ENT_SHULKER 69
+ #define ENT_PIG 90
+ #define ENT_SHEEP 91
+ #define ENT_COW 92
+ #define ENT_CHICKEN 93
+ #define ENT_SQUID 94
+ #define ENT_WOLF 95
+ #define ENT_MOOSHROOM 96
+ #define ENT_SNOWMAN 97
+ #define ENT_OCELOT 98
+ #define ENT_VILLAGER_GOLEM 99
+ #define ENT_HORSE 100
+ #define ENT_RABBIT 101
+ #define ENT_POLAR_BEAR 102
+ #define ENT_LLAMA 103
+ #define ENT_LLAMA_SPIT 104
+ #define ENT_VILLAGER 120
+ #define ENT_ENDER_CRYSTAL 200
+
+
+ */
+
 #define ENT_UNDEFINED 1
 #define ENT_PLAYER 2
 #define ENT_CREEPER 3

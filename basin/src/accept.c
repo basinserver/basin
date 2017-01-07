@@ -42,11 +42,16 @@ void run_accept(struct accept_param* param) {
 		c->writeBuffer_capacity = 0;
 		c->comp = -1;
 		c->state = 0;
+		c->onll_username = NULL;
 		c->disconnect = 0;
 		c->host_ip = NULL;
 		c->player = NULL;
 		c->host_port = 0;
 		c->protocolVersion = 0;
+		c->verifyToken = 0;
+		c->aes_ctx_enc = NULL;
+		c->aes_ctx_dec = NULL;
+		memset(c->sharedSecret, 0, 16);
 		if (poll(&spfd, 1, -1) < 0) {
 			printf("Error while polling server: %s\n", strerror(errno));
 			xfree(c);

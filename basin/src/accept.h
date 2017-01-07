@@ -13,6 +13,8 @@
 #include <sys/socket.h>
 #include "work.h"
 #include <netinet/ip6.h>
+#include <openssl/evp.h>
+#include <openssl/aes.h>
 
 struct accept_param {
 		int server_fd;
@@ -41,6 +43,11 @@ struct conn {
 		struct player* player;
 		int disconnect;
 		uint32_t protocolVersion;
+		uint32_t verifyToken;
+		char* onll_username;
+		uint8_t sharedSecret[16];
+		EVP_CIPHER_CTX* aes_ctx_enc;
+		EVP_CIPHER_CTX* aes_ctx_dec;
 };
 
 void run_accept(struct accept_param* param);

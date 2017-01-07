@@ -42,6 +42,7 @@
 #include "queue.h"
 #include "profile.h"
 #include "plugin.h"
+#include <openssl/rand.h>
 
 void main_tick() {
 	pthread_cond_broadcast (&glob_tick_cond);
@@ -116,7 +117,9 @@ int main(int argc, char* argv[]) {
 	signal(SIGPIPE, SIG_IGN);
 	struct timespec ts;
 	clock_gettime(CLOCK_MONOTONIC, &ts);
-	srand(ts.tv_sec * 1000000 + ts.tv_nsec / 1000);
+	size_t us = ts.tv_sec * 1000000 + ts.tv_nsec / 1000;
+	srand(us);
+	RAND_seed(&us, sizeof(size_t));
 	printf("Loading %s %s\n", DAEMON_NAME, VERSION);
 #ifdef DEBUG
 	printf("Running in Debug mode!\n");
@@ -204,6 +207,8 @@ int main(int argc, char* argv[]) {
 	printf("Commands Initialized\n");
 	init_plugins();
 	printf("Plugins Initialized\n");
+	init_encryption();
+	printf("Encryption Initialized\n");
 	for (int i = 0; i < servsl; i++) {
 		struct cnode* serv = servs[i];
 		const char* bind_mode = getConfigValue(serv, "bind-mode");

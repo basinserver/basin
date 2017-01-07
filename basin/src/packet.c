@@ -35,24 +35,42 @@ ssize_t readPacket(struct conn* conn, unsigned char* buf, size_t buflen, struct 
 	void* pktbuf = buf;
 	int32_t pktlen = buflen;
 	int tf = 0;
+	if (conn->aes_ctx_dec != NULL) {
+		if (EVP_DecryptInit_ex(conn->aes_ctx_dec, EVP_aes_128_cfb8(), NULL, conn->sharedSecret, conn->sharedSecret) != 1) return -1;
+		int csl = pktlen + 32; // 16 extra just in case
+		void* edata = xmalloc(csl);
+		if (EVP_DecryptUpdate(conn->aes_ctx_dec, edata, &csl, pktbuf, pktlen) != 1) {
+			xfree(edata);
+			goto rer;
+		}
+		int csl2 = 0;
+		if (EVP_DecryptFinal_ex(conn->aes_ctx_dec, edata + csl, &csl2) != 1) {
+			xfree(edata);
+			goto rer;
+		}
+		csl += csl2;
+		pktbuf = edata;
+		pktlen = csl;
+		tf = 1;
+	}
 	if (conn->comp >= 0) {
 		int32_t dl = 0;
 		int rx = readVarInt(&dl, pktbuf, pktlen);
-		if (rx == 0) return -1;
+		if (rx == 0) goto rer;
 		pktlen -= rx;
 		pktbuf += rx;
 		if (dl > 0 && pktlen > 0) {
 			pktlen = dl;
-			void* decmpbuf = malloc(dl);
+			void* decmpbuf = xmalloc(dl);
 			z_stream strm;
 			strm.zalloc = Z_NULL;
 			strm.zfree = Z_NULL;
 			strm.opaque = Z_NULL;
 			int dr = 0;
 			if ((dr = inflateInit(&strm)) != Z_OK) {
-				free(decmpbuf);
+				xfree(decmpbuf);
 				printf("Compression initialization error!\n");
-				return -1;
+				goto rer;
 			}
 			strm.avail_in = pktlen;
 			strm.next_in = pktbuf;
@@ -61,9 +79,9 @@ ssize_t readPacket(struct conn* conn, unsigned char* buf, size_t buflen, struct 
 			do {
 				dr = inflate(&strm, Z_FINISH);
 				if (dr == Z_STREAM_ERROR) {
-					free(decmpbuf);
+					xfree(decmpbuf);
 					printf("Compression Read Error\n");
-					return -1;
+					goto rer;
 				}
 				strm.avail_out = pktlen - strm.total_out;
 				strm.next_out = decmpbuf + strm.total_out;
@@ -543,6 +561,7 @@ ssize_t readPacket(struct conn* conn, unsigned char* buf, size_t buflen, struct 
 	}
 	goto rx;
 	rer: ;
+	if (tf) xfree(pktbuf);
 	return -1;
 	rx: ;
 	if (tf) xfree(pktbuf);
@@ -1920,14 +1939,14 @@ ssize_t writePacket(struct conn* conn, struct packet* packet) {
 			pi += writeVarInt(packet->data.login_client.encryptionrequest.public_key_length, pktbuf + pi);
 			//public_key
 			ENS(packet->data.login_client.encryptionrequest.public_key_length)
-			memcpy(pktbuf + pi, &packet->data.login_client.encryptionrequest.public_key, packet->data.login_client.encryptionrequest.public_key_length);
+			memcpy(pktbuf + pi, packet->data.login_client.encryptionrequest.public_key, packet->data.login_client.encryptionrequest.public_key_length);
 			pi += packet->data.login_client.encryptionrequest.public_key_length;
 			//verify_token_length
 			ENS(4)
 			pi += writeVarInt(packet->data.login_client.encryptionrequest.verify_token_length, pktbuf + pi);
 			//verify_token
 			ENS(packet->data.login_client.encryptionrequest.verify_token_length)
-			memcpy(pktbuf + pi, &packet->data.login_client.encryptionrequest.verify_token, packet->data.login_client.encryptionrequest.verify_token_length);
+			memcpy(pktbuf + pi, packet->data.login_client.encryptionrequest.verify_token, packet->data.login_client.encryptionrequest.verify_token_length);
 			pi += packet->data.login_client.encryptionrequest.verify_token_length;
 		} else if (id == PKT_LOGIN_CLIENT_LOGINSUCCESS) {
 			//uuid
@@ -1962,27 +1981,26 @@ ssize_t writePacket(struct conn* conn, struct packet* packet) {
 		}
 		strm.avail_in = pi;
 		strm.next_in = pktbuf;
-		void* cdata = malloc(16384);
+		size_t cc = pi + 32;
+		void* cdata = xmalloc(cc);
 		size_t ts = 0;
-		size_t cc = 16384;
 		strm.avail_out = cc - ts;
 		strm.next_out = cdata + ts;
 		do {
 			dr = deflate(&strm, Z_FINISH);
 			ts = strm.total_out;
 			if (ts >= cc) {
-				cc = ts + 16384;
-				cdata = realloc(cdata, cc);
+				cc = ts + 1024;
+				cdata = xrealloc(cdata, cc);
 			}
 			if (dr == Z_STREAM_ERROR) {
-				free(cdata);
+				xfree(cdata);
 				return -1;
 			}
 			strm.avail_out = cc - ts;
 			strm.next_out = cdata + ts;
 		} while (strm.avail_out == 0);
 		deflateEnd(&strm);
-		cdata = xrealloc(cdata, ts); // shrink
 		preps += writeVarInt(ts + getVarIntSize(pi), prep + preps);
 		preps += writeVarInt(pi, prep + preps);
 		wrt = cdata;
@@ -1997,7 +2015,63 @@ ssize_t writePacket(struct conn* conn, struct packet* packet) {
 		wrt = pktbuf;
 		wrt_s = pi;
 	}
-//TODO: encrypt
+	if (conn->aes_ctx_enc != NULL) {
+		if (EVP_EncryptInit_ex(conn->aes_ctx_enc, EVP_aes_128_cfb8(), NULL, conn->sharedSecret, conn->sharedSecret) != 1) {
+			wrt_s = -1;
+			goto rret;
+		}
+		int csl = wrt_s + 32; // 16 extra just in case
+		void* edata = xcalloc(csl);
+		if (EVP_EncryptUpdate(conn->aes_ctx_enc, edata, &csl, wrt, wrt_s) != 1) {
+			xfree(edata);
+			wrt_s = -1;
+			goto rret;
+		}
+		int csl2 = 0;
+		if (EVP_EncryptFinal_ex(conn->aes_ctx_enc, edata + csl, &csl2) != 1) {
+			xfree(edata);
+			wrt_s = -1;
+			goto rret;
+		}
+		csl += csl2;
+		void* owrt = wrt;
+		size_t owrts = wrt_s;
+		//xfree(wrt);
+		if (!frp) pktbuf = NULL;
+		wrt = edata;
+		wrt_s = csl;
+		//
+		if (EVP_DecryptInit_ex(conn->aes_ctx_dec, EVP_aes_128_cfb8(), NULL, conn->sharedSecret, conn->sharedSecret) != 1) return -1;
+		csl = wrt_s + 32; // 16 extra just in case
+		edata = xcalloc(csl);
+		if (EVP_DecryptUpdate(conn->aes_ctx_dec, edata, &csl, wrt, wrt_s) != 1) {
+			xfree(edata);
+			wrt_s = -1;
+			goto rret;
+		}
+		csl2 = 0;
+		if (EVP_DecryptFinal_ex(conn->aes_ctx_dec, edata + csl, &csl2) != 1) {
+			xfree(edata);
+			wrt_s = -1;
+			goto rret;
+		}
+		csl += csl2;
+		if (csl != owrts) {
+			printf("length mismatch! %i != %i\n", csl, owrts);
+		} else {
+			printf("original data:  ");
+			for (int i = 0; i < owrts; i++) {
+				printf("%02X", ((uint8_t*) owrt)[i]);
+			}
+			printf("\ndec/enc data: ");
+			for (int i = 0; i < csl; i++) {
+				printf("%02X", ((uint8_t*) edata)[i]);
+			}
+			printf("\n%s\n", memeq(owrt, owrts, edata, csl) ? "equal!" : "not equal!");
+		}
+		xfree(owrt);
+		xfree(edata);
+	}
 	if (conn->writeBuffer == NULL) {
 		conn->writeBuffer = xmalloc(preps);
 		memcpy(conn->writeBuffer, prep, preps);
@@ -2017,6 +2091,7 @@ ssize_t writePacket(struct conn* conn, struct packet* packet) {
 	}
 	memcpy(conn->writeBuffer + conn->writeBuffer_size, wrt, wrt_s);
 	conn->writeBuffer_size += wrt_s;
+	rret: ;
 	if (frp) xfree(wrt);
 	xfree(pktbuf);
 	return wrt_s;

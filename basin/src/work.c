@@ -32,6 +32,11 @@
 #include "item.h"
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include <openssl/sha.h>
+#include <netdb.h>
+#include <openssl/ssl.h>
+#include "version.h"
+#include "json.h"
 
 void closeConn(struct work_param* param, struct conn* conn) {
 	close(conn->fd);
@@ -43,10 +48,158 @@ void closeConn(struct work_param* param, struct conn* conn) {
 		conn->player->defunct = 1;
 		conn->player->conn = NULL;
 	}
+	if (conn->aes_ctx_enc != NULL) EVP_CIPHER_CTX_free(conn->aes_ctx_enc);
+	if (conn->aes_ctx_dec != NULL) EVP_CIPHER_CTX_free(conn->aes_ctx_dec);
 	if (conn->host_ip != NULL) xfree(conn->host_ip);
 	if (conn->readBuffer != NULL) xfree(conn->readBuffer);
 	if (conn->writeBuffer != NULL) xfree(conn->writeBuffer);
+	if (conn->onll_username != NULL) xfree(conn->onll_username);
 	xfree(conn);
+}
+
+int work_joinServer(struct conn* conn, char* username, char* uuids) {
+	struct packet rep;
+	rep.id = PKT_LOGIN_CLIENT_LOGINSUCCESS;
+	rep.data.login_client.loginsuccess.username = username;
+	struct uuid uuid;
+	unsigned char* uuidx = (unsigned char*) &uuid;
+	if (uuids == NULL) {
+		if (!online_mode) return 1;
+		MD5_CTX context;
+		MD5_Init(&context);
+		MD5_Update(&context, username, strlen(username));
+		MD5_Final(uuidx, &context);
+	} else {
+		if (strlen(uuids) != 32) return 1;
+		char ups[17];
+		memcpy(ups, uuids, 16);
+		ups[16] = 0;
+		uuid.uuid1 = strtoll(ups, NULL, 16);
+		memcpy(ups, uuids + 16, 16);
+		uuid.uuid2 = strtoll(ups, NULL, 16);
+	}
+	rep.data.login_client.loginsuccess.uuid = xmalloc(38);
+	snprintf(rep.data.login_client.loginsuccess.uuid, 10, "%08X-", ((uint32_t*) uuidx)[0]);
+	snprintf(rep.data.login_client.loginsuccess.uuid + 9, 6, "%04X-", ((uint16_t*) uuidx)[2]);
+	snprintf(rep.data.login_client.loginsuccess.uuid + 14, 6, "%04X-", ((uint16_t*) uuidx)[3]);
+	snprintf(rep.data.login_client.loginsuccess.uuid + 19, 6, "%04X-", ((uint16_t*) uuidx)[4]);
+	snprintf(rep.data.login_client.loginsuccess.uuid + 24, 9, "%08X", ((uint32_t*) (uuidx + 4))[2]);
+	snprintf(rep.data.login_client.loginsuccess.uuid + 32, 5, "%04X", ((uint16_t*) uuidx)[7]);
+	if (writePacket(conn, &rep) < 0) return 1;
+	xfree(rep.data.login_client.loginsuccess.uuid);
+	conn->state = STATE_PLAY;
+	struct entity* ep = newEntity(nextEntityID++, (double) overworld->spawnpos.x + .5, (double) overworld->spawnpos.y, (double) overworld->spawnpos.z + .5, ENT_PLAYER, 0., 0.);
+	struct player* player = newPlayer(ep, xstrdup(rep.data.login_client.loginsuccess.username, 1), uuid, conn, 0); // TODO default gamemode
+	player->protocolVersion = conn->protocolVersion;
+	conn->player = player;
+	put_hashmap(players, player->entity->id, player);
+	rep.id = PKT_PLAY_CLIENT_JOINGAME;
+	rep.data.play_client.joingame.entity_id = ep->id;
+	rep.data.play_client.joingame.gamemode = player->gamemode;
+	rep.data.play_client.joingame.dimension = overworld->dimension;
+	rep.data.play_client.joingame.difficulty = difficulty;
+	rep.data.play_client.joingame.max_players = max_players;
+	rep.data.play_client.joingame.level_type = overworld->levelType;
+	rep.data.play_client.joingame.reduced_debug_info = 0; // TODO
+	if (writePacket(conn, &rep) < 0) return 1;
+	rep.id = PKT_PLAY_CLIENT_PLUGINMESSAGE;
+	rep.data.play_client.pluginmessage.channel = "MC|Brand";
+	rep.data.play_client.pluginmessage.data = xmalloc(16);
+	int rx = writeVarInt(5, rep.data.play_client.pluginmessage.data);
+	memcpy(rep.data.play_client.pluginmessage.data + rx, "Basin", 5);
+	rep.data.play_client.pluginmessage.data_size = rx + 5;
+	if (writePacket(conn, &rep) < 0) return 1;
+	xfree(rep.data.play_client.pluginmessage.data);
+	rep.id = PKT_PLAY_CLIENT_SERVERDIFFICULTY;
+	rep.data.play_client.serverdifficulty.difficulty = difficulty;
+	if (writePacket(conn, &rep) < 0) return 1;
+	rep.id = PKT_PLAY_CLIENT_SPAWNPOSITION;
+	memcpy(&rep.data.play_client.spawnposition.location, &overworld->spawnpos, sizeof(struct encpos));
+	if (writePacket(conn, &rep) < 0) return 1;
+	rep.id = PKT_PLAY_CLIENT_PLAYERABILITIES;
+	rep.data.play_client.playerabilities.flags = 0; // TODO: allows flying, remove
+	rep.data.play_client.playerabilities.flying_speed = 0.05;
+	rep.data.play_client.playerabilities.field_of_view_modifier = .1;
+	if (writePacket(conn, &rep) < 0) return 1;
+	rep.id = PKT_PLAY_CLIENT_PLAYERPOSITIONANDLOOK;
+	rep.data.play_client.playerpositionandlook.x = ep->x;
+	rep.data.play_client.playerpositionandlook.y = ep->y;
+	rep.data.play_client.playerpositionandlook.z = ep->z;
+	rep.data.play_client.playerpositionandlook.yaw = ep->yaw;
+	rep.data.play_client.playerpositionandlook.pitch = ep->pitch;
+	rep.data.play_client.playerpositionandlook.flags = 0x0;
+	rep.data.play_client.playerpositionandlook.teleport_id = 0;
+	if (writePacket(conn, &rep) < 0) return 1;
+	rep.id = PKT_PLAY_CLIENT_PLAYERLISTITEM;
+	pthread_rwlock_rdlock(&players->data_mutex);
+	rep.data.play_client.playerlistitem.action_id = 0;
+	rep.data.play_client.playerlistitem.number_of_players = players->entry_count + 1;
+	rep.data.play_client.playerlistitem.players = xmalloc(rep.data.play_client.playerlistitem.number_of_players * sizeof(struct listitem_player));
+	size_t px = 0;
+	BEGIN_HASHMAP_ITERATION (players)
+	struct player* plx = (struct player*) value;
+	if (px < rep.data.play_client.playerlistitem.number_of_players) {
+		memcpy(&rep.data.play_client.playerlistitem.players[px].uuid, &plx->uuid, sizeof(struct uuid));
+		rep.data.play_client.playerlistitem.players[px].action.addplayer.name = xstrdup(plx->name, 0);
+		rep.data.play_client.playerlistitem.players[px].action.addplayer.number_of_properties = 0;
+		rep.data.play_client.playerlistitem.players[px].action.addplayer.properties = NULL;
+		rep.data.play_client.playerlistitem.players[px].action.addplayer.gamemode = plx->gamemode;
+		rep.data.play_client.playerlistitem.players[px].action.addplayer.ping = 0; // TODO
+		rep.data.play_client.playerlistitem.players[px].action.addplayer.has_display_name = 0;
+		rep.data.play_client.playerlistitem.players[px].action.addplayer.display_name = NULL;
+		px++;
+	}
+	if (player == plx) continue;
+	struct packet* pkt = xmalloc(sizeof(struct packet));
+	pkt->id = PKT_PLAY_CLIENT_PLAYERLISTITEM;
+	pkt->data.play_client.playerlistitem.action_id = 0;
+	pkt->data.play_client.playerlistitem.number_of_players = 1;
+	pkt->data.play_client.playerlistitem.players = xmalloc(sizeof(struct listitem_player));
+	memcpy(&pkt->data.play_client.playerlistitem.players->uuid, &player->uuid, sizeof(struct uuid));
+	pkt->data.play_client.playerlistitem.players->action.addplayer.name = xstrdup(player->name, 0);
+	pkt->data.play_client.playerlistitem.players->action.addplayer.number_of_properties = 0;
+	pkt->data.play_client.playerlistitem.players->action.addplayer.properties = NULL;
+	pkt->data.play_client.playerlistitem.players->action.addplayer.gamemode = player->gamemode;
+	pkt->data.play_client.playerlistitem.players->action.addplayer.ping = 0; // TODO
+	pkt->data.play_client.playerlistitem.players->action.addplayer.has_display_name = 0;
+	pkt->data.play_client.playerlistitem.players->action.addplayer.display_name = NULL;
+	add_queue(plx->outgoingPacket, pkt);
+	flush_outgoing(plx);
+	END_HASHMAP_ITERATION (players)
+	pthread_rwlock_unlock(&players->data_mutex);
+	memcpy(&rep.data.play_client.playerlistitem.players[px].uuid, &player->uuid, sizeof(struct uuid));
+	rep.data.play_client.playerlistitem.players[px].action.addplayer.name = xstrdup(player->name, 0);
+	rep.data.play_client.playerlistitem.players[px].action.addplayer.number_of_properties = 0;
+	rep.data.play_client.playerlistitem.players[px].action.addplayer.properties = NULL;
+	rep.data.play_client.playerlistitem.players[px].action.addplayer.gamemode = player->gamemode;
+	rep.data.play_client.playerlistitem.players[px].action.addplayer.ping = 0; // TODO
+	rep.data.play_client.playerlistitem.players[px].action.addplayer.has_display_name = 0;
+	rep.data.play_client.playerlistitem.players[px].action.addplayer.display_name = NULL;
+	px++;
+	if (writePacket(conn, &rep) < 0) return 1;
+	rep.id = PKT_PLAY_CLIENT_TIMEUPDATE;
+	rep.data.play_client.timeupdate.time_of_day = overworld->time;
+	rep.data.play_client.timeupdate.world_age = overworld->age;
+	if (writePacket(conn, &rep) < 0) return 1;
+	add_collection(playersToLoad, player);
+	//broadcastf("yellow", "%s has joined the server!", player->name);
+	const char* mip = NULL;
+	char tip[48];
+	if (conn->addr.sin6_family == AF_INET) {
+		struct sockaddr_in *sip4 = (struct sockaddr_in*) &conn->addr;
+		mip = inet_ntop(AF_INET, &sip4->sin_addr, tip, 48);
+	} else if (conn->addr.sin6_family == AF_INET6) {
+		struct sockaddr_in6 *sip6 = (struct sockaddr_in6*) &conn->addr;
+		if (memseq((unsigned char*) &sip6->sin6_addr, 10, 0) && memseq((unsigned char*) &sip6->sin6_addr + 10, 2, 0xff)) {
+			mip = inet_ntop(AF_INET, ((unsigned char*) &sip6->sin6_addr) + 12, tip, 48);
+		} else mip = inet_ntop(AF_INET6, &sip6->sin6_addr, tip, 48);
+	} else if (conn->addr.sin6_family == AF_LOCAL) {
+		mip = "UNIX";
+	} else {
+		mip = "UNKNOWN";
+	}
+	printf("Player '%s' has joined with IP '%s'\n", player->name, mip);
+	return 0;
 }
 
 int handleRead(struct conn* conn, struct work_param* param, int fd) {
@@ -96,10 +249,145 @@ int handleRead(struct conn* conn, struct work_param* param, int fd) {
 				conn->state = -1;
 			} else goto rete;
 		} else if (conn->state == STATE_LOGIN) {
-			if (inp->id == PKT_LOGIN_SERVER_LOGINSTART) {
+			if (inp->id == PKT_LOGIN_SERVER_ENCRYPTIONRESPONSE) {
+				if (conn->verifyToken == 0 || inp->data.login_server.encryptionresponse.shared_secret_length > 162 || inp->data.login_server.encryptionresponse.verify_token_length > 162) goto rete;
+				unsigned char decSecret[162];
+				int secLen = RSA_private_decrypt(inp->data.login_server.encryptionresponse.shared_secret_length, inp->data.login_server.encryptionresponse.shared_secret, decSecret, public_rsa, RSA_PKCS1_PADDING);
+				if (secLen != 16) goto rete;
+				unsigned char decVerifyToken[162];
+				int vtLen = RSA_private_decrypt(inp->data.login_server.encryptionresponse.verify_token_length, inp->data.login_server.encryptionresponse.verify_token, decVerifyToken, public_rsa, RSA_PKCS1_PADDING);
+				if (vtLen != 4) goto rete;
+				uint32_t vt = *((uint32_t*) decVerifyToken);
+				if (vt != conn->verifyToken) goto rete;
+				uint8_t hash[20];
+				SHA_CTX context;
+				SHA1_Init(&context);
+				SHA1_Update(&context, decSecret, 16);
+				SHA1_Update(&context, public_rsa_publickey, 162);
+				SHA1_Final(hash, &context);
+				int m = 0;
+				if (hash[0] & 0x80) {
+					m = 1;
+					for (int i = 0; i < 20; i++) {
+						hash[i] = ~hash[i];
+					}
+					(hash[19])++;
+				}
+				char fhash[32];
+				char* fhash2 = fhash + 1;
+				for (int i = 0; i < 20; i++) {
+					snprintf(fhash + 1 + (i * 2), 3, "%02X", hash[i]);
+				}
+				for (int i = 1; i < 41; i++) {
+					if (fhash[i] == '0') fhash2++;
+					else break;
+				}
+				fhash2--;
+				if (m) fhash2[0] = '-';
+				else fhash2++;
+				struct sockaddr_in sin;
+				struct hostent *host = gethostbyname("sessionserver.mojang.com");
+				if (host != NULL) {
+					struct in_addr **adl = (struct in_addr **) host->h_addr_list;
+					if (adl[0] != NULL) {
+						sin.sin_addr.s_addr = adl[0]->s_addr;
+					} else goto merr;
+				} else goto merr;
+				sin.sin_port = htons(443);
+				sin.sin_family = AF_INET;
+				int mfd = socket(AF_INET, SOCK_STREAM, 0);
+				SSL* sct = NULL;
+				int initssl = 0;
+				int val = 0;
+				if (mfd < 0) goto merr;
+				if (connect(mfd, (struct sockaddr*) &sin, sizeof(struct sockaddr_in))) goto merr;
+				sct = SSL_new(mojang_ctx);
+				SSL_set_connect_state(sct);
+				SSL_set_fd(sct, mfd);
+				if (SSL_connect(sct) != 1) goto merr;
+				else initssl = 1;
+				char cbuf[4096];
+				int tl = snprintf(cbuf, 1024, "GET /session/minecraft/hasJoined?username=%s&serverId=%s HTTP/1.1\r\nHost: sessionserver.mojang.com\r\nUser-Agent: Basin " VERSION "\r\nConnection: close\r\n\r\n", conn->onll_username, fhash2);
+				int tw = 0;
+				while (tw < tl) {
+					int r = SSL_write(sct, cbuf, tl);
+					if (r <= 0) goto merr;
+					else tw += r;
+				}
+				tw = 0;
+				int r = 0;
+				while ((r = SSL_read(sct, cbuf + tw, 4095 - tw)) > 0) {
+					tw += r;
+				}
+				cbuf[tw] = 0;
+				char* data = strstr(cbuf, "\r\n\r\n");
+				if (data == NULL) goto merr;
+				data += 4;
+				struct json_object json;
+				parseJSON(&json, data);
+				struct json_object* tmp = getJSONValue(&json, "id");
+				if (tmp == NULL || tmp->type != JSON_STRING) {
+					freeJSON(&json);
+					goto merr;
+				}
+				char* id = trim(tmp->data.string);
+				tmp = getJSONValue(&json, "name");
+				if (tmp == NULL || tmp->type != JSON_STRING) {
+					freeJSON(&json);
+					goto merr;
+				}
+				char* name = trim(tmp->data.string);
+				size_t sl = strlen(name);
+				if (sl < 2 || sl > 16) {
+					freeJSON(&json);
+					goto merr;
+				}
+				BEGIN_HASHMAP_ITERATION (players)
+				struct player* player = (struct player*) value;
+				if (streq_nocase(name, player->name)) {
+					kickPlayer(player, "You have logged in from another location!");
+					goto pbn2;
+				}
+				END_HASHMAP_ITERATION (players)
+				pbn2: ;
+				val = 1;
+				memcpy(conn->sharedSecret, decSecret, 16);
+				conn->aes_ctx_enc = EVP_CIPHER_CTX_new();
+				if (conn->aes_ctx_enc == NULL) goto rete;
+				conn->aes_ctx_dec = EVP_CIPHER_CTX_new();
+				if (conn->aes_ctx_dec == NULL) goto rete;
+				if (work_joinServer(conn, name, id)) {
+					freeJSON(&json);
+					if (initssl) SSL_shutdown(sct);
+					if (mfd >= 0) close(mfd);
+					if (sct != NULL) SSL_free(sct);
+					goto rete;
+				}
+				freeJSON(&json);
+				merr: ;
+				if (initssl) SSL_shutdown(sct);
+				if (mfd >= 0) close(mfd);
+				if (sct != NULL) SSL_free(sct);
+				if (!val) {
+					rep.id = PKT_LOGIN_CLIENT_DISCONNECT;
+					rep.data.login_client.disconnect.reason = xstrdup("{\"text\": \"There was an unresolvable issue with the Mojang sessionserver! Please try again.\"}", 0);
+					if (writePacket(conn, &rep) < 0) goto rete;
+					conn->disconnect = 1;
+					goto ret;
+				}
+			} else if (inp->id == PKT_LOGIN_SERVER_LOGINSTART) {
 				if (online_mode) {
-					//TODO
-					return -1;
+					if (conn->verifyToken) goto rete;
+					conn->onll_username = xstrdup(inp->data.login_server.loginstart.name, 0);
+					rep.id = PKT_LOGIN_CLIENT_ENCRYPTIONREQUEST;
+					rep.data.login_client.encryptionrequest.server_id = "";
+					rep.data.login_client.encryptionrequest.public_key = public_rsa_publickey;
+					rep.data.login_client.encryptionrequest.public_key_length = 162;
+					conn->verifyToken = rand();
+					if (conn->verifyToken == 0) conn->verifyToken = 1;
+					rep.data.login_client.encryptionrequest.verify_token = (uint8_t*) &conn->verifyToken;
+					rep.data.login_client.encryptionrequest.verify_token_length = 4;
+					if (writePacket(conn, &rep) < 0) goto rete;
 				} else {
 					int bn = 0;
 					char* rna = trim(inp->data.login_server.loginstart.name);
@@ -110,161 +398,19 @@ int handleRead(struct conn* conn, struct work_param* param, int fd) {
 						struct player* player = (struct player*) value;
 						if (streq_nocase(rna, player->name)) {
 							bn = 1;
-							break;
+							goto pbn;
 						}
 						END_HASHMAP_ITERATION (players)
+						pbn: ;
 					}
 					if (bn) {
 						rep.id = PKT_LOGIN_CLIENT_DISCONNECT;
 						rep.data.login_client.disconnect.reason = xstrdup(bn == 2 ? "{\"text\": \"Invalid name!\"}" : "{\"text\", \"You are already in the server!\"}", 0);
 						if (writePacket(conn, &rep) < 0) goto rete;
 						conn->disconnect = 1;
-						return 0;
+						goto ret;
 					}
-					rep.id = PKT_LOGIN_CLIENT_LOGINSUCCESS;
-					rep.data.login_client.loginsuccess.username = rna;
-					struct uuid uuid;
-					unsigned char* uuidx = (unsigned char*) &uuid;
-					MD5_CTX context;
-					MD5_Init(&context);
-					MD5_Update(&context, rna, strlen(rna));
-					MD5_Final(uuidx, &context);
-					rep.data.login_client.loginsuccess.uuid = xmalloc(38);
-					snprintf(rep.data.login_client.loginsuccess.uuid, 10, "%08X-", ((uint32_t*) uuidx)[0]);
-					snprintf(rep.data.login_client.loginsuccess.uuid + 9, 6, "%04X-", ((uint16_t*) uuidx)[2]);
-					snprintf(rep.data.login_client.loginsuccess.uuid + 14, 6, "%04X-", ((uint16_t*) uuidx)[3]);
-					snprintf(rep.data.login_client.loginsuccess.uuid + 19, 6, "%04X-", ((uint16_t*) uuidx)[4]);
-					snprintf(rep.data.login_client.loginsuccess.uuid + 24, 9, "%08X", ((uint32_t*) (uuidx + 4))[2]);
-					snprintf(rep.data.login_client.loginsuccess.uuid + 32, 5, "%04X", ((uint16_t*) uuidx)[7]);
-					if (writePacket(conn, &rep) < 0) goto rete;
-					xfree(rep.data.login_client.loginsuccess.uuid);
-					conn->state = STATE_PLAY;
-					struct entity* ep = newEntity(nextEntityID++, (double) overworld->spawnpos.x + .5, (double) overworld->spawnpos.y, (double) overworld->spawnpos.z + .5, ENT_PLAYER, 0., 0.);
-					struct player* player = newPlayer(ep, xstrdup(rep.data.login_client.loginsuccess.username, 1), uuid, conn, 0); // TODO default gamemode
-					player->protocolVersion = conn->protocolVersion;
-					conn->player = player;
-					put_hashmap(players, player->entity->id, player);
-					rep.id = PKT_PLAY_CLIENT_JOINGAME;
-					rep.data.play_client.joingame.entity_id = ep->id;
-					rep.data.play_client.joingame.gamemode = player->gamemode;
-					rep.data.play_client.joingame.dimension = overworld->dimension;
-					rep.data.play_client.joingame.difficulty = difficulty;
-					rep.data.play_client.joingame.max_players = max_players;
-					rep.data.play_client.joingame.level_type = overworld->levelType;
-					rep.data.play_client.joingame.reduced_debug_info = 0; // TODO
-					if (writePacket(conn, &rep) < 0) goto rete;
-					rep.id = PKT_PLAY_CLIENT_PLUGINMESSAGE;
-					rep.data.play_client.pluginmessage.channel = "MC|Brand";
-					rep.data.play_client.pluginmessage.data = xmalloc(16);
-					int rx = writeVarInt(5, rep.data.play_client.pluginmessage.data);
-					memcpy(rep.data.play_client.pluginmessage.data + rx, "Basin", 5);
-					rep.data.play_client.pluginmessage.data_size = rx + 5;
-					if (writePacket(conn, &rep) < 0) goto rete;
-					xfree(rep.data.play_client.pluginmessage.data);
-					rep.id = PKT_PLAY_CLIENT_SERVERDIFFICULTY;
-					rep.data.play_client.serverdifficulty.difficulty = difficulty;
-					if (writePacket(conn, &rep) < 0) goto rete;
-					rep.id = PKT_PLAY_CLIENT_SPAWNPOSITION;
-					memcpy(&rep.data.play_client.spawnposition.location, &overworld->spawnpos, sizeof(struct encpos));
-					if (writePacket(conn, &rep) < 0) goto rete;
-					rep.id = PKT_PLAY_CLIENT_PLAYERABILITIES;
-					rep.data.play_client.playerabilities.flags = 0; // TODO: allows flying, remove
-					rep.data.play_client.playerabilities.flying_speed = 0.05;
-					rep.data.play_client.playerabilities.field_of_view_modifier = .1;
-					if (writePacket(conn, &rep) < 0) goto rete;
-					rep.id = PKT_PLAY_CLIENT_PLAYERPOSITIONANDLOOK;
-					rep.data.play_client.playerpositionandlook.x = ep->x;
-					rep.data.play_client.playerpositionandlook.y = ep->y;
-					rep.data.play_client.playerpositionandlook.z = ep->z;
-					rep.data.play_client.playerpositionandlook.yaw = ep->yaw;
-					rep.data.play_client.playerpositionandlook.pitch = ep->pitch;
-					rep.data.play_client.playerpositionandlook.flags = 0x0;
-					rep.data.play_client.playerpositionandlook.teleport_id = 0;
-					if (writePacket(conn, &rep) < 0) goto rete;
-					rep.id = PKT_PLAY_CLIENT_PLAYERLISTITEM;
-					pthread_rwlock_rdlock(&players->data_mutex);
-					rep.data.play_client.playerlistitem.action_id = 0;
-					rep.data.play_client.playerlistitem.number_of_players = players->entry_count + 1;
-					rep.data.play_client.playerlistitem.players = xmalloc(rep.data.play_client.playerlistitem.number_of_players * sizeof(struct listitem_player));
-					size_t px = 0;
-					BEGIN_HASHMAP_ITERATION (players)
-					struct player* plx = (struct player*) value;
-					if (px < rep.data.play_client.playerlistitem.number_of_players) {
-						memcpy(&rep.data.play_client.playerlistitem.players[px].uuid, &plx->uuid, sizeof(struct uuid));
-						rep.data.play_client.playerlistitem.players[px].action.addplayer.name = xstrdup(plx->name, 0);
-						rep.data.play_client.playerlistitem.players[px].action.addplayer.number_of_properties = 0;
-						rep.data.play_client.playerlistitem.players[px].action.addplayer.properties = NULL;
-						rep.data.play_client.playerlistitem.players[px].action.addplayer.gamemode = plx->gamemode;
-						rep.data.play_client.playerlistitem.players[px].action.addplayer.ping = 0; // TODO
-						rep.data.play_client.playerlistitem.players[px].action.addplayer.has_display_name = 0;
-						rep.data.play_client.playerlistitem.players[px].action.addplayer.display_name = NULL;
-						px++;
-					}
-					if (player == plx) continue;
-					struct packet* pkt = xmalloc(sizeof(struct packet));
-					pkt->id = PKT_PLAY_CLIENT_PLAYERLISTITEM;
-					pkt->data.play_client.playerlistitem.action_id = 0;
-					pkt->data.play_client.playerlistitem.number_of_players = 1;
-					pkt->data.play_client.playerlistitem.players = xmalloc(sizeof(struct listitem_player));
-					memcpy(&pkt->data.play_client.playerlistitem.players->uuid, &player->uuid, sizeof(struct uuid));
-					pkt->data.play_client.playerlistitem.players->action.addplayer.name = xstrdup(player->name, 0);
-					pkt->data.play_client.playerlistitem.players->action.addplayer.number_of_properties = 0;
-					pkt->data.play_client.playerlistitem.players->action.addplayer.properties = NULL;
-					pkt->data.play_client.playerlistitem.players->action.addplayer.gamemode = player->gamemode;
-					pkt->data.play_client.playerlistitem.players->action.addplayer.ping = 0; // TODO
-					pkt->data.play_client.playerlistitem.players->action.addplayer.has_display_name = 0;
-					pkt->data.play_client.playerlistitem.players->action.addplayer.display_name = NULL;
-					add_queue(plx->outgoingPacket, pkt);
-					flush_outgoing(plx);
-					END_HASHMAP_ITERATION (players)
-					pthread_rwlock_unlock(&players->data_mutex);
-					memcpy(&rep.data.play_client.playerlistitem.players[px].uuid, &player->uuid, sizeof(struct uuid));
-					rep.data.play_client.playerlistitem.players[px].action.addplayer.name = xstrdup(player->name, 0);
-					rep.data.play_client.playerlistitem.players[px].action.addplayer.number_of_properties = 0;
-					rep.data.play_client.playerlistitem.players[px].action.addplayer.properties = NULL;
-					rep.data.play_client.playerlistitem.players[px].action.addplayer.gamemode = player->gamemode;
-					rep.data.play_client.playerlistitem.players[px].action.addplayer.ping = 0; // TODO
-					rep.data.play_client.playerlistitem.players[px].action.addplayer.has_display_name = 0;
-					rep.data.play_client.playerlistitem.players[px].action.addplayer.display_name = NULL;
-					px++;
-					if (writePacket(conn, &rep) < 0) goto rete;
-					rep.id = PKT_PLAY_CLIENT_TIMEUPDATE;
-					rep.data.play_client.timeupdate.time_of_day = overworld->time;
-					rep.data.play_client.timeupdate.world_age = overworld->age;
-					if (writePacket(conn, &rep) < 0) goto rete;
-					add_collection(playersToLoad, player);
-					//broadcastf("yellow", "%s has joined the server!", player->name);
-					const char* mip = NULL;
-					char tip[48];
-					if (conn->addr.sin6_family == AF_INET) {
-						struct sockaddr_in *sip4 = (struct sockaddr_in*) &conn->addr;
-						mip = inet_ntop(AF_INET, &sip4->sin_addr, tip, 48);
-					} else if (conn->addr.sin6_family == AF_INET6) {
-						struct sockaddr_in6 *sip6 = (struct sockaddr_in6*) &conn->addr;
-						if (memseq((unsigned char*) &sip6->sin6_addr, 10, 0) && memseq((unsigned char*) &sip6->sin6_addr + 10, 2, 0xff)) {
-							mip = inet_ntop(AF_INET, ((unsigned char*) &sip6->sin6_addr) + 12, tip, 48);
-						} else mip = inet_ntop(AF_INET6, &sip6->sin6_addr, tip, 48);
-					} else if (conn->addr.sin6_family == AF_LOCAL) {
-						mip = "UNIX";
-					} else {
-						mip = "UNKNOWN";
-					}
-					printf("Player '%s' has joined with IP '%s'\n", player->name, mip);
-					/*for (int x = -9; x < 10; x++) {
-					 for (int z = -9; z < 10; z++) {
-					 struct chunk* ch = getChunk(overworld, x + (int32_t) ep->x / 16, z + (int32_t) ep->z / 16);
-					 if (ch != NULL) {
-					 struct packet* pkt = xmalloc(sizeof(struct packet));
-					 pkt->id = PKT_PLAY_CLIENT_CHUNKDATA;
-					 pkt->data.play_client.chunkdata.data = ch;
-					 pkt->data.play_client.chunkdata.ground_up_continuous = 1;
-					 pkt->data.play_client.chunkdata.number_of_block_entities = 0;
-					 pkt->data.play_client.chunkdata.block_entities = NULL;
-					 add_queue(player->conn->outgoingPacket, pkt);
-					 }
-					 }
-					 }*/
-
+					if (work_joinServer(conn, rna, NULL)) goto rete;
 				}
 			}
 		} else if (conn->state == STATE_PLAY) {

@@ -10,6 +10,7 @@
 
 #include "accept.h"
 #include "inventory.h"
+#include <openssl/rsa.h>
 
 struct packet;
 
@@ -28,6 +29,12 @@ struct entity_metadata {
 		uint8_t* metadata;
 		size_t metadata_size;
 };
+
+RSA* public_rsa;
+uint8_t* public_rsa_publickey;
+SSL_CTX* mojang_ctx;
+
+void init_encryption();
 
 void swapEndian(void* dou, size_t ss);
 

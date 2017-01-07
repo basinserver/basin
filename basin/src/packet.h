@@ -1082,9 +1082,9 @@ struct pkt_login_client_disconnect {
 struct pkt_login_client_encryptionrequest {
 		char* server_id;
 		int32_t public_key_length;
-		int8_t* public_key;
+		uint8_t* public_key;
 		int32_t verify_token_length;
-		int8_t* verify_token;
+		uint8_t* verify_token;
 };
 
 #define PKT_LOGIN_CLIENT_LOGINSUCCESS 2
@@ -1110,9 +1110,9 @@ struct pkt_login_server_loginstart {
 
 struct pkt_login_server_encryptionresponse {
 		int32_t shared_secret_length;
-		int8_t* shared_secret;
+		uint8_t* shared_secret;
 		int32_t verify_token_length;
-		int8_t* verify_token;
+		uint8_t* verify_token;
 };
 
 union pkt_handshake_client {
