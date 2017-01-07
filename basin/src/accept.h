@@ -31,8 +31,9 @@ struct conn {
 		struct sockaddr_in6 addr;
 		socklen_t addrlen;
 		unsigned char* readBuffer;
+		unsigned char* readDecBuffer;
+		size_t readDecBuffer_size;
 		size_t readBuffer_size;
-		size_t readBuffer_checked;
 		unsigned char* writeBuffer;
 		size_t writeBuffer_size;
 		size_t writeBuffer_capacity;

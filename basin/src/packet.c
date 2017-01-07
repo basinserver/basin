@@ -29,30 +29,12 @@
 #define ADX(x) pbuf += x;ps -= x;
 #define CPS(x) if(ps < x) goto rer;
 #define CPS_OPT(x) if(ps >= x) {
-#define ENS(x) if(ps-pi < x) { ps += (x > 256 ? x + 1024 : 1024); pktbuf = xrealloc(pktbuf, ps); }
+#define ENS(x) if(ps-pi < x) { ps += (x > 256 ? x + 1024 : 1024); pktbuf = xrealloc(pktbuf - 10, ps + 10) + 10; }
 
 ssize_t readPacket(struct conn* conn, unsigned char* buf, size_t buflen, struct packet* packet) {
 	void* pktbuf = buf;
 	int32_t pktlen = buflen;
 	int tf = 0;
-	if (conn->aes_ctx_dec != NULL) {
-		if (EVP_DecryptInit_ex(conn->aes_ctx_dec, EVP_aes_128_cfb8(), NULL, conn->sharedSecret, conn->sharedSecret) != 1) return -1;
-		int csl = pktlen + 32; // 16 extra just in case
-		void* edata = xmalloc(csl);
-		if (EVP_DecryptUpdate(conn->aes_ctx_dec, edata, &csl, pktbuf, pktlen) != 1) {
-			xfree(edata);
-			goto rer;
-		}
-		int csl2 = 0;
-		if (EVP_DecryptFinal_ex(conn->aes_ctx_dec, edata + csl, &csl2) != 1) {
-			xfree(edata);
-			goto rer;
-		}
-		csl += csl2;
-		pktbuf = edata;
-		pktlen = csl;
-		tf = 1;
-	}
 	if (conn->comp >= 0) {
 		int32_t dl = 0;
 		int rx = readVarInt(&dl, pktbuf, pktlen);
@@ -572,7 +554,8 @@ ssize_t writePacket(struct conn* conn, struct packet* packet) {
 	if (conn->state == STATE_PLAY && packet->id == PKT_PLAY_CLIENT_CHUNKDATA) {
 		if (!isChunkLoaded(conn->player->world, packet->data.play_client.chunkdata.cx, packet->data.play_client.chunkdata.cz)) return 0;
 	}
-	unsigned char* pktbuf = xmalloc(1024);
+	unsigned char* pktbuf = xmalloc(1034);
+	pktbuf += 10;
 	size_t ps = 1024;
 	size_t pi = 0;
 	size_t slb = 0;
@@ -1982,7 +1965,7 @@ ssize_t writePacket(struct conn* conn, struct packet* packet) {
 		strm.avail_in = pi;
 		strm.next_in = pktbuf;
 		size_t cc = pi + 32;
-		void* cdata = xmalloc(cc);
+		void* cdata = xmalloc(cc + 10);
 		size_t ts = 0;
 		strm.avail_out = cc - ts;
 		strm.next_out = cdata + ts;
@@ -1991,7 +1974,7 @@ ssize_t writePacket(struct conn* conn, struct packet* packet) {
 			ts = strm.total_out;
 			if (ts >= cc) {
 				cc = ts + 1024;
-				cdata = xrealloc(cdata, cc);
+				cdata = xrealloc(cdata - 10, cc + 10) + 10;
 			}
 			if (dr == Z_STREAM_ERROR) {
 				xfree(cdata);
@@ -2015,85 +1998,79 @@ ssize_t writePacket(struct conn* conn, struct packet* packet) {
 		wrt = pktbuf;
 		wrt_s = pi;
 	}
+	if (preps >= 10) goto rret;
+	// ^ explode
+	wrt -= preps; // preallocated!
+	memcpy(wrt, prep, preps);
+	wrt_s += preps;
 	if (conn->aes_ctx_enc != NULL) {
-		if (EVP_EncryptInit_ex(conn->aes_ctx_enc, EVP_aes_128_cfb8(), NULL, conn->sharedSecret, conn->sharedSecret) != 1) {
-			wrt_s = -1;
-			goto rret;
-		}
 		int csl = wrt_s + 32; // 16 extra just in case
-		void* edata = xcalloc(csl);
+		void* edata = xmalloc(csl);
 		if (EVP_EncryptUpdate(conn->aes_ctx_enc, edata, &csl, wrt, wrt_s) != 1) {
 			xfree(edata);
 			wrt_s = -1;
 			goto rret;
 		}
-		int csl2 = 0;
-		if (EVP_EncryptFinal_ex(conn->aes_ctx_enc, edata + csl, &csl2) != 1) {
-			xfree(edata);
-			wrt_s = -1;
-			goto rret;
-		}
-		csl += csl2;
-		void* owrt = wrt;
-		size_t owrts = wrt_s;
-		//xfree(wrt);
+		xfree(wrt + preps - 10);
 		if (!frp) pktbuf = NULL;
 		wrt = edata;
 		wrt_s = csl;
 		//
-		if (EVP_DecryptInit_ex(conn->aes_ctx_dec, EVP_aes_128_cfb8(), NULL, conn->sharedSecret, conn->sharedSecret) != 1) return -1;
-		csl = wrt_s + 32; // 16 extra just in case
-		edata = xcalloc(csl);
-		if (EVP_DecryptUpdate(conn->aes_ctx_dec, edata, &csl, wrt, wrt_s) != 1) {
-			xfree(edata);
-			wrt_s = -1;
-			goto rret;
-		}
-		csl2 = 0;
-		if (EVP_DecryptFinal_ex(conn->aes_ctx_dec, edata + csl, &csl2) != 1) {
-			xfree(edata);
-			wrt_s = -1;
-			goto rret;
-		}
-		csl += csl2;
-		if (csl != owrts) {
-			printf("length mismatch! %i != %i\n", csl, owrts);
-		} else {
-			printf("original data:  ");
-			for (int i = 0; i < owrts; i++) {
-				printf("%02X", ((uint8_t*) owrt)[i]);
-			}
-			printf("\ndec/enc data: ");
-			for (int i = 0; i < csl; i++) {
-				printf("%02X", ((uint8_t*) edata)[i]);
-			}
-			printf("\n%s\n", memeq(owrt, owrts, edata, csl) ? "equal!" : "not equal!");
-		}
-		xfree(owrt);
-		xfree(edata);
+		/*if (EVP_DecryptInit_ex(conn->aes_ctx_dec, EVP_aes_128_cfb8(), NULL, conn->sharedSecret, conn->sharedSecret) != 1) return -1;
+		 csl = wrt_s + 32; // 16 extra just in case
+		 edata = xcalloc(csl);
+		 if (EVP_DecryptUpdate(conn->aes_ctx_dec, edata, &csl, wrt, wrt_s) != 1) {
+		 xfree(edata);
+		 wrt_s = -1;
+		 goto rret;
+		 }
+		 csl2 = 0;
+		 if (EVP_DecryptFinal_ex(conn->aes_ctx_dec, edata + csl, &csl2) != 1) {
+		 xfree(edata);
+		 wrt_s = -1;
+		 goto rret;
+		 }
+		 csl += csl2;
+		 if (csl != owrts) {
+		 printf("length mismatch! %i != %i\n", csl, owrts);
+		 } else {
+		 printf("original data: ");
+		 for (int i = 0; i < owrts; i++) {
+		 printf("%02X", ((uint8_t*) owrt)[i]);
+		 }
+		 printf("\nshared secret: ");
+		 for (int i = 0; i < 16; i++) {
+		 printf("%02X", ((uint8_t*) conn->sharedSecret)[i]);
+		 }
+		 printf("\nenc data:      ");
+		 for (int i = 0; i < wrt_s; i++) {
+		 printf("%02X", ((uint8_t*) wrt)[i]);
+		 }
+		 printf("\ndec/enc data:  ");
+		 for (int i = 0; i < csl; i++) {
+		 printf("%02X", ((uint8_t*) edata)[i]);
+		 }
+		 printf("\n%s\n", memeq(owrt, owrts, edata, csl) ? "equal!" : "not equal!");
+		 }
+		 xfree(owrt);
+		 xfree(edata);*/
 	}
 	if (conn->writeBuffer == NULL) {
-		conn->writeBuffer = xmalloc(preps);
-		memcpy(conn->writeBuffer, prep, preps);
-		conn->writeBuffer_size = preps;
-		conn->writeBuffer_capacity = preps;
+		conn->writeBuffer = xmalloc(wrt_s * 10);
+		memcpy(conn->writeBuffer, wrt, wrt_s);
+		conn->writeBuffer_size = wrt_s;
+		conn->writeBuffer_capacity = wrt_s * 10;
 	} else {
-		if (conn->writeBuffer_capacity - conn->writeBuffer_size < preps) {
-			conn->writeBuffer = xrealloc(conn->writeBuffer, conn->writeBuffer_size + preps * 10 + wrt_s * 10);
-			conn->writeBuffer_capacity += preps;
+		if ((conn->writeBuffer_capacity - conn->writeBuffer_size) <= wrt_s) {
+			conn->writeBuffer_capacity += wrt_s * 10;
+			conn->writeBuffer = xrealloc(conn->writeBuffer, conn->writeBuffer_capacity);
 		}
-		memcpy(conn->writeBuffer + conn->writeBuffer_size, prep, preps);
-		conn->writeBuffer_size += preps;
+		memcpy(conn->writeBuffer + conn->writeBuffer_size, wrt, wrt_s);
+		conn->writeBuffer_size += wrt_s;
 	}
-	if (conn->writeBuffer_capacity - conn->writeBuffer_size < wrt_s) {
-		conn->writeBuffer = xrealloc(conn->writeBuffer, conn->writeBuffer_size + wrt_s * 10);
-		conn->writeBuffer_capacity += wrt_s;
-	}
-	memcpy(conn->writeBuffer + conn->writeBuffer_size, wrt, wrt_s);
-	conn->writeBuffer_size += wrt_s;
 	rret: ;
-	if (frp) xfree(wrt);
-	xfree(pktbuf);
+	if (frp) xfree(wrt + preps - 10);
+	if (pktbuf != NULL) xfree(pktbuf - 10);
 	return wrt_s;
 }
 

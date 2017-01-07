@@ -36,7 +36,6 @@ void run_accept(struct accept_param* param) {
 		c->addrlen = sizeof(struct sockaddr_in6);
 		c->readBuffer = NULL;
 		c->readBuffer_size = 0;
-		c->readBuffer_checked = 0;
 		c->writeBuffer = NULL;
 		c->writeBuffer_size = 0;
 		c->writeBuffer_capacity = 0;
@@ -51,6 +50,8 @@ void run_accept(struct accept_param* param) {
 		c->verifyToken = 0;
 		c->aes_ctx_enc = NULL;
 		c->aes_ctx_dec = NULL;
+		c->readDecBuffer = NULL;
+		c->readDecBuffer_size = 0;
 		memset(c->sharedSecret, 0, 16);
 		if (poll(&spfd, 1, -1) < 0) {
 			printf("Error while polling server: %s\n", strerror(errno));

@@ -26,6 +26,8 @@
 #include <openssl/rsa.h>
 #include <openssl/x509.h>
 #include <openssl/ssl.h>
+#include <openssl/aes.h>
+#include <openssl/evp.h>
 
 void init_encryption() {
 	public_rsa = RSA_new();
@@ -45,6 +47,7 @@ void init_encryption() {
 	OpenSSL_add_all_algorithms();
 	SSL_load_error_strings();
 	SSL_library_init();
+	EVP_add_cipher (EVP_aes_128_cfb8());;
 	const SSL_METHOD* method = SSLv23_client_method();
 	mojang_ctx = SSL_CTX_new(method);
 }

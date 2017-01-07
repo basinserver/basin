@@ -48,10 +48,21 @@ void closeConn(struct work_param* param, struct conn* conn) {
 		conn->player->defunct = 1;
 		conn->player->conn = NULL;
 	}
-	if (conn->aes_ctx_enc != NULL) EVP_CIPHER_CTX_free(conn->aes_ctx_enc);
-	if (conn->aes_ctx_dec != NULL) EVP_CIPHER_CTX_free(conn->aes_ctx_dec);
+	if (conn->aes_ctx_enc != NULL) {
+		char final[256];
+		int csl2 = 0;
+		EVP_EncryptFinal_ex(conn->aes_ctx_enc, final, &csl2);
+		EVP_CIPHER_CTX_free(conn->aes_ctx_enc);
+	}
+	if (conn->aes_ctx_dec != NULL) {
+		char final[256];
+		int csl2 = 0;
+		EVP_DecryptFinal_ex(conn->aes_ctx_dec, final, &csl2);
+		EVP_CIPHER_CTX_free(conn->aes_ctx_dec);
+	}
 	if (conn->host_ip != NULL) xfree(conn->host_ip);
 	if (conn->readBuffer != NULL) xfree(conn->readBuffer);
+	if (conn->readDecBuffer != NULL) xfree(conn->readDecBuffer);
 	if (conn->writeBuffer != NULL) xfree(conn->writeBuffer);
 	if (conn->onll_username != NULL) xfree(conn->onll_username);
 	xfree(conn);
@@ -64,19 +75,23 @@ int work_joinServer(struct conn* conn, char* username, char* uuids) {
 	struct uuid uuid;
 	unsigned char* uuidx = (unsigned char*) &uuid;
 	if (uuids == NULL) {
-		if (!online_mode) return 1;
+		if (online_mode) return 1;
 		MD5_CTX context;
 		MD5_Init(&context);
 		MD5_Update(&context, username, strlen(username));
 		MD5_Final(uuidx, &context);
 	} else {
 		if (strlen(uuids) != 32) return 1;
-		char ups[17];
-		memcpy(ups, uuids, 16);
-		ups[16] = 0;
-		uuid.uuid1 = strtoll(ups, NULL, 16);
-		memcpy(ups, uuids + 16, 16);
-		uuid.uuid2 = strtoll(ups, NULL, 16);
+		char ups[9];
+		memcpy(ups, uuids, 8);
+		ups[8] = 0;
+		uuid.uuid1 = ((uint64_t) strtoll(ups, NULL, 16)) << 32;
+		memcpy(ups, uuids + 8, 8);
+		uuid.uuid1 |= ((uint64_t) strtoll(ups, NULL, 16)) & 0xFFFFFFFF;
+		memcpy(ups, uuids + 16, 8);
+		uuid.uuid2 = ((uint64_t) strtoll(ups, NULL, 16)) << 32;
+		memcpy(ups, uuids + 24, 8);
+		uuid.uuid2 |= ((uint64_t) strtoll(ups, NULL, 16)) & 0xFFFFFFFF;
 	}
 	rep.data.login_client.loginsuccess.uuid = xmalloc(38);
 	snprintf(rep.data.login_client.loginsuccess.uuid, 10, "%08X-", ((uint32_t*) uuidx)[0]);
@@ -105,9 +120,9 @@ int work_joinServer(struct conn* conn, char* username, char* uuids) {
 	rep.id = PKT_PLAY_CLIENT_PLUGINMESSAGE;
 	rep.data.play_client.pluginmessage.channel = "MC|Brand";
 	rep.data.play_client.pluginmessage.data = xmalloc(16);
-	int rx = writeVarInt(5, rep.data.play_client.pluginmessage.data);
-	memcpy(rep.data.play_client.pluginmessage.data + rx, "Basin", 5);
-	rep.data.play_client.pluginmessage.data_size = rx + 5;
+	int rx2 = writeVarInt(5, rep.data.play_client.pluginmessage.data);
+	memcpy(rep.data.play_client.pluginmessage.data + rx2, "Basin", 5);
+	rep.data.play_client.pluginmessage.data_size = rx2 + 5;
 	if (writePacket(conn, &rep) < 0) return 1;
 	xfree(rep.data.play_client.pluginmessage.data);
 	rep.id = PKT_PLAY_CLIENT_SERVERDIFFICULTY;
@@ -205,16 +220,43 @@ int work_joinServer(struct conn* conn, char* username, char* uuids) {
 int handleRead(struct conn* conn, struct work_param* param, int fd) {
 	if (conn->disconnect) return 0;
 	while (conn->readBuffer != NULL && conn->readBuffer_size > 0) {
+		void* abuf;
+		size_t asze;
+		if (conn->aes_ctx_dec != NULL) {
+			int csl = conn->readBuffer_size + 32; // 16 extra just in case
+			void* edata = xmalloc(csl);
+			if (EVP_DecryptUpdate(conn->aes_ctx_dec, edata, &csl, conn->readBuffer, conn->readBuffer_size) != 1) {
+				xfree(edata);
+				return -1;
+			}
+			if (csl == 0) break;
+			if (conn->readDecBuffer == NULL) {
+				conn->readDecBuffer = xmalloc(csl);
+				conn->readDecBuffer_size = 0;
+			} else {
+				conn->readDecBuffer = xrealloc(conn->readDecBuffer, csl + conn->readDecBuffer_size);
+			}
+			memcpy(conn->readDecBuffer + conn->readDecBuffer_size, edata, csl);
+			conn->readDecBuffer_size += csl;
+			abuf = conn->readDecBuffer;
+			asze = conn->readDecBuffer_size;
+			xfree(conn->readBuffer);
+			conn->readBuffer = NULL;
+			conn->readBuffer_size = 0;
+		} else {
+			abuf = conn->readBuffer;
+			asze = conn->readBuffer_size;
+		}
 		int32_t length = 0;
-		if (!readVarInt(&length, conn->readBuffer, conn->readBuffer_size)) {
+		if (!readVarInt(&length, abuf, asze)) {
 			return 0;
 		}
 		int ls = getVarIntSize(length);
-		if (conn->readBuffer_size - ls < length) {
+		if (asze - ls < length) {
 			return 0;
 		}
 		struct packet* inp = xmalloc(sizeof(struct packet));
-		ssize_t rx = readPacket(conn, conn->readBuffer + ls, length, inp);
+		ssize_t rx = readPacket(conn, abuf + ls, length, inp);
 		if (rx == -1) goto rete;
 		//printf("State = %i, ID = %i, Data = ", conn->state, inp->id);
 		//for (size_t i = 0; i < length + ls; i++) {
@@ -259,11 +301,14 @@ int handleRead(struct conn* conn, struct work_param* param, int fd) {
 				if (vtLen != 4) goto rete;
 				uint32_t vt = *((uint32_t*) decVerifyToken);
 				if (vt != conn->verifyToken) goto rete;
+				memcpy(conn->sharedSecret, decSecret, 16);
+				uint8_t pubkey[162];
+				memcpy(pubkey, public_rsa_publickey, 162);
 				uint8_t hash[20];
 				SHA_CTX context;
 				SHA1_Init(&context);
 				SHA1_Update(&context, decSecret, 16);
-				SHA1_Update(&context, public_rsa_publickey, 162);
+				SHA1_Update(&context, pubkey, 162);
 				SHA1_Final(hash, &context);
 				int m = 0;
 				if (hash[0] & 0x80) {
@@ -351,11 +396,14 @@ int handleRead(struct conn* conn, struct work_param* param, int fd) {
 				END_HASHMAP_ITERATION (players)
 				pbn2: ;
 				val = 1;
-				memcpy(conn->sharedSecret, decSecret, 16);
 				conn->aes_ctx_enc = EVP_CIPHER_CTX_new();
 				if (conn->aes_ctx_enc == NULL) goto rete;
+				//EVP_CIPHER_CTX_set_padding(conn->aes_ctx_enc, 0);
+				if (EVP_EncryptInit_ex(conn->aes_ctx_enc, EVP_aes_128_cfb8(), NULL, conn->sharedSecret, conn->sharedSecret) != 1) goto rete;
 				conn->aes_ctx_dec = EVP_CIPHER_CTX_new();
 				if (conn->aes_ctx_dec == NULL) goto rete;
+				//EVP_CIPHER_CTX_set_padding(conn->aes_ctx_dec, 0);
+				if (EVP_DecryptInit_ex(conn->aes_ctx_dec, EVP_aes_128_cfb8(), NULL, conn->sharedSecret, conn->sharedSecret) != 1) goto rete;
 				if (work_joinServer(conn, name, id)) {
 					freeJSON(&json);
 					if (initssl) SSL_shutdown(sct);
@@ -417,8 +465,12 @@ int handleRead(struct conn* conn, struct work_param* param, int fd) {
 			add_queue(conn->player->incomingPacket, inp);
 			df = 1;
 		}
-		memmove(conn->readBuffer, conn->readBuffer + length + ls, conn->readBuffer_size - length - ls);
-		conn->readBuffer_size -= length + ls;
+		beginProfilerSection("movebuf");
+		memmove(abuf, abuf + length + ls, asze - length - ls);
+		asze -= length + ls;
+		if (abuf == conn->readBuffer) conn->readBuffer_size = asze;
+		else if (abuf == conn->readDecBuffer) conn->readDecBuffer_size = asze;
+		endProfilerSection("movebuf");
 		goto ret;
 		rete: ;
 		if (!df) {
