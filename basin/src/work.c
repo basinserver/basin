@@ -219,34 +219,34 @@ int work_joinServer(struct conn* conn, char* username, char* uuids) {
 
 int handleRead(struct conn* conn, struct work_param* param, int fd) {
 	if (conn->disconnect) return 0;
-	while (conn->readBuffer != NULL && conn->readBuffer_size > 0) {
-		void* abuf;
-		size_t asze;
-		if (conn->aes_ctx_dec != NULL) {
-			int csl = conn->readBuffer_size + 32; // 16 extra just in case
-			void* edata = xmalloc(csl);
-			if (EVP_DecryptUpdate(conn->aes_ctx_dec, edata, &csl, conn->readBuffer, conn->readBuffer_size) != 1) {
-				xfree(edata);
-				return -1;
-			}
-			if (csl == 0) break;
-			if (conn->readDecBuffer == NULL) {
-				conn->readDecBuffer = xmalloc(csl);
-				conn->readDecBuffer_size = 0;
-			} else {
-				conn->readDecBuffer = xrealloc(conn->readDecBuffer, csl + conn->readDecBuffer_size);
-			}
-			memcpy(conn->readDecBuffer + conn->readDecBuffer_size, edata, csl);
-			conn->readDecBuffer_size += csl;
-			abuf = conn->readDecBuffer;
-			asze = conn->readDecBuffer_size;
-			xfree(conn->readBuffer);
-			conn->readBuffer = NULL;
-			conn->readBuffer_size = 0;
-		} else {
-			abuf = conn->readBuffer;
-			asze = conn->readBuffer_size;
+	void* abuf;
+	size_t asze;
+	if (conn->aes_ctx_dec != NULL) {
+		int csl = conn->readBuffer_size + 32; // 16 extra just in case
+		void* edata = xmalloc(csl);
+		if (EVP_DecryptUpdate(conn->aes_ctx_dec, edata, &csl, conn->readBuffer, conn->readBuffer_size) != 1) {
+			xfree(edata);
+			return -1;
 		}
+		if (csl == 0) return 0;
+		if (conn->readDecBuffer == NULL) {
+			conn->readDecBuffer = xmalloc(csl);
+			conn->readDecBuffer_size = 0;
+		} else {
+			conn->readDecBuffer = xrealloc(conn->readDecBuffer, csl + conn->readDecBuffer_size);
+		}
+		memcpy(conn->readDecBuffer + conn->readDecBuffer_size, edata, csl);
+		conn->readDecBuffer_size += csl;
+		abuf = conn->readDecBuffer;
+		asze = conn->readDecBuffer_size;
+		xfree(conn->readBuffer);
+		conn->readBuffer = NULL;
+		conn->readBuffer_size = 0;
+	} else {
+		abuf = conn->readBuffer;
+		asze = conn->readBuffer_size;
+	}
+	while (abuf != NULL && asze > 0) {
 		int32_t length = 0;
 		if (!readVarInt(&length, abuf, asze)) {
 			return 0;
