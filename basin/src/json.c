@@ -23,6 +23,10 @@ char* __readJSONString(char* json, size_t* i) {
 		} else if (cs == 1) {
 			if (json[*i] == '\"') {
 				errno = 0;
+				if (ret == NULL) {
+					ret = smalloc(1);
+					rs = 0;
+				}
 				ret[rs] = 0;
 				return ret;
 			} else if (json[*i] == '\\') {

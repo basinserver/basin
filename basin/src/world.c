@@ -922,7 +922,7 @@ int light_floodfill(struct world* world, struct chunk* chunk, struct world_light
 	uint8_t pl = getRawLightWorld_guess(world, chunk, lp->x, lp->y, lp->z, !skylight);
 	if (pl == maxl) return sslf;
 	setLightWorld_guess(world, chunk, maxl, lp->x, lp->y, lp->z, !skylight);
-	if (ks) return sslf;
+	if (ks) return 1;
 	if (subtract ? (maxl < 15) : (maxl > 0)) {
 
 		if (subtract ? xpl > maxl : xpl < maxl) {
@@ -1138,11 +1138,11 @@ void setBlockWorld_guess(struct world* world, struct chunk* chunk, block blk, in
 			lp.y = y;
 			lp.z = z;
 			light_floodfill(world, chunk, &lp, 0, bi->lightEmission, nup); // todo remove nup duplicates
-			/*BEGIN_HASHMAP_ITERATION (nup)
-			 struct world_lightpos* nlp = value;
-			 light_floodfill(world, chunk, nlp, 0, 0, 0);
-			 xfree (value);
-			 END_HASHMAP_ITERATION (nup)*/
+			BEGIN_HASHMAP_ITERATION (nup)
+			struct world_lightpos* nlp = value;
+			light_floodfill(world, chunk, nlp, 0, 0, 0);
+			xfree (value);
+			END_HASHMAP_ITERATION (nup)
 			del_hashmap(nup);
 			//light_floodfill(world, chunk, &lp, 1, 0, 0);
 			/*for (int32_t lx = x - 16; lx <= x + 16; lx++) {
