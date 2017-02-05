@@ -191,7 +191,10 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 		double lz = player->entity->z;
 		player->entity->lyaw = player->entity->yaw;
 		player->entity->lpitch = player->entity->pitch;
-		if (moveEntity(player->entity, pkt.x - lx, pkt.feet_y - ly, pkt.z - lz, .05)) {
+		double mx = pkt.x - lx;
+		double my = pkt.feet_y - ly;
+		double mz = pkt.z - lz;
+		if (moveEntity(player->entity, &mx, &my, &mz, .05)) {
 			teleportPlayer(player, lx, ly, lz);
 		} else {
 			player->entity->lx = lx;
@@ -238,7 +241,10 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 		double lz = player->entity->z;
 		player->entity->lyaw = player->entity->yaw;
 		player->entity->lpitch = player->entity->pitch;
-		if (moveEntity(player->entity, pkt.x - lx, pkt.feet_y - ly, pkt.z - lz, .05)) {
+		double mx = pkt.x - lx;
+		double my = pkt.feet_y - ly;
+		double mz = pkt.z - lz;
+		if (moveEntity(player->entity, &mx, &my, &mz, .05)) {
 			teleportPlayer(player, lx, ly, lz);
 		} else {
 			player->entity->lx = lx;

@@ -6,7 +6,7 @@
 		"height": 1.8,
 		"maxHealth": 20.0,
 		"flags": ["player", "livingbase"],
-		"packetType": "undefined",
+		"packetType": "player",
 		"packetID": 0
 	},
 	"item": {

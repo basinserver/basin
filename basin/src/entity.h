@@ -312,6 +312,8 @@ struct collection* entity_infos;
 
 void init_entities();
 
+uint32_t getIDFromEntityDataName(const char* dataname);
+
 struct entity_info* getEntityInfo(uint32_t id);
 
 void add_entity_info(uint32_t eid, struct entity_info* bm);
@@ -611,7 +613,7 @@ struct entity* newEntity(int32_t id, float x, float y, float z, uint32_t type, f
 
 void getEntityCollision(struct entity* ent, struct boundingbox* bb);
 
-int moveEntity(struct entity* entity, double mx, double my, double mz, float shrink);
+int moveEntity(struct entity* entity, double* mx, double* my, double* mz, float shrink);
 
 int tick_itemstack(struct world* world, struct entity* entity);
 

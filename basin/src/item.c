@@ -72,12 +72,13 @@ int onItemInteract_spawnegg(struct world* world, struct player* player, uint8_t 
 	if (et == NULL) return 0;
 	struct nbt_tag* tmp = getNBTChild(et, "id");
 	if (tmp == NULL || tmp->id != NBT_TAG_STRING) return 0;
-	struct entity* ent = newEntity();
+	uint32_t etx = getIDFromEntityDataName(tmp->data.nbt_string);
+	struct entity* ent = newEntity(nextEntityID++, (float) x + .5, (float) y, (float) z + .5, etx, 0., 0.);
+	spawnEntity(world, ent);
 	if (player->gamemode != 1 && --slot->itemCount <= 0) {
 		slot = NULL;
 	}
 	setSlot(player, player->inventory, slot_index, slot, 1, 1);
-
 	return 0;
 }
 
@@ -391,7 +392,7 @@ void init_items() {
 	getItemInfo(ITM_BUCKET)->onItemInteract = &onItemInteract_bucket;
 	getItemInfo(ITM_BUCKETWATER)->onItemInteract = &onItemInteract_bucket;
 	getItemInfo(ITM_BUCKETLAVA)->onItemInteract = &onItemInteract_bucket;
-
+	getItemInfo(ITM_MONSTERPLACER)->onItemInteract = &onItemInteract_spawnegg;
 }
 
 void add_item(item id, struct item_info* info) {

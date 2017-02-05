@@ -82,14 +82,14 @@ void init_entities() {
 					xfree(ei->loots);
 					goto cerr;
 				}
-				struct json_object* emp = getJSONValue(tmp, "id");
+				struct json_object* emp = getJSONValue(fj, "id");
 				if (emp == NULL || emp->type != JSON_NUMBER) {
 					xfree(ei->loots);
 					goto cerr;
 				}
 				ei->loots[i].id = (item) emp->data.number;
-				struct json_object* amin = getJSONValue(tmp, "amountMin");
-				struct json_object* amax = getJSONValue(tmp, "amountMax");
+				struct json_object* amin = getJSONValue(fj, "amountMin");
+				struct json_object* amax = getJSONValue(fj, "amountMax");
 				if ((amin == NULL) != (amax == NULL) || (amin != NULL && (amin->type != JSON_NUMBER || amax->type != JSON_NUMBER))) {
 					xfree(ei->loots);
 					goto cerr;
@@ -98,8 +98,8 @@ void init_entities() {
 					ei->loots[i].amountMin = (uint8_t) amin->data.number;
 					ei->loots[i].amountMax = (uint8_t) amax->data.number;
 				}
-				amin = getJSONValue(tmp, "metaMin");
-				amax = getJSONValue(tmp, "metaMax");
+				amin = getJSONValue(fj, "metaMin");
+				amax = getJSONValue(fj, "metaMax");
 				if ((amin == NULL) != (amax == NULL) || (amin != NULL && (amin->type != JSON_NUMBER || amax->type != JSON_NUMBER))) {
 					xfree(ei->loots);
 					goto cerr;
@@ -128,6 +128,9 @@ void init_entities() {
 		tmp = getJSONValue(ur, "packetID");
 		if (tmp == NULL || tmp->type != JSON_NUMBER) goto cerr;
 		ei->spawn_packet_id = (int32_t) tmp->data.number;
+		tmp = getJSONValue(ur, "dataname");
+		if (tmp == NULL || tmp->type != JSON_STRING) goto cerr;
+		ei->dataname = xstrdup(tmp->data.string, 0);
 		add_entity_info(id, ei);
 		continue;
 		cerr: ;
@@ -135,6 +138,15 @@ void init_entities() {
 	}
 	freeJSON(&json);
 	xfree(jsf);
+}
+
+uint32_t getIDFromEntityDataName(const char* dataname) {
+	for (size_t i = 0; i < entity_infos->size; i++) {
+		struct entity_info* ei = entity_infos->data[i];
+		if (ei == NULL) continue;
+		if (streq_nocase(ei->dataname, dataname)) return i;
+	}
+	return -1;
 }
 
 void getEntityCollision(struct entity* ent, struct boundingbox* bb) {
@@ -476,13 +488,13 @@ int getSwingTime(struct entity* ent) {
 	return 6;
 }
 
-int moveEntity(struct entity* entity, double mx, double my, double mz, float shrink) {
+int moveEntity(struct entity* entity, double* mx, double* my, double* mz, float shrink) {
 	struct boundingbox obb;
 	getEntityCollision(entity, &obb);
 	if (obb.minX == obb.maxX || obb.minZ == obb.maxZ || obb.minY == obb.maxY) {
-		entity->x += mx;
-		entity->y += my;
-		entity->z += mz;
+		entity->x += *mx;
+		entity->y += *my;
+		entity->z += *mz;
 		return 0;
 	}
 	obb.minX += shrink;
@@ -491,20 +503,20 @@ int moveEntity(struct entity* entity, double mx, double my, double mz, float shr
 	obb.maxY -= shrink;
 	obb.minZ += shrink;
 	obb.maxZ -= shrink;
-	if (mx < 0.) {
-		obb.minX += mx;
+	if (*mx < 0.) {
+		obb.minX += *mx;
 	} else {
-		obb.maxX += mx;
+		obb.maxX += *mx;
 	}
-	if (my < 0.) {
-		obb.minY += my;
+	if (*my < 0.) {
+		obb.minY += *my;
 	} else {
-		obb.maxY += my;
+		obb.maxY += *my;
 	}
-	if (mz < 0.) {
-		obb.minZ += mz;
+	if (*mz < 0.) {
+		obb.minZ += *mz;
 	} else {
-		obb.maxZ += mz;
+		obb.maxZ += *mz;
 	}
 	struct boundingbox pbb;
 	getEntityCollision(entity, &pbb);
@@ -514,7 +526,7 @@ int moveEntity(struct entity* entity, double mx, double my, double mz, float shr
 	pbb.maxY -= shrink;
 	pbb.minZ += shrink;
 	pbb.maxZ -= shrink;
-	double ny = my;
+	double ny = *my;
 	for (int32_t x = floor(obb.minX); x < floor(obb.maxX + 1.); x++) {
 		for (int32_t z = floor(obb.minZ); z < floor(obb.maxZ + 1.); z++) {
 			for (int32_t y = floor(obb.minY); y < floor(obb.maxY + 1.); y++) {
@@ -554,7 +566,7 @@ int moveEntity(struct entity* entity, double mx, double my, double mz, float shr
 	entity->y += ny;
 	pbb.minY += ny;
 	pbb.maxY += ny;
-	double nx = mx;
+	double nx = *mx;
 	for (int32_t x = floor(obb.minX); x < floor(obb.maxX + 1.); x++) {
 		for (int32_t z = floor(obb.minZ); z < floor(obb.maxZ + 1.); z++) {
 			for (int32_t y = floor(obb.minY); y < floor(obb.maxY + 1.); y++) {
@@ -589,7 +601,7 @@ int moveEntity(struct entity* entity, double mx, double my, double mz, float shr
 	entity->x += nx;
 	pbb.minX += nx;
 	pbb.maxX += nx;
-	double nz = mz;
+	double nz = *mz;
 	for (int32_t x = floor(obb.minX); x < floor(obb.maxX + 1.); x++) {
 		for (int32_t z = floor(obb.minZ); z < floor(obb.maxZ + 1.); z++) {
 			for (int32_t y = floor(obb.minY); y < floor(obb.maxY + 1.); y++) {
@@ -625,9 +637,9 @@ int moveEntity(struct entity* entity, double mx, double my, double mz, float shr
 	entity->z += nz;
 	pbb.minZ += nz;
 	pbb.maxZ += nz;
-	entity->collidedHorizontally = mx != nx || mz != nz;
-	entity->collidedVertically = my != ny;
-	entity->onGround = entity->collidedVertically && my < 0.;
+	entity->collidedHorizontally = *mx != nx || *mz != nz;
+	entity->collidedVertically = *my != ny;
+	entity->onGround = entity->collidedVertically && *my < 0.;
 	int32_t bx = floor(entity->x);
 	int32_t by = floor(entity->y - .20000000298023224);
 	int32_t bz = floor(entity->z);
@@ -640,16 +652,16 @@ int moveEntity(struct entity* entity, double mx, double my, double mz, float shr
 			by--;
 		}
 	}
-	if (mx != nx) mx = 0.;
-	if (mz != nz) mz = 0.;
-	if (my != ny) {
+	if (*mx != nx) *mx = 0.;
+	if (*mz != nz) *mz = 0.;
+	if (*my != ny) {
 		if (lb != BLK_SLIME || entity->sneaking) {
-			my = 0.;
+			*my = 0.;
 		} else {
-			my = -my;
+			*my = -(*my);
 		}
 	}
-	return ny != my || nx != mx || nz != mz;
+	return ny != *my || nx != *mx || nz != *mz;
 }
 
 void applyKnockback(struct entity* entity, float yaw, float strength) {
@@ -1014,7 +1026,9 @@ void tick_entity(struct world* world, struct entity* entity) {
 	if (entity->invincibilityTicks > 0) entity->invincibilityTicks--;
 	if (entity->type > ENT_PLAYER) {
 		if (entity->type == ENT_ITEM) entity->motY -= 0.04;
-		if (entity->motX != 0. || entity->motY != 0. || entity->motZ != 0.) moveEntity(entity, entity->motX, entity->motY, entity->motZ, 0.);
+		else if (hasFlag(getEntityInfo(entity->type), "livingbase")) entity->motY -= .08;
+
+		if (entity->motX != 0. || entity->motY != 0. || entity->motZ != 0.) moveEntity(entity, &entity->motX, &entity->motY, &entity->motZ, 0.);
 		double friction = .98;
 		if (entity->onGround) {
 			struct block_info* bi = getBlockInfo(getBlockWorld(entity->world, (int32_t) floor(entity->x), (int32_t) floor(entity->y) - 1, (int32_t) floor(entity->z)));
@@ -1026,7 +1040,8 @@ void tick_entity(struct world* world, struct entity* entity) {
 		if (fabs(entity->motX) < .0001) entity->motX = 0.;
 		if (fabs(entity->motY) < .0001) entity->motY = 0.;
 		if (fabs(entity->motZ) < .0001) entity->motZ = 0.;
-		if (entity->onGround && entity->motX == 0. && entity->motY == 0. && entity->motZ == 0.) entity->motY *= -.5;
+		if (entity->type == ENT_ITEM && entity->onGround && entity->motX == 0. && entity->motY == 0. && entity->motZ == 0.) entity->motY *= -.5;
+		if (entity->type == ENT_CREEPER) printf("onGround = %i, motY = %f\n", entity->onGround, entity->motY);
 	}
 	if (entity->type == ENT_ITEM) {
 		if (tick_itemstack(world, entity)) return;

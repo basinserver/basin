@@ -121,9 +121,9 @@ void loadEntity(struct player* to, struct entity* from) {
 		put_hashmap(from->loadingPlayers, to->entity->id, to);
 	} else if (from->type == ENT_PLAYER) {
 		return;
-	} else if (pt == PKT_PLAY_CLIENT_SPAWNOBJECT) {
+	} else if (pt == PKT_PLAY_CLIENT_SPAWNPAINTING) {
 		struct packet* pkt = xmalloc(sizeof(struct packet));
-		pkt->id = PKT_PLAY_CLIENT_SPAWNOBJECT;
+		pkt->id = PKT_PLAY_CLIENT_SPAWNPAINTING;
 		pkt->data.play_client.spawnpainting.entity_id = from->id;
 		struct uuid uuid;
 		for (int i = 0; i < 4; i++)
