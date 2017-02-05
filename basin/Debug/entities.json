@@ -1,7 +1,17 @@
 {
+	"player": {
+		"id": 0,
+		"dataname": "minecraft:player",
+		"width": 0.6,
+		"height": 1.8,
+		"maxHealth": 20.0,
+		"flags": ["player", "livingbase"],
+		"packetType": "undefined",
+		"packetID": 0
+	},
 	"item": {
 		"id": 1,
-		"dataname": "item",
+		"dataname": "minecraft:item",
 		"width": 0.25,
 		"height": 0.25,
 		"maxHealth": 0.0,
@@ -11,7 +21,7 @@
 	},
 	"xporb": {
 		"id": 2,
-		"dataname": "xp_orb",
+		"dataname": "minecraft:xp_orb",
 		"width": 0.25,
 		"height": 0.25,
 		"maxHealth": 0.0,
@@ -21,7 +31,7 @@
 	},
 	"areaeffectcloud": {
 		"id": 3,
-		"dataname": "area_effect_cloud",
+		"dataname": "minecraft:area_effect_cloud",
 		"width": 6.0,
 		"height": 0.5,
 		"maxHealth": 0.0,
@@ -31,7 +41,7 @@
 	},
 	"elderguardian": {
 		"id": 4,
-		"dataname": "elder_guardian",
+		"dataname": "minecraft:elder_guardian",
 		"width": 1.9975,
 		"height": 1.9975,
 		"maxHealth": 80.0,
@@ -79,7 +89,7 @@
 	},
 	"witherskeleton": {
 		"id": 5,
-		"dataname": "wither_skeleton",
+		"dataname": "minecraft:wither_skeleton",
 		"width": 0.7,
 		"height": 2.4,
 		"maxHealth": 20.0,
@@ -106,7 +116,7 @@
 	},
 	"stray": {
 		"id": 6,
-		"dataname": "stray",
+		"dataname": "minecraft:stray",
 		"width": 0.6,
 		"height": 1.99,
 		"maxHealth": 20.0,
@@ -133,7 +143,7 @@
 	},
 	"thrownegg": {
 		"id": 7,
-		"dataname": "egg",
+		"dataname": "minecraft:egg",
 		"width": 0.25,
 		"height": 0.25,
 		"maxHealth": 0.0,
@@ -143,7 +153,7 @@
 	},
 	"leashknot": {
 		"id": 8,
-		"dataname": "leash_knot",
+		"dataname": "minecraft:leash_knot",
 		"width": 0.5,
 		"height": 0.5,
 		"maxHealth": 0.0,
@@ -153,7 +163,7 @@
 	},
 	"painting": {
 		"id": 9,
-		"dataname": "painting",
+		"dataname": "minecraft:painting",
 		"width": 0.5,
 		"height": 0.5,
 		"maxHealth": 0.0,
@@ -163,7 +173,7 @@
 	},
 	"arrow": {
 		"id": 10,
-		"dataname": "arrow",
+		"dataname": "minecraft:arrow",
 		"width": 0.5,
 		"height": 0.5,
 		"maxHealth": 0.0,
@@ -173,7 +183,7 @@
 	},
 	"snowball": {
 		"id": 11,
-		"dataname": "snowball",
+		"dataname": "minecraft:snowball",
 		"width": 0.25,
 		"height": 0.25,
 		"maxHealth": 0.0,
@@ -183,7 +193,7 @@
 	},
 	"fireball": {
 		"id": 12,
-		"dataname": "fireball",
+		"dataname": "minecraft:fireball",
 		"width": 1.0,
 		"height": 1.0,
 		"maxHealth": 0.0,
@@ -193,7 +203,7 @@
 	},
 	"smallfireball": {
 		"id": 13,
-		"dataname": "small_fireball",
+		"dataname": "minecraft:small_fireball",
 		"width": 0.3125,
 		"height": 0.3125,
 		"maxHealth": 0.0,
@@ -203,7 +213,7 @@
 	},
 	"thrownenderpearl": {
 		"id": 14,
-		"dataname": "ender_pearl",
+		"dataname": "minecraft:ender_pearl",
 		"width": 0.25,
 		"height": 0.25,
 		"maxHealth": 0.0,
@@ -213,7 +223,7 @@
 	},
 	"eyeofendersignal": {
 		"id": 15,
-		"dataname": "eye_of_ender_signal",
+		"dataname": "minecraft:eye_of_ender_signal",
 		"width": 0.25,
 		"height": 0.25,
 		"maxHealth": 0.0,
@@ -223,7 +233,7 @@
 	},
 	"thrownpotion": {
 		"id": 16,
-		"dataname": "potion",
+		"dataname": "minecraft:potion",
 		"width": 0.25,
 		"height": 0.25,
 		"maxHealth": 0.0,
@@ -233,7 +243,7 @@
 	},
 	"thrownexpbottle": {
 		"id": 17,
-		"dataname": "xp_bottle",
+		"dataname": "minecraft:xp_bottle",
 		"width": 0.25,
 		"height": 0.25,
 		"maxHealth": 0.0,
@@ -243,7 +253,7 @@
 	},
 	"itemframe": {
 		"id": 18,
-		"dataname": "item_frame",
+		"dataname": "minecraft:item_frame",
 		"width": 0.5,
 		"height": 0.5,
 		"maxHealth": 0.0,
@@ -253,7 +263,7 @@
 	},
 	"witherskull": {
 		"id": 19,
-		"dataname": "wither_skull",
+		"dataname": "minecraft:wither_skull",
 		"width": 0.3125,
 		"height": 0.3125,
 		"maxHealth": 0.0,
@@ -263,7 +273,7 @@
 	},
 	"primedtnt": {
 		"id": 20,
-		"dataname": "tnt",
+		"dataname": "minecraft:tnt",
 		"width": 0.98,
 		"height": 0.98,
 		"maxHealth": 0.0,
@@ -273,7 +283,7 @@
 	},
 	"fallingsand": {
 		"id": 21,
-		"dataname": "falling_block",
+		"dataname": "minecraft:falling_block",
 		"width": 0.6,
 		"height": 1.8,
 		"maxHealth": 0.0,
@@ -283,7 +293,7 @@
 	},
 	"fireworksrocketentity": {
 		"id": 22,
-		"dataname": "fireworks_rocket",
+		"dataname": "minecraft:fireworks_rocket",
 		"width": 0.25,
 		"height": 0.25,
 		"maxHealth": 0.0,
@@ -293,7 +303,7 @@
 	},
 	"husk": {
 		"id": 23,
-		"dataname": "husk",
+		"dataname": "minecraft:husk",
 		"width": 0.6,
 		"height": 1.95,
 		"maxHealth": 20.0,
@@ -319,7 +329,7 @@
 	},
 	"spectralarrow": {
 		"id": 24,
-		"dataname": "spectral_arrow",
+		"dataname": "minecraft:spectral_arrow",
 		"width": 0.5,
 		"height": 0.5,
 		"maxHealth": 0.0,
@@ -329,7 +339,7 @@
 	},
 	"shulkerbullet": {
 		"id": 25,
-		"dataname": "shulker_bullet",
+		"dataname": "minecraft:shulker_bullet",
 		"width": 0.3125,
 		"height": 0.3125,
 		"maxHealth": 0.0,
@@ -339,7 +349,7 @@
 	},
 	"dragonfireball": {
 		"id": 26,
-		"dataname": "dragon_fireball",
+		"dataname": "minecraft:dragon_fireball",
 		"width": 1.0,
 		"height": 1.0,
 		"maxHealth": 0.0,
@@ -349,7 +359,7 @@
 	},
 	"zombievillager": {
 		"id": 27,
-		"dataname": "zombie_villager",
+		"dataname": "minecraft:zombie_villager",
 		"width": 0.6,
 		"height": 1.95,
 		"maxHealth": 20.0,
@@ -375,7 +385,7 @@
 	},
 	"skeletonhorse": {
 		"id": 28,
-		"dataname": "skeleton_horse",
+		"dataname": "minecraft:skeleton_horse",
 		"width": 1.3964844,
 		"height": 1.6,
 		"maxHealth": 15.0,
@@ -392,7 +402,7 @@
 	},
 	"zombiehorse": {
 		"id": 29,
-		"dataname": "zombie_horse",
+		"dataname": "minecraft:zombie_horse",
 		"width": 1.3964844,
 		"height": 1.6,
 		"maxHealth": 15.0,
@@ -409,7 +419,7 @@
 	},
 	"armorstand": {
 		"id": 30,
-		"dataname": "armor_stand",
+		"dataname": "minecraft:armor_stand",
 		"width": 0.5,
 		"height": 1.975,
 		"maxHealth": 20.0,
@@ -419,10 +429,10 @@
 	},
 	"donkey": {
 		"id": 31,
-		"dataname": "donkey",
+		"dataname": "minecraft:donkey",
 		"width": 1.3964844,
 		"height": 1.6,
-		"maxHealth": 21.0,
+		"maxHealth": 23.0,
 		"loot": [
 			{
 				"id": 334,
@@ -436,10 +446,10 @@
 	},
 	"mule": {
 		"id": 32,
-		"dataname": "mule",
+		"dataname": "minecraft:mule",
 		"width": 1.3964844,
 		"height": 1.6,
-		"maxHealth": 22.0,
+		"maxHealth": 21.0,
 		"loot": [
 			{
 				"id": 334,
@@ -453,7 +463,7 @@
 	},
 	"evocationfangs": {
 		"id": 33,
-		"dataname": "evocation_fangs",
+		"dataname": "minecraft:evocation_fangs",
 		"width": 0.5,
 		"height": 0.8,
 		"maxHealth": 0.0,
@@ -463,7 +473,7 @@
 	},
 	"evocationillager": {
 		"id": 34,
-		"dataname": "evocation_illager",
+		"dataname": "minecraft:evocation_illager",
 		"width": 0.6,
 		"height": 1.95,
 		"maxHealth": 24.0,
@@ -483,7 +493,7 @@
 	},
 	"vex": {
 		"id": 35,
-		"dataname": "vex",
+		"dataname": "minecraft:vex",
 		"width": 0.4,
 		"height": 0.8,
 		"maxHealth": 14.0,
@@ -495,7 +505,7 @@
 	},
 	"vindicationillager": {
 		"id": 36,
-		"dataname": "vindication_illager",
+		"dataname": "minecraft:vindication_illager",
 		"width": 0.6,
 		"height": 1.95,
 		"maxHealth": 24.0,
@@ -512,7 +522,7 @@
 	},
 	"minecartcommandblock": {
 		"id": 40,
-		"dataname": "commandblock_minecart",
+		"dataname": "minecraft:commandblock_minecart",
 		"width": 0.98,
 		"height": 0.7,
 		"maxHealth": 0.0,
@@ -522,7 +532,7 @@
 	},
 	"boat": {
 		"id": 41,
-		"dataname": "boat",
+		"dataname": "minecraft:boat",
 		"width": 1.375,
 		"height": 0.5625,
 		"maxHealth": 0.0,
@@ -532,7 +542,7 @@
 	},
 	"minecartrideable": {
 		"id": 42,
-		"dataname": "minecart",
+		"dataname": "minecraft:minecart",
 		"width": 0.98,
 		"height": 0.7,
 		"maxHealth": 0.0,
@@ -542,7 +552,7 @@
 	},
 	"minecartchest": {
 		"id": 43,
-		"dataname": "chest_minecart",
+		"dataname": "minecraft:chest_minecart",
 		"width": 0.98,
 		"height": 0.7,
 		"maxHealth": 0.0,
@@ -552,7 +562,7 @@
 	},
 	"minecartfurnace": {
 		"id": 44,
-		"dataname": "furnace_minecart",
+		"dataname": "minecraft:furnace_minecart",
 		"width": 0.98,
 		"height": 0.7,
 		"maxHealth": 0.0,
@@ -562,7 +572,7 @@
 	},
 	"minecarttnt": {
 		"id": 45,
-		"dataname": "tnt_minecart",
+		"dataname": "minecraft:tnt_minecart",
 		"width": 0.98,
 		"height": 0.7,
 		"maxHealth": 0.0,
@@ -572,7 +582,7 @@
 	},
 	"minecarthopper": {
 		"id": 46,
-		"dataname": "hopper_minecart",
+		"dataname": "minecraft:hopper_minecart",
 		"width": 0.98,
 		"height": 0.7,
 		"maxHealth": 0.0,
@@ -582,7 +592,7 @@
 	},
 	"minecartspawner": {
 		"id": 47,
-		"dataname": "spawner_minecart",
+		"dataname": "minecraft:spawner_minecart",
 		"width": 0.98,
 		"height": 0.7,
 		"maxHealth": 0.0,
@@ -592,7 +602,7 @@
 	},
 	"creeper": {
 		"id": 50,
-		"dataname": "creeper",
+		"dataname": "minecraft:creeper",
 		"width": 0.6,
 		"height": 1.7,
 		"maxHealth": 20.0,
@@ -609,7 +619,7 @@
 	},
 	"skeleton": {
 		"id": 51,
-		"dataname": "skeleton",
+		"dataname": "minecraft:skeleton",
 		"width": 0.6,
 		"height": 1.99,
 		"maxHealth": 20.0,
@@ -631,7 +641,7 @@
 	},
 	"spider": {
 		"id": 52,
-		"dataname": "spider",
+		"dataname": "minecraft:spider",
 		"width": 1.4,
 		"height": 0.9,
 		"maxHealth": 16.0,
@@ -653,7 +663,7 @@
 	},
 	"giant": {
 		"id": 53,
-		"dataname": "giant",
+		"dataname": "minecraft:giant",
 		"width": 3.6000001,
 		"height": 10.799999,
 		"maxHealth": 100.0,
@@ -665,7 +675,7 @@
 	},
 	"zombie": {
 		"id": 54,
-		"dataname": "zombie",
+		"dataname": "minecraft:zombie",
 		"width": 0.6,
 		"height": 1.95,
 		"maxHealth": 20.0,
@@ -691,7 +701,7 @@
 	},
 	"slime": {
 		"id": 55,
-		"dataname": "slime",
+		"dataname": "minecraft:slime",
 		"width": 0.6,
 		"height": 1.8,
 		"maxHealth": 20.0,
@@ -708,7 +718,7 @@
 	},
 	"ghast": {
 		"id": 56,
-		"dataname": "ghast",
+		"dataname": "minecraft:ghast",
 		"width": 4.0,
 		"height": 4.0,
 		"maxHealth": 10.0,
@@ -730,7 +740,7 @@
 	},
 	"pigzombie": {
 		"id": 57,
-		"dataname": "zombie_pigman",
+		"dataname": "minecraft:zombie_pigman",
 		"width": 0.6,
 		"height": 1.95,
 		"maxHealth": 20.0,
@@ -755,7 +765,7 @@
 	},
 	"enderman": {
 		"id": 58,
-		"dataname": "enderman",
+		"dataname": "minecraft:enderman",
 		"width": 0.6,
 		"height": 2.9,
 		"maxHealth": 40.0,
@@ -772,7 +782,7 @@
 	},
 	"cavespider": {
 		"id": 59,
-		"dataname": "cave_spider",
+		"dataname": "minecraft:cave_spider",
 		"width": 0.7,
 		"height": 0.5,
 		"maxHealth": 12.0,
@@ -794,7 +804,7 @@
 	},
 	"silverfish": {
 		"id": 60,
-		"dataname": "silverfish",
+		"dataname": "minecraft:silverfish",
 		"width": 0.4,
 		"height": 0.3,
 		"maxHealth": 8.0,
@@ -806,7 +816,7 @@
 	},
 	"blaze": {
 		"id": 61,
-		"dataname": "blaze",
+		"dataname": "minecraft:blaze",
 		"width": 0.6,
 		"height": 1.8,
 		"maxHealth": 20.0,
@@ -823,7 +833,7 @@
 	},
 	"lavaslime": {
 		"id": 62,
-		"dataname": "magma_cube",
+		"dataname": "minecraft:magma_cube",
 		"width": 0.6,
 		"height": 1.8,
 		"maxHealth": 20.0,
@@ -835,7 +845,7 @@
 	},
 	"enderdragon": {
 		"id": 63,
-		"dataname": "ender_dragon",
+		"dataname": "minecraft:ender_dragon",
 		"width": 16.0,
 		"height": 8.0,
 		"maxHealth": 200.0,
@@ -847,7 +857,7 @@
 	},
 	"witherboss": {
 		"id": 64,
-		"dataname": "wither",
+		"dataname": "minecraft:wither",
 		"width": 0.9,
 		"height": 3.5,
 		"maxHealth": 300.0,
@@ -859,7 +869,7 @@
 	},
 	"bat": {
 		"id": 65,
-		"dataname": "bat",
+		"dataname": "minecraft:bat",
 		"width": 0.5,
 		"height": 0.9,
 		"maxHealth": 6.0,
@@ -871,7 +881,7 @@
 	},
 	"witch": {
 		"id": 66,
-		"dataname": "witch",
+		"dataname": "minecraft:witch",
 		"width": 0.6,
 		"height": 1.95,
 		"maxHealth": 26.0,
@@ -918,7 +928,7 @@
 	},
 	"endermite": {
 		"id": 67,
-		"dataname": "endermite",
+		"dataname": "minecraft:endermite",
 		"width": 0.4,
 		"height": 0.3,
 		"maxHealth": 8.0,
@@ -930,7 +940,7 @@
 	},
 	"guardian": {
 		"id": 68,
-		"dataname": "guardian",
+		"dataname": "minecraft:guardian",
 		"width": 0.85,
 		"height": 0.85,
 		"maxHealth": 30.0,
@@ -973,7 +983,7 @@
 	},
 	"shulker": {
 		"id": 69,
-		"dataname": "shulker",
+		"dataname": "minecraft:shulker",
 		"width": 1.0,
 		"height": 1.0,
 		"maxHealth": 30.0,
@@ -988,7 +998,7 @@
 	},
 	"pig": {
 		"id": 90,
-		"dataname": "pig",
+		"dataname": "minecraft:pig",
 		"width": 0.9,
 		"height": 0.9,
 		"maxHealth": 10.0,
@@ -1005,7 +1015,7 @@
 	},
 	"sheep": {
 		"id": 91,
-		"dataname": "sheep",
+		"dataname": "minecraft:sheep",
 		"width": 0.9,
 		"height": 1.3,
 		"maxHealth": 8.0,
@@ -1027,7 +1037,7 @@
 	},
 	"cow": {
 		"id": 92,
-		"dataname": "cow",
+		"dataname": "minecraft:cow",
 		"width": 0.9,
 		"height": 1.4,
 		"maxHealth": 10.0,
@@ -1049,7 +1059,7 @@
 	},
 	"chicken": {
 		"id": 93,
-		"dataname": "chicken",
+		"dataname": "minecraft:chicken",
 		"width": 0.4,
 		"height": 0.7,
 		"maxHealth": 4.0,
@@ -1069,7 +1079,7 @@
 	},
 	"squid": {
 		"id": 94,
-		"dataname": "squid",
+		"dataname": "minecraft:squid",
 		"width": 0.8,
 		"height": 0.8,
 		"maxHealth": 10.0,
@@ -1088,7 +1098,7 @@
 	},
 	"wolf": {
 		"id": 95,
-		"dataname": "wolf",
+		"dataname": "minecraft:wolf",
 		"width": 0.6,
 		"height": 0.85,
 		"maxHealth": 8.0,
@@ -1100,7 +1110,7 @@
 	},
 	"mushroomcow": {
 		"id": 96,
-		"dataname": "mooshroom",
+		"dataname": "minecraft:mooshroom",
 		"width": 0.9,
 		"height": 1.4,
 		"maxHealth": 10.0,
@@ -1122,7 +1132,7 @@
 	},
 	"snowman": {
 		"id": 97,
-		"dataname": "snowman",
+		"dataname": "minecraft:snowman",
 		"width": 0.7,
 		"height": 1.9,
 		"maxHealth": 4.0,
@@ -1139,7 +1149,7 @@
 	},
 	"ozelot": {
 		"id": 98,
-		"dataname": "ocelot",
+		"dataname": "minecraft:ocelot",
 		"width": 0.6,
 		"height": 0.7,
 		"maxHealth": 10.0,
@@ -1151,7 +1161,7 @@
 	},
 	"villagergolem": {
 		"id": 99,
-		"dataname": "villager_golem",
+		"dataname": "minecraft:villager_golem",
 		"width": 1.4,
 		"height": 2.7,
 		"maxHealth": 100.0,
@@ -1173,10 +1183,10 @@
 	},
 	"horse": {
 		"id": 100,
-		"dataname": "horse",
+		"dataname": "minecraft:horse",
 		"width": 1.3964844,
 		"height": 1.6,
-		"maxHealth": 25.0,
+		"maxHealth": 24.0,
 		"loot": [
 			{
 				"id": 334,
@@ -1190,7 +1200,7 @@
 	},
 	"rabbit": {
 		"id": 101,
-		"dataname": "rabbit",
+		"dataname": "minecraft:rabbit",
 		"width": 0.4,
 		"height": 0.5,
 		"maxHealth": 3.0,
@@ -1215,7 +1225,7 @@
 	},
 	"polarbear": {
 		"id": 102,
-		"dataname": "polar_bear",
+		"dataname": "minecraft:polar_bear",
 		"width": 1.3,
 		"height": 1.4,
 		"maxHealth": 30.0,
@@ -1241,10 +1251,10 @@
 	},
 	"llama": {
 		"id": 103,
-		"dataname": "llama",
+		"dataname": "minecraft:llama",
 		"width": 1.3964844,
 		"height": 1.6,
-		"maxHealth": 27.0,
+		"maxHealth": 23.0,
 		"loot": [
 			{
 				"id": 334,
@@ -1258,7 +1268,7 @@
 	},
 	"llamaspit": {
 		"id": 104,
-		"dataname": "llama_spit",
+		"dataname": "minecraft:llama_spit",
 		"width": 0.6,
 		"height": 1.8,
 		"maxHealth": 0.0,
@@ -1268,7 +1278,7 @@
 	},
 	"villager": {
 		"id": 120,
-		"dataname": "villager",
+		"dataname": "minecraft:villager",
 		"width": 0.6,
 		"height": 1.95,
 		"maxHealth": 20.0,
@@ -1280,7 +1290,7 @@
 	},
 	"endercrystal": {
 		"id": 200,
-		"dataname": "ender_crystal",
+		"dataname": "minecraft:ender_crystal",
 		"width": 2.0,
 		"height": 2.0,
 		"maxHealth": 0.0,
