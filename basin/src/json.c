@@ -24,7 +24,7 @@ char* __readJSONString(char* json, size_t* i) {
 			if (json[*i] == '\"') {
 				errno = 0;
 				if (ret == NULL) {
-					ret = smalloc(1);
+					ret = xmalloc(1);
 					rs = 0;
 				}
 				ret[rs] = 0;

@@ -90,7 +90,10 @@ void loadPlayer(struct player* to, struct player* from) {
 }
 
 void loadEntity(struct player* to, struct entity* from) {
-	if (shouldSendAsObject(from->type)) {
+	struct entity_info* ei = getEntityInfo(from->type);
+	uint32_t pt = ei->spawn_packet;
+	uint32_t pid = ei->spawn_packet_id;
+	if (pt == PKT_PLAY_CLIENT_SPAWNOBJECT) {
 		struct packet* pkt = xmalloc(sizeof(struct packet));
 		pkt->id = PKT_PLAY_CLIENT_SPAWNOBJECT;
 		pkt->data.play_client.spawnobject.entity_id = from->id;
@@ -98,7 +101,7 @@ void loadEntity(struct player* to, struct entity* from) {
 		for (int i = 0; i < 4; i++)
 			memcpy((void*) &uuid + 4 * i, &from->id, 4);
 		memcpy(&pkt->data.play_client.spawnobject.object_uuid, &uuid, sizeof(struct uuid));
-		pkt->data.play_client.spawnobject.type = networkEntConvert(0, from->type);
+		pkt->data.play_client.spawnobject.type = pid;
 		pkt->data.play_client.spawnobject.x = from->x;
 		pkt->data.play_client.spawnobject.y = from->y;
 		pkt->data.play_client.spawnobject.z = from->z;
@@ -118,7 +121,7 @@ void loadEntity(struct player* to, struct entity* from) {
 		put_hashmap(from->loadingPlayers, to->entity->id, to);
 	} else if (from->type == ENT_PLAYER) {
 		return;
-	} else if (from->type == ENT_PAINTING) {
+	} else if (pt == PKT_PLAY_CLIENT_SPAWNOBJECT) {
 		struct packet* pkt = xmalloc(sizeof(struct packet));
 		pkt->id = PKT_PLAY_CLIENT_SPAWNOBJECT;
 		pkt->data.play_client.spawnpainting.entity_id = from->id;
@@ -134,9 +137,9 @@ void loadEntity(struct player* to, struct entity* from) {
 		add_queue(to->outgoingPacket, pkt);
 		put_hashmap(to->loadedEntities, from->id, from);
 		put_hashmap(from->loadingPlayers, to->entity->id, to);
-	} else if (from->type == ENT_EXPERIENCEORB) {
+	} else if (pt == PKT_PLAY_CLIENT_SPAWNEXPERIENCEORB) {
 		struct packet* pkt = xmalloc(sizeof(struct packet));
-		pkt->id = PKT_PLAY_CLIENT_SPAWNOBJECT;
+		pkt->id = PKT_PLAY_CLIENT_SPAWNEXPERIENCEORB;
 		pkt->data.play_client.spawnexperienceorb.entity_id = from->id;
 		pkt->data.play_client.spawnexperienceorb.x = from->x;
 		pkt->data.play_client.spawnexperienceorb.y = from->y;
@@ -145,7 +148,7 @@ void loadEntity(struct player* to, struct entity* from) {
 		add_queue(to->outgoingPacket, pkt);
 		put_hashmap(to->loadedEntities, from->id, from);
 		put_hashmap(from->loadingPlayers, to->entity->id, to);
-	} else {
+	} else if (pt == PKT_PLAY_CLIENT_SPAWNMOB) {
 		struct packet* pkt = xmalloc(sizeof(struct packet));
 		pkt->id = PKT_PLAY_CLIENT_SPAWNMOB;
 		pkt->data.play_client.spawnmob.entity_id = from->id;
@@ -153,7 +156,7 @@ void loadEntity(struct player* to, struct entity* from) {
 		for (int i = 0; i < 4; i++)
 			memcpy((void*) &uuid + 4 * i, &from->id, 4);
 		memcpy(&pkt->data.play_client.spawnmob.entity_uuid, &uuid, sizeof(struct uuid));
-		pkt->data.play_client.spawnmob.type = networkEntConvert(1, from->type);
+		pkt->data.play_client.spawnmob.type = pid;
 		pkt->data.play_client.spawnmob.x = from->x;
 		pkt->data.play_client.spawnmob.y = from->y;
 		pkt->data.play_client.spawnmob.z = from->z;
@@ -221,7 +224,7 @@ float randFloat() {
 }
 
 void dropBlockDrop(struct world* world, struct slot* slot, int32_t x, int32_t y, int32_t z) {
-	struct entity* item = newEntity(nextEntityID++, (double) x + .5, (double) y + .5, (double) z + .5, ENT_ITEMSTACK, randFloat() * 360., 0.);
+	struct entity* item = newEntity(nextEntityID++, (double) x + .5, (double) y + .5, (double) z + .5, ENT_ITEM, randFloat() * 360., 0.);
 	item->data.itemstack.slot = xmalloc(sizeof(struct slot));
 	item->objectData = 1;
 	item->motX = randFloat() * .2 - .1;
@@ -236,7 +239,7 @@ void dropBlockDrop(struct world* world, struct slot* slot, int32_t x, int32_t y,
 }
 
 void dropPlayerItem(struct player* player, struct slot* drop) {
-	struct entity* item = newEntity(nextEntityID++, player->entity->x, player->entity->y + 1.32, player->entity->z, ENT_ITEMSTACK, 0., 0.);
+	struct entity* item = newEntity(nextEntityID++, player->entity->x, player->entity->y + 1.32, player->entity->z, ENT_ITEM, 0., 0.);
 	item->data.itemstack.slot = xmalloc(sizeof(struct slot));
 	item->objectData = 1;
 	item->motX = -sin(player->entity->yaw * M_PI / 180.) * cos(player->entity->pitch * M_PI / 180.) * .3;
@@ -271,7 +274,7 @@ void playSound(struct world* world, int32_t soundID, int32_t soundCategory, floa
 }
 
 void dropPlayerItem_explode(struct player* player, struct slot* drop) {
-	struct entity* item = newEntity(nextEntityID++, player->entity->x, player->entity->y + 1.32, player->entity->z, ENT_ITEMSTACK, 0., 0.);
+	struct entity* item = newEntity(nextEntityID++, player->entity->x, player->entity->y + 1.32, player->entity->z, ENT_ITEM, 0., 0.);
 	item->data.itemstack.slot = xmalloc(sizeof(struct slot));
 	item->objectData = 1;
 	float f1 = randFloat() * .5;

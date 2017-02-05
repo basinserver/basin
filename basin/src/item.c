@@ -14,6 +14,7 @@
 #include "util.h"
 #include <unistd.h>
 #include "block.h"
+#include "nbt.h"
 
 int onItemBreakBlock_tool(struct world* world, struct player* player, uint8_t slot_index, struct slot* slot, int32_t x, uint8_t y, int32_t z) {
 	if (slot == NULL) return 0;
@@ -57,6 +58,26 @@ int onItemInteract_flintandsteel(struct world* world, struct player* player, uin
 	}
 	setSlot(player, player->inventory, slot_index, slot, 1, 1);
 	setBlockWorld(world, BLK_FIRE, x, y, z);
+	return 0;
+}
+
+int onItemInteract_spawnegg(struct world* world, struct player* player, uint8_t slot_index, struct slot* slot, int32_t x, uint8_t y, int32_t z, uint8_t face) {
+	if (slot == NULL || slot->nbt == NULL) return 0;
+	//TODO: mob spawners
+	offsetCoordByFace(&x, &y, &z, face);
+	//if (getBlockWorld(world, x, y, z) != 0) return 0;
+	struct item_info* ii = getItemInfo(slot->item);
+	if (ii == NULL) return 0;
+	struct nbt_tag* et = getNBTChild(slot->nbt, "EntityTag");
+	if (et == NULL) return 0;
+	struct nbt_tag* tmp = getNBTChild(et, "id");
+	if (tmp == NULL || tmp->id != NBT_TAG_STRING) return 0;
+	struct entity* ent = newEntity();
+	if (player->gamemode != 1 && --slot->itemCount <= 0) {
+		slot = NULL;
+	}
+	setSlot(player, player->inventory, slot_index, slot, 1, 1);
+
 	return 0;
 }
 

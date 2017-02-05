@@ -469,7 +469,7 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 				//if (ch != NULL) {
 				BEGIN_HASHMAP_ITERATION(player->world->entities)
 				struct entity* ent = (struct entity*) value;
-				if (ent == NULL || entity_distsq_block(ent, x, y, z) > 8. * 8. || !isLiving(ent->type)) continue;
+				if (ent == NULL || entity_distsq_block(ent, x, y, z) > 8. * 8. || !hasFlag(getEntityInfo(ent->type), "livingbase")) continue;
 				getEntityCollision(ent, &pbb);
 				pbb.minX += .01;
 				pbb.minY += .01;

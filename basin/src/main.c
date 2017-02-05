@@ -195,6 +195,8 @@ int main(int argc, char* argv[]) {
 	printf("Materials Initialized\n");
 	init_blocks();
 	printf("Blocks Initialized\n");
+	init_entities();
+	printf("Entities Initialized\n");
 	init_crafting();
 	printf("Crafting Initialized\n");
 	init_tools();

@@ -19,400 +19,135 @@
 #include "entity.h"
 #include <unistd.h>
 #include <pthread.h>
+#include <fcntl.h>
+#include "json.h"
+#include <errno.h>
+
+struct entity_info* getEntityInfo(uint32_t id) {
+	if (id < 0 || id > entity_infos->size) return NULL;
+	return entity_infos->data[id];
+}
+
+void add_entity_info(uint32_t eid, struct entity_info* bm) {
+	ensure_collection(entity_infos, eid + 1);
+	entity_infos->data[eid] = bm;
+	if (entity_infos->size < eid) entity_infos->size = eid;
+	entity_infos->count++;
+}
+
+void init_entities() {
+	entity_infos = new_collection(128, 0);
+	char* jsf = xmalloc(4097);
+	size_t jsfs = 4096;
+	size_t jsr = 0;
+	int fd = open("entities.json", O_RDONLY);
+	ssize_t r = 0;
+	while ((r = read(fd, jsf + jsr, jsfs - jsr)) > 0) {
+		jsr += r;
+		if (jsfs - jsr < 512) {
+			jsfs += 4096;
+			jsf = xrealloc(jsf, jsfs + 1);
+		}
+	}
+	jsf[jsr] = 0;
+	if (r < 0) {
+		printf("Error reading entity information: %s\n", strerror(errno));
+	}
+	close(fd);
+	struct json_object json;
+	parseJSON(&json, jsf);
+	for (size_t i = 0; i < json.child_count; i++) {
+		struct json_object* ur = json.children[i];
+		struct entity_info* ei = xcalloc(sizeof(struct entity_info));
+		struct json_object* tmp = getJSONValue(ur, "id");
+		if (tmp == NULL || tmp->type != JSON_NUMBER) goto cerr;
+		uint32_t id = (block) tmp->data.number;
+		if (id < 0) goto cerr;
+		tmp = getJSONValue(ur, "maxHealth");
+		if (tmp == NULL || tmp->type != JSON_NUMBER) goto cerr;
+		ei->maxHealth = (float) tmp->data.number;
+		tmp = getJSONValue(ur, "width");
+		if (tmp == NULL || tmp->type != JSON_NUMBER) goto cerr;
+		ei->width = (float) tmp->data.number;
+		tmp = getJSONValue(ur, "height");
+		if (tmp == NULL || tmp->type != JSON_NUMBER) goto cerr;
+		ei->height = (float) tmp->data.number;
+		tmp = getJSONValue(ur, "loot");
+		if (tmp != NULL && tmp->type == JSON_ARRAY) {
+			ei->loot_count = tmp->child_count;
+			ei->loots = xcalloc(tmp->child_count * sizeof(struct entity_loot));
+			for (size_t i = 0; i < tmp->child_count; i++) {
+				struct json_object* fj = tmp->children[i];
+				if (fj == NULL || fj->type != JSON_OBJECT) {
+					xfree(ei->loots);
+					goto cerr;
+				}
+				struct json_object* emp = getJSONValue(tmp, "id");
+				if (emp == NULL || emp->type != JSON_NUMBER) {
+					xfree(ei->loots);
+					goto cerr;
+				}
+				ei->loots[i].id = (item) emp->data.number;
+				struct json_object* amin = getJSONValue(tmp, "amountMin");
+				struct json_object* amax = getJSONValue(tmp, "amountMax");
+				if ((amin == NULL) != (amax == NULL) || (amin != NULL && (amin->type != JSON_NUMBER || amax->type != JSON_NUMBER))) {
+					xfree(ei->loots);
+					goto cerr;
+				}
+				if (amin != NULL) {
+					ei->loots[i].amountMin = (uint8_t) amin->data.number;
+					ei->loots[i].amountMax = (uint8_t) amax->data.number;
+				}
+				amin = getJSONValue(tmp, "metaMin");
+				amax = getJSONValue(tmp, "metaMax");
+				if ((amin == NULL) != (amax == NULL) || (amin != NULL && (amin->type != JSON_NUMBER || amax->type != JSON_NUMBER))) {
+					xfree(ei->loots);
+					goto cerr;
+				}
+				if (amin != NULL) {
+					ei->loots[i].metaMin = (uint8_t) amin->data.number;
+					ei->loots[i].metaMax = (uint8_t) amax->data.number;
+				}
+			}
+		}
+		tmp = getJSONValue(ur, "flags");
+		if (tmp == NULL || tmp->type != JSON_ARRAY) goto cerr;
+		ei->flag_count = tmp->child_count;
+		ei->flags = xmalloc(tmp->child_count * sizeof(char*));
+		for (size_t i = 0; i < tmp->child_count; i++) {
+			struct json_object* fj = tmp->children[i];
+			if (fj == NULL || fj->type != JSON_STRING) goto cerr;
+			ei->flags[i] = toLowerCase(xstrdup(trim(fj->data.string), 0));
+		}
+		tmp = getJSONValue(ur, "packetType");
+		if (tmp == NULL || tmp->type != JSON_STRING) goto cerr;
+		if (streq_nocase(tmp->data.string, "mob")) ei->spawn_packet = PKT_PLAY_CLIENT_SPAWNMOB;
+		else if (streq_nocase(tmp->data.string, "object")) ei->spawn_packet = PKT_PLAY_CLIENT_SPAWNOBJECT;
+		else if (streq_nocase(tmp->data.string, "exp")) ei->spawn_packet = PKT_PLAY_CLIENT_SPAWNEXPERIENCEORB;
+		else if (streq_nocase(tmp->data.string, "painting")) ei->spawn_packet = PKT_PLAY_CLIENT_SPAWNPAINTING;
+		tmp = getJSONValue(ur, "packetID");
+		if (tmp == NULL || tmp->type != JSON_NUMBER) goto cerr;
+		ei->spawn_packet_id = (int32_t) tmp->data.number;
+		add_entity_info(id, ei);
+		continue;
+		cerr: ;
+		printf("[WARNING] Error Loading Entity \"%s\"! Skipped.\n", ur->name);
+	}
+	freeJSON(&json);
+	xfree(jsf);
+}
 
 void getEntityCollision(struct entity* ent, struct boundingbox* bb) {
-	float width = .3;
-	float height = 1.8;
-	int32_t id = ent->type;
-	if (id == ENT_BOAT) {
-		width = 1.375;
-		height = .5625;
-	} else if (id == ENT_ITEMSTACK) {
-		width = .25;
-		height = .25;
-	} else if (id == ENT_AREAEFFECT) {
-		width = 2.;
-		height = .5;
-	} else if (id == ENT_MINECART) {
-		width = .98;
-		height = .7;
-	} else if (id == ENT_TNT) {
-		width = .98;
-		height = .98;
-	} else if (id == ENT_ENDERCRYSTAL) {
-		width = 2.;
-		height = 2.;
-	} else if (id == ENT_ARROW) {
-		width = .5;
-		height = .5;
-	} else if (id == ENT_SNOWBALL) {
-		width = .25;
-		height = .25;
-	} else if (id == ENT_EGG) {
-		width = .25;
-		height = .25;
-	} else if (id == ENT_FIREBALL) {
-		width = 1.;
-		height = 1.;
-	} else if (id == ENT_FIRECHARGE) {
-		width = .3125;
-		height = .3125;
-	} else if (id == ENT_ENDERPEARL) {
-		width = .25;
-		height = .25;
-	} else if (id == ENT_WITHERSKULL) {
-		width = .3125;
-		height = .3125;
-	} else if (id == ENT_SHULKERBULLET) {
-		width = .3125;
-		height = .3125;
-	} else if (id == ENT_LLAMASPIT) {
-		width = .25;
-		height = .25;
-	} else if (id == ENT_FALLINGBLOCK) {
-		width = .98;
-		height = .98;
-	} else if (id == ENT_ITEMFRAME) {
-		width = .5;
-		height = .5;
-	} else if (id == ENT_EYEENDER) {
-		width = 1.;
-		height = 1.;
-	} else if (id == ENT_THROWNPOTION) {
-		width = .25;
-		height = .25;
-	} else if (id == ENT_EXPBOTTLE) {
-		width = .25;
-		height = .25;
-	} else if (id == ENT_FIREWORK) {
-		width = .25;
-		height = .25;
-	} else if (id == ENT_LEASHKNOT) {
-		width = .5;
-		height = .5;
-	} else if (id == ENT_ARMORSTAND) {
-		width = .5;
-		height = 1.975;
-	} else if (id == ENT_EVOCATIONFANGS) {
-		width = .5;
-		height = .8;
-	} else if (id == ENT_FISHINGFLOAT) {
-		width = .25;
-		height = .25;
-	} else if (id == ENT_DRAGONFIREBALL) {
-		width = 1.;
-		height = 1.;
-	} else if (id == ENT_ELDERGUARDIAN) {
-		width = .85 * 2.35;
-		height = .85 * 2.35;
-	} else if (id == ENT_SKELETON) {
-		width = .6;
-		height = 1.99;
-	} else if (id == ENT_STRAY) {
-		width = .6;
-		height = 1.99;
-	} else if (id == ENT_HUSK) {
-		width = .6;
-		height = 1.95;
-	} else if (id == ENT_ZOMBIE) {
-		width = .6;
-		height = 1.95;
-	} else if (id == ENT_HORSE) {
-		width = 1.3964833;
-		height = 1.6;
-	} else if (id == ENT_EVOCATIONILLAGER) {
-		width = .6;
-		height = 1.95;
-	} else if (id == ENT_VEX) {
-		width = .4;
-		height = .8;
-	} else if (id == ENT_VINDICATIONILLAGER) {
-		width = .6;
-		height = 1.95;
-	} else if (id == ENT_CREEPER) {
-		width = .6;
-		height = 1.7;
-	} else if (id == ENT_SKELETON) {
-		width = .6;
-		height = 1.99;
-	} else if (id == ENT_SPIDER) {
-		width = 1.4;
-		height = .9;
-	} else if (id == ENT_GIANT) {
-		width = .6 * 6.;
-		height = 1.95 * 6.;
-	} else if (id == ENT_SLIME) {
-		width = .51 * ent->data.slime.size;
-		height = .51 * ent->data.slime.size;
-	} else if (id == ENT_GHAST) {
-		width = 4.;
-		height = 4.;
-	} else if (id == ENT_ZPIGMAN) {
-		width = .6;
-		height = 1.95;
-	} else if (id == ENT_ENDERMAN) {
-		width = .6;
-		height = 2.9;
-	} else if (id == ENT_CAVESPIDER) {
-		width = .7;
-		height = .5;
-	} else if (id == ENT_SILVERFISH) {
-		width = .4;
-		height = .3;
-	} else if (id == ENT_BLAZE) {
-		width = 0.;
-		height = 0.;
-	} else if (id == ENT_MAGMACUBE) {
-		width = .51 * ent->data.slime.size;
-		height = .51 * ent->data.slime.size;
-	} else if (id == ENT_ENDERDRAGON) {
-		width = 16.;
-		height = 18.;
-	} else if (id == ENT_WITHER) {
-		width = .9;
-		height = 3.5;
-	} else if (id == ENT_BAT) {
-		width = .5;
-		height = .9;
-	} else if (id == ENT_WITCH) {
-		width = .6;
-		height = 1.95;
-	} else if (id == ENT_ENDERMITE) {
-		width = .4;
-		height = .3;
-	} else if (id == ENT_GUARDIAN) {
-		width = .85;
-		height = .85;
-	} else if (id == ENT_SHULKER) {
-		width = 1.;
-		height = 1.;
-	} else if (id == ENT_PIG) {
-		width = .9;
-		height = .9;
-	} else if (id == ENT_SHEEP) {
-		width = .9;
-		height = 1.3;
-	} else if (id == ENT_COW) {
-		width = .9;
-		height = 1.4;
-	} else if (id == ENT_CHICKEN) {
-		width = .4;
-		height = .7;
-	} else if (id == ENT_SQUID) {
-		width = .8;
-		height = .8;
-	} else if (id == ENT_WOLF) {
-		width = .6;
-		height = .85;
-	} else if (id == ENT_MOOSHROOM) {
-		width = .9;
-		height = 1.4;
-	} else if (id == ENT_SNOWMAN) {
-		width = .7;
-		height = 1.9;
-	} else if (id == ENT_OCELOT) {
-		width = .6;
-		height = .7;
-	} else if (id == ENT_IRONGOLEM) {
-		width = 1.4;
-		height = 2.7;
-	} else if (id == ENT_RABBIT) {
-		width = .4;
-		height = .5;
-	} else if (id == ENT_POLARBEAR) {
-		width = 1.3;
-		height = 1.4;
-	} else if (id == ENT_LLAMA) {
-		width = .6;
-		height = 1.87;
-	} else if (id == ENT_VILLAGER) {
-		width = .6;
-		height = 1.95;
-	} else if (id == ENT_PAINTING) {
-		width = 0.;
-		height = 0.;
-	} else if (id == ENT_EXPERIENCEORB) {
-		width = .5;
-		height = .5;
-	} else if (id == ENT_PLAYER) {
-		width = .6;
-		height = 1.8;
-	}
-	bb->minX = ent->x - width / 2;
-	bb->maxX = ent->x + width / 2;
-	bb->minZ = ent->z - width / 2;
-	bb->maxZ = ent->z + width / 2;
+	struct entity_info* ei = getEntityInfo(ent->type);
+	bb->minX = ent->x - ei->width / 2;
+	bb->maxX = ent->x + ei->width / 2;
+	bb->minZ = ent->z - ei->width / 2;
+	bb->maxZ = ent->z + ei->width / 2;
 	bb->minY = ent->y;
-	bb->maxY = ent->y + height;
+	bb->maxY = ent->y + ei->height;
 }
 
-int entNetworkConvert(int type, int id) {
-	if (type == 0) {
-		if (id == 1) return ENT_BOAT;
-		else if (id == 2) return ENT_ITEMSTACK;
-		else if (id == 3) return ENT_AREAEFFECT;
-		else if (id == 10) return ENT_MINECART;
-		else if (id == 50) return ENT_TNT;
-		else if (id == 51) return ENT_ENDERCRYSTAL;
-		else if (id == 60) return ENT_ARROW;
-		else if (id == 61) return ENT_SNOWBALL;
-		else if (id == 62) return ENT_EGG;
-		else if (id == 63) return ENT_FIREBALL;
-		else if (id == 64) return ENT_FIRECHARGE;
-		else if (id == 65) return ENT_ENDERPEARL;
-		else if (id == 66) return ENT_WITHERSKULL;
-		else if (id == 67) return ENT_SHULKERBULLET;
-		else if (id == 68) return ENT_LLAMASPIT;
-		else if (id == 70) return ENT_FALLINGBLOCK;
-		else if (id == 71) return ENT_ITEMFRAME;
-		else if (id == 72) return ENT_EYEENDER;
-		else if (id == 73) return ENT_THROWNPOTION;
-		else if (id == 75) return ENT_EXPBOTTLE;
-		else if (id == 76) return ENT_FIREWORK;
-		else if (id == 77) return ENT_LEASHKNOT;
-		else if (id == 78) return ENT_ARMORSTAND;
-		else if (id == 79) return ENT_EVOCATIONFANGS;
-		else if (id == 90) return ENT_FISHINGFLOAT;
-		else if (id == 91) return ENT_ARROW;
-		else if (id == 93) return ENT_DRAGONFIREBALL;
-	} else if (type == 1) {
-		if (id == 4) return ENT_ELDERGUARDIAN;
-		else if (id == 5) return ENT_SKELETON;
-		else if (id == 6) return ENT_STRAY;
-		else if (id == 23) return ENT_HUSK;
-		else if (id == 27) return ENT_ZOMBIE;
-		else if (id == 28) return ENT_HORSE;
-		else if (id == 29) return ENT_HORSE;
-		else if (id == 31) return ENT_HORSE;
-		else if (id == 32) return ENT_HORSE;
-		else if (id == 34) return ENT_EVOCATIONILLAGER;
-		else if (id == 35) return ENT_VEX;
-		else if (id == 36) return ENT_VINDICATIONILLAGER;
-		else if (id == 50) return ENT_CREEPER;
-		else if (id == 51) return ENT_SKELETON;
-		else if (id == 52) return ENT_SPIDER;
-		else if (id == 53) return ENT_GIANT;
-		else if (id == 54) return ENT_ZOMBIE;
-		else if (id == 55) return ENT_SLIME;
-		else if (id == 56) return ENT_GHAST;
-		else if (id == 57) return ENT_ZPIGMAN;
-		else if (id == 58) return ENT_ENDERMAN;
-		else if (id == 59) return ENT_CAVESPIDER;
-		else if (id == 60) return ENT_SILVERFISH;
-		else if (id == 61) return ENT_BLAZE;
-		else if (id == 62) return ENT_MAGMACUBE;
-		else if (id == 63) return ENT_ENDERDRAGON;
-		else if (id == 64) return ENT_WITHER;
-		else if (id == 65) return ENT_BAT;
-		else if (id == 66) return ENT_WITCH;
-		else if (id == 67) return ENT_ENDERMITE;
-		else if (id == 68) return ENT_GUARDIAN;
-		else if (id == 69) return ENT_SHULKER;
-		else if (id == 90) return ENT_PIG;
-		else if (id == 91) return ENT_SHEEP;
-		else if (id == 92) return ENT_COW;
-		else if (id == 93) return ENT_CHICKEN;
-		else if (id == 94) return ENT_SQUID;
-		else if (id == 95) return ENT_WOLF;
-		else if (id == 96) return ENT_MOOSHROOM;
-		else if (id == 97) return ENT_SNOWMAN;
-		else if (id == 98) return ENT_OCELOT;
-		else if (id == 99) return ENT_IRONGOLEM;
-		else if (id == 100) return ENT_HORSE;
-		else if (id == 101) return ENT_RABBIT;
-		else if (id == 102) return ENT_POLARBEAR;
-		else if (id == 103) return ENT_LLAMA;
-		else if (id == 120) return ENT_VILLAGER;
-	}
-	return -1;
-}
-
-int networkEntConvert(int type, int id) {
-	if (type == 0) {
-		if (id == ENT_BOAT) return 1;
-		else if (id == ENT_ITEMSTACK) return 2;
-		else if (id == ENT_AREAEFFECT) return 3;
-		else if (id == ENT_MINECART) return 10;
-		else if (id == ENT_TNT) return 50;
-		else if (id == ENT_ENDERCRYSTAL) return 51;
-		else if (id == ENT_ARROW) return 60;
-		else if (id == ENT_SNOWBALL) return 61;
-		else if (id == ENT_EGG) return 62;
-		else if (id == ENT_FIREBALL) return 63;
-		else if (id == ENT_FIRECHARGE) return 64;
-		else if (id == ENT_ENDERPEARL) return 65;
-		else if (id == ENT_WITHERSKULL) return 66;
-		else if (id == ENT_SHULKERBULLET) return 67;
-		else if (id == ENT_LLAMASPIT) return 68;
-		else if (id == ENT_FALLINGBLOCK) return 70;
-		else if (id == ENT_ITEMFRAME) return 71;
-		else if (id == ENT_EYEENDER) return 72;
-		else if (id == ENT_THROWNPOTION) return 73;
-		else if (id == ENT_EXPBOTTLE) return 75;
-		else if (id == ENT_FIREWORK) return 76;
-		else if (id == ENT_LEASHKNOT) return 77;
-		else if (id == ENT_ARMORSTAND) return 78;
-		else if (id == ENT_EVOCATIONFANGS) return 79;
-		else if (id == ENT_FISHINGFLOAT) return 90;
-		else if (id == ENT_ARROW) return 91;
-		else if (id == ENT_DRAGONFIREBALL) return 93;
-	} else if (type == 1) {
-		if (id == ENT_ELDERGUARDIAN) return 4;
-		else if (id == ENT_SKELETON) return 5;
-		else if (id == ENT_STRAY) return 6;
-		else if (id == ENT_HUSK) return 23;
-		else if (id == ENT_ZOMBIE) return 27;
-		else if (id == ENT_HORSE) return 28;
-		else if (id == ENT_HORSE) return 29;
-		else if (id == ENT_HORSE) return 31;
-		else if (id == ENT_HORSE) return 32;
-		else if (id == ENT_EVOCATIONILLAGER) return 34;
-		else if (id == ENT_VEX) return 35;
-		else if (id == ENT_VINDICATIONILLAGER) return 36;
-		else if (id == ENT_CREEPER) return 50;
-		else if (id == ENT_SKELETON) return 51;
-		else if (id == ENT_SPIDER) return 52;
-		else if (id == ENT_GIANT) return 53;
-		else if (id == ENT_ZOMBIE) return 54;
-		else if (id == ENT_SLIME) return 55;
-		else if (id == ENT_GHAST) return 56;
-		else if (id == ENT_ZPIGMAN) return 57;
-		else if (id == ENT_ENDERMAN) return 58;
-		else if (id == ENT_CAVESPIDER) return 59;
-		else if (id == ENT_SILVERFISH) return 60;
-		else if (id == ENT_BLAZE) return 61;
-		else if (id == ENT_MAGMACUBE) return 62;
-		else if (id == ENT_ENDERDRAGON) return 63;
-		else if (id == ENT_WITHER) return 64;
-		else if (id == ENT_BAT) return 65;
-		else if (id == ENT_WITCH) return 66;
-		else if (id == ENT_ENDERMITE) return 67;
-		else if (id == ENT_GUARDIAN) return 68;
-		else if (id == ENT_SHULKER) return 69;
-		else if (id == ENT_PIG) return 90;
-		else if (id == ENT_SHEEP) return 91;
-		else if (id == ENT_COW) return 92;
-		else if (id == ENT_CHICKEN) return 93;
-		else if (id == ENT_SQUID) return 94;
-		else if (id == ENT_WOLF) return 95;
-		else if (id == ENT_MOOSHROOM) return 96;
-		else if (id == ENT_SNOWMAN) return 97;
-		else if (id == ENT_OCELOT) return 98;
-		else if (id == ENT_IRONGOLEM) return 99;
-		else if (id == ENT_HORSE) return 100;
-		else if (id == ENT_RABBIT) return 101;
-		else if (id == ENT_POLARBEAR) return 102;
-		else if (id == ENT_LLAMA) return 103;
-		else if (id == ENT_VILLAGER) return 120;
-	}
-	return -1;
-}
-
-int shouldSendAsObject(int id) {
-	return (id == ENT_BOAT || id == ENT_ITEMSTACK || id == ENT_AREAEFFECT || id == ENT_MINECART || id == ENT_TNT || id == ENT_ENDERCRYSTAL || id == ENT_ARROW || id == ENT_SNOWBALL || id == ENT_EGG || id == ENT_FIREBALL || id == ENT_FIRECHARGE || id == ENT_ENDERPEARL || id == ENT_WITHERSKULL || id == ENT_SHULKERBULLET || id == ENT_LLAMASPIT || id == ENT_FALLINGBLOCK || id == ENT_ITEMFRAME || id == ENT_EYEENDER || id == ENT_THROWNPOTION || id == ENT_EXPBOTTLE || id == ENT_FIREWORK || id == ENT_LEASHKNOT || id == ENT_ARMORSTAND || id == ENT_EVOCATIONFANGS || id == ENT_FISHINGFLOAT || id == ENT_ARROW || id == ENT_DRAGONFIREBALL);
-}
-
-struct entity* newEntity(int32_t id, float x, float y, float z, uint8_t type, float yaw, float pitch) {
+struct entity* newEntity(int32_t id, float x, float y, float z, uint32_t type, float yaw, float pitch) {
 	struct entity* e = malloc(sizeof(struct entity));
 	e->id = id;
 	e->age = 0;
@@ -492,7 +227,7 @@ void handleMetaByte(struct entity* ent, int index, signed char b) {
 }
 
 void handleMetaVarInt(struct entity* ent, int index, int32_t i) {
-	if ((ent->type == ENT_SKELETON || ent->type == ENT_SLIME || ent->type == ENT_MAGMACUBE || ent->type == ENT_GUARDIAN) && index == 11) {
+	if ((ent->type == ENT_SKELETON || ent->type == ENT_SLIME || ent->type == ENT_LAVASLIME || ent->type == ENT_GUARDIAN) && index == 11) {
 		ent->subtype = i;
 	}
 }
@@ -507,7 +242,7 @@ void handleMetaString(struct entity* ent, int index, char* str) {
 }
 
 void handleMetaSlot(struct entity* ent, int index, struct slot* slot) {
-	if (ent->type == ENT_ITEMSTACK && index == 6) {
+	if (ent->type == ENT_ITEM && index == 6) {
 		ent->data.itemstack.slot = slot;
 	}
 }
@@ -524,8 +259,10 @@ void handleMetaUUID(struct entity* ent, int index, struct uuid* pos) {
 
 }
 
-int isLiving(int type) {
-	return type == ENT_PLAYER || type == ENT_SKELETON || type == ENT_SPIDER || type == ENT_GIANT || type == ENT_ZOMBIE || type == ENT_SLIME || type == ENT_GHAST || type == ENT_ZPIGMAN || type == ENT_ENDERMAN || type == ENT_CAVESPIDER || type == ENT_SILVERFISH || type == ENT_BLAZE || type == ENT_MAGMACUBE || type == ENT_ENDERDRAGON || type == ENT_WITHER || type == ENT_BAT || type == ENT_WITCH || type == ENT_ENDERMITE || type == ENT_GUARDIAN || type == ENT_SHULKER || type == ENT_PIG || type == ENT_SHEEP || type == ENT_COW || type == ENT_CHICKEN || type == ENT_SQUID || type == ENT_WOLF || type == ENT_MOOSHROOM || type == ENT_SNOWMAN || type == ENT_OCELOT || type == ENT_IRONGOLEM || type == ENT_HORSE || type == ENT_RABBIT || type == ENT_VILLAGER || type == ENT_BOAT;
+int hasFlag(struct entity_info* ei, char* flag) {
+	for (size_t i = 0; i < ei->flag_count; i++)
+		if (streq_nocase(ei->flags[i], flag)) return 1;
+	return 0;
 }
 
 int entity_inFluid(struct entity* entity, uint16_t blk, float ydown, int meta_check) {
@@ -572,7 +309,7 @@ void outputMetaByte(struct entity* ent, unsigned char** loc, size_t* size) {
 }
 
 void outputMetaVarInt(struct entity* ent, unsigned char** loc, size_t* size) {
-	if ((ent->type == ENT_SKELETON || ent->type == ENT_SLIME || ent->type == ENT_MAGMACUBE || ent->type == ENT_GUARDIAN)) {
+	if ((ent->type == ENT_SKELETON || ent->type == ENT_SLIME || ent->type == ENT_LAVASLIME || ent->type == ENT_GUARDIAN)) {
 		*loc = xrealloc(*loc, *size + 2 + getVarIntSize(ent->subtype));
 		(*loc)[(*size)++] = 11;
 		(*loc)[(*size)++] = 1;
@@ -581,7 +318,7 @@ void outputMetaVarInt(struct entity* ent, unsigned char** loc, size_t* size) {
 }
 
 void outputMetaFloat(struct entity* ent, unsigned char** loc, size_t* size) {
-	if (isLiving(ent->type)) {
+	if (hasFlag(getEntityInfo(ent->type), "livingbase")) {
 		*loc = xrealloc(*loc, *size + 6);
 		(*loc)[(*size)++] = 7;
 		(*loc)[(*size)++] = 2;
@@ -596,7 +333,7 @@ void outputMetaString(struct entity* ent, unsigned char** loc, size_t* size) {
 }
 
 void outputMetaSlot(struct entity* ent, unsigned char** loc, size_t* size) {
-	if (ent->type == ENT_ITEMSTACK) {
+	if (ent->type == ENT_ITEM) {
 		*loc = xrealloc(*loc, *size + 1024);
 		(*loc)[(*size)++] = 6;
 		(*loc)[(*size)++] = 5;
@@ -943,7 +680,7 @@ void applyKnockback(struct entity* entity, float yaw, float strength) {
 }
 
 void damageEntityWithItem(struct entity* attacked, struct entity* attacker, uint8_t slot_index, struct slot* item) {
-	if (attacked == NULL || attacked->invincibilityTicks > 0 || !isLiving(attacked->type) || attacked->health <= 0.) return;
+	if (attacked == NULL || attacked->invincibilityTicks > 0 || !hasFlag(getEntityInfo(attacked->type), "livingbase") || attacked->health <= 0.) return;
 	if (attacked->type == ENT_PLAYER && attacked->data.player.player->gamemode == 1) return;
 	float damage = 1.;
 	if (item != NULL) {
@@ -976,7 +713,7 @@ void damageEntityWithItem(struct entity* attacked, struct entity* attacker, uint
 }
 
 void damageEntity(struct entity* attacked, float damage, int armorable) {
-	if (attacked == NULL || damage <= 0. || attacked->invincibilityTicks > 0 || !isLiving(attacked->type) || attacked->health <= 0.) return;
+	if (attacked == NULL || damage <= 0. || attacked->invincibilityTicks > 0 || !hasFlag(getEntityInfo(attacked->type), "livingbase") || attacked->health <= 0.) return;
 	float armor = 0;
 	if (attacked->type == ENT_PLAYER) {
 		struct player* player = attacked->data.player.player;
@@ -1054,7 +791,7 @@ void damageEntity(struct entity* attacked, float damage, int armorable) {
 }
 
 void healEntity(struct entity* healed, float amount) {
-	if (healed == NULL || amount <= 0. || healed->health <= 0. || !isLiving(healed->type)) return;
+	if (healed == NULL || amount <= 0. || healed->health <= 0. || !hasFlag(getEntityInfo(healed->type), "livingbase")) return;
 	float oh = healed->health;
 	healed->health += amount;
 	if (healed->health > healed->maxHealth) healed->health = 20.;
@@ -1136,7 +873,7 @@ int tick_itemstack(struct world* world, struct entity* entity) {
 			}
 			break;
 		}
-	} else if (oe->type == ENT_ITEMSTACK) {
+	} else if (oe->type == ENT_ITEM) {
 		if (oe->data.itemstack.slot->item == entity->data.itemstack.slot->item && oe->data.itemstack.slot->damage == entity->data.itemstack.slot->damage && oe->data.itemstack.slot->itemCount + entity->data.itemstack.slot->itemCount <= maxStackSize(entity->data.itemstack.slot)) {
 			getEntityCollision(oe, &oebb);
 			oebb.minX -= .625;
@@ -1276,7 +1013,7 @@ void tick_entity(struct world* world, struct entity* entity) {
 	entity->age++;
 	if (entity->invincibilityTicks > 0) entity->invincibilityTicks--;
 	if (entity->type > ENT_PLAYER) {
-		if (entity->type == ENT_ITEMSTACK) entity->motY -= 0.04;
+		if (entity->type == ENT_ITEM) entity->motY -= 0.04;
 		if (entity->motX != 0. || entity->motY != 0. || entity->motZ != 0.) moveEntity(entity, entity->motX, entity->motY, entity->motZ, 0.);
 		double friction = .98;
 		if (entity->onGround) {
@@ -1291,11 +1028,11 @@ void tick_entity(struct world* world, struct entity* entity) {
 		if (fabs(entity->motZ) < .0001) entity->motZ = 0.;
 		if (entity->onGround && entity->motX == 0. && entity->motY == 0. && entity->motZ == 0.) entity->motY *= -.5;
 	}
-	if (entity->type == ENT_ITEMSTACK) {
+	if (entity->type == ENT_ITEM) {
 		if (tick_itemstack(world, entity)) return;
 	}
-	if (entity->type == ENT_ITEMSTACK || entity->type == ENT_EXPERIENCEORB) pushOutOfBlocks(entity);
-	if (isLiving(entity->type)) {
+	if (entity->type == ENT_ITEM || entity->type == ENT_XPORB) pushOutOfBlocks(entity);
+	if (hasFlag(getEntityInfo(entity->type), "livingbase")) {
 		entity->inWater = entity_inFluid(entity, BLK_WATER, .4, 0) || entity_inFluid(entity, BLK_WATER_1, .4, 0);
 		entity->inLava = entity_inFluid(entity, BLK_LAVA, .4, 0) || entity_inFluid(entity, BLK_LAVA_1, .4, 0);
 		if ((entity->inWater || entity->inLava) && entity->type == ENT_PLAYER) entity->data.player.player->llTick = tick_counter;
@@ -1333,7 +1070,7 @@ void tick_entity(struct world* world, struct entity* entity) {
 
 void freeEntity(struct entity* entity) {
 	del_hashmap(entity->loadingPlayers);
-	if (entity->type == ENT_ITEMSTACK) {
+	if (entity->type == ENT_ITEM) {
 		if (entity->data.itemstack.slot != NULL) {
 			freeSlot(entity->data.itemstack.slot);
 			xfree(entity->data.itemstack.slot);

@@ -12,6 +12,7 @@
 #include "world.h"
 #include <stdlib.h>
 #include "world.h"
+#include "item.h"
 
 #define ENT_PLAYER 0
 #define ENT_ITEM 1
@@ -257,12 +258,6 @@
 #define ENT_LLAMASPIT 104
 #define ENT_VILLAGER 120
 #define ENT_ENDERCRYSTAL 200
-
-int entNetworkConvert(int type, int id);
-int networkEntConvert(int type, int id);
-
-int shouldSendAsObject(int id);
-
 #define POT_SPEED 1
 #define POT_SLOWNESS 2
 #define POT_HASTE 3
@@ -291,6 +286,36 @@ int shouldSendAsObject(int id);
 #define POT_LUCK 26
 #define POT_UNLUCK 27
 
+struct entity_loot {
+		item id;
+		uint8_t amountMax;
+		uint8_t amountMin;
+		uint8_t metaMin;
+		uint8_t metaMax;
+};
+
+struct entity_info {
+		char* name;
+		float maxHealth;
+		float width;
+		float height;
+		char** flags;
+		size_t flag_count;
+		uint32_t spawn_packet;
+		int32_t spawn_packet_id;
+		struct entity_loot* loots;
+		size_t loot_count;
+		char* dataname;
+};
+
+struct collection* entity_infos;
+
+void init_entities();
+
+struct entity_info* getEntityInfo(uint32_t id);
+
+void add_entity_info(uint32_t eid, struct entity_info* bm);
+
 struct potioneffect {
 		char effectID;
 		char amplifier;
@@ -298,7 +323,7 @@ struct potioneffect {
 		char particles;
 };
 
-int isLiving(int type);
+int hasFlag(struct entity_info* ei, char* flag);
 
 union entity_data {
 		struct entity_player {
@@ -526,7 +551,7 @@ struct entity {
 		double lx;
 		double ly;
 		double lz;
-		uint8_t type;
+		uint32_t type;
 		float yaw;
 		float pitch;
 		float lyaw;
@@ -582,7 +607,7 @@ double entity_distsq_block(struct entity* ent1, double x, double y, double z);
 
 double entity_dist_block(struct entity* ent1, double x, double y, double z);
 
-struct entity* newEntity(int32_t id, float x, float y, float z, uint8_t type, float yaw, float pitch);
+struct entity* newEntity(int32_t id, float x, float y, float z, uint32_t type, float yaw, float pitch);
 
 void getEntityCollision(struct entity* ent, struct boundingbox* bb);
 
