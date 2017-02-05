@@ -1,33 +1,37 @@
 {
 	"item": {
 		"id": 1,
+		"dataname": "item",
 		"width": 0.25,
 		"height": 0.25,
 		"maxHealth": 0.0,
 		"flags": ["item"],
 		"packetType": "object",
-		"packetID": "2"
+		"packetID": 2
 	},
 	"xporb": {
 		"id": 2,
+		"dataname": "xp_orb",
 		"width": 0.25,
 		"height": 0.25,
 		"maxHealth": 0.0,
 		"flags": ["xporb"],
 		"packetType": "exp",
-		"packetID": "2"
+		"packetID": 2
 	},
 	"areaeffectcloud": {
 		"id": 3,
+		"dataname": "area_effect_cloud",
 		"width": 6.0,
 		"height": 0.5,
 		"maxHealth": 0.0,
 		"flags": ["areaeffectcloud", "fireimmune"],
 		"packetType": "object",
-		"packetID": "3"
+		"packetID": 3
 	},
 	"elderguardian": {
 		"id": 4,
+		"dataname": "elder_guardian",
 		"width": 1.9975,
 		"height": 1.9975,
 		"maxHealth": 80.0,
@@ -71,10 +75,11 @@
 		],
 		"flags": ["elderguardian", "guardian", "mob", "creature", "living", "livingbase"],
 		"packetType": "mob",
-		"packetID": "4"
+		"packetID": 4
 	},
 	"witherskeleton": {
 		"id": 5,
+		"dataname": "wither_skeleton",
 		"width": 0.7,
 		"height": 2.4,
 		"maxHealth": 20.0,
@@ -97,10 +102,11 @@
 		],
 		"flags": ["witherskeleton", "abstractskeleton", "mob", "creature", "living", "livingbase", "fireimmune"],
 		"packetType": "mob",
-		"packetID": "5"
+		"packetID": 5
 	},
 	"stray": {
 		"id": 6,
+		"dataname": "stray",
 		"width": 0.6,
 		"height": 1.99,
 		"maxHealth": 20.0,
@@ -123,154 +129,171 @@
 		],
 		"flags": ["stray", "abstractskeleton", "mob", "creature", "living", "livingbase"],
 		"packetType": "mob",
-		"packetID": "6"
+		"packetID": 6
 	},
 	"thrownegg": {
 		"id": 7,
+		"dataname": "egg",
 		"width": 0.25,
 		"height": 0.25,
 		"maxHealth": 0.0,
 		"flags": ["egg", "throwable"],
 		"packetType": "object",
-		"packetID": "62"
+		"packetID": 62
 	},
 	"leashknot": {
 		"id": 8,
+		"dataname": "leash_knot",
 		"width": 0.5,
 		"height": 0.5,
 		"maxHealth": 0.0,
 		"flags": ["leashknot", "hanging"],
 		"packetType": "object",
-		"packetID": "77"
+		"packetID": 77
 	},
 	"painting": {
 		"id": 9,
+		"dataname": "painting",
 		"width": 0.5,
 		"height": 0.5,
 		"maxHealth": 0.0,
 		"flags": ["painting", "hanging"],
 		"packetType": "painting",
-		"packetID": "9"
+		"packetID": 9
 	},
 	"arrow": {
 		"id": 10,
+		"dataname": "arrow",
 		"width": 0.5,
 		"height": 0.5,
 		"maxHealth": 0.0,
 		"flags": ["tippedarrow", "arrow"],
 		"packetType": "object",
-		"packetID": "60"
+		"packetID": 60
 	},
 	"snowball": {
 		"id": 11,
+		"dataname": "snowball",
 		"width": 0.25,
 		"height": 0.25,
 		"maxHealth": 0.0,
 		"flags": ["snowball", "throwable"],
 		"packetType": "object",
-		"packetID": "61"
+		"packetID": 61
 	},
 	"fireball": {
 		"id": 12,
+		"dataname": "fireball",
 		"width": 1.0,
 		"height": 1.0,
 		"maxHealth": 0.0,
 		"flags": ["largefireball", "fireball"],
 		"packetType": "object",
-		"packetID": "63"
+		"packetID": 63
 	},
 	"smallfireball": {
 		"id": 13,
+		"dataname": "small_fireball",
 		"width": 0.3125,
 		"height": 0.3125,
 		"maxHealth": 0.0,
 		"flags": ["smallfireball", "fireball"],
 		"packetType": "object",
-		"packetID": "64"
+		"packetID": 64
 	},
 	"thrownenderpearl": {
 		"id": 14,
+		"dataname": "ender_pearl",
 		"width": 0.25,
 		"height": 0.25,
 		"maxHealth": 0.0,
 		"flags": ["enderpearl", "throwable"],
 		"packetType": "object",
-		"packetID": "65"
+		"packetID": 65
 	},
 	"eyeofendersignal": {
 		"id": 15,
+		"dataname": "eye_of_ender_signal",
 		"width": 0.25,
 		"height": 0.25,
 		"maxHealth": 0.0,
 		"flags": ["endereye"],
 		"packetType": "object",
-		"packetID": "72"
+		"packetID": 72
 	},
 	"thrownpotion": {
 		"id": 16,
+		"dataname": "potion",
 		"width": 0.25,
 		"height": 0.25,
 		"maxHealth": 0.0,
 		"flags": ["potion", "throwable"],
 		"packetType": "object",
-		"packetID": "73"
+		"packetID": 73
 	},
 	"thrownexpbottle": {
 		"id": 17,
+		"dataname": "xp_bottle",
 		"width": 0.25,
 		"height": 0.25,
 		"maxHealth": 0.0,
 		"flags": ["expbottle", "throwable"],
 		"packetType": "object",
-		"packetID": "75"
+		"packetID": 75
 	},
 	"itemframe": {
 		"id": 18,
+		"dataname": "item_frame",
 		"width": 0.5,
 		"height": 0.5,
 		"maxHealth": 0.0,
 		"flags": ["itemframe", "hanging"],
 		"packetType": "object",
-		"packetID": "71"
+		"packetID": 71
 	},
 	"witherskull": {
 		"id": 19,
+		"dataname": "wither_skull",
 		"width": 0.3125,
 		"height": 0.3125,
 		"maxHealth": 0.0,
 		"flags": ["witherskull", "fireball"],
 		"packetType": "object",
-		"packetID": "66"
+		"packetID": 66
 	},
 	"primedtnt": {
 		"id": 20,
+		"dataname": "tnt",
 		"width": 0.98,
 		"height": 0.98,
 		"maxHealth": 0.0,
 		"flags": ["tntprimed"],
 		"packetType": "object",
-		"packetID": "50"
+		"packetID": 50
 	},
 	"fallingsand": {
 		"id": 21,
+		"dataname": "falling_block",
 		"width": 0.6,
 		"height": 1.8,
 		"maxHealth": 0.0,
 		"flags": ["fallingblock"],
 		"packetType": "object",
-		"packetID": "70"
+		"packetID": 70
 	},
 	"fireworksrocketentity": {
 		"id": 22,
+		"dataname": "fireworks_rocket",
 		"width": 0.25,
 		"height": 0.25,
 		"maxHealth": 0.0,
 		"flags": ["fireworkrocket"],
 		"packetType": "object",
-		"packetID": "76"
+		"packetID": 76
 	},
 	"husk": {
 		"id": 23,
+		"dataname": "husk",
 		"width": 0.6,
 		"height": 1.95,
 		"maxHealth": 20.0,
@@ -292,37 +315,41 @@
 		],
 		"flags": ["husk", "zombie", "mob", "creature", "living", "livingbase"],
 		"packetType": "mob",
-		"packetID": "23"
+		"packetID": 23
 	},
 	"spectralarrow": {
 		"id": 24,
+		"dataname": "spectral_arrow",
 		"width": 0.5,
 		"height": 0.5,
 		"maxHealth": 0.0,
 		"flags": ["spectralarrow", "arrow"],
 		"packetType": "object",
-		"packetID": "91"
+		"packetID": 91
 	},
 	"shulkerbullet": {
 		"id": 25,
+		"dataname": "shulker_bullet",
 		"width": 0.3125,
 		"height": 0.3125,
 		"maxHealth": 0.0,
 		"flags": ["shulkerbullet"],
 		"packetType": "object",
-		"packetID": "67"
+		"packetID": 67
 	},
 	"dragonfireball": {
 		"id": 26,
+		"dataname": "dragon_fireball",
 		"width": 1.0,
 		"height": 1.0,
 		"maxHealth": 0.0,
 		"flags": ["dragonfireball", "fireball"],
 		"packetType": "object",
-		"packetID": "93"
+		"packetID": 93
 	},
 	"zombievillager": {
 		"id": 27,
+		"dataname": "zombie_villager",
 		"width": 0.6,
 		"height": 1.95,
 		"maxHealth": 20.0,
@@ -344,10 +371,11 @@
 		],
 		"flags": ["zombievillager", "zombie", "mob", "creature", "living", "livingbase"],
 		"packetType": "mob",
-		"packetID": "27"
+		"packetID": 27
 	},
 	"skeletonhorse": {
 		"id": 28,
+		"dataname": "skeleton_horse",
 		"width": 1.3964844,
 		"height": 1.6,
 		"maxHealth": 15.0,
@@ -360,10 +388,11 @@
 		],
 		"flags": ["skeletonhorse", "abstracthorse", "animal", "ageable", "creature", "living", "livingbase"],
 		"packetType": "mob",
-		"packetID": "28"
+		"packetID": 28
 	},
 	"zombiehorse": {
 		"id": 29,
+		"dataname": "zombie_horse",
 		"width": 1.3964844,
 		"height": 1.6,
 		"maxHealth": 15.0,
@@ -376,22 +405,24 @@
 		],
 		"flags": ["zombiehorse", "abstracthorse", "animal", "ageable", "creature", "living", "livingbase"],
 		"packetType": "mob",
-		"packetID": "29"
+		"packetID": 29
 	},
 	"armorstand": {
 		"id": 30,
+		"dataname": "armor_stand",
 		"width": 0.5,
 		"height": 1.975,
 		"maxHealth": 20.0,
 		"flags": ["armorstand", "livingbase"],
 		"packetType": "object",
-		"packetID": "78"
+		"packetID": 78
 	},
 	"donkey": {
 		"id": 31,
+		"dataname": "donkey",
 		"width": 1.3964844,
 		"height": 1.6,
-		"maxHealth": 25.0,
+		"maxHealth": 21.0,
 		"loot": [
 			{
 				"id": 334,
@@ -401,13 +432,14 @@
 		],
 		"flags": ["donkey", "abstractchesthorse", "abstracthorse", "animal", "ageable", "creature", "living", "livingbase"],
 		"packetType": "mob",
-		"packetID": "31"
+		"packetID": 31
 	},
 	"mule": {
 		"id": 32,
+		"dataname": "mule",
 		"width": 1.3964844,
 		"height": 1.6,
-		"maxHealth": 29.0,
+		"maxHealth": 22.0,
 		"loot": [
 			{
 				"id": 334,
@@ -417,19 +449,21 @@
 		],
 		"flags": ["mule", "abstractchesthorse", "abstracthorse", "animal", "ageable", "creature", "living", "livingbase"],
 		"packetType": "mob",
-		"packetID": "32"
+		"packetID": 32
 	},
 	"evocationfangs": {
 		"id": 33,
+		"dataname": "evocation_fangs",
 		"width": 0.5,
 		"height": 0.8,
 		"maxHealth": 0.0,
 		"flags": ["evokerfangs"],
 		"packetType": "object",
-		"packetID": "79"
+		"packetID": 79
 	},
 	"evocationillager": {
 		"id": 34,
+		"dataname": "evocation_illager",
 		"width": 0.6,
 		"height": 1.95,
 		"maxHealth": 24.0,
@@ -445,10 +479,11 @@
 		],
 		"flags": ["evoker", "mob", "creature", "living", "livingbase"],
 		"packetType": "mob",
-		"packetID": "34"
+		"packetID": 34
 	},
 	"vex": {
 		"id": 35,
+		"dataname": "vex",
 		"width": 0.4,
 		"height": 0.8,
 		"maxHealth": 14.0,
@@ -456,10 +491,11 @@
 		],
 		"flags": ["vex", "mob", "creature", "living", "livingbase", "fireimmune"],
 		"packetType": "mob",
-		"packetID": "35"
+		"packetID": 35
 	},
 	"vindicationillager": {
 		"id": 36,
+		"dataname": "vindication_illager",
 		"width": 0.6,
 		"height": 1.95,
 		"maxHealth": 24.0,
@@ -472,82 +508,91 @@
 		],
 		"flags": ["vindicator", "mob", "creature", "living", "livingbase"],
 		"packetType": "mob",
-		"packetID": "36"
+		"packetID": 36
 	},
 	"minecartcommandblock": {
 		"id": 40,
+		"dataname": "commandblock_minecart",
 		"width": 0.98,
 		"height": 0.7,
 		"maxHealth": 0.0,
 		"flags": ["minecartcommandblock", "minecart"],
 		"packetType": "object",
-		"packetID": "10"
+		"packetID": 10
 	},
 	"boat": {
 		"id": 41,
+		"dataname": "boat",
 		"width": 1.375,
 		"height": 0.5625,
 		"maxHealth": 0.0,
 		"flags": ["boat"],
 		"packetType": "object",
-		"packetID": "1"
+		"packetID": 1
 	},
 	"minecartrideable": {
 		"id": 42,
+		"dataname": "minecart",
 		"width": 0.98,
 		"height": 0.7,
 		"maxHealth": 0.0,
 		"flags": ["minecartempty", "minecart"],
 		"packetType": "object",
-		"packetID": "10"
+		"packetID": 10
 	},
 	"minecartchest": {
 		"id": 43,
+		"dataname": "chest_minecart",
 		"width": 0.98,
 		"height": 0.7,
 		"maxHealth": 0.0,
 		"flags": ["minecartchest", "minecartcontainer", "minecart"],
 		"packetType": "object",
-		"packetID": "10"
+		"packetID": 10
 	},
 	"minecartfurnace": {
 		"id": 44,
+		"dataname": "furnace_minecart",
 		"width": 0.98,
 		"height": 0.7,
 		"maxHealth": 0.0,
 		"flags": ["minecartfurnace", "minecart"],
 		"packetType": "object",
-		"packetID": "10"
+		"packetID": 10
 	},
 	"minecarttnt": {
 		"id": 45,
+		"dataname": "tnt_minecart",
 		"width": 0.98,
 		"height": 0.7,
 		"maxHealth": 0.0,
 		"flags": ["minecarttnt", "minecart"],
 		"packetType": "object",
-		"packetID": "10"
+		"packetID": 10
 	},
 	"minecarthopper": {
 		"id": 46,
+		"dataname": "hopper_minecart",
 		"width": 0.98,
 		"height": 0.7,
 		"maxHealth": 0.0,
 		"flags": ["minecarthopper", "minecartcontainer", "minecart"],
 		"packetType": "object",
-		"packetID": "10"
+		"packetID": 10
 	},
 	"minecartspawner": {
 		"id": 47,
+		"dataname": "spawner_minecart",
 		"width": 0.98,
 		"height": 0.7,
 		"maxHealth": 0.0,
 		"flags": ["minecartmobspawner", "minecart"],
 		"packetType": "object",
-		"packetID": "10"
+		"packetID": 10
 	},
 	"creeper": {
 		"id": 50,
+		"dataname": "creeper",
 		"width": 0.6,
 		"height": 1.7,
 		"maxHealth": 20.0,
@@ -560,10 +605,11 @@
 		],
 		"flags": ["creeper", "mob", "creature", "living", "livingbase"],
 		"packetType": "mob",
-		"packetID": "50"
+		"packetID": 50
 	},
 	"skeleton": {
 		"id": 51,
+		"dataname": "skeleton",
 		"width": 0.6,
 		"height": 1.99,
 		"maxHealth": 20.0,
@@ -581,10 +627,11 @@
 		],
 		"flags": ["skeleton", "abstractskeleton", "mob", "creature", "living", "livingbase"],
 		"packetType": "mob",
-		"packetID": "51"
+		"packetID": 51
 	},
 	"spider": {
 		"id": 52,
+		"dataname": "spider",
 		"width": 1.4,
 		"height": 0.9,
 		"maxHealth": 16.0,
@@ -602,10 +649,11 @@
 		],
 		"flags": ["spider", "mob", "creature", "living", "livingbase"],
 		"packetType": "mob",
-		"packetID": "52"
+		"packetID": 52
 	},
 	"giant": {
 		"id": 53,
+		"dataname": "giant",
 		"width": 3.6000001,
 		"height": 10.799999,
 		"maxHealth": 100.0,
@@ -613,10 +661,11 @@
 		],
 		"flags": ["giantzombie", "mob", "creature", "living", "livingbase"],
 		"packetType": "mob",
-		"packetID": "53"
+		"packetID": 53
 	},
 	"zombie": {
 		"id": 54,
+		"dataname": "zombie",
 		"width": 0.6,
 		"height": 1.95,
 		"maxHealth": 20.0,
@@ -638,10 +687,11 @@
 		],
 		"flags": ["zombie", "mob", "creature", "living", "livingbase"],
 		"packetType": "mob",
-		"packetID": "54"
+		"packetID": 54
 	},
 	"slime": {
 		"id": 55,
+		"dataname": "slime",
 		"width": 0.6,
 		"height": 1.8,
 		"maxHealth": 20.0,
@@ -654,10 +704,11 @@
 		],
 		"flags": ["slime", "living", "livingbase"],
 		"packetType": "mob",
-		"packetID": "55"
+		"packetID": 55
 	},
 	"ghast": {
 		"id": 56,
+		"dataname": "ghast",
 		"width": 4.0,
 		"height": 4.0,
 		"maxHealth": 10.0,
@@ -675,10 +726,11 @@
 		],
 		"flags": ["ghast", "flying", "living", "livingbase", "fireimmune"],
 		"packetType": "mob",
-		"packetID": "56"
+		"packetID": 56
 	},
 	"pigzombie": {
 		"id": 57,
+		"dataname": "zombie_pigman",
 		"width": 0.6,
 		"height": 1.95,
 		"maxHealth": 20.0,
@@ -699,10 +751,11 @@
 		],
 		"flags": ["pigzombie", "zombie", "mob", "creature", "living", "livingbase", "fireimmune"],
 		"packetType": "mob",
-		"packetID": "57"
+		"packetID": 57
 	},
 	"enderman": {
 		"id": 58,
+		"dataname": "enderman",
 		"width": 0.6,
 		"height": 2.9,
 		"maxHealth": 40.0,
@@ -715,10 +768,11 @@
 		],
 		"flags": ["enderman", "mob", "creature", "living", "livingbase"],
 		"packetType": "mob",
-		"packetID": "58"
+		"packetID": 58
 	},
 	"cavespider": {
 		"id": 59,
+		"dataname": "cave_spider",
 		"width": 0.7,
 		"height": 0.5,
 		"maxHealth": 12.0,
@@ -736,10 +790,11 @@
 		],
 		"flags": ["cavespider", "spider", "mob", "creature", "living", "livingbase"],
 		"packetType": "mob",
-		"packetID": "59"
+		"packetID": 59
 	},
 	"silverfish": {
 		"id": 60,
+		"dataname": "silverfish",
 		"width": 0.4,
 		"height": 0.3,
 		"maxHealth": 8.0,
@@ -747,10 +802,11 @@
 		],
 		"flags": ["silverfish", "mob", "creature", "living", "livingbase"],
 		"packetType": "mob",
-		"packetID": "60"
+		"packetID": 60
 	},
 	"blaze": {
 		"id": 61,
+		"dataname": "blaze",
 		"width": 0.6,
 		"height": 1.8,
 		"maxHealth": 20.0,
@@ -763,10 +819,11 @@
 		],
 		"flags": ["blaze", "mob", "creature", "living", "livingbase", "fireimmune"],
 		"packetType": "mob",
-		"packetID": "61"
+		"packetID": 61
 	},
 	"lavaslime": {
 		"id": 62,
+		"dataname": "magma_cube",
 		"width": 0.6,
 		"height": 1.8,
 		"maxHealth": 20.0,
@@ -774,10 +831,11 @@
 		],
 		"flags": ["magmacube", "slime", "living", "livingbase", "fireimmune"],
 		"packetType": "mob",
-		"packetID": "62"
+		"packetID": 62
 	},
 	"enderdragon": {
 		"id": 63,
+		"dataname": "ender_dragon",
 		"width": 16.0,
 		"height": 8.0,
 		"maxHealth": 200.0,
@@ -785,10 +843,11 @@
 		],
 		"flags": ["dragon", "living", "livingbase", "fireimmune"],
 		"packetType": "mob",
-		"packetID": "63"
+		"packetID": 63
 	},
 	"witherboss": {
 		"id": 64,
+		"dataname": "wither",
 		"width": 0.9,
 		"height": 3.5,
 		"maxHealth": 300.0,
@@ -796,10 +855,11 @@
 		],
 		"flags": ["wither", "mob", "creature", "living", "livingbase", "fireimmune"],
 		"packetType": "mob",
-		"packetID": "64"
+		"packetID": 64
 	},
 	"bat": {
 		"id": 65,
+		"dataname": "bat",
 		"width": 0.5,
 		"height": 0.9,
 		"maxHealth": 6.0,
@@ -807,10 +867,11 @@
 		],
 		"flags": ["bat", "ambientcreature", "living", "livingbase"],
 		"packetType": "mob",
-		"packetID": "65"
+		"packetID": 65
 	},
 	"witch": {
 		"id": 66,
+		"dataname": "witch",
 		"width": 0.6,
 		"height": 1.95,
 		"maxHealth": 26.0,
@@ -853,10 +914,11 @@
 		],
 		"flags": ["witch", "mob", "creature", "living", "livingbase"],
 		"packetType": "mob",
-		"packetID": "66"
+		"packetID": 66
 	},
 	"endermite": {
 		"id": 67,
+		"dataname": "endermite",
 		"width": 0.4,
 		"height": 0.3,
 		"maxHealth": 8.0,
@@ -864,10 +926,11 @@
 		],
 		"flags": ["endermite", "mob", "creature", "living", "livingbase"],
 		"packetType": "mob",
-		"packetID": "67"
+		"packetID": 67
 	},
 	"guardian": {
 		"id": 68,
+		"dataname": "guardian",
 		"width": 0.85,
 		"height": 0.85,
 		"maxHealth": 30.0,
@@ -906,10 +969,11 @@
 		],
 		"flags": ["guardian", "mob", "creature", "living", "livingbase"],
 		"packetType": "mob",
-		"packetID": "68"
+		"packetID": 68
 	},
 	"shulker": {
 		"id": 69,
+		"dataname": "shulker",
 		"width": 1.0,
 		"height": 1.0,
 		"maxHealth": 30.0,
@@ -920,10 +984,11 @@
 		],
 		"flags": ["shulker", "golem", "creature", "living", "livingbase", "fireimmune"],
 		"packetType": "mob",
-		"packetID": "69"
+		"packetID": 69
 	},
 	"pig": {
 		"id": 90,
+		"dataname": "pig",
 		"width": 0.9,
 		"height": 0.9,
 		"maxHealth": 10.0,
@@ -936,10 +1001,11 @@
 		],
 		"flags": ["pig", "animal", "ageable", "creature", "living", "livingbase"],
 		"packetType": "mob",
-		"packetID": "90"
+		"packetID": 90
 	},
 	"sheep": {
 		"id": 91,
+		"dataname": "sheep",
 		"width": 0.9,
 		"height": 1.3,
 		"maxHealth": 8.0,
@@ -957,10 +1023,11 @@
 		],
 		"flags": ["sheep", "animal", "ageable", "creature", "living", "livingbase"],
 		"packetType": "mob",
-		"packetID": "91"
+		"packetID": 91
 	},
 	"cow": {
 		"id": 92,
+		"dataname": "cow",
 		"width": 0.9,
 		"height": 1.4,
 		"maxHealth": 10.0,
@@ -978,10 +1045,11 @@
 		],
 		"flags": ["cow", "animal", "ageable", "creature", "living", "livingbase"],
 		"packetType": "mob",
-		"packetID": "92"
+		"packetID": 92
 	},
 	"chicken": {
 		"id": 93,
+		"dataname": "chicken",
 		"width": 0.4,
 		"height": 0.7,
 		"maxHealth": 4.0,
@@ -997,10 +1065,11 @@
 		],
 		"flags": ["chicken", "animal", "ageable", "creature", "living", "livingbase"],
 		"packetType": "mob",
-		"packetID": "93"
+		"packetID": 93
 	},
 	"squid": {
 		"id": 94,
+		"dataname": "squid",
 		"width": 0.8,
 		"height": 0.8,
 		"maxHealth": 10.0,
@@ -1015,10 +1084,11 @@
 		],
 		"flags": ["squid", "watermob", "living", "livingbase", "waterbreathing"],
 		"packetType": "mob",
-		"packetID": "94"
+		"packetID": 94
 	},
 	"wolf": {
 		"id": 95,
+		"dataname": "wolf",
 		"width": 0.6,
 		"height": 0.85,
 		"maxHealth": 8.0,
@@ -1026,10 +1096,11 @@
 		],
 		"flags": ["wolf", "tameable", "animal", "ageable", "creature", "living", "livingbase"],
 		"packetType": "mob",
-		"packetID": "95"
+		"packetID": 95
 	},
 	"mushroomcow": {
 		"id": 96,
+		"dataname": "mooshroom",
 		"width": 0.9,
 		"height": 1.4,
 		"maxHealth": 10.0,
@@ -1047,10 +1118,11 @@
 		],
 		"flags": ["mooshroom", "cow", "animal", "ageable", "creature", "living", "livingbase"],
 		"packetType": "mob",
-		"packetID": "96"
+		"packetID": 96
 	},
 	"snowman": {
 		"id": 97,
+		"dataname": "snowman",
 		"width": 0.7,
 		"height": 1.9,
 		"maxHealth": 4.0,
@@ -1063,10 +1135,11 @@
 		],
 		"flags": ["snowman", "golem", "creature", "living", "livingbase"],
 		"packetType": "mob",
-		"packetID": "97"
+		"packetID": 97
 	},
 	"ozelot": {
 		"id": 98,
+		"dataname": "ocelot",
 		"width": 0.6,
 		"height": 0.7,
 		"maxHealth": 10.0,
@@ -1074,10 +1147,11 @@
 		],
 		"flags": ["ocelot", "tameable", "animal", "ageable", "creature", "living", "livingbase"],
 		"packetType": "mob",
-		"packetID": "98"
+		"packetID": 98
 	},
 	"villagergolem": {
 		"id": 99,
+		"dataname": "villager_golem",
 		"width": 1.4,
 		"height": 2.7,
 		"maxHealth": 100.0,
@@ -1095,13 +1169,14 @@
 		],
 		"flags": ["irongolem", "golem", "creature", "living", "livingbase"],
 		"packetType": "mob",
-		"packetID": "99"
+		"packetID": 99
 	},
 	"horse": {
 		"id": 100,
+		"dataname": "horse",
 		"width": 1.3964844,
 		"height": 1.6,
-		"maxHealth": 24.0,
+		"maxHealth": 25.0,
 		"loot": [
 			{
 				"id": 334,
@@ -1111,10 +1186,11 @@
 		],
 		"flags": ["horse", "abstracthorse", "animal", "ageable", "creature", "living", "livingbase"],
 		"packetType": "mob",
-		"packetID": "100"
+		"packetID": 100
 	},
 	"rabbit": {
 		"id": 101,
+		"dataname": "rabbit",
 		"width": 0.4,
 		"height": 0.5,
 		"maxHealth": 3.0,
@@ -1135,10 +1211,11 @@
 		],
 		"flags": ["rabbit", "animal", "ageable", "creature", "living", "livingbase"],
 		"packetType": "mob",
-		"packetID": "101"
+		"packetID": 101
 	},
 	"polarbear": {
 		"id": 102,
+		"dataname": "polar_bear",
 		"width": 1.3,
 		"height": 1.4,
 		"maxHealth": 30.0,
@@ -1160,13 +1237,14 @@
 		],
 		"flags": ["polarbear", "animal", "ageable", "creature", "living", "livingbase"],
 		"packetType": "mob",
-		"packetID": "102"
+		"packetID": 102
 	},
 	"llama": {
 		"id": 103,
+		"dataname": "llama",
 		"width": 1.3964844,
 		"height": 1.6,
-		"maxHealth": 28.0,
+		"maxHealth": 27.0,
 		"loot": [
 			{
 				"id": 334,
@@ -1176,19 +1254,21 @@
 		],
 		"flags": ["llama", "abstractchesthorse", "abstracthorse", "animal", "ageable", "creature", "living", "livingbase"],
 		"packetType": "mob",
-		"packetID": "103"
+		"packetID": 103
 	},
 	"llamaspit": {
 		"id": 104,
+		"dataname": "llama_spit",
 		"width": 0.6,
 		"height": 1.8,
 		"maxHealth": 0.0,
 		"flags": ["llamaspit"],
 		"packetType": "object",
-		"packetID": "68"
+		"packetID": 68
 	},
 	"villager": {
 		"id": 120,
+		"dataname": "villager",
 		"width": 0.6,
 		"height": 1.95,
 		"maxHealth": 20.0,
@@ -1196,15 +1276,16 @@
 		],
 		"flags": ["villager", "ageable", "creature", "living", "livingbase"],
 		"packetType": "mob",
-		"packetID": "120"
+		"packetID": 120
 	},
 	"endercrystal": {
 		"id": 200,
+		"dataname": "ender_crystal",
 		"width": 2.0,
 		"height": 2.0,
 		"maxHealth": 0.0,
 		"flags": ["endercrystal"],
 		"packetType": "object",
-		"packetID": "51"
+		"packetID": 51
 	}
 }
