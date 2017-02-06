@@ -85,7 +85,7 @@ void sendEntityMove(struct player* player, struct entity* ent) {
 	//printf("mp = %f, md = %f\n", mp, md);
 	if ((md > .001 || mp > .01 || ent->type == ENT_PLAYER)) {
 		struct packet* pkt = xmalloc(sizeof(struct packet));
-		int ft = tick_counter % 200 == 0;
+		int ft = tick_counter % 200 == 0 || 1;
 		if (!ft && md <= .001 && mp <= .01) {
 			pkt->id = PKT_PLAY_CLIENT_ENTITY;
 			pkt->data.play_client.entity.entity_id = ent->id;
@@ -1207,24 +1207,23 @@ void tick_player(struct world* world, struct player* player) {
 		END_BROADCAST(player->world->players)
 	}
 	beginProfilerSection("entity_transmission");
-	BEGIN_HASHMAP_ITERATION(player->loadedEntities)
-	struct entity* ent = (struct entity*) value;
-	if (entity_distsq(ent, player->entity) > (CHUNK_VIEW_DISTANCE * 16.) * (CHUNK_VIEW_DISTANCE * 16.)) {
-		struct packet* pkt = xmalloc(sizeof(struct packet));
-		pkt->id = PKT_PLAY_CLIENT_DESTROYENTITIES;
-		pkt->data.play_client.destroyentities.count = 1;
-		pkt->data.play_client.destroyentities.entity_ids = xmalloc(sizeof(int32_t));
-		pkt->data.play_client.destroyentities.entity_ids[0] = ent->id;
-		add_queue(player->outgoingPacket, pkt);
-		pthread_rwlock_unlock(&player->loadedEntities->data_mutex);
-		put_hashmap(player->loadedEntities, ent->id, NULL);
-		pthread_rwlock_rdlock(&player->loadedEntities->data_mutex);
-		put_hashmap(ent->loadingPlayers, player->entity->id, NULL);
+	if (tick_counter % 20 == 0) {
+		BEGIN_HASHMAP_ITERATION(player->loadedEntities)
+		struct entity* ent = (struct entity*) value;
+		if (entity_distsq(ent, player->entity) > (CHUNK_VIEW_DISTANCE * 16.) * (CHUNK_VIEW_DISTANCE * 16.)) {
+			struct packet* pkt = xmalloc(sizeof(struct packet));
+			pkt->id = PKT_PLAY_CLIENT_DESTROYENTITIES;
+			pkt->data.play_client.destroyentities.count = 1;
+			pkt->data.play_client.destroyentities.entity_ids = xmalloc(sizeof(int32_t));
+			pkt->data.play_client.destroyentities.entity_ids[0] = ent->id;
+			add_queue(player->outgoingPacket, pkt);
+			pthread_rwlock_unlock(&player->loadedEntities->data_mutex);
+			put_hashmap(player->loadedEntities, ent->id, NULL);
+			pthread_rwlock_rdlock(&player->loadedEntities->data_mutex);
+			put_hashmap(ent->loadingPlayers, player->entity->id, NULL);
+		}
+		END_HASHMAP_ITERATION(player->loadedEntities)
 	}
-	if (ent->type != ENT_PLAYER) {
-		sendEntityMove(player, ent);
-	}
-	END_HASHMAP_ITERATION(player->loadedEntities)
 	endProfilerSection("entity_transmission");
 	beginProfilerSection("player_transmission");
 	//int32_t cx = ((int32_t) player->entity->x) >> 4;

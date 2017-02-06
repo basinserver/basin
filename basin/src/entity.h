@@ -306,6 +306,12 @@ struct entity_info {
 		struct entity_loot* loots;
 		size_t loot_count;
 		char* dataname;
+		void (*onDeath)(struct world* world, struct entity* entity, struct entity* causer); // causer may be NULL
+		void (*onAttacked)(struct world* world, struct entity* entity, struct entity* attacker); // attacker may be NULL
+		uint32_t (*onAITick)(struct world* world, struct entity* entity); // returns a tick delay before next AI tick, 0 = never tick again, 1 = 1 tick
+		uint32_t (*initAI)(struct world* world, struct entity* entity); // returns a tick delay before next AI tick, 0 = never tick again, 1 = 1 tick
+		void (*onSpawned)(struct world* world, struct entity* entity);
+		void (*onInteract)(struct world* world, struct entity* entity, struct player* interacter);
 };
 
 struct collection* entity_infos;
@@ -585,6 +591,9 @@ struct entity {
 		uint8_t invincibilityTicks;
 		uint8_t inWater;
 		uint8_t inLava;
+		struct aicontext* ai;
+		struct entity* attacking;
+		struct hashmap* attackers;
 };
 
 void damageEntityWithItem(struct entity* attacked, struct entity* attacker, uint8_t slot_index, struct slot* item);
@@ -597,7 +606,7 @@ void readMetadata(struct entity* ent, unsigned char* meta, size_t size);
 
 void writeMetadata(struct entity* ent, unsigned char** data, size_t* size);
 
-void load_entities();
+void jump(struct entity* entity);
 
 int entity_inFluid(struct entity* entity, uint16_t blk, float ydown, int meta_check);
 

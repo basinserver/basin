@@ -22,6 +22,7 @@
 #include <fcntl.h>
 #include "json.h"
 #include <errno.h>
+#include "ai.h"
 
 struct entity_info* getEntityInfo(uint32_t id) {
 	if (id < 0 || id > entity_infos->size) return NULL;
@@ -138,6 +139,8 @@ void init_entities() {
 	}
 	freeJSON(&json);
 	xfree(jsf);
+	getEntityInfo(ENT_ZOMBIE)->onAITick = &ai_handletasks;
+	getEntityInfo(ENT_ZOMBIE)->initAI = &initai_zombie;
 }
 
 uint32_t getIDFromEntityDataName(const char* dataname) {
@@ -157,6 +160,14 @@ void getEntityCollision(struct entity* ent, struct boundingbox* bb) {
 	bb->maxZ = ent->z + ei->width / 2;
 	bb->minY = ent->y;
 	bb->maxY = ent->y + ei->height;
+}
+
+void jump(struct entity* entity) {
+	if (entity->inWater || entity->inLava) entity->motY += .04;
+	else if (entity->onGround) {
+		entity->motY = .42;
+		//entity sprinting jump?
+	}
 }
 
 struct entity* newEntity(int32_t id, float x, float y, float z, uint32_t type, float yaw, float pitch) {
@@ -199,7 +210,10 @@ struct entity* newEntity(int32_t id, float x, float y, float z, uint32_t type, f
 	e->inLava = 0;
 	e->invincibilityTicks = 0;
 	e->loadingPlayers = new_hashmap(1, 1);
+	e->attacking = NULL;
+	e->attackers = new_hashmap(1, 0);
 	memset(&e->data, 0, sizeof(union entity_data));
+	e->ai = NULL;
 	return e;
 }
 
@@ -283,7 +297,7 @@ int entity_inFluid(struct entity* entity, uint16_t blk, float ydown, int meta_ch
 	if (pbb.minX == pbb.maxX || pbb.minZ == pbb.maxZ || pbb.minY == pbb.maxY) return 0;
 	pbb.minX += .001;
 	pbb.minY += .001;
-	pbb.minY -= ydown;
+	pbb.minY += ydown;
 	pbb.minZ += .001;
 	pbb.maxX -= .001;
 	pbb.maxY -= .001;
@@ -302,6 +316,7 @@ int entity_inFluid(struct entity* entity, uint16_t blk, float ydown, int meta_ch
 				bb2.maxY = 1. + (double) y;
 				bb2.minZ = 0. + (double) z;
 				bb2.maxZ = 1. + (double) z;
+				//printf("X: %f->%f vs %f->%f, Y: %f->%f vs %f->%f, Z: %f->%f vs %f->%f\n", bb2.minX, bb2.maxX, pbb.minX, pbb.maxX, bb2.minY, bb2.maxY, pbb.minY, pbb.maxY, bb2.minZ, bb2.maxZ, pbb.minZ, pbb.maxZ);
 				if (boundingbox_intersects(&bb2, &pbb)) {
 					return 1;
 				}
@@ -1024,10 +1039,28 @@ void tick_entity(struct world* world, struct entity* entity) {
 	}
 	entity->age++;
 	if (entity->invincibilityTicks > 0) entity->invincibilityTicks--;
+	if (entity->ai != NULL) {
+		struct entity_info* ei = getEntityInfo(entity->type);
+		if (ei != NULL && ei->onAITick != NULL) ei->onAITick(world, entity);
+	}
 	if (entity->type > ENT_PLAYER) {
 		if (entity->type == ENT_ITEM) entity->motY -= 0.04;
-		else if (hasFlag(getEntityInfo(entity->type), "livingbase")) entity->motY -= .08;
-
+		else if (hasFlag(getEntityInfo(entity->type), "livingbase")) {
+			if (entity->inLava) {
+				entity->motX *= .5;
+				entity->motY *= .5;
+				entity->motZ *= .5;
+				entity->motY -= .02;
+				//TODO: upswells
+			} else if (entity->inWater) {
+				//TODO: depth strider
+				entity->motX *= .8;
+				entity->motY *= .8;
+				entity->motZ *= .8;
+				entity->motY -= .02;
+				//TODO: upswells
+			} else entity->motY -= .08;
+		}
 		if (entity->motX != 0. || entity->motY != 0. || entity->motZ != 0.) moveEntity(entity, &entity->motX, &entity->motY, &entity->motZ, 0.);
 		double friction = .98;
 		if (entity->onGround) {
@@ -1041,15 +1074,14 @@ void tick_entity(struct world* world, struct entity* entity) {
 		if (fabs(entity->motY) < .0001) entity->motY = 0.;
 		if (fabs(entity->motZ) < .0001) entity->motZ = 0.;
 		if (entity->type == ENT_ITEM && entity->onGround && entity->motX == 0. && entity->motY == 0. && entity->motZ == 0.) entity->motY *= -.5;
-		if (entity->type == ENT_CREEPER) printf("onGround = %i, motY = %f\n", entity->onGround, entity->motY);
 	}
 	if (entity->type == ENT_ITEM) {
 		if (tick_itemstack(world, entity)) return;
 	}
 	if (entity->type == ENT_ITEM || entity->type == ENT_XPORB) pushOutOfBlocks(entity);
 	if (hasFlag(getEntityInfo(entity->type), "livingbase")) {
-		entity->inWater = entity_inFluid(entity, BLK_WATER, .4, 0) || entity_inFluid(entity, BLK_WATER_1, .4, 0);
-		entity->inLava = entity_inFluid(entity, BLK_LAVA, .4, 0) || entity_inFluid(entity, BLK_LAVA_1, .4, 0);
+		entity->inWater = entity_inFluid(entity, BLK_WATER, .2, 0) || entity_inFluid(entity, BLK_WATER_1, .2, 0);
+		entity->inLava = entity_inFluid(entity, BLK_LAVA, .2, 0) || entity_inFluid(entity, BLK_LAVA_1, .2, 0);
 		if ((entity->inWater || entity->inLava) && entity->type == ENT_PLAYER) entity->data.player.player->llTick = tick_counter;
 		//TODO: ladders
 		if (entity->type == ENT_PLAYER && entity->data.player.player->gamemode == 1) goto bfd;
@@ -1070,6 +1102,15 @@ void tick_entity(struct world* world, struct entity* entity) {
 			entity->fallDistance = 0.;
 		}
 		bfd: ;
+	}
+	if (entity->type != ENT_PLAYER) {
+		double md = entity_distsq_block(entity, entity->lx, entity->ly, entity->lz);
+		double mp = (entity->yaw - entity->lyaw) * (entity->yaw - entity->lyaw) + (entity->pitch - entity->lpitch) * (entity->pitch - entity->lpitch);
+		if (md > .001 || mp > .01) {
+			BEGIN_HASHMAP_ITERATION(entity->loadingPlayers);
+			sendEntityMove(value, entity);
+			END_HASHMAP_ITERATION(entity->loadingPlayers);
+		}
 	}
 	/*int32_t cx = ((int32_t) entity->x) >> 4;
 	 int32_t cz = ((int32_t) entity->z) >> 4;

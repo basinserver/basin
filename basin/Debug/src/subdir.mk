@@ -30,6 +30,7 @@ C_SRCS += \
 ../src/profile.c \
 ../src/anticheat.c \
 ../src/plugin.c \
+../src/ai.c \
 ../src/xstring.c 
 
 OBJS += \
@@ -63,6 +64,7 @@ OBJS += \
 ./src/profile.o \
 ./src/anticheat.o \
 ./src/plugin.o \
+./src/ai.o \
 ./src/xstring.o 
 
 C_DEPS += \
@@ -96,6 +98,7 @@ C_DEPS += \
 ./src/profile.d \
 ./src/anticheat.d \
 ./src/plugin.d \
+./src/ai.d \
 ./src/xstring.d 
 
 

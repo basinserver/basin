@@ -37,13 +37,10 @@
 #include "profile.h"
 #include <errno.h>
 #include "server.h"
-
-int __boundingbox_intersects(struct boundingbox* bb1, struct boundingbox* bb2, int inv) {
-	return (((bb1->minX >= bb2->minX && bb1->minX <= bb2->maxX) || (bb1->maxX >= bb2->minX && bb1->maxX <= bb2->maxX)) && ((bb1->minY >= bb2->minY && bb1->minY <= bb2->maxY) || (bb1->maxY >= bb2->minY && bb1->maxY <= bb2->maxY)) && ((bb1->minZ >= bb2->minZ && bb1->minZ <= bb2->maxZ) || (bb1->maxZ >= bb2->minZ && bb1->maxZ <= bb2->maxZ))) || (inv ? 0 : __boundingbox_intersects(bb2, bb1, 1)); // the second intersects handles if bb2 is contained within bb1
-}
+#include "ai.h"
 
 int boundingbox_intersects(struct boundingbox* bb1, struct boundingbox* bb2) {
-	return __boundingbox_intersects(bb1, bb2, 0);
+	return (((bb1->minX >= bb2->minX && bb1->minX <= bb2->maxX) || (bb1->maxX >= bb2->minX && bb1->maxX <= bb2->maxX) || (bb2->minX >= bb1->minX && bb2->minX <= bb1->maxX) || (bb2->maxX >= bb1->minX && bb2->maxX <= bb1->maxX)) && ((bb1->minY >= bb2->minY && bb1->minY <= bb2->maxY) || (bb1->maxY >= bb2->minY && bb1->maxY <= bb2->maxY) || (bb2->minY >= bb1->minY && bb2->minY <= bb1->maxY) || (bb2->maxY >= bb1->minY && bb2->maxY <= bb1->maxY)) && ((bb1->minZ >= bb2->minZ && bb1->minZ <= bb2->maxZ) || (bb1->maxZ >= bb2->minZ && bb1->maxZ <= bb2->maxZ) || (bb2->minZ >= bb1->minZ && bb2->minZ <= bb1->maxZ) || (bb2->maxZ >= bb1->minZ && bb2->maxZ <= bb1->maxZ)));
 }
 
 uint64_t getChunkKey(struct chunk* ch) {
@@ -1435,7 +1432,17 @@ struct chunk* getEntityChunk(struct entity* entity) {
 void spawnEntity(struct world* world, struct entity* entity) {
 	entity->world = world;
 	if (entity->loadingPlayers == NULL) entity->loadingPlayers = new_hashmap(1, 1);
+	if (entity->attackers == NULL) entity->attackers = new_hashmap(1, 0);
 	put_hashmap(world->entities, entity->id, entity);
+	struct entity_info* ei = getEntityInfo(entity->type);
+	if (ei != NULL) {
+		if (ei->initAI != NULL) {
+			entity->ai = xcalloc(sizeof(struct aicontext));
+			entity->ai->tasks = new_hashmap(1, 0);
+			(*ei->initAI)(world, entity);
+		}
+		if (ei->onSpawned != NULL) (*ei->onSpawned)(world, entity);
+	}
 //struct chunk* ch = getEntityChunk(entity);
 //if (ch != NULL) {
 //	put_hashmap(ch->entities, entity->id, entity);
@@ -1509,6 +1516,13 @@ void despawnEntity(struct world* world, struct entity* entity) {
 	END_BROADCAST(entity->loadingPlayers)
 	del_hashmap(entity->loadingPlayers);
 	entity->loadingPlayers = NULL;
+	BEGIN_HASHMAP_ITERATION(entity->attackers)
+	struct entity* attacker;
+	if (attacker->attacking == entity) attacker->attacking = NULL;
+	END_HASHMAP_ITERATION(entity->attackers)
+	del_hashmap(entity->attackers);
+	entity->attackers = NULL;
+	entity->attacking = NULL;
 }
 
 struct entity* getEntity(struct world* world, int32_t id) {
