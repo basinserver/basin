@@ -13,7 +13,7 @@
 #include <stdarg.h>
 #include <unistd.h>
 
-#define MEM_LEAK_DEBUG
+//#define MEM_LEAK_DEBUG
 
 #ifdef MEM_LEAK_DEBUG
 

@@ -1517,7 +1517,7 @@ void despawnEntity(struct world* world, struct entity* entity) {
 	del_hashmap(entity->loadingPlayers);
 	entity->loadingPlayers = NULL;
 	BEGIN_HASHMAP_ITERATION(entity->attackers)
-	struct entity* attacker;
+	struct entity* attacker = value;
 	if (attacker->attacking == entity) attacker->attacking = NULL;
 	END_HASHMAP_ITERATION(entity->attackers)
 	del_hashmap(entity->attackers);

@@ -23,10 +23,21 @@
 #include "json.h"
 #include <errno.h>
 #include "ai.h"
+#include "game.h"
 
 struct entity_info* getEntityInfo(uint32_t id) {
 	if (id < 0 || id > entity_infos->size) return NULL;
 	return entity_infos->data[id];
+}
+
+void swingArm(struct entity* entity) {
+	BEGIN_BROADCAST_DIST(entity, CHUNK_VIEW_DISTANCE * 16.)
+	struct packet* pkt = xmalloc(sizeof(struct packet));
+	pkt->id = PKT_PLAY_CLIENT_ANIMATION;
+	pkt->data.play_client.animation.entity_id = entity->id;
+	pkt->data.play_client.animation.animation = 0;
+	add_queue(bc_player->outgoingPacket, pkt);
+	END_BROADCAST(entity->world->players)
 }
 
 void add_entity_info(uint32_t eid, struct entity_info* bm) {
@@ -1042,6 +1053,7 @@ void tick_entity(struct world* world, struct entity* entity) {
 	if (entity->ai != NULL) {
 		struct entity_info* ei = getEntityInfo(entity->type);
 		if (ei != NULL && ei->onAITick != NULL) ei->onAITick(world, entity);
+		lookHelper_tick(entity);
 	}
 	if (entity->type > ENT_PLAYER) {
 		if (entity->type == ENT_ITEM) entity->motY -= 0.04;

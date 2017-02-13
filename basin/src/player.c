@@ -85,7 +85,7 @@ void sendEntityMove(struct player* player, struct entity* ent) {
 	//printf("mp = %f, md = %f\n", mp, md);
 	if ((md > .001 || mp > .01 || ent->type == ENT_PLAYER)) {
 		struct packet* pkt = xmalloc(sizeof(struct packet));
-		int ft = tick_counter % 200 == 0 || 1;
+		int ft = tick_counter % 200 == 0;
 		if (!ft && md <= .001 && mp <= .01) {
 			pkt->id = PKT_PLAY_CLIENT_ENTITY;
 			pkt->data.play_client.entity.entity_id = ent->id;

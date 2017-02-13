@@ -258,6 +258,7 @@
 #define ENT_LLAMASPIT 104
 #define ENT_VILLAGER 120
 #define ENT_ENDERCRYSTAL 200
+
 #define POT_SPEED 1
 #define POT_SLOWNESS 2
 #define POT_HASTE 3
@@ -313,6 +314,8 @@ struct entity_info {
 		void (*onSpawned)(struct world* world, struct entity* entity);
 		void (*onInteract)(struct world* world, struct entity* entity, struct player* interacter);
 };
+
+void swingArm(struct entity* entity);
 
 struct collection* entity_infos;
 
