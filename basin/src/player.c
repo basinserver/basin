@@ -76,6 +76,7 @@ struct player* newPlayer(struct entity* entity, char* name, struct uuid uuid, st
 	player->itemUseDuration = 0;
 	player->itemUseHand = 0;
 	player->chunkRequests = new_queue(0, 1);
+	player->foodExhaustion = 0.;
 	return player;
 }
 
@@ -321,6 +322,7 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 				}
 				if (!nb) {
 					setBlockWorld(player->world, 0, inp->data.play_server.playerdigging.location.x, inp->data.play_server.playerdigging.location.y, inp->data.play_server.playerdigging.location.z);
+					player->foodExhaustion += 0.005;
 					if (player->gamemode != 1) dropBlockDrops(player->world, blk, player, inp->data.play_server.playerdigging.location.x, inp->data.play_server.playerdigging.location.y, inp->data.play_server.playerdigging.location.z);
 				}
 				player->digging = -1.;
@@ -346,6 +348,7 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 					}
 					if (!nb) {
 						setBlockWorld(player->world, 0, player->digging_position.x, player->digging_position.y, player->digging_position.z);
+						player->foodExhaustion += 0.005;
 						if (player->gamemode != 1) dropBlockDrops(player->world, blk, player, player->digging_position.x, player->digging_position.y, player->digging_position.z);
 					}
 				} else {
@@ -1043,6 +1046,15 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 	cont: ;
 }
 
+void player_hungerUpdate(struct player* player) {
+	struct packet* pkt = xmalloc(sizeof(struct packet));
+	pkt->id = PKT_PLAY_CLIENT_UPDATEHEALTH;
+	pkt->data.play_client.updatehealth.health = player->entity->health;
+	pkt->data.play_client.updatehealth.food = player->food;
+	pkt->data.play_client.updatehealth.food_saturation = player->saturation;
+	add_queue(player->outgoingPacket, pkt);
+}
+
 void tick_player(struct world* world, struct player* player) {
 	if (player->defunct) {
 		put_hashmap(players, player->entity->id, NULL);
@@ -1076,20 +1088,42 @@ void tick_player(struct world* world, struct player* player) {
 		pkt->data.play_client.timeupdate.world_age = player->world->age;
 		add_queue(player->outgoingPacket, pkt);
 	}
-	if (player->saturation > 0. && player->food >= 20) {
-		if (++player->foodTimer >= 10) {
-			healEntity(player->entity, player->saturation > 6. ? player->saturation / 6. : 1.);
-			player->foodTimer = 0;
+	if (player->gamemode != 1 && player->gamemode != 3) {
+		float dt = entity_dist_block(player->entity, player->entity->lx, player->entity->ly, player->entity->lz);
+		if (dt > 0.) {
+			if (player->entity->inWater) player->foodExhaustion += .01 * dt;
+			else if (player->entity->onGround) {
+				if (player->entity->sprinting) player->foodExhaustion += .1 * dt;
+			}
 		}
-	} else if (player->food >= 18) {
-		if (++player->foodTimer >= 80) {
-			healEntity(player->entity, 1.);
-			player->foodTimer = 0;
+		if (player->foodExhaustion > 4.) {
+			player->foodExhaustion -= 4.;
+			if (player->saturation > 0.) {
+				player->saturation -= 1.;
+				if (player->saturation < 0.) player->saturation = 0.;
+			} else if (difficulty > 0) {
+				player->food -= 1;
+				if (player->food < 0) player->food = 0.;
+			}
+			player_hungerUpdate(player);
 		}
-	} else if (player->food <= 0) {
-		if (++player->foodTimer >= 80) {
-			if (player->entity->health > 10. || difficulty == 3 || (player->entity->health > 1. && difficulty == 2)) damageEntity(player->entity, 1., 0);
-			player->foodTimer = 0;
+		if (player->saturation > 0. && player->food >= 20) {
+			if (++player->foodTimer >= 10) {
+				healEntity(player->entity, player->saturation < 6. ? player->saturation / 6. : 1.);
+				player->foodExhaustion += player->saturation < 6. ? player->saturation : 6.;
+				player->foodTimer = 0;
+			}
+		} else if (player->food >= 18) {
+			if (++player->foodTimer >= 80) {
+				healEntity(player->entity, 1.);
+				player->foodExhaustion += 6.;
+				player->foodTimer = 0;
+			}
+		} else if (player->food <= 0) {
+			if (++player->foodTimer >= 80) {
+				if (player->entity->health > 10. || difficulty == 3 || (player->entity->health > 1. && difficulty == 2)) damageEntity(player->entity, 1., 0);
+				player->foodTimer = 0;
+			}
 		}
 	}
 	beginProfilerSection("chunks");

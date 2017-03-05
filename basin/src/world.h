@@ -184,6 +184,8 @@ struct subworld { // subworld for players thread
 		uint8_t defunct;
 };
 
+int world_blockRayTrace(struct boundingbox* bb, int32_t x, int32_t y, int32_t z, double px, double py, double pz, double ex, double ey, double ez, double *qx, double* qy, double* qz);
+
 int world_rayTrace(struct world* world, double x, double y, double z, double ex, double ey, double ez, int stopOnLiquid, int ignoreNonCollidable, int returnLast, double* rx, double* ry, double* rz);
 
 struct chunk_section* newChunkSection(struct chunk* chunk, int ymj, int skylight);

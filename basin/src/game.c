@@ -108,7 +108,6 @@ void loadEntity(struct player* to, struct entity* from) {
 		pkt->data.play_client.spawnobject.yaw = (from->yaw / 360.) * 256.;
 		pkt->data.play_client.spawnobject.pitch = (from->pitch / 360.) * 256.;
 		pkt->data.play_client.spawnobject.data = from->objectData;
-		printf("spawn velocity: %f, %f, %f -- %f, %f\n", from->motX, from->motY, from->motZ, from->yaw, from->pitch);
 		pkt->data.play_client.spawnobject.velocity_x = (int16_t)(from->motX * 8000.);
 		pkt->data.play_client.spawnobject.velocity_y = (int16_t)(from->motY * 8000.);
 		pkt->data.play_client.spawnobject.velocity_z = (int16_t)(from->motZ * 8000.);
@@ -283,8 +282,8 @@ void playSound(struct world* world, int32_t soundID, int32_t soundCategory, floa
 	END_BROADCAST(world->players)
 }
 
-void dropPlayerItem_explode(struct player* player, struct slot* drop) {
-	struct entity* item = newEntity(nextEntityID++, player->entity->x, player->entity->y + 1.32, player->entity->z, ENT_ITEM, 0., 0.);
+void dropEntityItem_explode(struct entity* entity, struct slot* drop) {
+	struct entity* item = newEntity(nextEntityID++, entity->x, entity->y + 1.32, entity->z, ENT_ITEM, 0., 0.);
 	item->data.itemstack.slot = xmalloc(sizeof(struct slot));
 	item->objectData = 1;
 	float f1 = randFloat() * .5;
@@ -294,10 +293,10 @@ void dropPlayerItem_explode(struct player* player, struct slot* drop) {
 	item->motY = .2;
 	item->data.itemstack.delayBeforeCanPickup = 20;
 	duplicateSlot(drop, item->data.itemstack.slot);
-	spawnEntity(player->world, item);
-	BEGIN_BROADCAST_DIST(player->entity, 128.)
+	spawnEntity(entity->world, item);
+	BEGIN_BROADCAST_DIST(entity, 128.)
 	loadEntity(bc_player, item);
-	END_BROADCAST(player->world->players)
+	END_BROADCAST(entity->world->players)
 }
 
 void dropBlockDrops(struct world* world, block blk, struct player* breaker, int32_t x, int32_t y, int32_t z) {

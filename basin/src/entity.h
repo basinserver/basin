@@ -605,9 +605,9 @@ struct entity {
 		struct hashmap* attackers;
 };
 
-void damageEntityWithItem(struct entity* attacked, struct entity* attacker, uint8_t slot_index, struct slot* item);
+int damageEntityWithItem(struct entity* attacked, struct entity* attacker, uint8_t slot_index, struct slot* item);
 
-void damageEntity(struct entity* attacked, float damage, int armorable);
+int damageEntity(struct entity* attacked, float damage, int armorable);
 
 void healEntity(struct entity* healed, float amount);
 

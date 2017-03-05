@@ -714,6 +714,21 @@ int moveEntity(struct entity* entity, double* mx, double* my, double* mz, float 
 	return ny != *my || nx != *mx || nz != *mz;
 }
 
+void applyVelocity(struct entity* entity, double x, double y, double z) {
+	entity->motX += x;
+	entity->motY += y;
+	entity->motZ += z;
+	BEGIN_BROADCAST(entity->loadingPlayers)
+	struct packet* pkt = xmalloc(sizeof(struct packet));
+	pkt->id = PKT_PLAY_CLIENT_ENTITYVELOCITY;
+	pkt->data.play_client.entityvelocity.entity_id = entity->id;
+	pkt->data.play_client.entityvelocity.velocity_x = (int16_t)(entity->motX * 8000.);
+	pkt->data.play_client.entityvelocity.velocity_y = (int16_t)(entity->motY * 8000.);
+	pkt->data.play_client.entityvelocity.velocity_z = (int16_t)(entity->motZ * 8000.);
+	add_queue(bc_player->outgoingPacket, pkt);
+	END_BROADCAST(entity->world->players)
+}
+
 void applyKnockback(struct entity* entity, float yaw, float strength) {
 	float kb_resistance = 0.;
 	if (randFloat() > kb_resistance) {
@@ -729,21 +744,13 @@ void applyKnockback(struct entity* entity, float yaw, float strength) {
 			entity->motY += strength;
 			if (entity->motY > .4) entity->motY = .4;
 		}
-		BEGIN_BROADCAST_DIST(entity, 128.)
-		struct packet* pkt = xmalloc(sizeof(struct packet));
-		pkt->id = PKT_PLAY_CLIENT_ENTITYVELOCITY;
-		pkt->data.play_client.entityvelocity.entity_id = entity->id;
-		pkt->data.play_client.entityvelocity.velocity_x = (int16_t)(entity->motX * 8000.);
-		pkt->data.play_client.entityvelocity.velocity_y = (int16_t)(entity->motY * 8000.);
-		pkt->data.play_client.entityvelocity.velocity_z = (int16_t)(entity->motZ * 8000.);
-		add_queue(bc_player->outgoingPacket, pkt);
-		END_BROADCAST(entity->world->players)
+		applyVelocity(entity, 0., 0., 0.);
 	}
 }
 
-void damageEntityWithItem(struct entity* attacked, struct entity* attacker, uint8_t slot_index, struct slot* item) {
-	if (attacked == NULL || attacked->invincibilityTicks > 0 || !hasFlag(getEntityInfo(attacked->type), "livingbase") || attacked->health <= 0.) return;
-	if (attacked->type == ENT_PLAYER && attacked->data.player.player->gamemode == 1) return;
+int damageEntityWithItem(struct entity* attacked, struct entity* attacker, uint8_t slot_index, struct slot* item) {
+	if (attacked == NULL || attacked->invincibilityTicks > 0 || !hasFlag(getEntityInfo(attacked->type), "livingbase") || attacked->health <= 0.) return 0;
+	if (attacked->type == ENT_PLAYER && attacked->data.player.player->gamemode == 1) return 0;
 	float damage = 1.;
 	if (item != NULL) {
 		struct item_info* ii = getItemInfo(item->item);
@@ -767,19 +774,23 @@ void damageEntityWithItem(struct entity* attacked, struct entity* attacker, uint
 	if (attacker->y > attacked->y && (attacker->ly - attacker->y) > 0 && !attacker->onGround && !attacker->sprinting) { // todo water/ladder
 		damage *= 1.5;
 	}
-	if (damage == 0.) return;
+	if (damage == 0.) return 0;
 	damageEntity(attacked, damage, 1);
 //TODO: enchantment
 	knockback_strength *= .2;
 	applyKnockback(attacked, attacker->yaw, knockback_strength);
+	if (attacker->type == ENT_PLAYER) {
+		attacker->data.player.player->foodExhaustion += .1;
+	}
+	return 1;
 }
 
-void damageEntity(struct entity* attacked, float damage, int armorable) {
-	if (attacked == NULL || damage <= 0. || attacked->invincibilityTicks > 0 || !hasFlag(getEntityInfo(attacked->type), "livingbase") || attacked->health <= 0.) return;
+int damageEntity(struct entity* attacked, float damage, int armorable) {
+	if (attacked == NULL || damage <= 0. || attacked->invincibilityTicks > 0 || !hasFlag(getEntityInfo(attacked->type), "livingbase") || attacked->health <= 0.) return 0;
 	float armor = 0;
 	if (attacked->type == ENT_PLAYER) {
 		struct player* player = attacked->data.player.player;
-		if (player->gamemode == 1) return;
+		if (player->gamemode == 1) return 0;
 		for (int i = 5; i <= 8; i++) {
 			struct slot* sl = getSlot(player, player->inventory, i);
 			if (sl != NULL) {
@@ -796,7 +807,7 @@ void damageEntity(struct entity* attacked, float damage, int armorable) {
 	damage *= 1. - (f) / 25.;
 	if (attacked->type == ENT_PLAYER) {
 		struct player* player = attacked->data.player.player;
-		if (player->gamemode == 1) return;
+		if (player->gamemode == 1) return 0;
 		for (int i = 5; i <= 8; i++) {
 			struct slot* sl = getSlot(player, player->inventory, i);
 			if (sl != NULL) {
@@ -823,16 +834,29 @@ void damageEntity(struct entity* attacked, float damage, int armorable) {
 			broadcastf("default", "%s died", player->name);
 			for (size_t i = 0; i < player->inventory->slot_count; i++) {
 				struct slot* slot = getSlot(player, player->inventory, i);
-				if (slot != NULL) dropPlayerItem_explode(player, slot);
+				if (slot != NULL) dropEntityItem_explode(player->entity, slot);
 				setSlot(player, player->inventory, i, 0, 0, 1);
 			}
 			if (player->inHand != NULL) {
-				dropPlayerItem_explode(player, player->inHand);
+				dropEntityItem_explode(player->entity, player->inHand);
 				freeSlot(player->inHand);
 				xfree(player->inHand);
 				player->inHand = NULL;
 			}
 			if (player->openInv != NULL) player_closeWindow(player, player->openInv->windowID);
+		} else {
+			struct entity_info* ei = getEntityInfo(attacked->type);
+			if (ei != NULL) for (size_t i = 0; i < ei->loot_count; i++) {
+				struct entity_loot* el = &ei->loots[i];
+				int amt = el->amountMax == el->amountMin ? el->amountMax : (rand() % (el->amountMax - el->amountMin) + el->amountMin);
+				if (amt <= 0) continue;
+				struct slot it;
+				it.item = el->id;
+				it.itemCount = amt;
+				it.damage = el->metaMax == el->metaMin ? el->metaMax : (rand() % (el->metaMax - el->metaMin) + el->metaMin);
+				it.nbt = NULL;
+				dropEntityItem_explode(attacked, &it);
+			}
 		}
 	}
 	BEGIN_BROADCAST_DIST(attacked, 128.)
@@ -850,6 +874,7 @@ void damageEntity(struct entity* attacked, float damage, int armorable) {
 	}
 	END_BROADCAST(attacked->world->players)
 	if (attacked->type == ENT_PLAYER) playSound(attacked->world, 316, 8, attacked->x, attacked->y, attacked->z, 1., 1.);
+	return 1;
 }
 
 void healEntity(struct entity* healed, float amount) {
@@ -875,22 +900,77 @@ int tick_arrow(struct world* world, struct entity* entity) {
 		int hf = world_rayTrace(entity->world, entity->x, entity->y, entity->z, entity->x + entity->motX, entity->y + entity->motY, entity->z + entity->motZ, 0, 1, 0, &hx, &hy, &hz);
 		//printf("hf = %i -- %f, %f, %f\n", hf, entity->x, entity->y, entity->z);
 		//printf("hf = %i -- %f, %f\n", hf, entity->yaw, entity->pitch);
-		//todo: entity
 		struct entity* ehit = NULL;
-		//
+		struct entity* shooter = getEntity(world, entity->objectData - 1);
+		double bd = 999.;
+		BEGIN_HASHMAP_ITERATION(world->entities)
+		struct entity* e2 = value;
+		double rd = entity_distsq_block(e2, entity->x + entity->motX, entity->y + entity->motY, entity->z + entity->motZ);
+		if (rd > 4) continue;
+		//printf("4d %f\n", rd);
+		if (e2 != entity && e2 != shooter && hasFlag(getEntityInfo(e2->type), "livingbase")) {		//todo: ticksInAir >= 5?
+			struct boundingbox eb;
+			getEntityCollision(e2, &eb);
+			//eb.minX -= .3;
+			//eb.maxX += .3;
+			//eb.minY -= .3;
+			//eb.maxY += .3;
+			//eb.minZ -= .3;
+			//eb.maxZ += .3;
+			double rx = 0.;
+			double ry = 0.;
+			double rz = 0.;
+			int face = world_blockRayTrace(&eb, 0, 0, 0, entity->x, entity->y, entity->z, entity->x + entity->motX, entity->y + entity->motY, entity->z + entity->motZ, &rx, &ry, &rz);
+			if (face >= 0) {
+				double dist = (entity->x + entity->motX - rx) * (entity->x + entity->motX - rx) + (entity->y + entity->motY - ry) * (entity->y + entity->motY - ry) + (entity->z + entity->motZ - rz) * (entity->z + entity->motZ - rz);		//entity_distsq_block(entity, rx, ry, rz);
+				//printf("%f\n", dist);
+				if (dist < bd) {
+					bd = dist;
+					ehit = e2;
+				}
+			}
+		}
+		END_HASHMAP_ITERATION(world->entities)
 		if (ehit != NULL) {
-
+			float speed = sqrtf(entity->motX * entity->motX + entity->motY * entity->motY + entity->motZ * entity->motZ);
+			int damage = ceil(speed * entity->data.arrow.damage);
+			if (entity->data.arrow.isCritical) damage += rand() % (damage / 2 + 2);
+			//TODO: if burning and not enderman, set entity on fire for 5 ticks.
+			if (damageEntity(ehit, damage, 1)) {
+				//TODO: entity arrow count ++;
+				if (entity->data.arrow.knockback > 0.) {
+					float hspeed = sqrtf(entity->motX * entity->motX + entity->motZ * entity->motZ);
+					if (hspeed > 0.) applyVelocity(ehit, entity->motX * entity->data.arrow.knockback * .6 / hspeed, .1, entity->motZ * entity->data.arrow.knockback * .6 / hspeed);
+				}
+			}				//TODO: else bounce
+							//TODO: arrow sound
+			if (ehit->type != ENT_ENDERMAN) {
+				pthread_rwlock_unlock(&world->entities->data_mutex);
+				despawnEntity(world, entity);
+				pthread_rwlock_rdlock(&world->entities->data_mutex);
+				freeEntity(entity);
+				return 1;
+			}
 		} else if (hf >= 0) {
+			entity->x = hx;
+			entity->y = hy;
+			entity->z = hz;
+			if (hf == YN) entity->y -= .001;
+			if (hf == XN) entity->x -= .001;
+			if (hf == ZN) entity->z -= .001;
 			entity->motX = hx - entity->x;
 			entity->motY = hy - entity->y;
 			entity->motZ = hz - entity->z;
-			float ds = sqrt(entity->motX * entity->motX + entity->motY * entity->motY + entity->motZ * entity->motZ);
-			entity->x -= entity->motX / ds * 0.05000000074505806;
-			entity->y -= entity->motY / ds * 0.05000000074505806;
-			entity->z -= entity->motZ / ds * 0.05000000074505806;
+			//float ds = sqrt(entity->motX * entity->motX + entity->motY * entity->motY + entity->motZ * entity->motZ);
+			//entity->x -= entity->motX / ds * 0.05000000074505806;
+			//entity->y -= entity->motY / ds * 0.05000000074505806;
+			//entity->z -= entity->motZ / ds * 0.05000000074505806;
 			entity->data.arrow.ticksInGround = 1;
 			entity->data.arrow.isCritical = 0;
 			entity->immovable = 1;
+			entity->lx = 0.;
+			entity->ly = 0.;
+			entity->lz = 0.;
 		}
 	} else {
 		if (entity->data.arrow.ticksInGround == 1) {
@@ -1146,6 +1226,12 @@ void tick_entity(struct world* world, struct entity* entity) {
 		if (ei != NULL && ei->onAITick != NULL) ei->onAITick(world, entity);
 		lookHelper_tick(entity);
 	}
+	if (entity->type == ENT_ITEM) {
+		if (tick_itemstack(world, entity)) return;
+	}
+	if (entity->type == ENT_ARROW || entity->type == ENT_SPECTRALARROW) {
+		if (tick_arrow(world, entity)) return;
+	}
 	if (entity->type > ENT_PLAYER) {
 		if (entity->motX != 0. || entity->motY != 0. || entity->motZ != 0.) moveEntity(entity, &entity->motX, &entity->motY, &entity->motZ, 0.);
 		double gravity = 0.;
@@ -1192,12 +1278,6 @@ void tick_entity(struct world* world, struct entity* entity) {
 		if (fabs(entity->motY) < .0001) entity->motY = 0.;
 		if (fabs(entity->motZ) < .0001) entity->motZ = 0.;
 		if (entity->type == ENT_ITEM && entity->onGround && entity->motX == 0. && entity->motY == 0. && entity->motZ == 0.) entity->motY *= -.5;
-	}
-	if (entity->type == ENT_ITEM) {
-		if (tick_itemstack(world, entity)) return;
-	}
-	if (entity->type == ENT_ARROW || entity->type == ENT_SPECTRALARROW) {
-		if (tick_arrow(world, entity)) return;
 	}
 	if (entity->type == ENT_ITEM || entity->type == ENT_XPORB) pushOutOfBlocks(entity);
 	if (hasFlag(getEntityInfo(entity->type), "livingbase")) {

@@ -53,19 +53,17 @@ uint64_t getChunkKey2(int32_t cx, int32_t cz) {
 
 struct chunk* getChunk_guess(struct world* world, struct chunk* ch, int32_t x, int32_t z) {
 	if (ch == NULL) return getChunk(world, x, z);
-	int32_t rx = x >> 4;
-	int32_t rz = z >> 4;
-	if (ch->x == rx && ch->z == rz) return ch;
+	if (ch->x == x && ch->z == z) return ch;
 	if (abs(x - ch->x) > 3 || abs(z - ch->z) > 3) return getChunk(world, x, z);
 	struct chunk* cch = ch;
 	while (cch != NULL) {
-		if (cch->x > rx) cch = cch->xn;
-		else if (cch->x < rx) cch = cch->xp;
+		if (cch->x > x) cch = cch->xn;
+		else if (cch->x < x) cch = cch->xp;
 		if (cch != NULL) {
-			if (cch->z > rz) cch = cch->zn;
-			else if (cch->z < rz) cch = cch->zp;
+			if (cch->z > z) cch = cch->zn;
+			else if (cch->z < z) cch = cch->zp;
 		}
-		if (cch != NULL && cch->x == rx && rz) return cch;
+		if (cch != NULL && cch->x == x && cch->z == z) return cch;
 	}
 	return getChunk(world, x, z);
 }
@@ -645,9 +643,9 @@ int wrt_isClosest(double tx, double ty, double tz, double x1, double y1, double 
 }
 
 int world_blockRayTrace(struct boundingbox* bb, int32_t x, int32_t y, int32_t z, double px, double py, double pz, double ex, double ey, double ez, double *qx, double* qy, double* qz) {
-	double bx = 0.;
-	double by = 0.;
-	double bz = 0.;
+	double bx = ex;
+	double by = ey;
+	double bz = ez;
 	double rx = 0.;
 	double ry = 0.;
 	double rz = 0.;
@@ -771,7 +769,7 @@ int world_rayTrace(struct world* world, double x, double y, double z, double ex,
 			//todo: cancollidecheck?
 			for (size_t i = 0; i < bi->boundingBox_count; i++) {
 				struct boundingbox* bb = &bi->boundingBoxes[i];
-				int face = world_blockRayTrace(bb, iex, iey, iez, x, y, z, ex, ey, ez, rx, ry, rz);
+				int face = world_blockRayTrace(bb, ix, iy, iz, x, y, z, ex, ey, ez, rx, ry, rz);
 				if (face >= 0) return face;
 			}
 			//TODO: returnlast finish

@@ -337,6 +337,7 @@ void onItemUse_bow(struct world* world, struct player* player, uint8_t slot_inde
 		if (velocity == 1.) arrow->data.arrow.isCritical = 1;
 		arrow->data.arrow.damage = 2.;
 		arrow->objectData = 1 + player->entity->id;
+		arrow->data.arrow.knockback = 1.;
 
 		//TODO: power enchant
 		//TODO: punch enchant
@@ -349,7 +350,6 @@ void onItemUse_bow(struct world* world, struct player* player, uint8_t slot_inde
 		}
 		spawnEntity(player->world, arrow);
 	}
-	printf("shoot bow %i %f\n", ticks, velocity);
 }
 
 int canUseItem_bow(struct world* world, struct player* player, uint8_t slot_index, struct slot* slot) {
@@ -360,11 +360,40 @@ int canUseItem_bow(struct world* world, struct player* player, uint8_t slot_inde
 	return 1;
 }
 
+int canUseItem_food(struct world* world, struct player* player, uint8_t slot_index, struct slot* slot) {
+	if (slot == NULL) return 0;
+	struct item_info* ii = getItemInfo(slot->item);
+	if (ii == NULL) return 0;
+	struct itemfood_arg* arg = ii->callback_arg;
+	if (!arg->alwaysEat && player->food >= 20) return 0;
+	return 1;
+}
+
 void onItemUse_food(struct world* world, struct player* player, uint8_t slot_index, struct slot* slot, uint32_t ticks) {
 	if (slot == NULL) return;
 	struct item_info* ii = getItemInfo(slot->item);
 	if (ii == NULL) return;
-	printf("eat food %i\n", ticks);
+	struct itemfood_arg* arg = ii->callback_arg;
+	if (ticks >= 32) {
+		player->food += arg->food;
+		if (player->food > 20) player->food = 20;
+		player->saturation += arg->saturation * arg->food * 2.;
+		if (player->saturation > player->food) player->saturation = player->food;
+		player_hungerUpdate(player);
+		if (--slot->itemCount <= 0) slot = NULL;
+		setSlot(player, player->inventory, slot_index, slot, 1, 1);
+	}
+}
+
+void init_food(item i, int food, float saturation, int alwaysEat) {
+	struct itemfood_arg* ia = xmalloc(sizeof(struct itemfood_arg));
+	ia->food = food;
+	ia->saturation = saturation;
+	ia->alwaysEat = alwaysEat;
+	struct item_info* ii = getItemInfo(i);
+	ii->callback_arg = ia;
+	ii->onItemUse = &onItemUse_food;
+	ii->canUseItem = &canUseItem_food;
 }
 
 struct collection* item_infos;
@@ -491,8 +520,36 @@ void init_items() {
 	getItemInfo(ITM_MONSTERPLACER)->onItemInteract = &onItemInteract_spawnegg;
 	getItemInfo(ITM_BOW)->onItemUse = &onItemUse_bow;
 	getItemInfo(ITM_BOW)->canUseItem = &canUseItem_bow;
-	getItemInfo(ITM_APPLE)->onItemUse = &onItemUse_food;
-	getItemInfo(ITM_APPLEGOLD)->onItemUse = &onItemUse_food;
+	init_food(ITM_APPLE, 4, 0.3, 0);
+	init_food(ITM_MUSHROOMSTEW, 6, 0.6, 0);
+	init_food(ITM_BREAD, 5, 0.6, 0);
+	init_food(ITM_PORKCHOPRAW, 3, 0.3, 0);
+	init_food(ITM_PORKCHOPCOOKED, 8, 0.8, 0);
+	init_food(ITM_APPLEGOLD, 4, 1.2, 1);
+	init_food(ITM_FISH_COD_RAW, 2, 0.1, 0);
+	init_food(ITM_FISH_COD_COOKED, 5, 0.6, 0);
+	init_food(ITM_COOKIE, 2, 0.1, 0);
+	init_food(ITM_MELON, 2, 0.3, 0);
+	init_food(ITM_BEEFRAW, 3, 0.3, 0);
+	init_food(ITM_BEEFCOOKED, 8, 0.8, 0);
+	init_food(ITM_CHICKENRAW, 2, 0.3, 0);
+	init_food(ITM_CHICKENCOOKED, 6, 0.6, 0);
+	init_food(ITM_ROTTENFLESH, 4, 0.1, 0);
+	init_food(ITM_SPIDEREYE, 2, 0.8, 0);
+	init_food(ITM_CARROTS, 3, 0.6, 0);
+	init_food(ITM_POTATO, 1, 0.3, 0);
+	init_food(ITM_POTATOBAKED, 5, 0.6, 0);
+	init_food(ITM_POTATOPOISONOUS, 2, 0.3, 0);
+	init_food(ITM_CARROTGOLDEN, 6, 1.2, 0);
+	init_food(ITM_PUMPKINPIE, 8, 0.3, 0);
+	init_food(ITM_RABBITRAW, 3, 0.3, 0);
+	init_food(ITM_RABBITCOOKED, 5, 0.6, 0);
+	init_food(ITM_RABBITSTEW, 10, 0.6, 0);
+	init_food(ITM_MUTTONRAW, 2, 0.3, 0);
+	init_food(ITM_MUTTONCOOKED, 6, 0.8, 0);
+	init_food(ITM_CHORUSFRUIT, 4, 0.3, 1);
+	init_food(ITM_BEETROOT, 1, 0.6, 0);
+	init_food(ITM_BEETROOT_SOUP, 6, 0.6, 0);
 }
 
 void add_item(item id, struct item_info* info) {

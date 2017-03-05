@@ -23,7 +23,7 @@ void playSound(struct world* world, int32_t soundID, int32_t soundCategory, floa
 
 void dropPlayerItem(struct player* player, struct slot* drop);
 
-void dropPlayerItem_explode(struct player* player, struct slot* drop);
+void dropEntityItem_explode(struct entity* entity, struct slot* drop);
 
 void dropBlockDrop(struct world* world, struct slot* slot, int32_t x, int32_t y, int32_t z);
 

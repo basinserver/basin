@@ -63,7 +63,10 @@ struct player {
 		acstate_t acstate;
 		struct subworld* subworld;
 		struct queue* chunkRequests;
+		float foodExhaustion;
 };
+
+void player_hungerUpdate(struct player* player);
 
 void sendEntityMove(struct player* player, struct entity* ent);
 
