@@ -24,11 +24,8 @@ struct player {
 		uint8_t ping;
 		uint8_t stage;
 		uint8_t invulnerable;
-		uint8_t mayfly;
-		uint8_t instabuild;
 		float walkSpeed;
 		float flySpeed;
-		uint8_t maybuild;
 		uint8_t flying;
 		int32_t xpseed;
 		int32_t xptotal;
@@ -37,7 +34,9 @@ struct player {
 		float saturation;
 		int8_t sleeping;
 		int16_t fire;
-		//TODO: enderitems & inventory
+		uint32_t itemUseDuration;
+		uint8_t itemUseHand;
+		//TODO: enderitems inv
 		int32_t food;
 		float foodexhaustion;
 		int32_t foodTick;
@@ -63,6 +62,7 @@ struct player {
 		float reachDistance;
 		acstate_t acstate;
 		struct subworld* subworld;
+		struct queue* chunkRequests;
 };
 
 void sendEntityMove(struct player* player, struct entity* ent);

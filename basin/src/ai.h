@@ -42,9 +42,47 @@ void ai_stdcancel(struct world* world, struct entity* entity, struct aitask* ai)
 
 struct aitask* ai_initTask(struct entity* entity, uint16_t mutex, int32_t (*ai_tick)(struct world* world, struct entity* entity, struct aitask* ai), int (*ai_should)(struct world* world, struct entity* entity, struct aitask* ai), void* data);
 
-struct aipath {
+#define AIPATH_BLOCKED -1.0
+#define AIPATH_OPEN 0.0
+#define AIPATH_WALKABLE 0.0
+#define AIPATH_TRAPDOOR 0.0
+#define AIPATH_FENCE -1.0
+#define AIPATH_LAVA -1.0
+#define AIPATH_WATER 8.0
+#define AIPATH_RAIL 0.0
+#define AIPATH_DANGER_FIRE 8.0
+#define AIPATH_DAMAGE_FIRE 16.0
+#define AIPATH_DANGER_CACTUS 8.0
+#define AIPATH_DAMAGE_CACTUS -1.0
+#define AIPATH_DANGER_OTHER 8.0
+#define AIPATH_DAMAGE_OTHER -1.0
+#define AIPATH_DOOR_OPEN 0.0
+#define AIPATH_DOOR_WOOD_CLOSED -1.0
+#define AIPATH_DOOR_IRON_CLOSED -1.0
 
+struct aipath_point {
+		int32_t x;
+		int32_t y;
+		int32_t z;
+		int32_t index;
+		float total_dist;
+		float next_dist;
+		float target_dist;
+		struct aipath_point* previous;
+		float cost;
+		uint8_t visited;
+		float priority;
 };
+
+struct aipath {
+		struct aipath_point** points;
+		size_t points_size;
+		size_t points_count;
+};
+
+struct aipath* findPath(int32_t sx, int32_t sy, int32_t sz, int32_t ex, int32_t ey, int32_t ez);
+
+void freePath(struct aipath* path);
 
 struct aicontext {
 		struct hashmap* tasks;

@@ -209,7 +209,8 @@ struct entity* newEntity(int32_t id, float x, float y, float z, uint32_t type, f
 	e->collidedHorizontally = 0;
 	e->sneaking = 0;
 	e->sprinting = 0;
-	e->usingItem = 0;
+	e->usingItemMain = 0;
+	e->usingItemOff = 0;
 	e->portalCooldown = 0;
 	e->ticksExisted = 0;
 	e->subtype = 0;
@@ -223,6 +224,7 @@ struct entity* newEntity(int32_t id, float x, float y, float z, uint32_t type, f
 	e->loadingPlayers = new_hashmap(1, 1);
 	e->attacking = NULL;
 	e->attackers = new_hashmap(1, 0);
+	e->immovable = 0;
 	memset(&e->data, 0, sizeof(union entity_data));
 	e->ai = NULL;
 	return e;
@@ -259,7 +261,11 @@ void handleMetaByte(struct entity* ent, int index, signed char b) {
 	if (index == 0) {
 		ent->sneaking = b & 0x02 ? 1 : 0;
 		ent->sprinting = b & 0x08 ? 1 : 0;
-		ent->usingItem = b & 0x10 ? 1 : 0;
+		ent->usingItemMain = b & 0x10 ? 1 : 0;
+		ent->usingItemOff = 0;
+	} else if (hasFlag(getEntityInfo(ent->type), "living") && index == 6) {
+		ent->usingItemMain = b & 0x01;
+		ent->usingItemOff = (b & 0x02) ? 1 : 0;
 	}
 }
 
@@ -343,7 +349,14 @@ void outputMetaByte(struct entity* ent, unsigned char** loc, size_t* size) {
 	(*loc)[(*size)++] = 0;
 	(*loc)[*size] = ent->sneaking ? 0x02 : 0;
 	(*loc)[*size] |= ent->sprinting ? 0x08 : 0;
-	(*loc)[(*size)++] |= ent->usingItem ? 0x08 : 0;
+	(*loc)[(*size)++] |= (ent->usingItemMain || ent->usingItemOff) ? 0x08 : 0;
+	if (hasFlag(getEntityInfo(ent->type), "livingbase")) {
+		(*loc)[(*size)++] = 6;
+		(*loc)[(*size)++] = 0;
+		(*loc)[*size] = ent->usingItemMain ? 0x01 : 0;
+		(*loc)[(*size)++] |= ent->usingItemOff ? 0x02 : 0;
+	}
+
 }
 
 void outputMetaVarInt(struct entity* ent, unsigned char** loc, size_t* size) {
@@ -503,6 +516,16 @@ void writeMetadata(struct entity* ent, unsigned char** data, size_t* size) {
 	(*data)[(*size)++] = 0xFF;
 }
 
+void updateMetadata(struct entity* ent) {
+	BEGIN_BROADCAST(ent->loadingPlayers)
+	struct packet* pkt = xmalloc(sizeof(struct packet));
+	pkt->id = PKT_PLAY_CLIENT_ENTITYMETADATA;
+	pkt->data.play_client.entitymetadata.entity_id = ent->id;
+	writeMetadata(ent, &pkt->data.play_client.entitymetadata.metadata.metadata, &pkt->data.play_client.entitymetadata.metadata.metadata_size);
+	add_queue(bc_player->outgoingPacket, pkt);
+	END_BROADCAST(ent->loadingPlayers)
+}
+
 int getSwingTime(struct entity* ent) {
 	for (size_t i = 0; i < ent->effect_count; i++) {
 		if (ent->effects[i].effectID == 3) {
@@ -515,9 +538,10 @@ int getSwingTime(struct entity* ent) {
 }
 
 int moveEntity(struct entity* entity, double* mx, double* my, double* mz, float shrink) {
+	if (entity->immovable) return 0;
 	struct boundingbox obb;
 	getEntityCollision(entity, &obb);
-	if (obb.minX == obb.maxX || obb.minZ == obb.maxZ || obb.minY == obb.maxY) {
+	if (entity->type == ENT_ARROW || entity->type == ENT_SPECTRALARROW || obb.minX == obb.maxX || obb.minZ == obb.maxZ || obb.minY == obb.maxY) {
 		entity->x += *mx;
 		entity->y += *my;
 		entity->z += *mz;
@@ -843,6 +867,73 @@ void healEntity(struct entity* healed, float amount) {
 	}
 }
 
+int tick_arrow(struct world* world, struct entity* entity) {
+	if (entity->data.arrow.ticksInGround == 0) {
+		double hx = 0.;
+		double hy = 0.;
+		double hz = 0.;
+		int hf = world_rayTrace(entity->world, entity->x, entity->y, entity->z, entity->x + entity->motX, entity->y + entity->motY, entity->z + entity->motZ, 0, 1, 0, &hx, &hy, &hz);
+		//printf("hf = %i -- %f, %f, %f\n", hf, entity->x, entity->y, entity->z);
+		//printf("hf = %i -- %f, %f\n", hf, entity->yaw, entity->pitch);
+		//todo: entity
+		struct entity* ehit = NULL;
+		//
+		if (ehit != NULL) {
+
+		} else if (hf >= 0) {
+			entity->motX = hx - entity->x;
+			entity->motY = hy - entity->y;
+			entity->motZ = hz - entity->z;
+			float ds = sqrt(entity->motX * entity->motX + entity->motY * entity->motY + entity->motZ * entity->motZ);
+			entity->x -= entity->motX / ds * 0.05000000074505806;
+			entity->y -= entity->motY / ds * 0.05000000074505806;
+			entity->z -= entity->motZ / ds * 0.05000000074505806;
+			entity->data.arrow.ticksInGround = 1;
+			entity->data.arrow.isCritical = 0;
+			entity->immovable = 1;
+		}
+	} else {
+		if (entity->data.arrow.ticksInGround == 1) {
+			entity->motX = 0.;
+			entity->motY = 0.;
+			entity->motZ = 0.;
+		}
+		entity->data.arrow.ticksInGround++;
+		if (entity->data.arrow.ticksInGround == 1200) {
+			pthread_rwlock_unlock(&world->entities->data_mutex);
+			despawnEntity(world, entity);
+			pthread_rwlock_rdlock(&world->entities->data_mutex);
+			freeEntity(entity);
+			return 1;
+		}
+	}
+	//printf("hf2c = %f, %f, %f\n", entity->x, entity->y, entity->z);
+
+	if (entity->data.arrow.ticksInGround == 0) {
+		float dhz = sqrtf(entity->motX * entity->motX + entity->motZ * entity->motZ);
+		entity->yaw = atan2f(entity->motX, entity->motZ) * 180. / M_PI;
+		entity->pitch = atan2f(entity->motY, dhz) * 180. / M_PI;
+		//printf("desired %f, %f, %f\n", entity->pitch, entity->motY, dhz);
+		//printf("yaw = %f, lyaw = %f\npitch = %f, lpitch = %f\n", entity->yaw, entity->lyaw, entity->pitch, entity->lpitch);
+		if (entity->lyaw == 0. && entity->lpitch == 0.) {
+			entity->lyaw = entity->yaw;
+			entity->lpitch = entity->pitch;
+		} else {
+			while (entity->pitch - entity->lpitch < -180.)
+				entity->lpitch -= 360.;
+			while (entity->pitch - entity->lpitch >= 180.)
+				entity->lpitch += 360.;
+			while (entity->yaw - entity->lyaw < -180.)
+				entity->lyaw -= 360.;
+			while (entity->yaw - entity->lyaw >= 180.)
+				entity->lyaw += 360.;
+			entity->pitch = entity->lpitch + (entity->pitch - entity->lpitch) * .2;
+			entity->yaw = entity->lyaw + (entity->yaw - entity->lyaw) * .2;
+		}
+	}
+	return 0;
+}
+
 int tick_itemstack(struct world* world, struct entity* entity) {
 	if (entity->data.itemstack.delayBeforeCanPickup > 0) {
 		entity->data.itemstack.delayBeforeCanPickup--;
@@ -1056,7 +1147,21 @@ void tick_entity(struct world* world, struct entity* entity) {
 		lookHelper_tick(entity);
 	}
 	if (entity->type > ENT_PLAYER) {
-		if (entity->type == ENT_ITEM) entity->motY -= 0.04;
+		if (entity->motX != 0. || entity->motY != 0. || entity->motZ != 0.) moveEntity(entity, &entity->motX, &entity->motY, &entity->motZ, 0.);
+		double gravity = 0.;
+		int ar = entity->type == ENT_ARROW || entity->type == ENT_SPECTRALARROW;
+		float friction = .98;
+		if (ar) {
+			//printf("ymot %f pit %f\n", entity->motY, entity->pitch);
+			//printf("af %.17f, %.17f --- %.17f, %.17f, %.17f\n", entity->yaw, entity->pitch, entity->motX, entity->motY, entity->motZ);
+			friction = .99;
+			if (entity->inWater) friction = .6;
+			entity->motX *= friction;
+			entity->motY *= friction;
+			entity->motZ *= friction;
+		}
+		if (entity->type == ENT_ITEM) gravity = .04;
+		else if (ar) gravity = .05000000074505806;
 		else if (hasFlag(getEntityInfo(entity->type), "livingbase")) {
 			if (entity->inLava) {
 				entity->motX *= .5;
@@ -1073,15 +1178,16 @@ void tick_entity(struct world* world, struct entity* entity) {
 				//TODO: upswells
 			} else entity->motY -= .08;
 		}
-		if (entity->motX != 0. || entity->motY != 0. || entity->motZ != 0.) moveEntity(entity, &entity->motX, &entity->motY, &entity->motZ, 0.);
-		double friction = .98;
-		if (entity->onGround) {
-			struct block_info* bi = getBlockInfo(getBlockWorld(entity->world, (int32_t) floor(entity->x), (int32_t) floor(entity->y) - 1, (int32_t) floor(entity->z)));
-			if (bi != NULL) friction = bi->slipperiness * .98;
+		if (gravity != 0. && !entity->immovable) entity->motY -= gravity;
+		if (!ar) {
+			if (entity->onGround) {
+				struct block_info* bi = getBlockInfo(getBlockWorld(entity->world, (int32_t) floor(entity->x), (int32_t) floor(entity->y) - 1, (int32_t) floor(entity->z)));
+				if (bi != NULL) friction = bi->slipperiness * .98;
+			}
+			entity->motX *= friction;
+			entity->motY *= .98;
+			entity->motZ *= friction;
 		}
-		entity->motX *= friction;
-		entity->motY *= .98;
-		entity->motZ *= friction;
 		if (fabs(entity->motX) < .0001) entity->motX = 0.;
 		if (fabs(entity->motY) < .0001) entity->motY = 0.;
 		if (fabs(entity->motZ) < .0001) entity->motZ = 0.;
@@ -1089,6 +1195,9 @@ void tick_entity(struct world* world, struct entity* entity) {
 	}
 	if (entity->type == ENT_ITEM) {
 		if (tick_itemstack(world, entity)) return;
+	}
+	if (entity->type == ENT_ARROW || entity->type == ENT_SPECTRALARROW) {
+		if (tick_arrow(world, entity)) return;
 	}
 	if (entity->type == ENT_ITEM || entity->type == ENT_XPORB) pushOutOfBlocks(entity);
 	if (hasFlag(getEntityInfo(entity->type), "livingbase")) {

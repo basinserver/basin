@@ -113,6 +113,121 @@ void lookHelper_tick(struct entity* entity) {
 	}
 }
 
+float aipath_manhattan(struct aipath_point* p1, struct aipath_point* p2) {
+	return fabs(p1->x - p2->x) + fabs(p1->y - p2->y) + fabs(p1->y - p2->y);
+}
+
+void aipath_sortback(struct aipath* path, int32_t index) {
+	struct aipath_point* pp = path->points[index];
+	int i = 0;
+	for (float ld = pp->target_dist; index > 0; index = i) {
+		i = (index - 1) >> 1;
+		struct aipath_point* pp2 = path->points[i];
+		if (ld >= pp2->target_dist) break;
+		path->points[index] = pp2;
+		pp2->index = index;
+	}
+	path->points[index] = pp;
+	pp->index = index;
+}
+
+void aipath_sortforward(struct aipath* path, int32_t index) {
+	struct aipath_point* pp = path->points[index];
+	float ld = pp->target_dist;
+	while (1) {
+		int i = 1 + (index << 1);
+		int j = i + 1;
+		if (i >= path->points_count) break;
+		struct aipath_point* pp2 = path->points[i];
+		float ld2 = pp2->target_dist;
+		struct aipath_point* pp3 = NULL;
+		float ld3 = 0.;
+		if (j >= path->points_count) ld3 = (float) 0x7f800000; // positive infinity
+		else {
+			pp3 = path->points[j];
+			ld3 = pp3->target_dist;
+		}
+		if (ld2 < ld3) {
+			if (ld2 >= ld) break;
+			path->points[index] = pp2;
+			pp2->index = index;
+			index = i;
+		} else {
+			if (ld3 >= ld) break;
+			path->points[index] = pp3;
+			pp3->index = index;
+			index = j;
+		}
+	}
+	path->points[index] = pp;
+	pp->index = index;
+}
+
+struct aipath_point* aipath_addpoint(struct aipath* path, struct aipath_point* point) {
+	if (path->points_count == path->points_size) {
+		path->points_size *= 2;
+		path->points = xrealloc(path->points, path->points_size * sizeof(struct aipath_point));
+		memset(path->points + (path->points_size / 2), 0, (path->points_size / 2) * sizeof(struct aipath_point));
+	}
+	struct aipath_point* np = xmalloc(sizeof(struct aipath_point));
+	memcpy(np, point, sizeof(struct aipath_point));
+	path->points[path->points_count] = np;
+	np->index = path->points_count;
+	aipath_sortback(path, np->index);
+	path->points_count++;
+	return np;
+}
+
+struct aipath_point* aipath_dequeue(struct aipath* path) {
+	if (path->points_count == 0) return NULL;
+	struct aipath_point* pp = path->points[0];
+	path->points[0] = path->points[--path->points_count];
+	path->points[path->points_count] = NULL;
+	if (path->points_count > 0) aipath_sortforward(path, 0);
+	pp->index = -1;
+	return pp;
+}
+
+struct aipath* findPath(int32_t sx, int32_t sy, int32_t sz, int32_t ex, int32_t ey, int32_t ez) {
+	struct aipath_point end;
+	memset(&end, 0, sizeof(struct aipath_point));
+	end.x = ex;
+	end.y = ey;
+	end.z = ez;
+	struct aipath_point start;
+	memset(&start, 0, sizeof(struct aipath_point));
+	start.x = sx;
+	start.y = sy;
+	start.z = sz;
+	struct aipath* path = xmalloc(sizeof(struct aipath));
+	path->points_count = 0;
+	path->points_size = 128;
+	path->points = xcalloc(sizeof(struct aipath_point) * path->points_size);
+	start.x = sx;
+	start.y = sy;
+	start.z = sz;
+	start.next_dist = aipath_manhattan(path->points[0], &end);
+	start.target_dist = start.next_dist;
+	struct aipath_point* cp = aipath_addpoint(path, &start);
+	int i = 0;
+	while (path->points_count > 0) {
+		if (++i >= 200) break;
+		struct aipath_point* pp2 = aipath_dequeue(path);
+		if (pp2->x == end.x && pp2->y == end.y && pp2->z == end.z) {
+			cp = pp2;
+			break;
+		}
+		if (aipath_manhattan(pp2, &end) < aipath_manhattan(cp, &end)) cp = pp2;
+		pp2->visited = 1;
+
+	}
+	return path;
+}
+
+void freePath(struct aipath* path) {
+
+}
+
 int32_t ai_attackmelee(struct world* world, struct entity* entity, struct aitask* ai) {
 	struct ai_attackmelee_data* amd = ai->data;
 	entity->ai->lookHelper_speedYaw = 30.;

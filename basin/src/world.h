@@ -83,13 +83,10 @@ typedef uint16_t block;
 uint32_t nextEntityID;
 
 struct chunk_req {
-		struct player* pl;
 		int32_t cx;
 		int32_t cz;
 		uint8_t load;
 };
-
-struct queue* chunk_input;
 
 pthread_cond_t chunk_wake;
 pthread_mutex_t chunk_wake_mut;
@@ -186,6 +183,8 @@ struct subworld { // subworld for players thread
 		struct hashmap* players;
 		uint8_t defunct;
 };
+
+int world_rayTrace(struct world* world, double x, double y, double z, double ex, double ey, double ez, int stopOnLiquid, int ignoreNonCollidable, int returnLast, double* rx, double* ry, double* rz);
 
 struct chunk_section* newChunkSection(struct chunk* chunk, int ymj, int skylight);
 

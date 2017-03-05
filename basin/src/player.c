@@ -35,11 +35,8 @@ struct player* newPlayer(struct entity* entity, char* name, struct uuid uuid, st
 	player->ping = 0;
 	player->stage = 0;
 	player->invulnerable = 0;
-	player->mayfly = 0;
-	player->instabuild = 0;
 	player->walkSpeed = 0;
 	player->flySpeed = 0;
-	player->maybuild = 0;
 	player->flying = 0;
 	player->xpseed = 0;
 	player->xptotal = 0;
@@ -76,12 +73,16 @@ struct player* newPlayer(struct entity* entity, char* name, struct uuid uuid, st
 	player->triggerRechunk = 0;
 	player->chunksSent = 0;
 	player->world = NULL;
+	player->itemUseDuration = 0;
+	player->itemUseHand = 0;
+	player->chunkRequests = new_queue(0, 1);
 	return player;
 }
 
 void sendEntityMove(struct player* player, struct entity* ent) {
 	double md = entity_distsq_block(ent, ent->lx, ent->ly, ent->lz);
 	double mp = (ent->yaw - ent->lyaw) * (ent->yaw - ent->lyaw) + (ent->pitch - ent->lpitch) * (ent->pitch - ent->lpitch);
+
 	//printf("mp = %f, md = %f\n", mp, md);
 	if ((md > .001 || mp > .01 || ent->type == ENT_PLAYER)) {
 		struct packet* pkt = xmalloc(sizeof(struct packet));
@@ -391,7 +392,21 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 			}
 			pthread_mutex_unlock(&player->inventory->mut);
 		} else if (inp->data.play_server.playerdigging.status == 5) {
-			//TODO
+			if (player->itemUseDuration > 0) {
+				struct slot* ihs = getSlot(player, player->inventory, player->itemUseHand ? 45 : (36 + player->currentItem));
+				struct item_info* ihi = ihs == NULL ? NULL : getItemInfo(ihs->item);
+				if (ihs == NULL || ihi == NULL) {
+					player->itemUseDuration = 0;
+					player->entity->usingItemMain = 0;
+					player->entity->usingItemOff = 0;
+					updateMetadata(player->entity);
+				}
+				if (ihi->onItemUse != NULL) (*ihi->onItemUse)(player->world, player, player->itemUseHand ? 45 : (36 + player->currentItem), ihs, player->itemUseDuration);
+				player->entity->usingItemMain = 0;
+				player->entity->usingItemOff = 0;
+				player->itemUseDuration = 0;
+				updateMetadata(player->entity);
+			}
 			pthread_mutex_unlock(&player->inventory->mut);
 		} else if (inp->data.play_server.playerdigging.status == 6) {
 			swapSlots(player, player->inventory, 45, 36 + player->currentItem, 1);
@@ -424,13 +439,7 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 		else if (inp->data.play_server.entityaction.action_id == 1) player->entity->sneaking = 0;
 		else if (inp->data.play_server.entityaction.action_id == 3) player->entity->sprinting = 1;
 		else if (inp->data.play_server.entityaction.action_id == 4) player->entity->sprinting = 0;
-		BEGIN_BROADCAST_EXCEPT_DIST(player, player->entity, 128.)
-		struct packet* pkt = xmalloc(sizeof(struct packet));
-		pkt->id = PKT_PLAY_CLIENT_ENTITYMETADATA;
-		pkt->data.play_client.entitymetadata.entity_id = player->entity->id;
-		writeMetadata(player->entity, &pkt->data.play_client.entitymetadata.metadata.metadata, &pkt->data.play_client.entitymetadata.metadata.metadata_size);
-		add_queue(bc_player->outgoingPacket, pkt);
-		END_BROADCAST(player->world->players)
+		updateMetadata(player->entity);
 	} else if (inp->id == PKT_PLAY_SERVER_PLAYERBLOCKPLACEMENT) {
 		if (player->openInv != NULL) goto cont;
 		if (entity_dist_block(player->entity, inp->data.play_server.playerblockplacement.location.x, inp->data.play_server.playerblockplacement.location.y, inp->data.play_server.playerblockplacement.location.z) > player->reachDistance) goto cont;
@@ -1018,7 +1027,16 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 		struct slot* cs = getSlot(player, player->inventory, hand ? 45 : (36 + player->currentItem));
 		if (cs != NULL) {
 			struct item_info* ii = getItemInfo(cs->item);
-			if (ii != NULL && ii->onItemUse != NULL) (*ii->onItemUse)(player->world, player, hand ? 45 : (36 + player->currentItem), cs, 0);
+			if (ii != NULL && (ii->canUseItem == NULL || (*ii->canUseItem)(player->world, player, hand ? 45 : (36 + player->currentItem), cs))) {
+				if (ii->maxUseDuration == 0 && ii->onItemUse != NULL) (*ii->onItemUse)(player->world, player, hand ? 45 : (36 + player->currentItem), cs, 0);
+				else if (ii->maxUseDuration > 0) {
+					player->itemUseDuration = 1;
+					player->itemUseHand = hand ? 1 : 0;
+					player->entity->usingItemMain = !player->itemUseHand;
+					player->entity->usingItemOff = player->itemUseHand;
+					updateMetadata(player->entity);
+				}
+			}
 		}
 		pthread_mutex_unlock(&player->inventory->mut);
 	}
@@ -1081,17 +1099,16 @@ void tick_player(struct world* world, struct player* player) {
 	int32_t lpcz = ((int32_t) player->entity->lz >> 4);
 	if (player->loadedChunks->entry_count == 0 || player->triggerRechunk) {
 		beginProfilerSection("chunkLoading_tick");
-		pthread_mutex_lock(&chunk_input->data_mutex);
+		pthread_mutex_lock(&player->chunkRequests->data_mutex);
 		if (player->triggerRechunk) {
 			BEGIN_HASHMAP_ITERATION(player->loadedChunks)
 			struct chunk* ch = (struct chunk*) value;
 			if (ch->x < pcx - CHUNK_VIEW_DISTANCE || ch->x > pcx + CHUNK_VIEW_DISTANCE || ch->z < pcz - CHUNK_VIEW_DISTANCE || ch->z > pcz + CHUNK_VIEW_DISTANCE) {
 				struct chunk_req* cr = xmalloc(sizeof(struct chunk_req));
-				cr->pl = player;
 				cr->cx = ch->x;
 				cr->cz = ch->z;
 				cr->load = 0;
-				add_queue(chunk_input, cr);
+				add_queue(player->chunkRequests, cr);
 			}
 			END_HASHMAP_ITERATION(player->loadedChunks)
 		}
@@ -1101,11 +1118,10 @@ void tick_player(struct world* world, struct player* player) {
 			for (int i = 0; i < ((r == 0) ? 1 : (r * 8)); i++) {
 				if (!player->triggerRechunk || !contains_hashmap(player->loadedChunks, getChunkKey2(x, z))) {
 					struct chunk_req* cr = xmalloc(sizeof(struct chunk_req));
-					cr->pl = player;
 					cr->cx = x;
 					cr->cz = z;
 					cr->load = 1;
-					add_queue(chunk_input, cr);
+					add_queue(player->chunkRequests, cr);
 				}
 				if (i < 2 * r) x++;
 				else if (i < 4 * r) z++;
@@ -1113,29 +1129,28 @@ void tick_player(struct world* world, struct player* player) {
 				else if (i < 8 * r) z--;
 			}
 		}
-		pthread_mutex_unlock(&chunk_input->data_mutex);
+		pthread_mutex_unlock(&player->chunkRequests->data_mutex);
 		player->triggerRechunk = 0;
+		pthread_cond_signal (&chunk_wake);
 		endProfilerSection("chunkLoading_tick");
 	}
 	if (lpcx != pcx || lpcz != pcz) {
-		pthread_mutex_lock(&chunk_input->data_mutex);
+		pthread_mutex_lock(&player->chunkRequests->data_mutex);
 		for (int32_t fx = lpcx; lpcx < pcx ? (fx < pcx) : (fx > pcx); lpcx < pcx ? fx++ : fx--) {
 			for (int32_t fz = lpcz - CHUNK_VIEW_DISTANCE; fz <= lpcz + CHUNK_VIEW_DISTANCE; fz++) {
 				beginProfilerSection("chunkUnloading_live");
 				struct chunk_req* cr = xmalloc(sizeof(struct chunk_req));
-				cr->pl = player;
 				cr->cx = lpcx < pcx ? (fx - CHUNK_VIEW_DISTANCE) : (fx + CHUNK_VIEW_DISTANCE);
 				cr->cz = fz;
 				cr->load = 0;
-				add_queue(chunk_input, cr);
+				add_queue(player->chunkRequests, cr);
 				endProfilerSection("chunkUnloading_live");
 				beginProfilerSection("chunkLoading_live");
 				cr = xmalloc(sizeof(struct chunk_req));
-				cr->pl = player;
 				cr->cx = lpcx < pcx ? (fx + CHUNK_VIEW_DISTANCE) : (fx - CHUNK_VIEW_DISTANCE);
 				cr->cz = fz;
 				cr->load = 1;
-				add_queue(chunk_input, cr);
+				add_queue(player->chunkRequests, cr);
 				endProfilerSection("chunkLoading_live");
 			}
 		}
@@ -1143,26 +1158,43 @@ void tick_player(struct world* world, struct player* player) {
 			for (int32_t fx = lpcx - CHUNK_VIEW_DISTANCE; fx <= lpcx + CHUNK_VIEW_DISTANCE; fx++) {
 				beginProfilerSection("chunkUnloading_live");
 				struct chunk_req* cr = xmalloc(sizeof(struct chunk_req));
-				cr->pl = player;
 				cr->cx = fx;
 				cr->cz = lpcz < pcz ? (fz - CHUNK_VIEW_DISTANCE) : (fz + CHUNK_VIEW_DISTANCE);
 				cr->load = 0;
-				add_queue(chunk_input, cr);
+				add_queue(player->chunkRequests, cr);
 				endProfilerSection("chunkUnloading_live");
 				beginProfilerSection("chunkLoading_live");
 				cr = xmalloc(sizeof(struct chunk_req));
-				cr->pl = player;
 				cr->cx = fx;
 				cr->cz = lpcz < pcz ? (fz + CHUNK_VIEW_DISTANCE) : (fz - CHUNK_VIEW_DISTANCE);
 				cr->load = 1;
-				add_queue(chunk_input, cr);
+				add_queue(player->chunkRequests, cr);
 				endProfilerSection("chunkLoading_live");
 			}
 		}
-		pthread_mutex_unlock(&chunk_input->data_mutex);
+		pthread_mutex_unlock(&player->chunkRequests->data_mutex);
+		pthread_cond_signal (&chunk_wake);
 	}
 	endProfilerSection("chunks");
-
+	if (player->itemUseDuration > 0) {
+		struct slot* ihs = getSlot(player, player->inventory, player->itemUseHand ? 45 : (36 + player->currentItem));
+		struct item_info* ihi = ihs == NULL ? NULL : getItemInfo(ihs->item);
+		if (ihs == NULL || ihi == NULL) {
+			player->itemUseDuration = 0;
+			player->entity->usingItemMain = 0;
+			player->entity->usingItemOff = 0;
+			updateMetadata(player->entity);
+		} else if (ihi->maxUseDuration <= player->itemUseDuration) {
+			if (ihi->onItemUse != NULL) (*ihi->onItemUse)(world, player, player->itemUseHand ? 45 : (36 + player->currentItem), ihs, player->itemUseDuration);
+			player->itemUseDuration = 0;
+			player->entity->usingItemMain = 0;
+			player->entity->usingItemOff = 0;
+			updateMetadata(player->entity);
+		} else {
+			if (ihi->onItemUseTick != NULL) (*ihi->onItemUseTick)(world, player, player->itemUseHand ? 45 : (36 + player->currentItem), ihs, player->itemUseDuration);
+			player->itemUseDuration++;
+		}
+	}
 	//if (((int32_t) player->entity->lx >> 4) != pcx || ((int32_t) player->entity->lz >> 4) != pcz || player->loadedChunks->count < CHUNK_VIEW_DISTANCE * CHUNK_VIEW_DISTANCE * 4 || player->triggerRechunk) {
 	//}
 	if (player->digging >= 0.) {
@@ -1437,6 +1469,11 @@ void freePlayer(struct player* player) {
 		xfree(pkt);
 	}
 	del_queue(player->outgoingPacket);
+	struct chunk_req* cr;
+	while ((cr = pop_nowait_queue(player->chunkRequests)) != NULL) {
+		xfree(cr);
+	}
+	del_queue(player->chunkRequests);
 	if (player->inHand != NULL) {
 		freeSlot(player->inHand);
 		xfree(player->inHand);

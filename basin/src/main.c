@@ -451,7 +451,6 @@ int main(int argc, char* argv[]) {
 		}
 	}
 	pthread_t tt;
-	chunk_input = new_queue(0, 1);
 	pthread_cond_init(&chunk_wake, NULL);
 	pthread_mutex_init(&chunk_wake_mut, NULL);
 	pthread_mutex_init(&glob_tick_mut, NULL);

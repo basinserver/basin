@@ -336,20 +336,30 @@ block onBlockPlaced_vine(struct player* player, struct world* world, block blk, 
 	if (bi != NULL && bi->fullCube && bi->material->blocksMovement) out |= 0x8;
 	b = getBlockWorld(world, x, y + 1, z);
 	bi = getBlockInfo(b);
+	//printf("block placed vine = ");
 	if ((b >> 4) == (BLK_VINE >> 4)) {
+		//printf("%i\n", b);
 		return b;
 	} else if (!(bi != NULL && bi->fullCube && bi->material->blocksMovement) && (out & 0x0f) == 0) {
+		//printf("0 -- %i, %i, %i, %i, %i\n", b, bi != NULL, bi->fullCube, bi->material->blocksMovement, out);
 		return 0;
 	}
+	//printf("2/%i\n", out);
 	return out;
 }
 
 void onBlockUpdate_vine(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
+	//printf("bu vine <%i, %i, %i> ", x, y, z);
 	block b = onBlockPlaced_vine(NULL, world, blk, x, y, z, -1);
-	if (b != blk) setBlockWorld(world, b, x, y, z);
+	//printf("%i != %i\n", b, blk);
+	if (b != blk) {
+		if (b >> 4 == blk >> 4 && b >> 4 == BLK_VINE >> 4) setBlockWorld_noupdate(world, b, x, y, z);
+		else setBlockWorld(world, b, x, y, z);
+	}
 }
 
 int canBePlaced_vine(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
+	//printf("cbp vine at\n");
 	block b = getBlockWorld(world, x, y, z + 1);
 	struct block_info* bi = getBlockInfo(b);
 	if (bi != NULL && bi->fullCube && bi->material->blocksMovement) return 1;
@@ -366,6 +376,7 @@ int canBePlaced_vine(struct world* world, block blk, int32_t x, int32_t y, int32
 	if ((b >> 4) == (BLK_VINE >> 4)) return 1;
 	bi = getBlockInfo(b);
 	if (bi != NULL && bi->fullCube && bi->material->blocksMovement) return 1;
+	//printf("cbp vine at --- cannot be placed\n");
 	return 0;
 }
 
@@ -373,7 +384,9 @@ void randomTick_vine(struct world* world, struct chunk* ch, block blk, int32_t x
 	if (rand() % 4 != 0) return;
 	block below = getBlockWorld_guess(world, ch, x, y - 1, z);
 	if (below == 0) {
+		//printf("rtv grow\n");
 		setBlockWorld_guess(world, ch, onBlockPlaced_vine(NULL, world, BLK_VINE, x, y, z, -1), x, y - 1, z);
+		//printf("rtv growdun\n");
 	}
 }
 
@@ -918,7 +931,7 @@ int lava_checkForMixing(struct world* world, struct chunk* ch, block blk, int32_
 }
 
 void fluid_doFlowInto(int water, struct world* world, struct chunk* ch, int32_t x, uint8_t y, int32_t z, int level, block b) {
-	// potentially triggerMixEffects
+// potentially triggerMixEffects
 	struct block_info* bi = getBlockInfo(b);
 	if (bi != NULL && !streq_nocase(bi->material->name, "air") && !streq_nocase(bi->material->name, "lava")) {
 		dropBlockDrops(world, b, NULL, x, y, z);

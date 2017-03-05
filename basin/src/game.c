@@ -108,6 +108,7 @@ void loadEntity(struct player* to, struct entity* from) {
 		pkt->data.play_client.spawnobject.yaw = (from->yaw / 360.) * 256.;
 		pkt->data.play_client.spawnobject.pitch = (from->pitch / 360.) * 256.;
 		pkt->data.play_client.spawnobject.data = from->objectData;
+		printf("spawn velocity: %f, %f, %f -- %f, %f\n", from->motX, from->motY, from->motZ, from->yaw, from->pitch);
 		pkt->data.play_client.spawnobject.velocity_x = (int16_t)(from->motX * 8000.);
 		pkt->data.play_client.spawnobject.velocity_y = (int16_t)(from->motY * 8000.);
 		pkt->data.play_client.spawnobject.velocity_z = (int16_t)(from->motZ * 8000.);
@@ -176,6 +177,15 @@ void loadEntity(struct player* to, struct entity* from) {
 void onInventoryUpdate(struct player* player, struct inventory* inv, int slot) {
 	if (inv->type == INVTYPE_PLAYERINVENTORY) {
 		if (slot == player->currentItem + 36) {
+			if (player->itemUseDuration > 0 && player->itemUseHand == 0) {
+				struct slot* ihs = getSlot(player, player->inventory, player->itemUseHand ? 45 : (36 + player->currentItem));
+				struct item_info* ihi = ihs == NULL ? NULL : getItemInfo(ihs->item);
+				if (ihs == NULL || ihi == NULL) player->itemUseDuration = 0;
+				else {
+					if (ihi->onItemUseTick != NULL) (*ihi->onItemUseTick)(player->world, player, player->itemUseHand ? 45 : (36 + player->currentItem), ihs, -1);
+					player->itemUseDuration = 0;
+				}
+			}
 			BEGIN_BROADCAST_EXCEPT_DIST(player, player->entity, 128.)
 			struct packet* pkt = xmalloc(sizeof(struct packet));
 			pkt->id = PKT_PLAY_CLIENT_ENTITYEQUIPMENT;

@@ -459,7 +459,11 @@ union entity_data {
 
 		} endercrystal;
 		struct entity_arrow {
-
+				uint32_t ticksInGround;
+				uint8_t isCritical;
+				uint8_t pickupFlags;
+				float damage;
+				float knockback;
 		} arrow;
 		struct entity_snowball {
 
@@ -581,7 +585,8 @@ struct entity {
 		struct potioneffect* effects;
 		size_t effect_count;
 		int sneaking;
-		int usingItem;
+		int usingItemMain;
+		int usingItemOff;
 		int sprinting;
 		int portalCooldown;
 		size_t ticksExisted;
@@ -594,6 +599,7 @@ struct entity {
 		uint8_t invincibilityTicks;
 		uint8_t inWater;
 		uint8_t inLava;
+		uint8_t immovable;
 		struct aicontext* ai;
 		struct entity* attacking;
 		struct hashmap* attackers;
@@ -608,6 +614,8 @@ void healEntity(struct entity* healed, float amount);
 void readMetadata(struct entity* ent, unsigned char* meta, size_t size);
 
 void writeMetadata(struct entity* ent, unsigned char** data, size_t* size);
+
+void updateMetadata(struct entity* ent);
 
 void jump(struct entity* entity);
 

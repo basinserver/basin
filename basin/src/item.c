@@ -15,6 +15,8 @@
 #include <unistd.h>
 #include "block.h"
 #include "nbt.h"
+#include <math.h>
+#include "game.h"
 
 int onItemBreakBlock_tool(struct world* world, struct player* player, uint8_t slot_index, struct slot* slot, int32_t x, uint8_t y, int32_t z) {
 	if (slot == NULL) return 0;
@@ -250,15 +252,15 @@ int onItemInteract_shovel(struct world* world, struct player* player, uint8_t sl
 	return 0;
 }
 
-int onItemUse_armor(struct world* world, struct player* player, uint8_t slot_index, struct slot* slot, uint16_t ticks) {
-	if (slot == NULL) return 0;
+void onItemUse_armor(struct world* world, struct player* player, uint8_t slot_index, struct slot* slot, uint32_t ticks) {
+	if (slot == NULL) return;
 	uint16_t sli = 5;
 	struct item_info* ii = getItemInfo(slot->item);
 	if (ii->armorType == ARMOR_HELMET) sli = 5;
 	else if (ii->armorType == ARMOR_CHESTPLATE) sli = 6;
 	else if (ii->armorType == ARMOR_LEGGINGS) sli = 7;
 	else if (ii->armorType == ARMOR_BOOTS) sli = 8;
-	if (getSlot(player, player->inventory, sli) != NULL) return 0;
+	if (getSlot(player, player->inventory, sli) != NULL) return;
 	setSlot(player, player->inventory, sli, slot, 1, 1);
 	setSlot(player, player->inventory, slot_index, NULL, 1, 0);
 }
@@ -272,6 +274,97 @@ float onEntityHitWhileWearing_armor(struct world* world, struct player* player, 
 	}
 	setSlot(player, player->inventory, slot_index, slot, 1, 1);
 	return damage;
+}
+
+int bow_isArrow(struct slot* slot) {
+	item i = slot == NULL ? 0 : slot->item;
+	return i == ITM_ARROW || i == ITM_SPECTRAL_ARROW || i == ITM_TIPPED_ARROW || i == ITM_LINGERING_POTION;
+}
+
+int bow_findAmmo(struct player* player) {
+	struct slot* tmp = getSlot(player, player->inventory, 45);
+	if (bow_isArrow(tmp)) return 45;
+	tmp = getSlot(player, player->inventory, 36 + player->currentItem);
+	if (bow_isArrow(tmp)) return 36 + player->currentItem;
+	for (int i = 0; i < player->inventory->slot_count; i++) {
+		struct slot* tmp = getSlot(player, player->inventory, i);
+		if (bow_isArrow(tmp)) return i;
+	}
+	return -1;
+}
+
+void onItemUse_bow(struct world* world, struct player* player, uint8_t slot_index, struct slot* slot, uint32_t ticks) {
+	if (slot == NULL) return;
+	struct item_info* ii = getItemInfo(slot->item);
+	if (ii == NULL) return;
+	int bs = bow_findAmmo(player);
+	struct slot* ammo = NULL;
+	if (player->gamemode != 1) {
+		if (bs < 0) return;
+		//TODO: or infinity enchantment
+		ammo = getSlot(player, player->inventory, bs);
+	}
+	float velocity = (float) ticks / 20.;
+	velocity = (velocity * velocity + velocity * 2.) / 3.;
+	if (velocity > 1.) velocity = 1.;
+	if (velocity >= .1) {
+		int sp = ammo != NULL && ammo->item == ITM_SPECTRAL_ARROW;
+		struct entity* arrow = newEntity(nextEntityID++, player->entity->x, player->entity->y + 1.52, player->entity->z, sp ? ENT_SPECTRALARROW : ENT_ARROW, player->entity->yaw, player->entity->pitch);
+		//player->entity->pitch = 0.;
+		//player->entity->yaw = 0.;
+		float x = -sinf(player->entity->yaw / 360. * 2 * M_PI) * cosf(player->entity->pitch / 360. * 2 * M_PI);
+		float y = -sinf(player->entity->pitch / 360. * 2 * M_PI);
+		float z = cosf(player->entity->yaw / 360. * 2 * M_PI) * cosf(player->entity->pitch / 360. * 2 * M_PI);
+		float s = sqrtf(x * x + y * y + z * z);
+		x /= s;
+		y /= s;
+		z /= s;
+		//TODO: inaccuracy calc gaussian
+		x *= velocity * 3.;
+		y *= velocity * 3.;
+		z *= velocity * 3.;
+		arrow->motX = x;
+		arrow->motY = y;
+		arrow->motZ = z;
+		float sr = sqrtf(x * x + z * z);
+		arrow->yaw = atan2f(x, z) * 180. / M_PI;
+		arrow->pitch = atan2f(y, sr) * 180. / M_PI;
+		arrow->lyaw = arrow->yaw;
+		arrow->lpitch = arrow->pitch;
+		arrow->motX += player->entity->motX;
+		arrow->motZ += player->entity->motZ;
+		if (!player->entity->onGround) arrow->motY += player->entity->motY;
+		if (velocity == 1.) arrow->data.arrow.isCritical = 1;
+		arrow->data.arrow.damage = 2.;
+		arrow->objectData = 1 + player->entity->id;
+
+		//TODO: power enchant
+		//TODO: punch enchant
+		//TODO: flame enchant
+		if (ammo != NULL) {
+			if (--ammo->itemCount <= 0) {
+				ammo = NULL;
+			}
+			setSlot(player, player->inventory, bs, ammo, 1, 1);
+		}
+		spawnEntity(player->world, arrow);
+	}
+	printf("shoot bow %i %f\n", ticks, velocity);
+}
+
+int canUseItem_bow(struct world* world, struct player* player, uint8_t slot_index, struct slot* slot) {
+	if (slot == NULL) return 0;
+	struct item_info* ii = getItemInfo(slot->item);
+	if (ii == NULL) return 0;
+	if (player->gamemode != 1 && bow_findAmmo(player) < 0) return 0;
+	return 1;
+}
+
+void onItemUse_food(struct world* world, struct player* player, uint8_t slot_index, struct slot* slot, uint32_t ticks) {
+	if (slot == NULL) return;
+	struct item_info* ii = getItemInfo(slot->item);
+	if (ii == NULL) return;
+	printf("eat food %i\n", ticks);
 }
 
 struct collection* item_infos;
@@ -308,7 +401,7 @@ void init_items() {
 		struct json_object* tmp = getJSONValue(ur, "id");
 		if (tmp == NULL || tmp->type != JSON_NUMBER) goto cerr;
 		item id = (item) tmp->data.number;
-		if (id <= 0) goto cerr;
+		if (id < 0) goto cerr;
 		tmp = getJSONValue(ur, "toolType");
 		if (tmp == NULL || tmp->type != JSON_STRING) goto cerr;
 		if (streq_nocase(tmp->data.string, "none")) ii->toolType = NULL;
@@ -323,6 +416,9 @@ void init_items() {
 		tmp = getJSONValue(ur, "maxDamage");
 		if (tmp == NULL || tmp->type != JSON_NUMBER) goto cerr;
 		ii->maxDamage = (int16_t) tmp->data.number;
+		tmp = getJSONValue(ur, "maxUseDuration");
+		if (tmp == NULL || tmp->type != JSON_NUMBER) goto cerr;
+		ii->maxUseDuration = (uint32_t) tmp->data.number;
 		tmp = getJSONValue(ur, "toolProficiency");
 		if (tmp == NULL || tmp->type != JSON_NUMBER) goto cerr;
 		ii->toolProficiency = (float) tmp->data.number;
@@ -393,6 +489,10 @@ void init_items() {
 	getItemInfo(ITM_BUCKETWATER)->onItemInteract = &onItemInteract_bucket;
 	getItemInfo(ITM_BUCKETLAVA)->onItemInteract = &onItemInteract_bucket;
 	getItemInfo(ITM_MONSTERPLACER)->onItemInteract = &onItemInteract_spawnegg;
+	getItemInfo(ITM_BOW)->onItemUse = &onItemUse_bow;
+	getItemInfo(ITM_BOW)->canUseItem = &canUseItem_bow;
+	getItemInfo(ITM_APPLE)->onItemUse = &onItemUse_food;
+	getItemInfo(ITM_APPLEGOLD)->onItemUse = &onItemUse_food;
 }
 
 void add_item(item id, struct item_info* info) {
