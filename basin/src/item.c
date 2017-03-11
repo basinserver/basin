@@ -327,13 +327,13 @@ void onItemUse_bow(struct world* world, struct player* player, uint8_t slot_inde
 		arrow->motY = y;
 		arrow->motZ = z;
 		float sr = sqrtf(x * x + z * z);
-		arrow->yaw = atan2f(x, z) * 180. / M_PI;
+		arrow->yaw = -atan2f(x, z) * 180. / M_PI;
 		arrow->pitch = atan2f(y, sr) * 180. / M_PI;
 		arrow->lyaw = arrow->yaw;
 		arrow->lpitch = arrow->pitch;
-		arrow->motX += player->entity->motX;
-		arrow->motZ += player->entity->motZ;
-		if (!player->entity->onGround) arrow->motY += player->entity->motY;
+		//arrow->motX += player->entity->motX;
+		//arrow->motZ += player->entity->motZ;
+		//if (!player->entity->onGround) arrow->motY += player->entity->motY;
 		if (velocity == 1.) arrow->data.arrow.isCritical = 1;
 		arrow->data.arrow.damage = 2.;
 		arrow->objectData = 1 + player->entity->id;

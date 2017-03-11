@@ -187,6 +187,7 @@ int main(int argc, char* argv[]) {
 		errlog(delog, "Only one server block is supported at this time.");
 		return -1;
 	}
+	globalChunkQueue = new_queue(0, 1);
 	players = new_hashmap(1, 1);
 	defunctPlayers = new_collection(16, 1);
 	defunctChunks = new_collection(16, 1);

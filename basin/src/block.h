@@ -584,8 +584,10 @@ struct block_info* getBlockInfo(block b);
 item getItemFromName(const char* name);
 
 struct block_info {
-		void (*onBlockDestroyed)(struct world* world, block blk, int32_t x, int32_t y, int32_t z);
-		block (*onBlockPlaced)(struct player* player, struct world* world, block blk, int32_t x, int32_t y, int32_t z, uint8_t face);
+		int (*onBlockDestroyed)(struct world* world, block blk, int32_t x, int32_t y, int32_t z, block replacedBy);
+		int (*onBlockDestroyedPlayer)(struct player* player, struct world* world, block blk, int32_t x, int32_t y, int32_t z);
+		block (*onBlockPlaced)(struct world* world, block blk, int32_t x, int32_t y, int32_t z, block replaced);
+		block (*onBlockPlacedPlayer)(struct player* player, struct world* world, block blk, int32_t x, int32_t y, int32_t z, uint8_t face);
 		void (*onBlockInteract)(struct world* world, block blk, int32_t x, int32_t y, int32_t z, struct player* player, uint8_t face, float curPosX, float curPosY, float curPosZ);
 		void (*onBlockCollide)(struct world* world, block blk, int32_t x, int32_t y, int32_t z, struct entity* entity);
 		void (*onBlockUpdate)(struct world* world, block blk, int32_t x, int32_t y, int32_t z);
@@ -628,9 +630,9 @@ void onBlockInteract_furnace(struct world* world, block blk, int32_t x, int32_t 
 
 void update_furnace(struct world* world, struct tile_entity* te);
 
-void onBlockDestroyed_chest(struct world* world, block blk, int32_t x, int32_t y, int32_t z);
+int onBlockDestroyed_chest(struct world* world, block blk, int32_t x, int32_t y, int32_t z, block replacedBy);
 
-void onBlockDestroyed_furnace(struct world* world, block blk, int32_t x, int32_t y, int32_t z);
+int onBlockDestroyed_furnace(struct world* world, block blk, int32_t x, int32_t y, int32_t z, block replacedBy);
 
 int canBePlaced_reeds(struct world* world, block blk, int32_t x, int32_t y, int32_t z);
 

@@ -44,7 +44,7 @@ void closeConn(struct work_param* param, struct conn* conn) {
 		errlog(param->logsess, "Failed to delete connection properly! This is bad!");
 	}
 	if (conn->player != NULL) {
-		//broadcastf("yellow", "%s has left the server!", conn->player->name);
+		broadcastf("yellow", "%s has left the server!", conn->player->name);
 		conn->player->defunct = 1;
 		conn->player->conn = NULL;
 	}
@@ -197,7 +197,7 @@ int work_joinServer(struct conn* conn, char* username, char* uuids) {
 	rep.data.play_client.timeupdate.world_age = overworld->age;
 	if (writePacket(conn, &rep) < 0) return 1;
 	add_collection(playersToLoad, player);
-	//broadcastf("yellow", "%s has joined the server!", player->name);
+	broadcastf("yellow", "%s has joined the server!", player->name);
 	const char* mip = NULL;
 	char tip[48];
 	if (conn->addr.sin6_family == AF_INET) {

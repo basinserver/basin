@@ -25,7 +25,7 @@ all: basin
 basin: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: GCC C Linker'
-	$(CC) $(CFLAGS) -o "basin" $(OBJS) $(USER_OBJS) $(LIBS)
+	$(CC) $(CFLAGS) -rdynamic -o "basin" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 

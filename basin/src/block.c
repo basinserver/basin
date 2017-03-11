@@ -34,7 +34,7 @@ void onBlockInteract_workbench(struct world* world, block blk, int32_t x, int32_
 	player_openInventory(player, wb);
 }
 
-block onBlockPlaced_chest(struct player* player, struct world* world, block blk, int32_t x, int32_t y, int32_t z, uint8_t face) {
+block onBlockPlaced_chest(struct world* world, block blk, int32_t x, int32_t y, int32_t z, block replaced) {
 	int16_t meta = blk & 0x0f;
 	if (meta < 2 || meta > 5) meta = 2;
 	struct tile_entity* te = newTileEntity("minecraft:chest", x, y, z);
@@ -47,7 +47,8 @@ block onBlockPlaced_chest(struct player* player, struct world* world, block blk,
 	return (blk & ~0x0f) | meta;
 }
 
-block onBlockPlaced_furnace(struct player* player, struct world* world, block blk, int32_t x, int32_t y, int32_t z, uint8_t face) {
+block onBlockPlaced_furnace(struct world* world, block blk, int32_t x, int32_t y, int32_t z, block replaced) {
+	if ((replaced >> 4) == (BLK_FURNACE_1 >> 4) || (replaced >> 4) == (BLK_FURNACE >> 4)) return blk;
 	int16_t meta = blk & 0x0f;
 	if (meta < 2 || meta > 5) meta = 2;
 	struct tile_entity* te = newTileEntity("minecraft:furnace", x, y, z);
@@ -60,20 +61,21 @@ block onBlockPlaced_furnace(struct player* player, struct world* world, block bl
 	return (blk & ~0x0f) | meta;
 }
 
-void onBlockDestroyed_chest(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
+int onBlockDestroyed_chest(struct world* world, block blk, int32_t x, int32_t y, int32_t z, block replacedBy) {
 	struct tile_entity* te = getTileEntityWorld(world, x, y, z);
-	if (te == NULL) return;
+	if (te == NULL) return 0;
 	for (size_t i = 0; i < te->data.chest.inv->slot_count; i++) {
 		struct slot* sl = getSlot(NULL, te->data.chest.inv, i);
 		dropBlockDrop(world, sl, x, y, z);
 	}
 	setTileEntityWorld(world, x, y, z, NULL);
+	return 0;
 }
 
 void onBlockInteract_chest(struct world* world, block blk, int32_t x, int32_t y, int32_t z, struct player* player, uint8_t face, float curPosX, float curPosY, float curPosZ) {
 	struct tile_entity* te = getTileEntityWorld(world, x, y, z);
 	if (te == NULL || !streq_nocase(te->id, "minecraft:chest")) {
-		onBlockPlaced_chest(player, world, blk, x, y, z, YP);
+		onBlockPlaced_chest(world, blk, x, y, z, 0);
 		te = getTileEntityWorld(world, x, y, z);
 	}
 	//TODO: impl locks, loot
@@ -91,20 +93,22 @@ void onBlockInteract_chest(struct world* world, block blk, int32_t x, int32_t y,
 	END_BROADCAST(player->world->players)
 }
 
-void onBlockDestroyed_furnace(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
+int onBlockDestroyed_furnace(struct world* world, block blk, int32_t x, int32_t y, int32_t z, block replacedBy) {
+	if ((replacedBy >> 4) == (BLK_FURNACE_1 >> 4) || (replacedBy >> 4) == (BLK_FURNACE >> 4)) return 0;
 	struct tile_entity* te = getTileEntityWorld(world, x, y, z);
-	if (te == NULL) return;
+	if (te == NULL) return 0;
 	for (size_t i = 0; i < te->data.furnace.inv->slot_count; i++) {
 		struct slot* sl = getSlot(NULL, te->data.furnace.inv, i);
 		dropBlockDrop(world, sl, x, y, z);
 	}
 	setTileEntityWorld(world, x, y, z, NULL);
+	return 0;
 }
 
 void onBlockInteract_furnace(struct world* world, block blk, int32_t x, int32_t y, int32_t z, struct player* player, uint8_t face, float curPosX, float curPosY, float curPosZ) {
 	struct tile_entity* te = getTileEntityWorld(world, x, y, z);
 	if (te == NULL || !streq_nocase(te->id, "minecraft:furnace")) {
-		onBlockPlaced_furnace(player, world, blk, x, y, z, YP);
+		onBlockPlaced_furnace(world, blk, x, y, z, 0);
 		te = getTileEntityWorld(world, x, y, z);
 	}
 	//TODO: impl locks, loot

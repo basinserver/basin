@@ -24,6 +24,7 @@
 #include <errno.h>
 #include "ai.h"
 #include "game.h"
+#include "plugin.h"
 
 struct entity_info* getEntityInfo(uint32_t id) {
 	if (id < 0 || id > entity_infos->size) return NULL;
@@ -183,6 +184,7 @@ void jump(struct entity* entity) {
 
 struct entity* newEntity(int32_t id, float x, float y, float z, uint32_t type, float yaw, float pitch) {
 	struct entity* e = malloc(sizeof(struct entity));
+	struct entity_info* ei = getEntityInfo(type);
 	e->id = id;
 	e->age = 0;
 	e->x = x;
@@ -215,7 +217,7 @@ struct entity* newEntity(int32_t id, float x, float y, float z, uint32_t type, f
 	e->ticksExisted = 0;
 	e->subtype = 0;
 	e->fallDistance = 0.;
-	e->maxHealth = 20;
+	e->maxHealth = ei == NULL ? 20. : ei->maxHealth;
 	e->health = e->maxHealth;
 	e->world = NULL;
 	e->inWater = 0;
@@ -344,7 +346,7 @@ int entity_inFluid(struct entity* entity, uint16_t blk, float ydown, int meta_ch
 }
 
 void outputMetaByte(struct entity* ent, unsigned char** loc, size_t* size) {
-	*loc = xrealloc(*loc, (*size) + 3);
+	*loc = xrealloc(*loc, (*size) + 10);
 	(*loc)[(*size)++] = 0;
 	(*loc)[(*size)++] = 0;
 	(*loc)[*size] = ent->sneaking ? 0x02 : 0;
@@ -726,7 +728,16 @@ void applyVelocity(struct entity* entity, double x, double y, double z) {
 	pkt->data.play_client.entityvelocity.velocity_y = (int16_t)(entity->motY * 8000.);
 	pkt->data.play_client.entityvelocity.velocity_z = (int16_t)(entity->motZ * 8000.);
 	add_queue(bc_player->outgoingPacket, pkt);
-	END_BROADCAST(entity->world->players)
+	END_BROADCAST(entity->loadingPlayers)
+	if (entity->type == ENT_PLAYER) {
+		struct packet* pkt = xmalloc(sizeof(struct packet));
+		pkt->id = PKT_PLAY_CLIENT_ENTITYVELOCITY;
+		pkt->data.play_client.entityvelocity.entity_id = entity->id;
+		pkt->data.play_client.entityvelocity.velocity_x = (int16_t)(entity->motX * 8000.);
+		pkt->data.play_client.entityvelocity.velocity_y = (int16_t)(entity->motY * 8000.);
+		pkt->data.play_client.entityvelocity.velocity_z = (int16_t)(entity->motZ * 8000.);
+		add_queue(entity->data.player.player->outgoingPacket, pkt);
+	}
 }
 
 void applyKnockback(struct entity* entity, float yaw, float strength) {
@@ -774,6 +785,10 @@ int damageEntityWithItem(struct entity* attacked, struct entity* attacker, uint8
 	if (attacker->y > attacked->y && (attacker->ly - attacker->y) > 0 && !attacker->onGround && !attacker->sprinting) { // todo water/ladder
 		damage *= 1.5;
 	}
+	BEGIN_HASHMAP_ITERATION (plugins)
+	struct plugin* plugin = value;
+	if (plugin->onEntityAttacked != NULL) damage = (*plugin->onEntityAttacked)(attacker->world, attacker, slot_index, item, attacked, damage);
+	END_HASHMAP_ITERATION (plugins)
 	if (damage == 0.) return 0;
 	damageEntity(attacked, damage, 1);
 //TODO: enchantment
@@ -791,7 +806,7 @@ int damageEntity(struct entity* attacked, float damage, int armorable) {
 	if (attacked->type == ENT_PLAYER) {
 		struct player* player = attacked->data.player.player;
 		if (player->gamemode == 1) return 0;
-		for (int i = 5; i <= 8; i++) {
+		if (armorable) for (int i = 5; i <= 8; i++) {
 			struct slot* sl = getSlot(player, player->inventory, i);
 			if (sl != NULL) {
 				struct item_info* ii = getItemInfo(sl->item);
@@ -801,14 +816,16 @@ int damageEntity(struct entity* attacked, float damage, int armorable) {
 			}
 		}
 	}
-	float f = armor - damage / 2.;
-	if (f < armor * .2) f = armor * .2;
-	if (f > 20.) f = 20.;
-	damage *= 1. - (f) / 25.;
+	if (armorable) {
+		float f = armor - damage / 2.;
+		if (f < armor * .2) f = armor * .2;
+		if (f > 20.) f = 20.;
+		damage *= 1. - (f) / 25.;
+	}
 	if (attacked->type == ENT_PLAYER) {
 		struct player* player = attacked->data.player.player;
 		if (player->gamemode == 1) return 0;
-		for (int i = 5; i <= 8; i++) {
+		if (armorable) for (int i = 5; i <= 8; i++) {
 			struct slot* sl = getSlot(player, player->inventory, i);
 			if (sl != NULL) {
 				struct item_info* ii = getItemInfo(sl->item);
@@ -1049,13 +1066,13 @@ int tick_itemstack(struct world* world, struct entity* entity) {
 		//printf("%f, %f, %f vs %f, %f, %f\n", entity->x, entity->y, entity->z, oe->x, oe->y, oe->z);
 		if (boundingbox_intersects(&oebb, &cebb)) {
 			int os = entity->data.itemstack.slot->itemCount;
-			pthread_rwlock_unlock(&world->entities->data_mutex);
-			pthread_rwlock_unlock(&world->entities->data_mutex);
+			//pthread_rwlock_unlock(&world->entities->data_mutex);
+			//pthread_rwlock_unlock(&world->entities->data_mutex);
 			pthread_mutex_lock(&oe->data.player.player->inventory->mut);
 			int r = addInventoryItem_PI(oe->data.player.player, oe->data.player.player->inventory, entity->data.itemstack.slot, 1);
 			pthread_mutex_unlock(&oe->data.player.player->inventory->mut);
-			pthread_rwlock_rdlock(&world->entities->data_mutex);
-			pthread_rwlock_rdlock(&world->entities->data_mutex);
+			//pthread_rwlock_rdlock(&world->entities->data_mutex);
+			//pthread_rwlock_rdlock(&world->entities->data_mutex);
 			if (r <= 0) {
 				BEGIN_BROADCAST_DIST(entity, 32.)
 				struct packet* pkt = xmalloc(sizeof(struct packet));
@@ -1079,6 +1096,7 @@ int tick_itemstack(struct world* world, struct entity* entity) {
 				writeMetadata(entity, &pkt->data.play_client.entitymetadata.metadata.metadata, &pkt->data.play_client.entitymetadata.metadata.metadata_size);
 				add_queue(bc_player->outgoingPacket, pkt);
 				END_BROADCAST(entity->world->players)
+				BREAK_HASHMAP_ITERATION(entity->world->entities)
 			}
 			break;
 		}

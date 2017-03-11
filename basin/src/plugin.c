@@ -12,6 +12,7 @@
 #include <dlfcn.h>
 #include "util.h"
 #include "xstring.h"
+#include <errno.h>
 
 uint32_t next_plugin_id;
 
@@ -26,6 +27,11 @@ void init_plugins() {
 			snprintf(lp, PATH_MAX, "plugins/%s", de->d_name);
 			struct plugin* pl = xcalloc(sizeof(struct plugin));
 			pl->hnd = dlopen(lp, RTLD_GLOBAL | RTLD_NOW);
+			if (pl->hnd == NULL) {
+				printf("Error loading plugin! %s\n", dlerror());
+				free(pl);
+				continue;
+			}
 			pl->filename = xstrdup(de->d_name, 0);
 			void (*init)(struct plugin* plugin) = dlsym(pl->hnd, "init_plugin");
 			(*init)(pl);

@@ -22,6 +22,7 @@
 #include "command.h"
 #include "smelting.h"
 #include "crafting.h"
+#include "plugin.h"
 
 struct player* newPlayer(struct entity* entity, char* name, struct uuid uuid, struct conn* conn, uint8_t gamemode) {
 	struct player* player = xmalloc(sizeof(struct player));
@@ -47,7 +48,6 @@ struct player* newPlayer(struct entity* entity, char* name, struct uuid uuid, st
 	player->fire = 0;
 	//TODO: enderitems
 	player->food = 20;
-	player->foodexhaustion = 0.;
 	player->foodTick = 0;
 	player->nextKeepAlive = 0;
 	player->inHand = NULL;
@@ -77,6 +77,7 @@ struct player* newPlayer(struct entity* entity, char* name, struct uuid uuid, st
 	player->itemUseHand = 0;
 	player->chunkRequests = new_queue(0, 1);
 	player->foodExhaustion = 0.;
+	player->lastTeleportID = 0;
 	return player;
 }
 
@@ -87,7 +88,7 @@ void sendEntityMove(struct player* player, struct entity* ent) {
 	//printf("mp = %f, md = %f\n", mp, md);
 	if ((md > .001 || mp > .01 || ent->type == ENT_PLAYER)) {
 		struct packet* pkt = xmalloc(sizeof(struct packet));
-		int ft = tick_counter % 200 == 0;
+		int ft = tick_counter % 200 == 0 || (ent->type == ENT_PLAYER && ent->data.player.player->lastTeleportID != 0);
 		if (!ft && md <= .001 && mp <= .01) {
 			pkt->id = PKT_PLAY_CLIENT_ENTITY;
 			pkt->data.play_client.entity.entity_id = ent->id;
@@ -172,6 +173,7 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 			xfree(rs);
 		}
 	} else if (inp->id == PKT_PLAY_SERVER_PLAYER) {
+		if (player->lastTeleportID != 0) goto cont;
 		struct pkt_play_server_player pkt = inp->data.play_server.player;
 		if (ac_tick(player, pkt.on_ground)) goto cont;
 		player->entity->lx = player->entity->x;
@@ -184,6 +186,7 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 		sendEntityMove(bc_player, player->entity);
 		END_BROADCAST(player->entity->loadingPlayers)
 	} else if (inp->id == PKT_PLAY_SERVER_PLAYERPOSITION) {
+		if (player->lastTeleportID != 0) goto cont;
 		struct pkt_play_server_playerposition pkt = inp->data.play_server.playerposition;
 		if (ac_tick(player, pkt.on_ground)) goto cont;
 		if (ac_tickpos(player, pkt.x, pkt.feet_y, pkt.z)) goto cont;
@@ -218,6 +221,7 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 			END_BROADCAST(player->entity->loadingPlayers)
 		}
 	} else if (inp->id == PKT_PLAY_SERVER_PLAYERLOOK) {
+		if (player->lastTeleportID != 0) goto cont;
 		struct pkt_play_server_playerlook pkt = inp->data.play_server.playerlook;
 		if (ac_tick(player, pkt.on_ground)) goto cont;
 		if (ac_ticklook(player, pkt.yaw, pkt.pitch)) goto cont;
@@ -234,6 +238,7 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 		sendEntityMove(bc_player, player->entity);
 		END_BROADCAST(player->entity->loadingPlayers)
 	} else if (inp->id == PKT_PLAY_SERVER_PLAYERPOSITIONANDLOOK) {
+		if (player->lastTeleportID != 0) goto cont;
 		struct pkt_play_server_playerpositionandlook pkt = inp->data.play_server.playerpositionandlook;
 		if (ac_tick(player, pkt.on_ground)) goto cont;
 		if (ac_tickpos(player, pkt.x, pkt.feet_y, pkt.z)) goto cont;
@@ -321,9 +326,12 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 					}
 				}
 				if (!nb) {
-					setBlockWorld(player->world, 0, inp->data.play_server.playerdigging.location.x, inp->data.play_server.playerdigging.location.y, inp->data.play_server.playerdigging.location.z);
-					player->foodExhaustion += 0.005;
-					if (player->gamemode != 1) dropBlockDrops(player->world, blk, player, inp->data.play_server.playerdigging.location.x, inp->data.play_server.playerdigging.location.y, inp->data.play_server.playerdigging.location.z);
+					if (setBlockWorld(player->world, 0, inp->data.play_server.playerdigging.location.x, inp->data.play_server.playerdigging.location.y, inp->data.play_server.playerdigging.location.z)) {
+						setBlockWorld(player->world, blk, inp->data.play_server.playerdigging.location.x, inp->data.play_server.playerdigging.location.y, inp->data.play_server.playerdigging.location.z);
+					} else {
+						player->foodExhaustion += 0.005;
+						if (player->gamemode != 1) dropBlockDrops(player->world, blk, player, inp->data.play_server.playerdigging.location.x, inp->data.play_server.playerdigging.location.y, inp->data.play_server.playerdigging.location.z);
+					}
 				}
 				player->digging = -1.;
 				memset(&player->digging_position, 0, sizeof(struct encpos));
@@ -347,9 +355,12 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 						}
 					}
 					if (!nb) {
-						setBlockWorld(player->world, 0, player->digging_position.x, player->digging_position.y, player->digging_position.z);
-						player->foodExhaustion += 0.005;
-						if (player->gamemode != 1) dropBlockDrops(player->world, blk, player, player->digging_position.x, player->digging_position.y, player->digging_position.z);
+						if (setBlockWorld(player->world, 0, player->digging_position.x, player->digging_position.y, player->digging_position.z)) {
+							setBlockWorld(player->world, blk, player->digging_position.x, player->digging_position.y, player->digging_position.z);
+						} else {
+							player->foodExhaustion += 0.005;
+							if (player->gamemode != 1) dropBlockDrops(player->world, blk, player, player->digging_position.x, player->digging_position.y, player->digging_position.z);
+						}
 					}
 				} else {
 					setBlockWorld(player->world, blk, player->digging_position.x, player->digging_position.y, player->digging_position.z);
@@ -516,13 +527,19 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 				//}
 				//}
 				if (!bad) {
-					if (getBlockInfo(tbb)->onBlockPlaced != NULL) tbb = (*getBlockInfo(tbb)->onBlockPlaced)(player, player->world, tbb, x, y, z, face);
+					if (tbi->onBlockPlacedPlayer != NULL) tbb = (*tbi->onBlockPlacedPlayer)(player, player->world, tbb, x, y, z, face);
+					BEGIN_HASHMAP_ITERATION (plugins)
+					struct plugin* plugin = value;
+					if (plugin->onBlockPlacedPlayer != NULL) tbb = (*plugin->onBlockPlacedPlayer)(player, player->world, tbb, x, y, z, face);
+					END_HASHMAP_ITERATION (plugins)
 					if (tbi->canBePlaced != NULL && !(*tbi->canBePlaced)(player->world, tbb, x, y, z)) {
 						setBlockWorld(player->world, b2, x, y, z);
 						goto pbp_cont;
 					}
-					setBlockWorld(player->world, tbb, x, y, z);
-					if (player->gamemode != 1) {
+					if (setBlockWorld(player->world, tbb, x, y, z)) {
+						setBlockWorld(player->world, b2, x, y, z);
+						setSlot(player, player->inventory, 36 + player->currentItem, ci, 1, 1);
+					} else if (player->gamemode != 1) {
 						if (--ci->itemCount <= 0) {
 							ci = NULL;
 						}
@@ -530,9 +547,11 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 					}
 				} else {
 					setBlockWorld(player->world, b2, x, y, z);
+					setSlot(player, player->inventory, 36 + player->currentItem, ci, 1, 1);
 				}
 			} else {
 				setBlockWorld(player->world, b2, x, y, z);
+				setSlot(player, player->inventory, 36 + player->currentItem, ci, 1, 1);
 			}
 		}
 		pbp_cont: ;
@@ -855,7 +874,7 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 						}
 					} else if (inv->type == INVTYPE_FURNACE) {
 						if (player->inHand->itemCount < mss) {
-							for (size_t i = 0; i < 63; i++) {
+							for (size_t i = 3; i < 39; i++) {
 								struct slot* invi = getSlot(player, inv, i);
 								if (itemsStackable(player->inHand, invi)) {
 									uint8_t oc = player->inHand->itemCount;
@@ -1007,6 +1026,7 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 			spawnEntity(player->world, player->entity);
 			player->entity->health = 20.;
 			player->food = 20;
+			player->entity->fallDistance = 0.;
 			player->saturation = 0.; // TODO
 			struct packet* pkt = xmalloc(sizeof(struct packet));
 			pkt->id = PKT_PLAY_CLIENT_UPDATEHEALTH;
@@ -1023,6 +1043,11 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 			add_queue(player->outgoingPacket, pkt);
 			teleportPlayer(player, (double) player->world->spawnpos.x + .5, (double) player->world->spawnpos.y, (double) player->world->spawnpos.z + .5); // TODO: make overworld
 			setPlayerGamemode(player, -1);
+			BEGIN_HASHMAP_ITERATION (plugins)
+			struct plugin* plugin = value;
+			if (plugin->onPlayerSpawn != NULL) (*plugin->onPlayerSpawn)(player->world, player);
+			END_HASHMAP_ITERATION (plugins)
+			player->entity->invincibilityTicks = 5;
 		}
 	} else if (inp->id == PKT_PLAY_SERVER_USEITEM) {
 		int32_t hand = inp->data.play_server.useitem.hand;
@@ -1042,6 +1067,8 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 			}
 		}
 		pthread_mutex_unlock(&player->inventory->mut);
+	} else if (inp->id == PKT_PLAY_SERVER_TELEPORTCONFIRM) {
+		if (inp->data.play_server.teleportconfirm.teleport_id == player->lastTeleportID) player->lastTeleportID = 0;
 	}
 	cont: ;
 }
@@ -1107,16 +1134,20 @@ void tick_player(struct world* world, struct player* player) {
 			}
 			player_hungerUpdate(player);
 		}
-		if (player->saturation > 0. && player->food >= 20) {
+		if (player->saturation > 0. && player->food >= 20 && difficulty == 0) {
 			if (++player->foodTimer >= 10) {
-				healEntity(player->entity, player->saturation < 6. ? player->saturation / 6. : 1.);
-				player->foodExhaustion += player->saturation < 6. ? player->saturation : 6.;
+				if (player->entity->health < player->entity->maxHealth) {
+					healEntity(player->entity, player->saturation < 6. ? player->saturation / 6. : 1.);
+					player->foodExhaustion += (player->saturation < 6. ? player->saturation : 6.) / 6.;
+				}
 				player->foodTimer = 0;
 			}
 		} else if (player->food >= 18) {
 			if (++player->foodTimer >= 80) {
-				healEntity(player->entity, 1.);
-				player->foodExhaustion += 6.;
+				if (player->entity->health < player->entity->maxHealth) {
+					healEntity(player->entity, 1.);
+					player->foodExhaustion += 1.;
+				}
 				player->foodTimer = 0;
 			}
 		} else if (player->food <= 0) {
@@ -1131,9 +1162,10 @@ void tick_player(struct world* world, struct player* player) {
 	int32_t pcz = ((int32_t) player->entity->z >> 4);
 	int32_t lpcx = ((int32_t) player->entity->lx >> 4);
 	int32_t lpcz = ((int32_t) player->entity->lz >> 4);
-	if (player->loadedChunks->entry_count == 0 || player->triggerRechunk) {
+	if (player->loadedChunks->entry_count == 0 || player->triggerRechunk) { // || tick_counter % 200 == 0
 		beginProfilerSection("chunkLoading_tick");
 		pthread_mutex_lock(&player->chunkRequests->data_mutex);
+		int we0 = player->loadedChunks->entry_count == 0 || player->triggerRechunk;
 		if (player->triggerRechunk) {
 			BEGIN_HASHMAP_ITERATION(player->loadedChunks)
 			struct chunk* ch = (struct chunk*) value;
@@ -1141,6 +1173,7 @@ void tick_player(struct world* world, struct player* player) {
 				struct chunk_req* cr = xmalloc(sizeof(struct chunk_req));
 				cr->cx = ch->x;
 				cr->cz = ch->z;
+				cr->world = world;
 				cr->load = 0;
 				add_queue(player->chunkRequests, cr);
 			}
@@ -1150,10 +1183,11 @@ void tick_player(struct world* world, struct player* player) {
 			int32_t x = pcx - r;
 			int32_t z = pcz - r;
 			for (int i = 0; i < ((r == 0) ? 1 : (r * 8)); i++) {
-				if (!player->triggerRechunk || !contains_hashmap(player->loadedChunks, getChunkKey2(x, z))) {
+				if (we0 || !contains_hashmap(player->loadedChunks, getChunkKey2(x, z))) {
 					struct chunk_req* cr = xmalloc(sizeof(struct chunk_req));
 					cr->cx = x;
 					cr->cz = z;
+					cr->world = world;
 					cr->load = 1;
 					add_queue(player->chunkRequests, cr);
 				}
@@ -1183,6 +1217,7 @@ void tick_player(struct world* world, struct player* player) {
 				cr = xmalloc(sizeof(struct chunk_req));
 				cr->cx = lpcx < pcx ? (fx + CHUNK_VIEW_DISTANCE) : (fx - CHUNK_VIEW_DISTANCE);
 				cr->cz = fz;
+				cr->world = world;
 				cr->load = 1;
 				add_queue(player->chunkRequests, cr);
 				endProfilerSection("chunkLoading_live");
@@ -1202,6 +1237,7 @@ void tick_player(struct world* world, struct player* player) {
 				cr->cx = fx;
 				cr->cz = lpcz < pcz ? (fz + CHUNK_VIEW_DISTANCE) : (fz - CHUNK_VIEW_DISTANCE);
 				cr->load = 1;
+				cr->world = world;
 				add_queue(player->chunkRequests, cr);
 				endProfilerSection("chunkLoading_live");
 			}
@@ -1307,6 +1343,10 @@ void tick_player(struct world* world, struct player* player) {
 	//}
 	//}
 	endProfilerSection("player_transmission");
+	BEGIN_HASHMAP_ITERATION (plugins)
+	struct plugin* plugin = value;
+	if (plugin->tick_player != NULL) (*plugin->tick_player)(player->world, player);
+	END_HASHMAP_ITERATION (plugins)
 	//printf("%i\n", player->loadedChunks->size);
 }
 
@@ -1405,8 +1445,36 @@ void teleportPlayer(struct player* player, double x, double y, double z) {
 	pkt->data.play_client.playerpositionandlook.yaw = player->entity->yaw;
 	pkt->data.play_client.playerpositionandlook.pitch = player->entity->pitch;
 	pkt->data.play_client.playerpositionandlook.flags = 0x0;
-	pkt->data.play_client.playerpositionandlook.teleport_id = 0;
+	pkt->data.play_client.playerpositionandlook.teleport_id = tick_counter;
+	player->lastTeleportID = pkt->data.play_client.playerpositionandlook.teleport_id;
 	add_queue(player->outgoingPacket, pkt);
+	/*BEGIN_HASHMAP_ITERATION(player->entity->loadingPlayers)
+	 struct player* bp = value;
+	 struct packet* pkt = xmalloc(sizeof(struct packet));
+	 pkt->id = PKT_PLAY_CLIENT_DESTROYENTITIES;
+	 pkt->data.play_client.destroyentities.count = 1;
+	 pkt->data.play_client.destroyentities.entity_ids = xmalloc(sizeof(int32_t));
+	 pkt->data.play_client.destroyentities.entity_ids[0] = player->entity->id;
+	 add_queue(bp->outgoingPacket, pkt);
+	 put_hashmap(bp->loadedEntities, player->entity->id, NULL);
+	 pthread_rwlock_unlock(&player->entity->loadingPlayers->data_mutex);
+	 put_hashmap(player->entity->loadingPlayers, bp->entity->id, NULL);
+	 pthread_rwlock_rdlock(&player->entity->loadingPlayers->data_mutex);
+	 END_HASHMAP_ITERATION(player->entity->loadingPlayers)
+	 BEGIN_HASHMAP_ITERATION(player->loadedEntities)
+	 struct entity* be = value;
+	 if (be->type != ENT_PLAYER) continue;
+	 struct packet* pkt = xmalloc(sizeof(struct packet));
+	 pkt->id = PKT_PLAY_CLIENT_DESTROYENTITIES;
+	 pkt->data.play_client.destroyentities.count = 1;
+	 pkt->data.play_client.destroyentities.entity_ids = xmalloc(sizeof(int32_t));
+	 pkt->data.play_client.destroyentities.entity_ids[0] = be->id;
+	 add_queue(player->outgoingPacket, pkt);
+	 pthread_rwlock_unlock(&player->loadedEntities->data_mutex);
+	 put_hashmap(player->loadedEntities, be->id, NULL);
+	 put_hashmap(be->loadingPlayers, player->entity->id, NULL);
+	 pthread_rwlock_rdlock(&player->loadedEntities->data_mutex);
+	 END_HASHMAP_ITERATION(player->loadedEntities)*/
 //	if (player->tps > 0) player->tps--;
 }
 

@@ -38,7 +38,6 @@ struct player {
 		uint8_t itemUseHand;
 		//TODO: enderitems inv
 		int32_t food;
-		float foodexhaustion;
 		int32_t foodTick;
 		int32_t nextKeepAlive;
 		struct encpos digging_position;
@@ -64,6 +63,7 @@ struct player {
 		struct subworld* subworld;
 		struct queue* chunkRequests;
 		float foodExhaustion;
+		size_t lastTeleportID;
 };
 
 void player_hungerUpdate(struct player* player);

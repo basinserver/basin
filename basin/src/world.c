@@ -38,6 +38,7 @@
 #include <errno.h>
 #include "server.h"
 #include "ai.h"
+#include "plugin.h"
 
 int boundingbox_intersects(struct boundingbox* bb1, struct boundingbox* bb2) {
 	return (((bb1->minX >= bb2->minX && bb1->minX <= bb2->maxX) || (bb1->maxX >= bb2->minX && bb1->maxX <= bb2->maxX) || (bb2->minX >= bb1->minX && bb2->minX <= bb1->maxX) || (bb2->maxX >= bb1->minX && bb2->maxX <= bb1->maxX)) && ((bb1->minY >= bb2->minY && bb1->minY <= bb2->maxY) || (bb1->maxY >= bb2->minY && bb1->maxY <= bb2->maxY) || (bb2->minY >= bb1->minY && bb2->minY <= bb1->maxY) || (bb2->maxY >= bb1->minY && bb2->maxY <= bb1->maxY)) && ((bb1->minZ >= bb2->minZ && bb1->minZ <= bb2->maxZ) || (bb1->maxZ >= bb2->minZ && bb1->maxZ <= bb2->maxZ) || (bb2->minZ >= bb1->minZ && bb2->minZ <= bb1->maxZ) || (bb2->maxZ >= bb1->minZ && bb2->maxZ <= bb1->maxZ)));
@@ -340,13 +341,35 @@ void chunkloadthr(size_t b) {
 		pthread_mutex_lock (&chunk_wake_mut);
 		pthread_cond_wait(&chunk_wake, &chunk_wake_mut);
 		pthread_mutex_unlock(&chunk_wake_mut);
-		if (players->entry_count == 0) goto nm;
+		if (players->entry_count == 0 && globalChunkQueue->size == 0) goto nm;
+		if (globalChunkQueue->size > 0) {
+			struct chunk_req* cr = NULL;
+			while ((cr = pop_nowait_queue(globalChunkQueue)) != NULL) {
+				if (cr->load) {
+					beginProfilerSection("chunkLoading_getChunk");
+					struct chunk* ch = getChunkWithLoad(cr->world, cr->cx, cr->cz, b);
+					if (ch != NULL) ch->playersLoaded++;
+					endProfilerSection("chunkLoading_getChunk");
+				} else {
+					struct chunk* ch = getChunk(cr->world, cr->cx, cr->cz);
+					if (ch != NULL && !ch->defunct) {
+						if (--ch->playersLoaded <= 0) {
+							unloadChunk(cr->world, ch);
+						}
+					}
+				}
+			}
+		}
 		BEGIN_HASHMAP_ITERATION (players)
 		struct player* player = value;
-		if (player->defunct || player->chunksSent >= 3 || player->chunkRequests->size == 0 || (player->conn != NULL && player->conn->writeBuffer_size > 1024 * 1024 * 128)) continue;
+		if (player->defunct || player->chunksSent >= 5 || player->chunkRequests->size == 0 || (player->conn != NULL && player->conn->writeBuffer_size > 1024 * 1024 * 128)) continue;
 		struct chunk_req* chr = pop_nowait_queue(player->chunkRequests);
 		if (chr == NULL) continue;
 		if (chr->load) {
+			if (chr->world != player->world) {
+				xfree(chr);
+				continue;
+			}
 			player->chunksSent++;
 			if (contains_hashmap(player->loadedChunks, getChunkKey2(chr->cx, chr->cz))) {
 				xfree(chr);
@@ -389,20 +412,27 @@ void chunkloadthr(size_t b) {
 			}
 		} else {
 			//beginProfilerSection("unchunkLoading");
-			struct packet* pkt = xmalloc(sizeof(struct packet));
-			pkt->id = PKT_PLAY_CLIENT_UNLOADCHUNK;
-			pkt->data.play_client.unloadchunk.chunk_x = chr->cx;
-			pkt->data.play_client.unloadchunk.chunk_z = chr->cz;
-			pkt->data.play_client.unloadchunk.ch = NULL;
 			struct chunk* ch = getChunk(player->world, chr->cx, chr->cz);
-			put_hashmap(player->loadedChunks, getChunkKey2(chr->cx, chr->cz), NULL);
+			uint64_t ck = getChunkKey2(chr->cx, chr->cz);
+			if (get_hashmap(player->loadedChunks, ck) == NULL) {
+				xfree(chr);
+				continue;
+			}
+			put_hashmap(player->loadedChunks, ck, NULL);
 			if (ch != NULL && !ch->defunct) {
 				if (--ch->playersLoaded <= 0) {
 					unloadChunk(player->world, ch);
 				}
 			}
-			add_queue(player->outgoingPacket, pkt);
-			flush_outgoing(player);
+			if (chr->world == player->world) {
+				struct packet* pkt = xmalloc(sizeof(struct packet));
+				pkt->id = PKT_PLAY_CLIENT_UNLOADCHUNK;
+				pkt->data.play_client.unloadchunk.chunk_x = chr->cx;
+				pkt->data.play_client.unloadchunk.chunk_z = chr->cz;
+				pkt->data.play_client.unloadchunk.ch = NULL;
+				add_queue(player->outgoingPacket, pkt);
+				flush_outgoing(player);
+			}
 			//endProfilerSection("unchunkLoading");
 		}
 		xfree(chr);
@@ -421,14 +451,14 @@ int isChunkLoaded(struct world* world, int32_t x, int32_t z) {
 
 void unloadChunk(struct world* world, struct chunk* chunk) {
 //TODO: save chunk
-//pthread_rwlock_wrlock(&world->chl);
+	pthread_rwlock_wrlock(&world->chunks->data_mutex);
 	if (chunk->xp != NULL) chunk->xp->xn = NULL;
 	if (chunk->xn != NULL) chunk->xn->xp = NULL;
 	if (chunk->zp != NULL) chunk->zp->zn = NULL;
 	if (chunk->zn != NULL) chunk->zn->zp = NULL;
+	pthread_rwlock_unlock(&world->chunks->data_mutex);
 	put_hashmap(world->chunks, getChunkKey(chunk), NULL);
 	add_collection(defunctChunks, chunk);
-//pthread_rwlock_unlock(&world->chl);
 }
 
 int getBiome(struct world* world, int32_t x, int32_t z) {
@@ -778,12 +808,7 @@ int world_rayTrace(struct world* world, double x, double y, double z, double ex,
 	return returnLast ? cface : -1;
 }
 
-void setTileEntityChunk(struct chunk* chunk, struct tile_entity* te) { // TODO: optimize
-	if (te == NULL) return;
-	int32_t x = te->x;
-	uint8_t y = te->y;
-	int32_t z = te->z;
-	if (y > 255 || y < 0) return;
+void setTileEntityChunk(struct chunk* chunk, struct tile_entity* te, int32_t x, uint8_t y, int32_t z) {
 	for (size_t i = 0; i < chunk->tileEntities->size; i++) {
 		struct tile_entity* te2 = (struct tile_entity*) chunk->tileEntities->data[i];
 		if (te2 == NULL) continue;
@@ -827,7 +852,7 @@ void setTileEntityWorld(struct world* world, int32_t x, int32_t y, int32_t z, st
 	if (y < 0 || y > 255) return;
 	struct chunk* chunk = getChunk(world, x >> 4, z >> 4);
 	if (chunk == NULL) return;
-	setTileEntityChunk(chunk, te);
+	setTileEntityChunk(chunk, te, x, y, z);
 }
 
 struct chunk* newChunk(int16_t x, int16_t z) {
@@ -999,18 +1024,18 @@ void setBlockChunk(struct chunk* chunk, block blk, uint8_t x, uint8_t y, uint8_t
 	*((int32_t*) &cs->blocks[bi / 8]) = cv;
 }
 
-void setBlockWorld(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
-	if (y < 0 || y > 255) return;
+int setBlockWorld(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
+	if (y < 0 || y > 255) return 1;
 	struct chunk* ch = getChunk(world, x >> 4, z >> 4);
-	if (ch == NULL) return;
-	setBlockWorld_guess(world, ch, blk, x, y, z);
+	if (ch == NULL) return 1;
+	return setBlockWorld_guess(world, ch, blk, x, y, z);
 }
 
-void setBlockWorld_noupdate(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
-	if (y < 0 || y > 255) return;
+int setBlockWorld_noupdate(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
+	if (y < 0 || y > 255) return 1;
 	struct chunk* ch = getChunk(world, x >> 4, z >> 4);
-	if (ch == NULL) return;
-	setBlockWorld_guess_noupdate(world, ch, blk, x, y, z);
+	if (ch == NULL) return 1;
+	return setBlockWorld_guess_noupdate(world, ch, blk, x, y, z);
 }
 
 void world_doLightProc(struct world* world, struct chunk* chunk, int32_t x, int32_t y, int32_t z, uint8_t light) {
@@ -1142,11 +1167,11 @@ int light_floodfill(struct world* world, struct chunk* chunk, struct world_light
 	return sslf;
 }
 
-void setBlockWorld_guess(struct world* world, struct chunk* chunk, block blk, int32_t x, int32_t y, int32_t z) {
-	if (y < 0 || y > 255) return;
+int setBlockWorld_guess(struct world* world, struct chunk* chunk, block blk, int32_t x, int32_t y, int32_t z) {
+	if (y < 0 || y > 255) return 1;
 	chunk = getChunk_guess(world, chunk, x >> 4, z >> 4);
 	if (chunk == NULL) chunk = getChunk(world, x >> 4, z >> 4);
-	if (chunk == NULL) return;
+	if (chunk == NULL) return 1;
 	block ob = getBlockChunk(chunk, x & 0x0f, y, z & 0x0f);
 	struct block_info* obi = getBlockInfo(ob);
 	uint16_t ohm = world->dimension == OVERWORLD ? chunk->heightMap[z & 0x0f][x & 0x0f] : 0;
@@ -1154,6 +1179,21 @@ void setBlockWorld_guess(struct world* world, struct chunk* chunk, block blk, in
 	int pchm = 0;
 	struct hashmap* nup = NULL;
 	if (obi != NULL) {
+		int ict = 0;
+		if (ob != blk) {
+			if (obi->onBlockDestroyed != NULL) ict = (*obi->onBlockDestroyed)(world, ob, x, y, z, blk);
+			if (!ict) {
+				BEGIN_HASHMAP_ITERATION (plugins)
+				struct plugin* plugin = value;
+				if (plugin->onBlockDestroyed != NULL && (*plugin->onBlockDestroyed)(world, ob, x, y, z, blk)) {
+					ict = 1;
+					BREAK_HASHMAP_ITERATION (plugins)
+					break;
+				}
+				END_HASHMAP_ITERATION (plugins)
+			}
+			if (ict) return 1;
+		}
 		if (world->dimension == OVERWORLD && ((y >= ohm && obi->lightOpacity >= 1) || (y < ohm && obi->lightOpacity == 0))) {
 			pchm = 1;
 			nup = new_hashmap(1, 0);
@@ -1162,6 +1202,29 @@ void setBlockWorld_guess(struct world* world, struct chunk* chunk, block blk, in
 			lp.z = z;
 			light_floodfill(world, chunk, &lp, 1, 15, nup); // todo remove nup duplicates
 		}
+	}
+	pnbi: ;
+	struct block_info* nbi = getBlockInfo(blk);
+	if (nbi != NULL && blk != ob) {
+		int ict = 0;
+		block obb = blk;
+		if (nbi->onBlockPlaced != NULL) blk = (*nbi->onBlockPlaced)(world, blk, x, y, z, ob);
+		if (blk == 0 && obb != 0) ict = 1;
+		else if (blk != obb) goto pnbi;
+		if (!ict) {
+			BEGIN_HASHMAP_ITERATION (plugins)
+			struct plugin* plugin = value;
+			if (plugin->onBlockPlaced != NULL) {
+				blk = (*plugin->onBlockPlaced)(world, blk, x, y, z, ob);
+				if (blk == 0 && obb != 0) {
+					ict = 1;
+					BREAK_HASHMAP_ITERATION (plugins)
+					break;
+				} else if (blk != obb) goto pnbi;
+			}
+			END_HASHMAP_ITERATION (plugins)
+		}
+		if (ict) return 1;
 	}
 	setBlockChunk(chunk, blk, x & 0x0f, y, z & 0x0f, world->dimension == 0);
 	uint16_t nhm = world->dimension == OVERWORLD ? chunk->heightMap[z & 0x0f][x & 0x0f] : 0;
@@ -1174,8 +1237,6 @@ void setBlockWorld_guess(struct world* world, struct chunk* chunk, block blk, in
 	pkt->data.play_client.blockchange.block_id = blk;
 	add_queue(bc_player->outgoingPacket, pkt);
 	END_BROADCAST(world->players)
-	struct block_info* bi = getBlockInfo(ob);
-	if (bi != NULL && bi->onBlockDestroyed != NULL) (*bi->onBlockDestroyed)(world, ob, x, y, z);
 	beginProfilerSection("block_update");
 	updateBlockWorld_guess(world, chunk, x, y, z);
 	updateBlockWorld_guess(world, chunk, x + 1, y, z);
@@ -1186,10 +1247,9 @@ void setBlockWorld_guess(struct world* world, struct chunk* chunk, block blk, in
 	updateBlockWorld_guess(world, chunk, x, y - 1, z);
 	endProfilerSection("block_update");
 	beginProfilerSection("skylight_update");
-	struct block_info* nbi = getBlockInfo(blk);
-	if (nbi == NULL || bi == NULL) return;
+	if (nbi == NULL || obi == NULL) return 0;
 	if (world->dimension == OVERWORLD) {
-		if (pchm || bi->lightOpacity != nbi->lightOpacity) {
+		if (pchm || obi->lightOpacity != nbi->lightOpacity) {
 			/*setLightWorld_guess(world, chunk, 15, x, nhm, z, 0);
 			 struct world_lightpos lp;
 			 if (ohm < nhm) {
@@ -1283,8 +1343,8 @@ void setBlockWorld_guess(struct world* world, struct chunk* chunk, block blk, in
 	}
 	endProfilerSection("skylight_update");
 	beginProfilerSection("blocklight_update");
-	if (bi->lightEmission != nbi->lightEmission || bi->lightOpacity != nbi->lightOpacity) {
-		if (bi->lightEmission <= nbi->lightEmission) {
+	if (obi->lightEmission != nbi->lightEmission || obi->lightOpacity != nbi->lightOpacity) {
+		if (obi->lightEmission <= nbi->lightEmission) {
 			beginProfilerSection("blocklight_update_equals");
 			struct world_lightpos lp;
 			lp.x = x;
@@ -1298,7 +1358,7 @@ void setBlockWorld_guess(struct world* world, struct chunk* chunk, block blk, in
 			lp.x = x;
 			lp.y = y;
 			lp.z = z;
-			light_floodfill(world, chunk, &lp, 0, bi->lightEmission, nup); // todo remove nup duplicates
+			light_floodfill(world, chunk, &lp, 0, obi->lightEmission, nup); // todo remove nup duplicates
 			BEGIN_HASHMAP_ITERATION (nup)
 			struct world_lightpos* nlp = value;
 			light_floodfill(world, chunk, nlp, 0, 0, 0);
@@ -1350,13 +1410,55 @@ void setBlockWorld_guess(struct world* world, struct chunk* chunk, block blk, in
 		}
 	}
 	endProfilerSection("blocklight_update");
+	return 0;
 }
 
-void setBlockWorld_guess_noupdate(struct world* world, struct chunk* chunk, block blk, int32_t x, int32_t y, int32_t z) {
-	if (y < 0 || y > 255) return;
+int setBlockWorld_guess_noupdate(struct world* world, struct chunk* chunk, block blk, int32_t x, int32_t y, int32_t z) {
+	if (y < 0 || y > 255) return 1;
 	chunk = getChunk_guess(world, chunk, x >> 4, z >> 4);
-	if (chunk == NULL) return;
+	if (chunk == NULL) return 1;
 	block ob = getBlockChunk(chunk, x & 0x0f, y, z & 0x0f);
+	struct block_info* obi = getBlockInfo(ob);
+	if (obi != NULL) {
+		int ict = 0;
+		if (ob != blk) {
+			if (obi->onBlockDestroyed != NULL) ict = (*obi->onBlockDestroyed)(world, ob, x, y, z, blk);
+			if (!ict) {
+				BEGIN_HASHMAP_ITERATION (plugins)
+				struct plugin* plugin = value;
+				if (plugin->onBlockDestroyed != NULL && (*plugin->onBlockDestroyed)(world, ob, x, y, z, blk)) {
+					ict = 1;
+					BREAK_HASHMAP_ITERATION (plugins)
+					break;
+				}
+				END_HASHMAP_ITERATION (plugins)
+			}
+			if (ict) return 1;
+		}
+	}
+	pnbi: ;
+	struct block_info* nbi = getBlockInfo(blk);
+	if (nbi != NULL && blk != ob) {
+		int ict = 0;
+		block obb = blk;
+		if (nbi->onBlockPlaced != NULL) blk = (*nbi->onBlockPlaced)(world, blk, x, y, z, ob);
+		if (blk == 0 && obb != 0) ict = 1;
+		else if (blk != obb) goto pnbi;
+		if (!ict) {
+			BEGIN_HASHMAP_ITERATION (plugins)
+			struct plugin* plugin = value;
+			if (plugin->onBlockPlaced != NULL) {
+				blk = (*plugin->onBlockPlaced)(world, blk, x, y, z, ob);
+				if (blk == 0 && obb != 0) {
+					ict = 1;
+					BREAK_HASHMAP_ITERATION (plugins)
+					break;
+				} else if (blk != obb) goto pnbi;
+			}
+			END_HASHMAP_ITERATION (plugins)
+		}
+		if (ict) return 1;
+	}
 	setBlockChunk(chunk, blk, x & 0x0f, y, z & 0x0f, world->dimension == 0);
 	BEGIN_BROADCAST_DISTXYZ((double) x + .5, (double) y + .5, (double) z + .5, world->players, CHUNK_VIEW_DISTANCE * 16.)
 	struct packet* pkt = xmalloc(sizeof(struct packet));
@@ -1367,8 +1469,7 @@ void setBlockWorld_guess_noupdate(struct world* world, struct chunk* chunk, bloc
 	pkt->data.play_client.blockchange.block_id = blk;
 	add_queue(bc_player->outgoingPacket, pkt);
 	END_BROADCAST(world->players)
-	struct block_info* bi = getBlockInfo(ob);
-	if (bi != NULL && bi->onBlockDestroyed != NULL) (*bi->onBlockDestroyed)(world, ob, x, y, z);
+	return 0;
 }
 
 struct world* newWorld(size_t chl_count) {
@@ -1440,6 +1541,10 @@ int loadWorld(struct world* world, char* path) {
 		}
 		closedir(dir);
 	}
+	BEGIN_HASHMAP_ITERATION (plugins)
+	struct plugin* plugin = value;
+	if (plugin->onWorldLoad != NULL) (*plugin->onWorldLoad)(world);
+	END_HASHMAP_ITERATION (plugins)
 	return 0;
 }
 
@@ -1557,6 +1662,10 @@ void tick_world(struct world* world) {
 		END_HASHMAP_ITERATION(world->scheduledTicks)
 		endProfilerSection("tick_chunk_scheduledticks");
 		endProfilerSection("tick_chunks");
+		BEGIN_HASHMAP_ITERATION (plugins)
+		struct plugin* plugin = value;
+		if (plugin->tick_world != NULL) (*plugin->tick_world)(world);
+		END_HASHMAP_ITERATION (plugins)
 	}
 }
 
@@ -1595,7 +1704,9 @@ struct chunk* getEntityChunk(struct entity* entity) {
 
 void spawnEntity(struct world* world, struct entity* entity) {
 	entity->world = world;
-	if (entity->loadingPlayers == NULL) entity->loadingPlayers = new_hashmap(1, 1);
+	if (entity->loadingPlayers == NULL) {
+		entity->loadingPlayers = new_hashmap(1, 1);
+	}
 	if (entity->attackers == NULL) entity->attackers = new_hashmap(1, 0);
 	put_hashmap(world->entities, entity->id, entity);
 	struct entity_info* ei = getEntityInfo(entity->type);
@@ -1639,9 +1750,14 @@ void spawnPlayer(struct world* world, struct player* player) {
 	put_hashmap(sw->players, player->entity->id, player); // no ticks until next tick!
 	se: ;
 	spawnEntity(world, player->entity);
+	BEGIN_HASHMAP_ITERATION (plugins)
+	struct plugin* plugin = value;
+	if (plugin->onPlayerSpawn != NULL) (*plugin->onPlayerSpawn)(world, player);
+	END_HASHMAP_ITERATION (plugins)
 }
 
 void despawnPlayer(struct world* world, struct player* player) {
+	if (player->openInv != NULL) player_closeWindow(player, player->openInv->windowID);
 	despawnEntity(world, player->entity);
 	pthread_rwlock_unlock(&player->subworld->players->data_mutex);
 	put_hashmap(player->subworld->players, player->entity->id, NULL);

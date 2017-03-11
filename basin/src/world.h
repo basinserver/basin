@@ -83,6 +83,7 @@ typedef uint16_t block;
 uint32_t nextEntityID;
 
 struct chunk_req {
+		struct world* world;
 		int32_t cx;
 		int32_t cz;
 		uint8_t load;
@@ -137,6 +138,8 @@ struct chunk {
 		//TODO: tileTicks
 };
 
+struct queue* globalChunkQueue;
+
 void chunkloadthr(size_t b);
 
 uint64_t getChunkKey(struct chunk* ch);
@@ -184,6 +187,8 @@ struct subworld { // subworld for players thread
 		uint8_t defunct;
 };
 
+uint16_t getHeightMapWorld_guess(struct world* world, struct chunk* ch, int32_t x, int32_t z);
+
 int world_blockRayTrace(struct boundingbox* bb, int32_t x, int32_t y, int32_t z, double px, double py, double pz, double ex, double ey, double ez, double *qx, double* qy, double* qz);
 
 int world_rayTrace(struct world* world, double x, double y, double z, double ex, double ey, double ez, int stopOnLiquid, int ignoreNonCollidable, int returnLast, double* rx, double* ry, double* rz);
@@ -192,9 +197,9 @@ struct chunk_section* newChunkSection(struct chunk* chunk, int ymj, int skylight
 
 void scheduleBlockTick(struct world* world, int32_t x, int32_t y, int32_t z, int32_t ticksFromNow);
 
-void setBlockWorld_noupdate(struct world* world, block blk, int32_t x, int32_t y, int32_t z);
+int setBlockWorld_noupdate(struct world* world, block blk, int32_t x, int32_t y, int32_t z);
 
-void setBlockWorld_guess_noupdate(struct world* world, struct chunk* chunk, block blk, int32_t x, int32_t y, int32_t z);
+int setBlockWorld_guess_noupdate(struct world* world, struct chunk* chunk, block blk, int32_t x, int32_t y, int32_t z);
 
 void tick_world(struct world* world);
 
@@ -228,13 +233,13 @@ void freeRegion(struct region* region);
 
 void setBlockChunk(struct chunk* chunk, block blk, uint8_t x, uint8_t y, uint8_t z, int skylight);
 
-void setBlockWorld(struct world* world, block blk, int32_t x, int32_t y, int32_t z);
+int setBlockWorld(struct world* world, block blk, int32_t x, int32_t y, int32_t z);
 
-void setBlockWorld_guess(struct world* world, struct chunk* chunk, block blk, int32_t x, int32_t y, int32_t z);
+int setBlockWorld_guess(struct world* world, struct chunk* chunk, block blk, int32_t x, int32_t y, int32_t z);
 
 struct tile_entity* getTileEntityChunk(struct chunk* chunk, int32_t x, int32_t y, int32_t z);
 
-void setTileEntityChunk(struct chunk* chunk, struct tile_entity* te);
+void setTileEntityChunk(struct chunk* chunk, struct tile_entity* te, int32_t x, uint8_t y, int32_t z);
 
 struct tile_entity* getTileEntityWorld(struct world* world, int32_t x, int32_t y, int32_t z);
 
