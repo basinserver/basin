@@ -805,7 +805,7 @@ int damageEntity(struct entity* attacked, float damage, int armorable) {
 	float armor = 0;
 	if (attacked->type == ENT_PLAYER) {
 		struct player* player = attacked->data.player.player;
-		if (player->gamemode == 1) return 0;
+		if (player->gamemode == 1 && player->entity->y >= -64.) return 0;
 		if (armorable) for (int i = 5; i <= 8; i++) {
 			struct slot* sl = getSlot(player, player->inventory, i);
 			if (sl != NULL) {
@@ -824,7 +824,7 @@ int damageEntity(struct entity* attacked, float damage, int armorable) {
 	}
 	if (attacked->type == ENT_PLAYER) {
 		struct player* player = attacked->data.player.player;
-		if (player->gamemode == 1) return 0;
+		if (player->gamemode == 1 && player->entity->y >= -64.) return 0;
 		if (armorable) for (int i = 5; i <= 8; i++) {
 			struct slot* sl = getSlot(player, player->inventory, i);
 			if (sl != NULL) {
@@ -1243,6 +1243,9 @@ void tick_entity(struct world* world, struct entity* entity) {
 		struct entity_info* ei = getEntityInfo(entity->type);
 		if (ei != NULL && ei->onAITick != NULL) ei->onAITick(world, entity);
 		lookHelper_tick(entity);
+	}
+	if (entity->y < -64.) {
+		damageEntity(entity, 1., 0);
 	}
 	if (entity->type == ENT_ITEM) {
 		if (tick_itemstack(world, entity)) return;
