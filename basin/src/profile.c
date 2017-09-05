@@ -21,6 +21,7 @@ struct profiler_section {
 		double ms_spent;
 		double sectionLastStart;
 		double creation;
+		double maxTime;
 };
 
 void beginProfilerSection(char* name) {
@@ -42,6 +43,7 @@ void beginProfilerSection(char* name) {
 		struct profiler_section* ps = xmalloc(sizeof(struct profiler_section));
 		ps->name = name;
 		ps->ms_spent = 0.;
+		ps->maxTime = 0.;
 		put_hashmap(psec, (uint64_t) name, ps);
 		struct timespec ts;
 		clock_gettime(CLOCK_MONOTONIC, &ts);
@@ -60,8 +62,12 @@ void endProfilerSection(char* name) {
 	struct profiler_section* ps = get_hashmap(psec, (uint64_t) name);
 	if (ps == NULL) return;
 	if (ps->sectionLastStart < 0.) return;
-	ps->ms_spent += now - ps->sectionLastStart;
+	double msa = now - ps->sectionLastStart;
+	ps->ms_spent += msa;
 	ps->sectionLastStart = -1.;
+	if (ps->maxTime < msa) {
+		ps->maxTime = msa;
+	}
 #endif
 }
 
@@ -77,7 +83,7 @@ void printProfiler() {
 		ps->ms_spent += now - ps->sectionLastStart;
 		ps->sectionLastStart = -1.;
 	}
-	printf("%s: %f ms - %f ms/tick\n", ps->name, ps->ms_spent, ps->ms_spent / (now - ps->creation) * 50.);
+	printf("%s: %f ms - %f ms/tick - %f maximum\n", ps->name, ps->ms_spent, ps->ms_spent / (now - ps->creation) * 50., ps->maxTime);
 	END_HASHMAP_ITERATION (psec)
 #endif
 }
@@ -87,6 +93,7 @@ void clearProfiler() {
 	BEGIN_HASHMAP_ITERATION (psec)
 	struct profiler_section* ps = value;
 	ps->ms_spent = 0.;
+	ps->maxTime = 0.;
 	END_HASHMAP_ITERATION (psec)
 #endif
 }

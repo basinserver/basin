@@ -152,6 +152,10 @@ void command_kill(struct player* player, char** args, size_t args_count) {
 	damageEntity(player->entity, player->entity->maxHealth * 10., 0);
 }
 
+void command_tps(struct player* player, char** args, size_t args_count) {
+	broadcastf("light_purple", "%f tps", player->world->tps);
+}
+
 void init_base_commands() {
 	registerCommand("gamemode", &command_gamemode);
 	registerCommand("gm", &command_gamemode);
@@ -168,6 +172,7 @@ void init_base_commands() {
 	registerCommand("ls", &command_list);
 	registerCommand("who", &command_list);
 	registerCommand("kill", &command_kill);
+	registerCommand("tps", &command_tps);
 }
 
 typedef void (*command_callback)(struct player* player, char** args, size_t args_count);

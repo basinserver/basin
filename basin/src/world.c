@@ -379,6 +379,7 @@ void chunkloadthr(size_t b) {
 			struct chunk* ch = getChunkWithLoad(player->world, chr->cx, chr->cz, b);
 			if (player->loadedChunks == NULL) {
 				xfree(chr);
+				endProfilerSection("chunkLoading_getChunk");
 				continue;
 			}
 			endProfilerSection("chunkLoading_getChunk");
@@ -1485,6 +1486,8 @@ struct world* newWorld(size_t chl_count) {
 	world->subworlds = new_hashmap(1, 1);
 	world->skylightSubtracted = 0;
 	world->scheduledTicks = new_hashmap(1, 1);
+	world->tps = 0;
+	world->ticksInSecond = 0;
 	return world;
 }
 
@@ -1606,6 +1609,12 @@ void tick_world(struct world* world) {
 		pthread_mutex_lock (&glob_tick_mut);
 		pthread_cond_wait(&glob_tick_cond, &glob_tick_mut);
 		pthread_mutex_unlock(&glob_tick_mut);
+		beginProfilerSection("tick_world");
+		if (tick_counter % 20 == 0) {
+			world->tps = world->ticksInSecond;
+			world->ticksInSecond = 0;
+		}
+		world->ticksInSecond++;
 		world_pretick(world);
 		pthread_cond_broadcast(&world->tick_cond); // we use a different condition for subtick threads for the pretick
 		beginProfilerSection("tick_entity");
@@ -1666,6 +1675,7 @@ void tick_world(struct world* world) {
 		struct plugin* plugin = value;
 		if (plugin->tick_world != NULL) (*plugin->tick_world)(world);
 		END_HASHMAP_ITERATION (plugins)
+		endProfilerSection("tick_world");
 	}
 }
 

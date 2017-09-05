@@ -308,7 +308,7 @@ int canBePlaced_ladder(struct world* world, block blk, int32_t x, int32_t y, int
 	return isNormalCube(getBlockInfo(b));
 }
 
-block onBlockPlaced_ladder(struct player* player, struct world* world, block blk, int32_t x, int32_t y, int32_t z, uint8_t face) {
+block onBlockPlacedPlayer_ladder(struct player* player, struct world* world, block blk, int32_t x, int32_t y, int32_t z, uint8_t face) {
 	int zpg = 0;
 	int zng = 0;
 	int xng = 0;
@@ -324,7 +324,7 @@ block onBlockPlaced_ladder(struct player* player, struct world* world, block blk
 	else return 0;
 }
 
-block onBlockPlaced_vine(struct player* player, struct world* world, block blk, int32_t x, int32_t y, int32_t z, uint8_t face) {
+block onBlockPlacedPlayer_vine(struct player* player, struct world* world, block blk, int32_t x, int32_t y, int32_t z, uint8_t face) {
 	block out = blk & ~0x0f;
 	block b = getBlockWorld(world, x, y, z + 1);
 	struct block_info* bi = getBlockInfo(b);
@@ -354,7 +354,7 @@ block onBlockPlaced_vine(struct player* player, struct world* world, block blk, 
 
 void onBlockUpdate_vine(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
 	//printf("bu vine <%i, %i, %i> ", x, y, z);
-	block b = onBlockPlaced_vine(NULL, world, blk, x, y, z, -1);
+	block b = onBlockPlacedPlayer_vine(NULL, world, blk, x, y, z, -1);
 	//printf("%i != %i\n", b, blk);
 	if (b != blk) {
 		if (b >> 4 == blk >> 4 && b >> 4 == BLK_VINE >> 4) setBlockWorld_noupdate(world, b, x, y, z);
@@ -389,7 +389,7 @@ void randomTick_vine(struct world* world, struct chunk* ch, block blk, int32_t x
 	block below = getBlockWorld_guess(world, ch, x, y - 1, z);
 	if (below == 0) {
 		//printf("rtv grow\n");
-		setBlockWorld_guess(world, ch, onBlockPlaced_vine(NULL, world, BLK_VINE, x, y, z, -1), x, y - 1, z);
+		setBlockWorld_guess(world, ch, onBlockPlacedPlayer_vine(NULL, world, BLK_VINE, x, y, z, -1), x, y - 1, z);
 		//printf("rtv growdun\n");
 	}
 }
@@ -449,7 +449,7 @@ int canBePlaced_reeds(struct world* world, block blk, int32_t x, int32_t y, int3
 
 int canBePlaced_requirefarmland(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
 	block b = getBlockWorld(world, x, y - 1, z);
-	return b == BLK_FARMLAND;
+	return b >> 4 == BLK_FARMLAND >> 4;
 }
 
 int canBePlaced_requiresoulsand(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
@@ -589,6 +589,74 @@ void dropItems_crops(struct world* world, block blk, int32_t x, int32_t y, int32
 			}
 		}
 		dropBlockDrop(world, &drop, x, y, z);
+	}
+}
+
+float crops_getGrowthChance(struct world* world, block b, int32_t x, int32_t y, int32_t z) {
+	float chance = 1.;
+	for (int32_t sx = x - 1; sx <= x + 1; sx++) {
+		for (int32_t sz = x - 1; sz <= x + 1; sz++) {
+			block b2 = getBlockWorld(world, sx, y - 1, sz);
+			float subchance = 0.;
+			if ((b2 >> 4) == (BLK_FARMLAND >> 4)) {
+				subchance = 1.;
+				if ((b2 & 0x0f) > 0) {
+					subchance = 3;
+				}
+			}
+			if (sx != 0 || sz != 0) {
+				subchance /= 4.;
+			}
+			chance += subchance;
+		}
+	}
+	int xSame = getBlockWorld(world, x - 1, y, z) >> 4 == b >> 4 || getBlockWorld(world, x + 1, y, z) >> 4 == b >> 4;
+	int zSame = getBlockWorld(world, x, y, z - 1) >> 4 == b >> 4 || getBlockWorld(world, x, y, z + 1) >> 4 == b >> 4;
+	if (xSame && zSame) {
+		chance /= 2.;
+	} else {
+		int dSame = getBlockWorld(world, x - 1, y, z - 1) >> 4 == b >> 4 || getBlockWorld(world, x + 1, y, z - 1) >> 4 == b >> 4 || getBlockWorld(world, x - 1, y, z + 1) >> 4 == b >> 4 || getBlockWorld(world, x + 1, y, z + 1) >> 4 == b >> 4;
+		if (dSame) {
+			chance /= 2.;
+		}
+	}
+	return chance;
+}
+
+void randomTick_crops(struct world* world, struct chunk* ch, block blk, int32_t x, int32_t y, int32_t z) {
+	uint8_t lwu = getLightWorld_guess(world, ch, x, y + 1, z);
+	if (lwu > 9) {
+		uint8_t age = blk & 0x0f;
+		if (blk >> 4 == BLK_CROPS >> 4) {
+			if (age < 7) {
+				float gChance = crops_getGrowthChance(world, blk, x, y, z);
+				if (rand() % ((int) (25. / gChance) + 1) == 0) {
+					block nb = (blk & 0xfff0) | ((blk & 0x0f) + 1);
+					setBlockWorld_guess(world, ch, nb, x, y, z);
+				}
+			}
+		}
+	}
+}
+
+void randomTick_farmland(struct world* world, struct chunk* ch, block blk, int32_t x, int32_t y, int32_t z) {
+	uint8_t moisture = blk & 0x0f;
+	uint8_t hasWaterOrRain = 0; // TODO: true if raining
+	if (!hasWaterOrRain) for (int32_t sx = x - 4; sx <= x + 4; sx++) {
+		for (int32_t sz = z - 4; sz <= z + 4; sz++) {
+			if (streq_nocase(getBlockInfo(getBlockWorld_guess(world, ch, sx, y, sz))->material->name, "water")) {
+				hasWaterOrRain = 1;
+				goto postWater;
+			}
+		}
+	}
+	postWater: ;
+	if (hasWaterOrRain && moisture < 7) {
+		block nb = (blk & 0xfff0) | 7;
+		setBlockWorld_guess(world, ch, nb, x, y, z);
+	} else if (moisture > 0 && !hasWaterOrRain) {
+		block nb = (blk & 0xfff0) | (moisture - 1);
+		setBlockWorld_guess(world, ch, nb, x, y, z);
 	}
 }
 
@@ -854,7 +922,7 @@ void randomTick_sapling(struct world* world, struct chunk* chunk, block blk, int
 	}
 }
 
-block onBlockPlaced_log(struct player* player, struct world* world, block blk, int32_t x, int32_t y, int32_t z, uint8_t face) {
+block onBlockPlacedPlayer_log(struct player* player, struct world* world, block blk, int32_t x, int32_t y, int32_t z, uint8_t face) {
 	block nb = blk & ~0xC;
 	if (face == XP || face == XN) {
 		nb |= 0x4;
@@ -1358,6 +1426,7 @@ void init_blocks() {
 	tmp->dropItems = &dropItems_crops;
 	tmp->canBePlaced = &canBePlaced_requirefarmland;
 	tmp->onBlockUpdate = &onBlockUpdate_checkPlace;
+	tmp->randomTick = &randomTick_crops;
 	tmp = getBlockInfo(BLK_PUMPKINSTEM);
 	tmp->dropItems = &dropItems_crops;
 	tmp->canBePlaced = &canBePlaced_requirefarmland;
@@ -1401,17 +1470,17 @@ void init_blocks() {
 		tmp->onBlockUpdate = &onBlockUpdate_checkPlace;
 	}
 	for (block b = BLK_LOG_OAK; b < BLK_LOG_OAK_8; b++)
-		getBlockInfo(b)->onBlockPlaced = &onBlockPlaced_log;
+		getBlockInfo(b)->onBlockPlacedPlayer = &onBlockPlacedPlayer_log;
 	for (block b = BLK_LOG_ACACIA_1; b < BLK_LOG_OAK_14; b++)
-		getBlockInfo(b)->onBlockPlaced = &onBlockPlaced_log;
+		getBlockInfo(b)->onBlockPlacedPlayer = &onBlockPlacedPlayer_log;
 	getBlockInfo(BLK_GRASS)->randomTick = &randomTick_grass;
 	tmp = getBlockInfo(BLK_VINE);
-	tmp->onBlockPlaced = &onBlockPlaced_vine;
+	tmp->onBlockPlacedPlayer = &onBlockPlacedPlayer_vine;
 	tmp->onBlockUpdate = &onBlockUpdate_vine;
 	tmp->canBePlaced = &canBePlaced_vine;
 	tmp->randomTick = &randomTick_vine;
 	tmp = getBlockInfo(BLK_LADDER);
-	tmp->onBlockPlaced = &onBlockPlaced_ladder;
+	tmp->onBlockPlacedPlayer = &onBlockPlacedPlayer_ladder;
 	tmp->canBePlaced = &canBePlaced_ladder;
 	tmp->onBlockUpdate = &onBlockUpdate_checkPlace;
 	for (block b = BLK_FENCEGATE; b < BLK_FENCEGATE + 16; b++)
@@ -1424,5 +1493,6 @@ void init_blocks() {
 	tmp = getBlockInfo(BLK_LAVA_1);
 	tmp->onBlockUpdate = &onBlockUpdate_staticfluid;
 	tmp->randomTick = &randomTick_staticlava;
-
+	tmp = getBlockInfo(BLK_FARMLAND);
+	tmp->randomTick = &randomTick_farmland;
 }

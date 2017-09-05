@@ -1012,7 +1012,7 @@ int tick_arrow(struct world* world, struct entity* entity) {
 		entity->pitch = atan2f(entity->motY, dhz) * 180. / M_PI;
 		//printf("desired %f, %f, %f\n", entity->pitch, entity->motY, dhz);
 		//printf("yaw = %f, lyaw = %f\npitch = %f, lpitch = %f\n", entity->yaw, entity->lyaw, entity->pitch, entity->lpitch);
-		if (entity->lyaw == 0. && entity->lpitch == 0.) {
+		if ((entity->lyaw == 0. && entity->lpitch == 0.)) {
 			entity->lyaw = entity->yaw;
 			entity->lpitch = entity->pitch;
 		} else {

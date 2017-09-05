@@ -467,12 +467,18 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 		if (ci != NULL) {
 			struct item_info* ii = getItemInfo(ci->item);
 			if (ii != NULL && ii->onItemInteract != NULL) {
+				pthread_mutex_unlock(&player->inventory->mut);
 				if ((*ii->onItemInteract)(player->world, player, player->currentItem + 36, ci, x, y, z, face)) goto pbp_cont;
+				pthread_mutex_lock(&player->inventory->mut);
+				ci = getSlot(player, player->inventory, 36 + player->currentItem);
 			}
 		}
 		struct block_info* bi = getBlockInfo(b);
 		if (!player->entity->sneaking && bi != NULL && bi->onBlockInteract != NULL) {
+			pthread_mutex_unlock(&player->inventory->mut);
 			(*bi->onBlockInteract)(player->world, b, x, y, z, player, face, inp->data.play_server.playerblockplacement.cursor_position_x, inp->data.play_server.playerblockplacement.cursor_position_y, inp->data.play_server.playerblockplacement.cursor_position_z);
+			pthread_mutex_lock(&player->inventory->mut);
+			ci = getSlot(player, player->inventory, 36 + player->currentItem);
 		} else if (ci != NULL && ci->item < 256) {
 			if (bi == NULL || !bi->material->replacable) {
 				if (face == 0) y--;

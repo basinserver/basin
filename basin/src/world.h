@@ -179,6 +179,8 @@ struct world {
 		struct hashmap* subworlds;
 		uint8_t skylightSubtracted;
 		struct hashmap* scheduledTicks;
+		uint16_t ticksInSecond;
+		float tps;
 };
 
 struct subworld { // subworld for players thread
