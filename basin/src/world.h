@@ -12,6 +12,7 @@
 #include "network.h"
 #include "inventory.h"
 #include <pthread.h>
+#include "perlin.h"
 
 typedef uint16_t block;
 
@@ -181,6 +182,8 @@ struct world {
 		struct hashmap* scheduledTicks;
 		uint16_t ticksInSecond;
 		float tps;
+		uint64_t seed;
+		struct perlin perlin;
 };
 
 struct subworld { // subworld for players thread

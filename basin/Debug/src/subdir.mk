@@ -31,6 +31,7 @@ C_SRCS += \
 ../src/anticheat.c \
 ../src/plugin.c \
 ../src/ai.c \
+../src/perlin.c \
 ../src/xstring.c 
 
 OBJS += \
@@ -65,6 +66,7 @@ OBJS += \
 ./src/anticheat.o \
 ./src/plugin.o \
 ./src/ai.o \
+./src/perlin.o \
 ./src/xstring.o 
 
 C_DEPS += \
@@ -99,6 +101,7 @@ C_DEPS += \
 ./src/anticheat.d \
 ./src/plugin.d \
 ./src/ai.d \
+./src/perlin.d \
 ./src/xstring.d 
 
 

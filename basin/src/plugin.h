@@ -43,6 +43,7 @@ struct plugin {
 		void (*onEntitySpawn)(struct world* world, struct entity* entity); // called after an entity spawns
 		void (*onPlayerSpawn)(struct world* world, struct player* player); // called after a player spawns
 		void (*onPlayerFullySpawned)(struct world* world, struct player* player); // called after a player spawns and has moved
+		struct chunk* (*generateChunk)(struct world* world, struct chunk* chunk); // if set and returns a non-null valid chunk, will use it as a world generator
 };
 
 void init_plugins();

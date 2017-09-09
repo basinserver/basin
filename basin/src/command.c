@@ -42,21 +42,31 @@ void command_gamemode(struct player* player, char** args, size_t args_count) {
 
 void command_tp(struct player* player, char** args, size_t args_count) {
 	if (player != NULL) return;
-	if (args_count == 0 || args_count > 2) {
-		sendMessageToPlayer(player, "Usage: /tp <to> OR /tp <from> <to>", "red");
+	if (args_count == 0 || args_count > 4) {
+		sendMessageToPlayer(player, "Usage: /tp <to> OR /tp <from> <to> or <x> <y> <z> or <player> <x> <y> <z>", "red");
 		return;
 	}
-	struct player* from = args_count == 1 ? player : getPlayerByName(args[0]);
-	struct player* to = args_count == 1 ? getPlayerByName(args[0]) : getPlayerByName(args[1]);
-	if (from == NULL || to == NULL) {
-		sendMessageToPlayer(player, "[ERROR] No such player found.", "red");
-		return;
+	if (args_count >= 3) {
+		struct player* from = args_count == 3 ? player : getPlayerByName(args[0]);
+		if (from == NULL) {
+			sendMessageToPlayer(player, "[ERROR] No such player found.", "red");
+			return;
+		}
+		int32_t ai = args_count == 4 ? 1 : 0;
+		teleportPlayer(from, strtol(args[ai++], NULL, 10), strtol(args[ai++], NULL, 10), strtol(args[ai++], NULL, 10));
+	} else {
+		struct player* from = args_count == 1 ? player : getPlayerByName(args[0]);
+		struct player* to = args_count == 1 ? getPlayerByName(args[0]) : getPlayerByName(args[1]);
+		if (from == NULL || to == NULL) {
+			sendMessageToPlayer(player, "[ERROR] No such player found.", "red");
+			return;
+		}
+		if (from->world != to->world) {
+			sendMessageToPlayer(player, "[ERROR] Players in different worlds!", "red");
+			return;
+		}
+		teleportPlayer(from, to->entity->x, to->entity->y, to->entity->z);
 	}
-	if (from->world != to->world) {
-		sendMessageToPlayer(player, "[ERROR] Players in different worlds!", "red");
-		return;
-	}
-	teleportPlayer(from, to->entity->x, to->entity->y, to->entity->z);
 }
 
 void command_kick(struct player* player, char** args, size_t args_count) {
