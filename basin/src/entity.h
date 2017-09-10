@@ -35,169 +35,7 @@
 #define ENT_ITEMFRAME 18
 #define ENT_WITHERSKULL 19
 #define ENT_PRIMEDTNT 20
-#define ENT_FALLINGSAND 21
-#define ENT_FIREWORKSROCKETENTITY 22
-#define ENT_HUSK 23
-#define ENT_SPECTRALARROW 24
-#define ENT_SHULKERBULLET 25
-#define ENT_DRAGONFIREBALL 26
-#define ENT_ZOMBIEVILLAGER 27
-#define ENT_SKELETONHORSE 28
-#define ENT_ZOMBIEHORSE 29
-#define ENT_ARMORSTAND 30
-#define ENT_DONKEY 31
-#define ENT_MULE 32
-#define ENT_EVOCATIONFANGS 33
-#define ENT_EVOCATIONILLAGER 34
-#define ENT_VEX 35
-#define ENT_VINDICATIONILLAGER 36
-#define ENT_MINECARTCOMMANDBLOCK 40
-#define ENT_BOAT 41
-#define ENT_MINECARTRIDEABLE 42
-#define ENT_MINECARTCHEST 43
-#define ENT_MINECARTFURNACE 44
-#define ENT_MINECARTTNT 45
-#define ENT_MINECARTHOPPER 46
-#define ENT_MINECARTSPAWNER 47
-#define ENT_CREEPER 50
-#define ENT_SKELETON 51
-#define ENT_SPIDER 52
-#define ENT_GIANT 53
-#define ENT_ZOMBIE 54
-#define ENT_SLIME 55
-#define ENT_GHAST 56
-#define ENT_PIGZOMBIE 57
-#define ENT_ENDERMAN 58
-#define ENT_CAVESPIDER 59
-#define ENT_SILVERFISH 60
-#define ENT_BLAZE 61
-#define ENT_LAVASLIME 62
-#define ENT_ENDERDRAGON 63
-#define ENT_WITHERBOSS 64
-#define ENT_BAT 65
-#define ENT_WITCH 66
-#define ENT_ENDERMITE 67
-#define ENT_GUARDIAN 68
-#define ENT_SHULKER 69
-#define ENT_PIG 90
-#define ENT_SHEEP 91
-#define ENT_COW 92
-#define ENT_CHICKEN 93
-#define ENT_SQUID 94
-#define ENT_WOLF 95
-#define ENT_MUSHROOMCOW 96
-#define ENT_SNOWMAN 97
-#define ENT_OZELOT 98
-#define ENT_VILLAGERGOLEM 99
-#define ENT_HORSE 100
-#define ENT_RABBIT 101
-#define ENT_POLARBEAR 102
-#define ENT_LLAMA 103
-#define ENT_LLAMASPIT 104
-#define ENT_VILLAGER 120
-#define ENT_ENDERCRYSTAL 200
-#define ENT_ITEM 1
-#define ENT_XPORB 2
-#define ENT_AREAEFFECTCLOUD 3
-#define ENT_ELDERGUARDIAN 4
-#define ENT_WITHERSKELETON 5
-#define ENT_STRAY 6
-#define ENT_THROWNEGG 7
-#define ENT_LEASHKNOT 8
-#define ENT_PAINTING 9
-#define ENT_ARROW 10
-#define ENT_SNOWBALL 11
-#define ENT_FIREBALL 12
-#define ENT_SMALLFIREBALL 13
-#define ENT_THROWNENDERPEARL 14
-#define ENT_EYEOFENDERSIGNAL 15
-#define ENT_THROWNPOTION 16
-#define ENT_THROWNEXPBOTTLE 17
-#define ENT_ITEMFRAME 18
-#define ENT_WITHERSKULL 19
-#define ENT_PRIMEDTNT 20
-#define ENT_FALLINGSAND 21
-#define ENT_FIREWORKSROCKETENTITY 22
-#define ENT_HUSK 23
-#define ENT_SPECTRALARROW 24
-#define ENT_SHULKERBULLET 25
-#define ENT_DRAGONFIREBALL 26
-#define ENT_ZOMBIEVILLAGER 27
-#define ENT_SKELETONHORSE 28
-#define ENT_ZOMBIEHORSE 29
-#define ENT_ARMORSTAND 30
-#define ENT_DONKEY 31
-#define ENT_MULE 32
-#define ENT_EVOCATIONFANGS 33
-#define ENT_EVOCATIONILLAGER 34
-#define ENT_VEX 35
-#define ENT_VINDICATIONILLAGER 36
-#define ENT_MINECARTCOMMANDBLOCK 40
-#define ENT_BOAT 41
-#define ENT_MINECARTRIDEABLE 42
-#define ENT_MINECARTCHEST 43
-#define ENT_MINECARTFURNACE 44
-#define ENT_MINECARTTNT 45
-#define ENT_MINECARTHOPPER 46
-#define ENT_MINECARTSPAWNER 47
-#define ENT_CREEPER 50
-#define ENT_SKELETON 51
-#define ENT_SPIDER 52
-#define ENT_GIANT 53
-#define ENT_ZOMBIE 54
-#define ENT_SLIME 55
-#define ENT_GHAST 56
-#define ENT_PIGZOMBIE 57
-#define ENT_ENDERMAN 58
-#define ENT_CAVESPIDER 59
-#define ENT_SILVERFISH 60
-#define ENT_BLAZE 61
-#define ENT_LAVASLIME 62
-#define ENT_ENDERDRAGON 63
-#define ENT_WITHERBOSS 64
-#define ENT_BAT 65
-#define ENT_WITCH 66
-#define ENT_ENDERMITE 67
-#define ENT_GUARDIAN 68
-#define ENT_SHULKER 69
-#define ENT_PIG 90
-#define ENT_SHEEP 91
-#define ENT_COW 92
-#define ENT_CHICKEN 93
-#define ENT_SQUID 94
-#define ENT_WOLF 95
-#define ENT_MUSHROOMCOW 96
-#define ENT_SNOWMAN 97
-#define ENT_OZELOT 98
-#define ENT_VILLAGERGOLEM 99
-#define ENT_HORSE 100
-#define ENT_RABBIT 101
-#define ENT_POLARBEAR 102
-#define ENT_LLAMA 103
-#define ENT_LLAMASPIT 104
-#define ENT_VILLAGER 120
-#define ENT_ENDERCRYSTAL 200
-#define ENT_ITEM 1
-#define ENT_XPORB 2
-#define ENT_AREAEFFECTCLOUD 3
-#define ENT_ELDERGUARDIAN 4
-#define ENT_WITHERSKELETON 5
-#define ENT_STRAY 6
-#define ENT_THROWNEGG 7
-#define ENT_LEASHKNOT 8
-#define ENT_PAINTING 9
-#define ENT_ARROW 10
-#define ENT_SNOWBALL 11
-#define ENT_FIREBALL 12
-#define ENT_SMALLFIREBALL 13
-#define ENT_THROWNENDERPEARL 14
-#define ENT_EYEOFENDERSIGNAL 15
-#define ENT_THROWNPOTION 16
-#define ENT_THROWNEXPBOTTLE 17
-#define ENT_ITEMFRAME 18
-#define ENT_WITHERSKULL 19
-#define ENT_PRIMEDTNT 20
-#define ENT_FALLINGSAND 21
+#define ENT_FALLINGBLOCK 21
 #define ENT_FIREWORKSROCKETENTITY 22
 #define ENT_HUSK 23
 #define ENT_SPECTRALARROW 24
@@ -310,9 +148,10 @@ struct entity_info {
 		void (*onDeath)(struct world* world, struct entity* entity, struct entity* causer); // causer may be NULL
 		void (*onAttacked)(struct world* world, struct entity* entity, struct entity* attacker); // attacker may be NULL
 		uint32_t (*onAITick)(struct world* world, struct entity* entity); // returns a tick delay before next AI tick, 0 = never tick again, 1 = 1 tick
+		int (*onTick)(struct world* world, struct entity* entity); // if return != 0, then the tick is cancelled (for when the entity has been despawned)
 		uint32_t (*initAI)(struct world* world, struct entity* entity); // returns a tick delay before next AI tick, 0 = never tick again, 1 = 1 tick
 		void (*onSpawned)(struct world* world, struct entity* entity);
-		void (*onInteract)(struct world* world, struct entity* entity, struct player* interacter);
+		void (*onInteract)(struct world* world, struct entity* entity, struct player* interacter, struct slot* item, int16_t slot_index);
 };
 
 void swingArm(struct entity* entity);
@@ -487,7 +326,7 @@ union entity_data {
 
 		} shulkerbullet;
 		struct entity_fallingblock {
-
+				block b;
 		} fallingblock;
 		struct entity_itemframe {
 

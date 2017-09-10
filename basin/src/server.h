@@ -13,7 +13,7 @@ size_t max_players;
 int online_mode;
 int difficulty;
 
-#define RANDOM_TICK_SPEED 10
+#define RANDOM_TICK_SPEED 3
 // 3
 
 #endif /* SERVER_H_ */

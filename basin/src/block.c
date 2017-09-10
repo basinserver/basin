@@ -298,6 +298,66 @@ void dropItems_tallgrass(struct world* world, block blk, int32_t x, int32_t y, i
 	}
 }
 
+int falling_canFallThrough(block b) {
+	struct block_info* bi = getBlockInfo(b);
+	return bi == NULL || streq_nocase(bi->material->name, "fire") || streq_nocase(bi->material->name, "air") || streq_nocase(bi->material->name, "water") || streq_nocase(bi->material->name, "lava");
+}
+
+void onBlockUpdate_falling(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
+	if (y > 0 && falling_canFallThrough(getBlockWorld(world, x, y - 1, z))) {
+		setBlockWorld(world, 0, x, y, z);
+		struct entity* e = newEntity(nextEntityID++, (double) x + .5, (double) y, (double) z + .5, ENT_FALLINGBLOCK, 0., 0.);
+		e->data.fallingblock.b = blk;
+		e->objectData = blk >> 4;
+		spawnEntity(world, e);
+	}
+}
+
+void sponge_floodfill(struct world* world, int32_t x, int32_t y, int32_t z, int32_t* pos, uint32_t* removed) {
+	if (*removed > 64) return;
+	block b = getBlockWorld(world, x, y, z);
+	if (b >> 4 == BLK_WATER >> 4 || b >> 4 == BLK_WATER_1 >> 4) {
+		pos[*removed * 3] = x;
+		pos[*removed * 3 + 1] = y;
+		pos[*removed * 3 + 2] = z;
+		(*removed)++;
+		if (*removed > 64) return;
+	}
+}
+
+void onBlockUpdate_sponge(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
+	if ((blk & 0x0f) == 0) {
+		uint32_t removed = 0;
+		int32_t pos[65][3];
+		uint32_t lRemoved = 0;
+		while (removed < 65) {
+			if (removed == 0) {
+				sponge_floodfill(world, x - 1, y, z, pos, &removed);
+				sponge_floodfill(world, x + 1, y, z, pos, &removed);
+				sponge_floodfill(world, x, y + 1, z, pos, &removed);
+				sponge_floodfill(world, x, y - 1, z, pos, &removed);
+				sponge_floodfill(world, x, y, z + 1, pos, &removed);
+				sponge_floodfill(world, x, y, z - 1, pos, &removed);
+				if (removed == 0) break;
+				else setBlockWorld(world, blk | 1, x, y, z);
+			}
+			uint32_t rRemoved = removed;
+			for (uint32_t i = lRemoved; i < removed; i++) {
+				setBlockWorld(world, 0, pos[i][0], pos[i][1], pos[i][2]);
+				sponge_floodfill(world, pos[i][0] - 1, pos[i][1], pos[i][2], pos, &rRemoved);
+				sponge_floodfill(world, pos[i][0] + 1, pos[i][1], pos[i][2], pos, &rRemoved);
+				sponge_floodfill(world, pos[i][0], pos[i][1] + 1, pos[i][2], pos, &rRemoved);
+				sponge_floodfill(world, pos[i][0], pos[i][1] - 1, pos[i][2], pos, &rRemoved);
+				sponge_floodfill(world, pos[i][0], pos[i][1], pos[i][2] + 1, pos, &rRemoved);
+				sponge_floodfill(world, pos[i][0], pos[i][1], pos[i][2] - 1, pos, &rRemoved);
+			}
+			if (lRemoved == removed) break;
+			lRemoved = removed;
+			removed = rRemoved;
+		}
+	}
+}
+
 int canBePlaced_ladder(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
 	uint8_t m = blk & 0x0f;
 	block b = 0;
@@ -340,7 +400,7 @@ block onBlockPlacedPlayer_vine(struct player* player, struct world* world, block
 	if (bi != NULL && bi->fullCube && bi->material->blocksMovement) out |= 0x8;
 	b = getBlockWorld(world, x, y + 1, z);
 	bi = getBlockInfo(b);
-	//printf("block placed vine = ");
+//printf("block placed vine = ");
 	if ((b >> 4) == (BLK_VINE >> 4)) {
 		//printf("%i\n", b);
 		return b;
@@ -348,14 +408,14 @@ block onBlockPlacedPlayer_vine(struct player* player, struct world* world, block
 		//printf("0 -- %i, %i, %i, %i, %i\n", b, bi != NULL, bi->fullCube, bi->material->blocksMovement, out);
 		return 0;
 	}
-	//printf("2/%i\n", out);
+//printf("2/%i\n", out);
 	return out;
 }
 
 void onBlockUpdate_vine(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
-	//printf("bu vine <%i, %i, %i> ", x, y, z);
+//printf("bu vine <%i, %i, %i> ", x, y, z);
 	block b = onBlockPlacedPlayer_vine(NULL, world, blk, x, y, z, -1);
-	//printf("%i != %i\n", b, blk);
+//printf("%i != %i\n", b, blk);
 	if (b != blk) {
 		if (b >> 4 == blk >> 4 && b >> 4 == BLK_VINE >> 4) setBlockWorld_noupdate(world, b, x, y, z);
 		else setBlockWorld(world, b, x, y, z);
@@ -363,7 +423,7 @@ void onBlockUpdate_vine(struct world* world, block blk, int32_t x, int32_t y, in
 }
 
 int canBePlaced_vine(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
-	//printf("cbp vine at\n");
+//printf("cbp vine at\n");
 	block b = getBlockWorld(world, x, y, z + 1);
 	struct block_info* bi = getBlockInfo(b);
 	if (bi != NULL && bi->fullCube && bi->material->blocksMovement) return 1;
@@ -380,7 +440,7 @@ int canBePlaced_vine(struct world* world, block blk, int32_t x, int32_t y, int32
 	if ((b >> 4) == (BLK_VINE >> 4)) return 1;
 	bi = getBlockInfo(b);
 	if (bi != NULL && bi->fullCube && bi->material->blocksMovement) return 1;
-	//printf("cbp vine at --- cannot be placed\n");
+//printf("cbp vine at --- cannot be placed\n");
 	return 0;
 }
 
@@ -1495,4 +1555,8 @@ void init_blocks() {
 	tmp->randomTick = &randomTick_staticlava;
 	tmp = getBlockInfo(BLK_FARMLAND);
 	tmp->randomTick = &randomTick_farmland;
+	getBlockInfo(BLK_SAND)->onBlockUpdate = &onBlockUpdate_falling;
+	getBlockInfo(BLK_GRAVEL)->onBlockUpdate = &onBlockUpdate_falling;
+	getBlockInfo(BLK_ANVIL)->onBlockUpdate = &onBlockUpdate_falling;
+	getBlockInfo(BLK_SPONGE_DRY)->onBlockUpdate = &onBlockUpdate_sponge;
 }

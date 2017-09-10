@@ -84,13 +84,6 @@
 #define BLK_LEAVES_JUNGLE_3 303
 #define BLK_SPONGE_DRY 304
 #define BLK_SPONGE_WET 305
-#define BLK_SPONGE_WET_1 307
-#define BLK_SPONGE_WET_2 309
-#define BLK_SPONGE_WET_3 311
-#define BLK_SPONGE_WET_4 313
-#define BLK_SPONGE_WET_5 315
-#define BLK_SPONGE_WET_6 317
-#define BLK_SPONGE_WET_7 319
 #define BLK_GLASS 320
 #define BLK_ORELAPIS 336
 #define BLK_BLOCKLAPIS 352
@@ -341,16 +334,7 @@
 #define BLK_POTATOES 2272
 #define BLK_BUTTON_1 2288
 #define BLK_SKULL 2304
-#define BLK_ANVIL_INTACT 2320
-#define BLK_ANVIL_SLIGHTLYDAMAGED 2321
-#define BLK_ANVIL_INTACT_1 2324
-#define BLK_ANVIL_INTACT_2 2325
-#define BLK_ANVIL_INTACT_3 2326
-#define BLK_ANVIL_INTACT_4 2327
-#define BLK_ANVIL_INTACT_5 2328
-#define BLK_ANVIL_INTACT_6 2329
-#define BLK_ANVIL_INTACT_7 2330
-#define BLK_ANVIL_INTACT_8 2331
+#define BLK_ANVIL 2320
 #define BLK_CHESTTRAP 2336
 #define BLK_WEIGHTEDPLATE_LIGHT 2352
 #define BLK_WEIGHTEDPLATE_HEAVY 2368
@@ -609,6 +593,8 @@ struct block_info {
 		uint8_t lightOpacity;
 		uint8_t lightEmission;
 };
+
+int falling_canFallThrough(block b);
 
 int isNormalCube(struct block_info* bi);
 

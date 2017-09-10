@@ -59,7 +59,7 @@ struct player* newPlayer(struct entity* entity, char* name, struct uuid uuid, st
 	player->openInv = NULL;
 	put_hashmap(player->inventory->players, player->entity->id, player);
 	player->loadedChunks = new_hashmap(1, 1);
-	player->loadedEntities = new_hashmap(1, 1);
+	player->loadedEntities = new_hashmap(1, 0);
 	player->incomingPacket = new_queue(0, 1);
 	player->outgoingPacket = new_queue(0, 1);
 	player->defunct = 0;
@@ -533,23 +533,16 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 				//}
 				//}
 				if (!bad) {
-					if (tbi->onBlockPlacedPlayer != NULL) tbb = (*tbi->onBlockPlacedPlayer)(player, player->world, tbb, x, y, z, face);
-					BEGIN_HASHMAP_ITERATION (plugins)
-					struct plugin* plugin = value;
-					if (plugin->onBlockPlacedPlayer != NULL) tbb = (*plugin->onBlockPlacedPlayer)(player, player->world, tbb, x, y, z, face);
-					END_HASHMAP_ITERATION (plugins)
-					if (tbi->canBePlaced != NULL && !(*tbi->canBePlaced)(player->world, tbb, x, y, z)) {
-						setBlockWorld(player->world, b2, x, y, z);
-						goto pbp_cont;
-					}
-					if (setBlockWorld(player->world, tbb, x, y, z)) {
-						setBlockWorld(player->world, b2, x, y, z);
-						setSlot(player, player->inventory, 36 + player->currentItem, ci, 1, 1);
-					} else if (player->gamemode != 1) {
-						if (--ci->itemCount <= 0) {
-							ci = NULL;
+					if (canPlayerPlaceBlock(player, tbb, x, y, z, face)) {
+						if (setBlockWorld(player->world, tbb, x, y, z)) {
+							setBlockWorld(player->world, b2, x, y, z);
+							setSlot(player, player->inventory, 36 + player->currentItem, ci, 1, 1);
+						} else if (player->gamemode != 1) {
+							if (--ci->itemCount <= 0) {
+								ci = NULL;
+							}
+							setSlot(player, player->inventory, 36 + player->currentItem, ci, 1, 1);
 						}
-						setSlot(player, player->inventory, 36 + player->currentItem, ci, 1, 1);
 					}
 				} else {
 					setBlockWorld(player->world, b2, x, y, z);
@@ -1017,7 +1010,17 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 	} else if (inp->id == PKT_PLAY_SERVER_CLOSEWINDOW) {
 		player_closeWindow(player, inp->data.play_server.closewindow.window_id);
 	} else if (inp->id == PKT_PLAY_SERVER_USEENTITY) {
-		if (inp->data.play_server.useentity.type == 1) {
+		if (inp->data.play_server.useentity.type == 0) {
+			struct entity* ent = getEntity(player->world, inp->data.play_server.useentity.target);
+			if (ent != NULL && ent != player->entity && ent->health > 0. && ent->world == player->world && entity_dist(ent, player->entity) < 4.) {
+				struct entity_info* ei = getEntityInfo(ent->type);
+				if (ei != NULL && ei->onInteract != NULL) {
+					pthread_mutex_lock(&player->inventory->mut);
+					(*ei->onInteract)(player->world, ent, player, getSlot(player, player->inventory, 36 + player->currentItem), 36 + player->currentItem);
+					pthread_mutex_unlock(&player->inventory->mut);
+				}
+			}
+		} else if (inp->data.play_server.useentity.type == 1) {
 			struct entity* ent = getEntity(player->world, inp->data.play_server.useentity.target);
 			if (ent != NULL && ent != player->entity && ent->health > 0. && ent->world == player->world && entity_dist(ent, player->entity) < 4. && (tick_counter - player->lastSwing) >= 3) {
 				pthread_mutex_lock(&player->inventory->mut);
@@ -1325,9 +1328,7 @@ void tick_player(struct world* world, struct player* player) {
 			pkt->data.play_client.destroyentities.entity_ids = xmalloc(sizeof(int32_t));
 			pkt->data.play_client.destroyentities.entity_ids[0] = ent->id;
 			add_queue(player->outgoingPacket, pkt);
-			pthread_rwlock_unlock(&player->loadedEntities->data_mutex);
 			put_hashmap(player->loadedEntities, ent->id, NULL);
-			pthread_rwlock_rdlock(&player->loadedEntities->data_mutex);
 			put_hashmap(ent->loadingPlayers, player->entity->id, NULL);
 		}
 		END_HASHMAP_ITERATION(player->loadedEntities)
@@ -1476,10 +1477,8 @@ void teleportPlayer(struct player* player, double x, double y, double z) {
 	 pkt->data.play_client.destroyentities.entity_ids = xmalloc(sizeof(int32_t));
 	 pkt->data.play_client.destroyentities.entity_ids[0] = be->id;
 	 add_queue(player->outgoingPacket, pkt);
-	 pthread_rwlock_unlock(&player->loadedEntities->data_mutex);
 	 put_hashmap(player->loadedEntities, be->id, NULL);
 	 put_hashmap(be->loadingPlayers, player->entity->id, NULL);
-	 pthread_rwlock_rdlock(&player->loadedEntities->data_mutex);
 	 END_HASHMAP_ITERATION(player->loadedEntities)*/
 //	if (player->tps > 0) player->tps--;
 }
@@ -1592,4 +1591,19 @@ void freePlayer(struct player* player) {
 	xfree(player->inventory);
 	xfree(player->name);
 	xfree(player);
+}
+
+int canPlayerPlaceBlock(struct player* player, block blk, int32_t x, int32_t y, int32_t z, uint8_t face) {
+	struct block_info* bi = getBlockInfo(blk);
+	block tbb = blk;
+	if (bi != NULL && bi->onBlockPlacedPlayer != NULL) tbb = (*bi->onBlockPlacedPlayer)(player, player->world, tbb, x, y, z, face);
+	BEGIN_HASHMAP_ITERATION (plugins)
+	struct plugin* plugin = value;
+	if (plugin->onBlockPlacedPlayer != NULL) tbb = (*plugin->onBlockPlacedPlayer)(player, player->world, tbb, x, y, z, face);
+	END_HASHMAP_ITERATION (plugins)
+	bi = getBlockInfo(blk);
+	if (bi != NULL && bi->canBePlaced != NULL && !(*bi->canBePlaced)(player->world, tbb, x, y, z)) {
+		return 0;
+	}
+	return 1;
 }

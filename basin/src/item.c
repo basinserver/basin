@@ -17,6 +17,45 @@
 #include "nbt.h"
 #include <math.h>
 #include "game.h"
+#include "player.h"
+
+int onItemInteract_itemblock(struct world* world, struct player* player, uint8_t slot_index, struct slot* slot, int32_t x, uint8_t y, int32_t z, uint8_t face) {
+	offsetCoordByFace(&x, &y, &z, face);
+	block pre = getBlockWorld(world, x, y, z);
+	block b = pre;
+	if (slot->item == ITM_STRING) {
+		b = BLK_TRIPWIRE;
+	} else if (slot->item == ITM_REDSTONE) {
+		b = BLK_REDSTONEDUST;
+	} else if (slot->item == ITM_CAKE) {
+		b = BLK_CAKE;
+	} else if (slot->item == ITM_DIODE) {
+		b = BLK_DIODE;
+	} else if (slot->item == ITM_BREWINGSTAND) {
+		b = BLK_BREWINGSTAND;
+	} else if (slot->item == ITM_CAULDRON) {
+		b = BLK_CAULDRON;
+	} else if (slot->item == ITM_FLOWERPOT) {
+		b = BLK_FLOWERPOT;
+	} else if (slot->item == ITM_COMPARATOR) {
+		b = BLK_COMPARATOR;
+	}
+	if (canPlayerPlaceBlock(player, b, x, y, z, face)) {
+		if (setBlockWorld(player->world, b, x, y, z)) {
+			setBlockWorld(player->world, pre, x, y, z);
+			setSlot(player, player->inventory, 36 + player->currentItem, slot, 1, 1);
+		} else if (player->gamemode != 1) {
+			if (--slot->itemCount <= 0) {
+				slot = NULL;
+			}
+			setSlot(player, player->inventory, 36 + player->currentItem, slot, 1, 1);
+		}
+	} else {
+		setBlockWorld(player->world, pre, x, y, z);
+		setSlot(player, player->inventory, 36 + player->currentItem, slot, 1, 1);
+	}
+	return 0;
+}
 
 int onItemBreakBlock_tool(struct world* world, struct player* player, uint8_t slot_index, struct slot* slot, int32_t x, uint8_t y, int32_t z) {
 	if (slot == NULL) return 0;
@@ -53,6 +92,7 @@ int onItemInteract_flintandsteel(struct world* world, struct player* player, uin
 	if (slot == NULL) return 0;
 	offsetCoordByFace(&x, &y, &z, face);
 	if (getBlockWorld(world, x, y, z) != 0) return 0;
+	if (!canPlayerPlaceBlock(player, BLK_FIRE, x, y, z, face)) return 0;
 	struct item_info* ii = getItemInfo(slot->item);
 	if (ii == NULL) return 0;
 	if (player->gamemode != 1 && ++slot->damage >= ii->maxDamage) {
@@ -87,6 +127,7 @@ int onItemInteract_spawnegg(struct world* world, struct player* player, uint8_t 
 int onItemInteract_reeds(struct world* world, struct player* player, uint8_t slot_index, struct slot* slot, int32_t x, uint8_t y, int32_t z, uint8_t face) {
 	if (slot == NULL) return 0;
 	offsetCoordByFace(&x, &y, &z, face);
+	if (!canPlayerPlaceBlock(player, BLK_REEDS, x, y, z, face)) return 0;
 	if (getBlockWorld(world, x, y, z) != 0) return 0;
 	if (!canBePlaced_reeds(world, BLK_REEDS, x, y, z)) return 0;
 	struct item_info* ii = getItemInfo(slot->item);
@@ -108,6 +149,7 @@ int onItemInteract_bucket(struct world* world, struct player* player, uint8_t sl
 	uint16_t ba = b >> 4;
 	if (slot->item == ITM_BUCKETWATER) {
 		if (b != 0 && !bi->material->replacable && ba != BLK_WATER >> 4 && ba != BLK_WATER_1 >> 4) return 0;
+		if (!canPlayerPlaceBlock(player, BLK_WATER_1, x, y, z, face)) return 0;
 		setBlockWorld(world, BLK_WATER_1, x, y, z);
 		if (player->gamemode != 1) {
 			slot->item = ITM_BUCKET;
@@ -115,6 +157,7 @@ int onItemInteract_bucket(struct world* world, struct player* player, uint8_t sl
 		}
 	} else if (slot->item == ITM_BUCKETLAVA) {
 		if (b != 0 && !bi->material->replacable && ba != BLK_LAVA >> 4 && ba != BLK_LAVA_1 >> 4) return 0;
+		if (!canPlayerPlaceBlock(player, BLK_LAVA_1, x, y, z, face)) return 0;
 		setBlockWorld(world, BLK_LAVA_1, x, y, z);
 		if (player->gamemode != 1) {
 			slot->item = ITM_BUCKET;
@@ -141,6 +184,7 @@ int onItemInteract_bucket(struct world* world, struct player* player, uint8_t sl
 
 int onItemInteract_bonemeal(struct world* world, struct player* player, uint8_t slot_index, struct slot* slot, int32_t x, uint8_t y, int32_t z, uint8_t face) {
 	if (slot == NULL) return 0;
+	if (!canPlayerPlaceBlock(player, ITM_DYEPOWDER_BLACK, x, y, z, face)) return 0;
 	block b = getBlockWorld(world, x, y, z);
 	uint16_t ba = b >> 4;
 	if (ba == (BLK_CROPS >> 4) || (ba == BLK_PUMPKINSTEM >> 4) || (ba == BLK_PUMPKINSTEM_1 >> 4) || (ba == BLK_CARROTS >> 4) || (ba == BLK_POTATOES >> 4) || (ba == BLK_BEETROOTS >> 4) || (ba == BLK_COCOA >> 4)) {
@@ -196,13 +240,14 @@ int onItemInteract_bonemeal(struct world* world, struct player* player, uint8_t 
 
 int onItemInteract_seeds(struct world* world, struct player* player, uint8_t slot_index, struct slot* slot, int32_t x, uint8_t y, int32_t z, uint8_t face) {
 	if (slot == NULL) return 0;
+	offsetCoordByFace(&x, &y, &z, face);
+	if (!canPlayerPlaceBlock(player, ITM_DYEPOWDER_BLACK, x, y, z, face)) return 0;
 	block b = getBlockWorld(world, x, y, z);
 	if (slot->item == ITM_DYEPOWDER_BLACK) {
 		if (slot->damage == 3 && (face == 1 || face == 0 || b != BLK_LOG_JUNGLE)) return 0;
 		if (slot->damage == 15) return onItemInteract_bonemeal(world, player, slot_index, slot, x, y, z, face);
 		else if (slot->damage != 3) return 0;
 	} else if (face != 1 || (b >> 4) != (slot->item == ITM_NETHERSTALKSEEDS ? (BLK_HELLSAND >> 4) : (BLK_FARMLAND >> 4))) return 0;
-	offsetCoordByFace(&x, &y, &z, face);
 	b = getBlockWorld(world, x, y, z);
 	if (b != 0) return 0;
 	block tp = 0;
@@ -228,6 +273,7 @@ int onItemInteract_hoe(struct world* world, struct player* player, uint8_t slot_
 	if (ii == NULL) return 0;
 	block b = getBlockWorld(world, x, y, z);
 	if (b == BLK_DIRT || b == BLK_GRASS) {
+		if (!canPlayerPlaceBlock(player, slot->item, x, y, z, face)) return 0;
 		if (player->gamemode != 1 && ++slot->damage >= ii->maxDamage) {
 			slot = NULL;
 		}
@@ -243,6 +289,7 @@ int onItemInteract_shovel(struct world* world, struct player* player, uint8_t sl
 	if (ii == NULL) return 0;
 	block b = getBlockWorld(world, x, y, z);
 	if (b == BLK_GRASS) {
+		if (!canPlayerPlaceBlock(player, slot->item, x, y, z, face)) return 0;
 		if (player->gamemode != 1 && ++slot->damage >= ii->maxDamage) {
 			slot = NULL;
 		}
@@ -521,6 +568,14 @@ void init_items() {
 	getItemInfo(ITM_MONSTERPLACER)->onItemInteract = &onItemInteract_spawnegg;
 	getItemInfo(ITM_BOW)->onItemUse = &onItemUse_bow;
 	getItemInfo(ITM_BOW)->canUseItem = &canUseItem_bow;
+	getItemInfo(ITM_STRING)->onItemInteract = &onItemInteract_itemblock;
+	getItemInfo(ITM_REDSTONE)->onItemInteract = &onItemInteract_itemblock;
+	getItemInfo(ITM_CAKE)->onItemInteract = &onItemInteract_itemblock;
+	getItemInfo(ITM_DIODE)->onItemInteract = &onItemInteract_itemblock;
+	getItemInfo(ITM_BREWINGSTAND)->onItemInteract = &onItemInteract_itemblock;
+	getItemInfo(ITM_CAULDRON)->onItemInteract = &onItemInteract_itemblock;
+	getItemInfo(ITM_FLOWERPOT)->onItemInteract = &onItemInteract_itemblock;
+	getItemInfo(ITM_COMPARATOR)->onItemInteract = &onItemInteract_itemblock;
 	init_food(ITM_APPLE, 4, 0.3, 0);
 	init_food(ITM_MUSHROOMSTEW, 6, 0.6, 0);
 	init_food(ITM_BREAD, 5, 0.6, 0);

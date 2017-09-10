@@ -1546,15 +1546,12 @@ struct world* newWorld(size_t chl_count) {
 	struct world* world = xmalloc(sizeof(struct world));
 	memset(world, 0, sizeof(struct world));
 	world->regions = new_hashmap(1, 1);
-	world->entities = new_hashmap(1, 1);
+	world->entities = new_hashmap(1, 0);
 	world->players = new_hashmap(1, 1);
 	world->chunks = new_hashmap(1, 1);
-	pthread_mutex_init(&world->tick_mut, NULL);
-	pthread_cond_init(&world->tick_cond, NULL);
 	world->chl_count = chl_count;
-	world->subworlds = new_hashmap(1, 1);
 	world->skylightSubtracted = 0;
-	world->scheduledTicks = new_hashmap(1, 1);
+	world->scheduledTicks = new_hashmap(1, 0);
 	world->tps = 0;
 	world->ticksInSecond = 0;
 	world->seed = 9876543;
@@ -1622,43 +1619,6 @@ int loadWorld(struct world* world, char* path) {
 	return 0;
 }
 
-void thr_player_tick(struct subworld* sw) {
-	while (1) {
-		pthread_mutex_lock(&sw->world->tick_mut);
-		pthread_cond_wait(&sw->world->tick_cond, &sw->world->tick_mut);
-		pthread_mutex_unlock(&sw->world->tick_mut);
-		if (sw->defunct) {
-			//assume all players are gone
-			put_hashmap(sw->world->subworlds, (uint64_t) sw, NULL);
-			del_hashmap(sw->players);
-			xfree(sw);
-			return;
-		}
-		beginProfilerSection("player_receive_packet");
-		BEGIN_HASHMAP_ITERATION(sw->players)
-		struct player* player = (struct player*) value;
-		if (player->incomingPacket->size == 0) continue;
-		pthread_mutex_lock(&player->incomingPacket->data_mutex);
-		struct packet* wp = pop_nowait_queue(player->incomingPacket);
-		while (wp != NULL) {
-			player_receive_packet(player, wp);
-			freePacket(STATE_PLAY, 0, wp);
-			xfree(wp);
-			wp = pop_nowait_queue(player->incomingPacket);
-		}
-		pthread_mutex_unlock(&player->incomingPacket->data_mutex);
-		END_HASHMAP_ITERATION(sw->players)
-		endProfilerSection("player_receive_packet");
-		beginProfilerSection("tick_player");
-		BEGIN_HASHMAP_ITERATION(sw->players)
-		struct player* player = (struct player*) value;
-		tick_player(sw->world, player);
-		tick_entity(sw->world, player->entity); // might need to be moved into separate loop later
-		END_HASHMAP_ITERATION(sw->players)
-		endProfilerSection("tick_player");
-	}
-}
-
 void world_pretick(struct world* world) {
 	if (++world->time >= 24000) world->time = 0;
 	world->age++;
@@ -1687,7 +1647,28 @@ void tick_world(struct world* world) {
 		}
 		world->ticksInSecond++;
 		world_pretick(world);
-		pthread_cond_broadcast(&world->tick_cond); // we use a different condition for subtick threads for the pretick
+		beginProfilerSection("player_receive_packet");
+		BEGIN_HASHMAP_ITERATION(world->players)
+		struct player* player = (struct player*) value;
+		if (player->incomingPacket->size == 0) continue;
+		pthread_mutex_lock(&player->incomingPacket->data_mutex);
+		struct packet* wp = pop_nowait_queue(player->incomingPacket);
+		while (wp != NULL) {
+			player_receive_packet(player, wp);
+			freePacket(STATE_PLAY, 0, wp);
+			xfree(wp);
+			wp = pop_nowait_queue(player->incomingPacket);
+		}
+		pthread_mutex_unlock(&player->incomingPacket->data_mutex);
+		END_HASHMAP_ITERATION(world->players)
+		endProfilerSection("player_receive_packet");
+		beginProfilerSection("tick_player");
+		BEGIN_HASHMAP_ITERATION(world->players)
+		struct player* player = (struct player*) value;
+		tick_player(world, player);
+		tick_entity(world, player->entity); // might need to be moved into separate loop later
+		END_HASHMAP_ITERATION(world->players)
+		endProfilerSection("tick_player");
 		beginProfilerSection("tick_entity");
 		BEGIN_HASHMAP_ITERATION(world->entities)
 		struct entity* entity = (struct entity*) value;
@@ -1729,7 +1710,6 @@ void tick_world(struct world* world) {
 			block b = getBlockWorld(world, st->x, st->y, st->z);
 			struct block_info* bi = getBlockInfo(b);
 			int k = 0;
-			pthread_rwlock_unlock(&world->scheduledTicks->data_mutex);
 			if (bi->scheduledTick != NULL) k = (*bi->scheduledTick)(world, b, st->x, st->y, st->z);
 			if (k > 0) {
 				st->ticksLeft = k;
@@ -1737,7 +1717,6 @@ void tick_world(struct world* world) {
 				put_hashmap(world->scheduledTicks, (uint64_t) st, NULL);
 				xfree(st);
 			}
-			pthread_rwlock_rdlock(&world->scheduledTicks->data_mutex);
 		}
 		END_HASHMAP_ITERATION(world->scheduledTicks)
 		endProfilerSection("tick_chunk_scheduledticks");
@@ -1810,25 +1789,6 @@ void spawnPlayer(struct world* world, struct player* player) {
 	if (player->loadedEntities == NULL) player->loadedEntities = new_hashmap(1, 0);
 	if (player->loadedChunks == NULL) player->loadedChunks = new_hashmap(1, 1);
 	put_hashmap(world->players, player->entity->id, player);
-	BEGIN_HASHMAP_ITERATION(world->subworlds)
-	struct subworld* sw = value;
-	if (sw->players->entry_count < 100 && !sw->defunct) {
-		put_hashmap(sw->players, player->entity->id, player);
-		player->subworld = sw;
-		BREAK_HASHMAP_ITERATION(world->subworlds)
-		goto se;
-	}
-	END_HASHMAP_ITERATION(world->subworlds)
-//no subworld with < 100 players
-	struct subworld* sw = xmalloc(sizeof(struct subworld));
-	sw->world = world;
-	sw->players = new_hashmap(1, 1);
-	sw->defunct = 0;
-	player->subworld = sw;
-	put_hashmap(world->subworlds, (uint64_t) sw, sw);
-	pthread_t swt;
-	pthread_create(&swt, NULL, &thr_player_tick, sw);
-	put_hashmap(sw->players, player->entity->id, player); // no ticks until next tick!
 	se: ;
 	spawnEntity(world, player->entity);
 	BEGIN_HASHMAP_ITERATION (plugins)
@@ -1840,9 +1800,6 @@ void spawnPlayer(struct world* world, struct player* player) {
 void despawnPlayer(struct world* world, struct player* player) {
 	if (player->openInv != NULL) player_closeWindow(player, player->openInv->windowID);
 	despawnEntity(world, player->entity);
-	pthread_rwlock_unlock(&player->subworld->players->data_mutex);
-	put_hashmap(player->subworld->players, player->entity->id, NULL);
-	pthread_rwlock_rdlock(&player->subworld->players->data_mutex);
 	BEGIN_HASHMAP_ITERATION(player->loadedEntities)
 	if (value == NULL || value == player->entity) continue;
 	struct entity* ent = (struct entity*) value;
@@ -1859,7 +1816,6 @@ void despawnPlayer(struct world* world, struct player* player) {
 	del_hashmap(player->loadedChunks);
 	player->loadedChunks = NULL;
 	put_hashmap(world->players, player->entity->id, NULL);
-	if (player->subworld->players->entry_count <= 0) player->subworld->defunct = 1;
 }
 
 void despawnEntity(struct world* world, struct entity* entity) {

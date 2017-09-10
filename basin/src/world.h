@@ -174,22 +174,13 @@ struct world {
 		uint64_t age;
 		struct nbt_tag* level;
 		char* lpa;
-		pthread_mutex_t tick_mut;
-		pthread_cond_t tick_cond;
 		size_t chl_count;
-		struct hashmap* subworlds;
 		uint8_t skylightSubtracted;
 		struct hashmap* scheduledTicks;
 		uint16_t ticksInSecond;
 		float tps;
 		uint64_t seed;
 		struct perlin perlin;
-};
-
-struct subworld { // subworld for players thread
-		struct world* world;
-		struct hashmap* players;
-		uint8_t defunct;
 };
 
 uint16_t getHeightMapWorld_guess(struct world* world, struct chunk* ch, int32_t x, int32_t z);
