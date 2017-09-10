@@ -19,6 +19,140 @@
 #include "game.h"
 #include "player.h"
 
+int onItemInteract_painting(struct world* world, struct player* player, uint8_t slot_index, struct slot* slot, int32_t x, uint8_t y, int32_t z, uint8_t face) {
+	int32_t ox = x;
+	int32_t oy = y;
+	int32_t oz = z;
+	offsetCoordByFace(&ox, &oy, &oz, face);
+	if (face != YP && face != YN && canPlayerPlaceBlock(player, ITM_PAINTING, ox, oy, oz, face)) {
+		struct entity* ent = newEntity(nextEntityID++, (double) ox, (double) oy, (double) oz, ENT_PAINTING, 0., 0.);
+		if (face == NORTH) ent->data.painting.direction = 2;
+		if (face == SOUTH) ent->data.painting.direction = 0;
+		if (face == WEST) ent->data.painting.direction = 1;
+		if (face == EAST) ent->data.painting.direction = 3;
+		block b = getBlockWorld(world, x, y, z);
+		if (!isNormalCube(getBlockInfo(b))) return 0;
+		b = getBlockWorld(world, ox, oy, oz);
+		if (b != 0) return 0;
+		int32_t p = -1;
+		for (int32_t i = 0; i < 50; i++) {
+			p = rand() % 26;
+			if (p < 7) {
+
+			}
+			if (p >= 7) {
+				b = getBlockWorld(world, x + (face == ZP ? 1 : (face == ZN ? -1 : 0)), y, z + (face == XP ? 1 : (face == XN ? -1 : 0)));
+				if (!isNormalCube(getBlockInfo(b))) continue;
+				b = getBlockWorld(world, ox + (face == ZP ? 1 : (face == ZN ? -1 : 0)), oy, oz + (face == XP ? 1 : (face == XN ? -1 : 0)));
+				if (b != 0) return 0;
+			}
+			if (p >= 12) {
+				b = getBlockWorld(world, x, y + 1, z);
+				if (!isNormalCube(getBlockInfo(b))) continue;
+				b = getBlockWorld(world, ox, oy + 1, oz);
+				if (b != 0) return 0;
+			}
+			if (p >= 14) {
+				b = getBlockWorld(world, x + (face == ZP ? 1 : (face == ZN ? -1 : 0)), y + 1, z + (face == XP ? 1 : (face == XN ? -1 : 0)));
+				if (!isNormalCube(getBlockInfo(b))) continue;
+				b = getBlockWorld(world, ox + (face == ZP ? 1 : (face == ZN ? -1 : 0)), oy + 1, oz + (face == XP ? 1 : (face == XN ? -1 : 0)));
+				if (b != 0) return 0;
+			}
+			if (p >= 20) {
+				b = getBlockWorld(world, x + (face == ZP ? 1 : (face == ZN ? -1 : 0)) * 2, y, z + (face == XP ? 1 : (face == XN ? -1 : 0)) * 2);
+				if (!isNormalCube(getBlockInfo(b))) continue;
+				b = getBlockWorld(world, x - (face == ZP ? 1 : (face == ZN ? -1 : 0)), y, z - (face == XP ? 1 : (face == XN ? -1 : 0)));
+				if (!isNormalCube(getBlockInfo(b))) continue;
+				b = getBlockWorld(world, x + (face == ZP ? 1 : (face == ZN ? -1 : 0)) * 2, y + 1, z + (face == XP ? 1 : (face == XN ? -1 : 0))) * 2;
+				if (!isNormalCube(getBlockInfo(b))) continue;
+				b = getBlockWorld(world, x - (face == ZP ? 1 : (face == ZN ? -1 : 0)), y + 1, z - (face == XP ? 1 : (face == XN ? -1 : 0)));
+				if (!isNormalCube(getBlockInfo(b))) continue;
+				b = getBlockWorld(world, ox + (face == ZP ? 1 : (face == ZN ? -1 : 0)) * 2, oy, oz + (face == XP ? 1 : (face == XN ? -1 : 0)) * 2);
+				if (b != 0) return 0;
+				b = getBlockWorld(world, ox - (face == ZP ? 1 : (face == ZN ? -1 : 0)), oy, oz - (face == XP ? 1 : (face == XN ? -1 : 0)));
+				if (b != 0) return 0;
+				b = getBlockWorld(world, ox + (face == ZP ? 1 : (face == ZN ? -1 : 0)) * 2, oy + 1, oz + (face == XP ? 1 : (face == XN ? -1 : 0))) * 2;
+				if (b != 0) return 0;
+				b = getBlockWorld(world, ox - (face == ZP ? 1 : (face == ZN ? -1 : 0)), oy + 1, oz - (face == XP ? 1 : (face == XN ? -1 : 0)));
+				if (b != 0) return 0;
+			}
+			if (p >= 21) {
+				for (int32_t i = 2; i <= (p < 24 ? 2 : 3); i++) {
+					b = getBlockWorld(world, x + (face == ZP ? 1 : (face == ZN ? -1 : 0)) * 2, y + i, z + (face == XP ? 1 : (face == XN ? -1 : 0)) * 2);
+					if (!isNormalCube(getBlockInfo(b))) continue;
+					b = getBlockWorld(world, x + (face == ZP ? 1 : (face == ZN ? -1 : 0)), y + i, z + (face == XP ? 1 : (face == XN ? -1 : 0)));
+					if (!isNormalCube(getBlockInfo(b))) continue;
+					b = getBlockWorld(world, x * 2, y + i, z);
+					if (!isNormalCube(getBlockInfo(b))) continue;
+					b = getBlockWorld(world, x - (face == ZP ? 1 : (face == ZN ? -1 : 0)), y + i, z - (face == XP ? 1 : (face == XN ? -1 : 0)));
+					if (!isNormalCube(getBlockInfo(b))) continue;
+					b = getBlockWorld(world, ox + (face == ZP ? 1 : (face == ZN ? -1 : 0)) * 2, oy + i, oz + (face == XP ? 1 : (face == XN ? -1 : 0)) * 2);
+					if (b != 0) return 0;
+					b = getBlockWorld(world, ox + (face == ZP ? 1 : (face == ZN ? -1 : 0)), oy + i, oz + (face == XP ? 1 : (face == XN ? -1 : 0)));
+					if (b != 0) return 0;
+					b = getBlockWorld(world, ox, oy + i, oz);
+					if (b != 0) return 0;
+					b = getBlockWorld(world, ox - (face == ZP ? 1 : (face == ZN ? -1 : 0)), oy + i, oz - (face == XP ? 1 : (face == XN ? -1 : 0)));
+					if (b != 0) return 0;
+				}
+			}
+			break;
+		}
+		if (p < 0) {
+			freeEntity(ent);
+			return 0;
+		}
+		if (p == 0) ent->data.painting.title = "Kebab";
+		else if (p == 1) ent->data.painting.title = "Aztec";
+		else if (p == 2) ent->data.painting.title = "Alban";
+		else if (p == 3) ent->data.painting.title = "Aztec2";
+		else if (p == 4) ent->data.painting.title = "Bomb";
+		else if (p == 5) ent->data.painting.title = "Plant";
+		else if (p == 6) ent->data.painting.title = "Wasteland";
+		else if (p == 7) ent->data.painting.title = "Pool";
+		else if (p == 8) ent->data.painting.title = "Courbet";
+		else if (p == 9) ent->data.painting.title = "Sea";
+		else if (p == 10) ent->data.painting.title = "Sunset";
+		else if (p == 11) ent->data.painting.title = "Creebet";
+		else if (p == 12) ent->data.painting.title = "Wanderer";
+		else if (p == 13) ent->data.painting.title = "Graham";
+		else if (p == 14) ent->data.painting.title = "Match";
+		else if (p == 15) ent->data.painting.title = "Bust";
+		else if (p == 16) ent->data.painting.title = "Stage";
+		else if (p == 17) ent->data.painting.title = "Void";
+		else if (p == 18) ent->data.painting.title = "SkullAndRoses";
+		else if (p == 19) ent->data.painting.title = "Wither";
+		else if (p == 20) ent->data.painting.title = "Fighters";
+		else if (p == 21) ent->data.painting.title = "Pointer";
+		else if (p == 22) ent->data.painting.title = "Pigscene";
+		else if (p == 23) ent->data.painting.title = "BurningSkull";
+		else if (p == 24) ent->data.painting.title = "Skeleton";
+		else if (p == 25) ent->data.painting.title = "DonkeyKong";
+		spawnEntity(world, ent);
+		if (player->gamemode != 1) setSlot(player, player->inventory, 36 + player->currentItem, NULL, 1, 1);
+	}
+	return 0;
+
+}
+
+int onItemInteract_minecart(struct world* world, struct player* player, uint8_t slot_index, struct slot* slot, int32_t x, uint8_t y, int32_t z, uint8_t face) {
+	block b = getBlockWorld(world, x, y, z);
+	if (b >> 4 != BLK_RAIL >> 4 && b >> 4 != BLK_ACTIVATORRAIL >> 4 && b >> 4 != BLK_GOLDENRAIL >> 4 && b >> 4 != BLK_DETECTORRAIL >> 4) return 0;
+	double dy = 0.;
+	if (b & 0b0110) dy += .5;
+	uint16_t et = ENT_MINECARTRIDEABLE;
+	if (slot->item == ITM_MINECARTCHEST) et = ENT_MINECARTCHEST;
+	else if (slot->item == ITM_MINECARTFURNACE) et = ENT_MINECARTFURNACE;
+	else if (slot->item == ITM_MINECARTTNT) et = ENT_MINECARTTNT;
+	else if (slot->item == ITM_MINECARTHOPPER) et = ENT_MINECARTHOPPER;
+	else if (slot->item == ITM_MINECARTCOMMANDBLOCK) et = ENT_MINECARTCOMMANDBLOCK;
+	struct entity* ent = newEntity(nextEntityID++, (double) x + .5, (double) y + dy, (double) z + .5, et, 0., 0.);
+	spawnEntity(world, ent);
+	if (player->gamemode != 1) setSlot(player, player->inventory, 36 + player->currentItem, NULL, 1, 1);
+	return 0;
+
+}
+
 int onItemInteract_door(struct world* world, struct player* player, uint8_t slot_index, struct slot* slot, int32_t x, uint8_t y, int32_t z, uint8_t face) {
 	if (face != YP) return 0;
 	offsetCoordByFace(&x, &y, &z, face);
@@ -620,6 +754,13 @@ void init_items() {
 	getItemInfo(ITM_CAULDRON)->onItemInteract = &onItemInteract_itemblock;
 	getItemInfo(ITM_FLOWERPOT)->onItemInteract = &onItemInteract_itemblock;
 	getItemInfo(ITM_COMPARATOR)->onItemInteract = &onItemInteract_itemblock;
+	getItemInfo(ITM_MINECART)->onItemInteract = &onItemInteract_minecart;
+	getItemInfo(ITM_MINECARTCHEST)->onItemInteract = &onItemInteract_minecart;
+	getItemInfo(ITM_MINECARTFURNACE)->onItemInteract = &onItemInteract_minecart;
+	getItemInfo(ITM_MINECARTTNT)->onItemInteract = &onItemInteract_minecart;
+	getItemInfo(ITM_MINECARTHOPPER)->onItemInteract = &onItemInteract_minecart;
+	getItemInfo(ITM_MINECARTCOMMANDBLOCK)->onItemInteract = &onItemInteract_minecart;
+	getItemInfo(ITM_PAINTING)->onItemInteract = &onItemInteract_painting;
 	init_food(ITM_APPLE, 4, 0.3, 0);
 	init_food(ITM_MUSHROOMSTEW, 6, 0.6, 0);
 	init_food(ITM_BREAD, 5, 0.6, 0);

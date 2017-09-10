@@ -468,7 +468,7 @@ double entity_distsq_block(struct entity* ent1, double x, double y, double z);
 
 double entity_dist_block(struct entity* ent1, double x, double y, double z);
 
-struct entity* newEntity(int32_t id, float x, float y, float z, uint32_t type, float yaw, float pitch);
+struct entity* newEntity(int32_t id, double x, double y, double z, uint32_t type, float yaw, float pitch);
 
 void getEntityCollision(struct entity* ent, struct boundingbox* bb);
 

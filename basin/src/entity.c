@@ -26,6 +26,16 @@
 #include "game.h"
 #include "plugin.h"
 
+void onSpawned_minecart(struct world* world, struct entity* entity) {
+	if (entity->type == ENT_MINECARTRIDEABLE) entity->objectData = 0;
+	else if (entity->type == ENT_MINECARTCHEST) entity->objectData = 1;
+	else if (entity->type == ENT_MINECARTFURNACE) entity->objectData = 2;
+	else if (entity->type == ENT_MINECARTTNT) entity->objectData = 3;
+	else if (entity->type == ENT_MINECARTSPAWNER) entity->objectData = 4;
+	else if (entity->type == ENT_MINECARTHOPPER) entity->objectData = 5;
+	else if (entity->type == ENT_MINECARTCOMMANDBLOCK) entity->objectData = 6;
+}
+
 struct entity_info* getEntityInfo(uint32_t id) {
 	if (id < 0 || id > entity_infos->size) return NULL;
 	return entity_infos->data[id];
@@ -444,6 +454,13 @@ void init_entities() {
 	getEntityInfo(ENT_SPECTRALARROW)->onTick = &tick_arrow;
 	getEntityInfo(ENT_COW)->onInteract = &onInteract_cow;
 	getEntityInfo(ENT_MUSHROOMCOW)->onInteract = &onInteract_mooshroom;
+	getEntityInfo(ENT_MINECARTRIDEABLE)->onSpawned = &onSpawned_minecart;
+	getEntityInfo(ENT_MINECARTCHEST)->onSpawned = &onSpawned_minecart;
+	getEntityInfo(ENT_MINECARTFURNACE)->onSpawned = &onSpawned_minecart;
+	getEntityInfo(ENT_MINECARTTNT)->onSpawned = &onSpawned_minecart;
+	getEntityInfo(ENT_MINECARTSPAWNER)->onSpawned = &onSpawned_minecart;
+	getEntityInfo(ENT_MINECARTHOPPER)->onSpawned = &onSpawned_minecart;
+	getEntityInfo(ENT_MINECARTCOMMANDBLOCK)->onSpawned = &onSpawned_minecart;
 }
 
 uint32_t getIDFromEntityDataName(const char* dataname) {
@@ -473,7 +490,7 @@ void jump(struct entity* entity) {
 	}
 }
 
-struct entity* newEntity(int32_t id, float x, float y, float z, uint32_t type, float yaw, float pitch) {
+struct entity* newEntity(int32_t id, double x, double y, double z, uint32_t type, float yaw, float pitch) {
 	struct entity* e = malloc(sizeof(struct entity));
 	struct entity_info* ei = getEntityInfo(type);
 	e->id = id;

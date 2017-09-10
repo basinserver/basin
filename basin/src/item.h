@@ -26,6 +26,10 @@ void offsetCoordByFace(int32_t* x, uint8_t* y, int32_t* z, uint8_t face);
 #define ZP 3
 #define XN 4
 #define XP 5
+#define NORTH 2
+#define SOUTH 3
+#define WEST 4
+#define EAST 5
 
 #define ITM_SHOVELIRON 256
 #define ITM_PICKAXEIRON 257
