@@ -27,10 +27,56 @@
 struct collection* block_infos;
 struct collection* block_materials;
 
+int canBePlaced_bed(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
+	block b = getBlockWorld(world, x, y - 1, z);
+	struct block_info* bi = getBlockInfo(b);
+	return isNormalCube(bi);
+}
+
+void onBlockUpdate_bed(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
+	block b = getBlockWorld(world, x, y - 1, z);
+	struct block_info* bi = getBlockInfo(b);
+	if (!isNormalCube(bi)) goto delete;
+	int facing = blk & 0b0011;
+	int head = blk & 0b1000;
+	uint8_t rf = 0;
+	if (facing == 0) rf = SOUTH;
+	else if (facing == 1) rf = WEST;
+	else if (facing == 2) rf = NORTH;
+	else if (facing == 3) rf = EAST;
+	if (head) {
+		if (rf == SOUTH) rf = NORTH;
+		else if (rf == NORTH) rf = SOUTH;
+		else if (rf == EAST) rf = WEST;
+		else if (rf == WEST) rf = EAST;
+	}
+	int32_t ox = x;
+	int32_t oy = y;
+	int32_t oz = z;
+	offsetCoordByFace(&ox, &oy, &oz, rf);
+	b = getBlockWorld(world, ox, oy, oz);
+	if (b >> 4 == blk >> 4) return;
+	delete:;
+	setBlockWorld(world, 0, x, y, z);
+	if (head) dropBlockDrops(world, blk, NULL, x, y, z);
+}
+
 int canBePlaced_door(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
 	block b = getBlockWorld(world, x, y - 1, z);
 	struct block_info* bi = getBlockInfo(b);
-	return b >> 4 == blk >> 4 || isNormalCube(bi);
+	return (b >> 4 == blk >> 4 && !(b & 0b1000) && (blk & 0b1000)) || isNormalCube(bi);
+}
+
+void onBlockUpdate_door(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
+	block b = getBlockWorld(world, x, y - 1, z);
+	struct block_info* bi = getBlockInfo(b);
+	int upper = blk & 0b1000;
+	if (!upper && !isNormalCube(bi)) goto delete;
+	b = getBlockWorld(world, x, y + (upper ? -1 : 1), z);
+	if (b >> 4 == blk >> 4) return;
+	delete:;
+	setBlockWorld(world, 0, x, y, z);
+	if (!upper) dropBlockDrops(world, blk, NULL, x, y, z);
 }
 
 void onBlockInteract_woodendoor(struct world* world, block blk, int32_t x, int32_t y, int32_t z, struct player* player, uint8_t face, float curPosX, float curPosY, float curPosZ) {
@@ -95,7 +141,7 @@ void onBlockInteract_chest(struct world* world, block blk, int32_t x, int32_t y,
 		onBlockPlaced_chest(world, blk, x, y, z, 0);
 		te = getTileEntityWorld(world, x, y, z);
 	}
-	//TODO: impl locks, loot
+//TODO: impl locks, loot
 	player_openInventory(player, te->data.chest.inv);
 	BEGIN_BROADCAST_DIST(player->entity, 128.)
 	struct packet* pkt = xmalloc(sizeof(struct packet));
@@ -128,7 +174,7 @@ void onBlockInteract_furnace(struct world* world, block blk, int32_t x, int32_t 
 		onBlockPlaced_furnace(world, blk, x, y, z, 0);
 		te = getTileEntityWorld(world, x, y, z);
 	}
-	//TODO: impl locks, loot
+//TODO: impl locks, loot
 	player_openInventory(player, te->data.furnace.inv);
 	struct packet* pkt = xmalloc(sizeof(struct packet));
 	pkt->id = PKT_PLAY_CLIENT_WINDOWPROPERTY;
@@ -1584,41 +1630,45 @@ void init_blocks() {
 		tmp = getBlockInfo(b);
 		tmp->onBlockInteract = &onBlockInteract_woodendoor;
 		tmp->canBePlaced = &canBePlaced_door;
-		tmp->onBlockUpdate = &onBlockUpdate_checkPlace;
+		tmp->onBlockUpdate = &onBlockUpdate_door;
 	}
 	for (block b = BLK_DOORSPRUCE; b < BLK_DOORSPRUCE + 16; b++) {
 		tmp = getBlockInfo(b);
 		tmp->onBlockInteract = &onBlockInteract_woodendoor;
 		tmp->canBePlaced = &canBePlaced_door;
-		tmp->onBlockUpdate = &onBlockUpdate_checkPlace;
+		tmp->onBlockUpdate = &onBlockUpdate_door;
 	}
 	for (block b = BLK_DOORBIRCH; b < BLK_DOORBIRCH + 16; b++) {
 		tmp = getBlockInfo(b);
 		tmp->onBlockInteract = &onBlockInteract_woodendoor;
 		tmp->canBePlaced = &canBePlaced_door;
-		tmp->onBlockUpdate = &onBlockUpdate_checkPlace;
+		tmp->onBlockUpdate = &onBlockUpdate_door;
 	}
 	for (block b = BLK_DOORJUNGLE; b < BLK_DOORJUNGLE + 16; b++) {
 		tmp = getBlockInfo(b);
 		tmp->onBlockInteract = &onBlockInteract_woodendoor;
 		tmp->canBePlaced = &canBePlaced_door;
-		tmp->onBlockUpdate = &onBlockUpdate_checkPlace;
+		tmp->onBlockUpdate = &onBlockUpdate_door;
 	}
 	for (block b = BLK_DOORACACIA; b < BLK_DOORACACIA + 16; b++) {
 		tmp = getBlockInfo(b);
 		tmp->onBlockInteract = &onBlockInteract_woodendoor;
 		tmp->canBePlaced = &canBePlaced_door;
-		tmp->onBlockUpdate = &onBlockUpdate_checkPlace;
+		tmp->onBlockUpdate = &onBlockUpdate_door;
 	}
 	for (block b = BLK_DOORDARKOAK; b < BLK_DOORDARKOAK + 16; b++) {
 		tmp = getBlockInfo(b);
 		tmp->onBlockInteract = &onBlockInteract_woodendoor;
 		tmp->canBePlaced = &canBePlaced_door;
-		tmp->onBlockUpdate = &onBlockUpdate_checkPlace;
+		tmp->onBlockUpdate = &onBlockUpdate_door;
 	}
 	for (block b = BLK_DOORIRON; b < BLK_DOORIRON + 16; b++) {
 		tmp = getBlockInfo(b);
 		tmp->canBePlaced = &canBePlaced_door;
-		tmp->onBlockUpdate = &onBlockUpdate_checkPlace;
+		tmp->onBlockUpdate = &onBlockUpdate_door;
 	}
+	tmp = getBlockInfo(BLK_BED);
+	tmp->canBePlaced = &canBePlaced_bed;
+	tmp->onBlockUpdate = &onBlockUpdate_bed;
+
 }

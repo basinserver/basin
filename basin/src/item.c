@@ -19,7 +19,52 @@
 #include "game.h"
 #include "player.h"
 
-int onItemInteract_painting(struct world* world, struct player* player, uint8_t slot_index, struct slot* slot, int32_t x, uint8_t y, int32_t z, uint8_t face) {
+int onItemInteract_bed(struct world* world, struct player* player, uint8_t slot_index, struct slot* slot, int32_t x, int32_t y, int32_t z, uint8_t face) {
+	if (face != YP) return 0;
+	if (!getBlockInfo(getBlockWorld(world, x, y, z))->material->replacable) offsetCoordByFace(&x, &y, &z, face);
+	uint32_t h = (uint32_t) floor(player->entity->yaw / 90. + .5) & 3;
+	uint8_t rf = 0;
+	if (h == 0) rf = SOUTH;
+	else if (h == 1) rf = WEST;
+	else if (h == 2) rf = NORTH;
+	else if (h == 3) rf = EAST;
+	int32_t x2 = x;
+	int32_t y2 = y;
+	int32_t z2 = z;
+	offsetCoordByFace(&x2, &y2, &z2, rf);
+	block pre = getBlockWorld(world, x, y, z);
+	block pre2 = getBlockWorld(world, x2, y2, z2);
+	block b = BLK_BED | h;
+	block b2 = b;
+	b2 |= 0b1000;
+	if (canPlayerPlaceBlock(player, b, x, y, z, face) && !setBlockWorld_noupdate(player->world, b, x, y, z)) {
+		if (!canPlayerPlaceBlock(player, b2, x2, y2, z2, face) || setBlockWorld(player->world, b2, x2, y2, z2)) {
+			setBlockWorld(player->world, pre, x, y, z);
+			setBlockWorld(player->world, pre2, x2, y2, z2);
+			setSlot(player, player->inventory, 36 + player->currentItem, slot, 1, 1);
+			return 0;
+		} else if (player->gamemode != 1) {
+			if (--slot->itemCount <= 0) {
+				slot = NULL;
+			}
+			setSlot(player, player->inventory, 36 + player->currentItem, slot, 1, 1);
+		}
+		updateBlockWorld_guess(world, NULL, x, y, z);
+		updateBlockWorld_guess(world, NULL, x + 1, y, z);
+		updateBlockWorld_guess(world, NULL, x - 1, y, z);
+		updateBlockWorld_guess(world, NULL, x, y + 1, z);
+		updateBlockWorld_guess(world, NULL, x, y - 1, z);
+		updateBlockWorld_guess(world, NULL, x, y, z + 1);
+		updateBlockWorld_guess(world, NULL, x, y, z - 1);
+	} else {
+		setBlockWorld(player->world, pre, x, y, z);
+		setBlockWorld(player->world, pre2, x2, y2, z2);
+		setSlot(player, player->inventory, 36 + player->currentItem, slot, 1, 1);
+	}
+	return 0;
+}
+
+int onItemInteract_painting(struct world* world, struct player* player, uint8_t slot_index, struct slot* slot, int32_t x, int32_t y, int32_t z, uint8_t face) {
 	int32_t ox = x;
 	int32_t oy = y;
 	int32_t oz = z;
@@ -135,7 +180,7 @@ int onItemInteract_painting(struct world* world, struct player* player, uint8_t 
 
 }
 
-int onItemInteract_minecart(struct world* world, struct player* player, uint8_t slot_index, struct slot* slot, int32_t x, uint8_t y, int32_t z, uint8_t face) {
+int onItemInteract_minecart(struct world* world, struct player* player, uint8_t slot_index, struct slot* slot, int32_t x, int32_t y, int32_t z, uint8_t face) {
 	block b = getBlockWorld(world, x, y, z);
 	if (b >> 4 != BLK_RAIL >> 4 && b >> 4 != BLK_ACTIVATORRAIL >> 4 && b >> 4 != BLK_GOLDENRAIL >> 4 && b >> 4 != BLK_DETECTORRAIL >> 4) return 0;
 	double dy = 0.;
@@ -153,9 +198,9 @@ int onItemInteract_minecart(struct world* world, struct player* player, uint8_t 
 
 }
 
-int onItemInteract_door(struct world* world, struct player* player, uint8_t slot_index, struct slot* slot, int32_t x, uint8_t y, int32_t z, uint8_t face) {
+int onItemInteract_door(struct world* world, struct player* player, uint8_t slot_index, struct slot* slot, int32_t x, int32_t y, int32_t z, uint8_t face) {
 	if (face != YP) return 0;
-	offsetCoordByFace(&x, &y, &z, face);
+	if (!getBlockInfo(getBlockWorld(world, x, y, z))->material->replacable) offsetCoordByFace(&x, &y, &z, face);
 	block pre = getBlockWorld(world, x, y, z);
 	block pre2 = getBlockWorld(world, x, y + 1, z);
 	block b = BLK_DOOROAK;
@@ -171,17 +216,25 @@ int onItemInteract_door(struct world* world, struct player* player, uint8_t slot
 	else if (h == 1) b |= 2;
 	else if (h == 2) b |= 3;
 	b2 |= 0b1000;
-	if (canPlayerPlaceBlock(player, b, x, y, z, face) && !setBlockWorld(player->world, b, x, y, z)) {
+	if (canPlayerPlaceBlock(player, b, x, y, z, face) && !setBlockWorld_noupdate(player->world, b, x, y, z)) {
 		if (!canPlayerPlaceBlock(player, b2, x, y + 1, z, face) || setBlockWorld(player->world, b2, x, y + 1, z)) {
 			setBlockWorld(player->world, pre, x, y, z);
 			setBlockWorld(player->world, pre2, x, y + 1, z);
 			setSlot(player, player->inventory, 36 + player->currentItem, slot, 1, 1);
+			return 0;
 		} else if (player->gamemode != 1) {
 			if (--slot->itemCount <= 0) {
 				slot = NULL;
 			}
 			setSlot(player, player->inventory, 36 + player->currentItem, slot, 1, 1);
 		}
+		updateBlockWorld_guess(world, NULL, x, y, z);
+		updateBlockWorld_guess(world, NULL, x + 1, y, z);
+		updateBlockWorld_guess(world, NULL, x - 1, y, z);
+		updateBlockWorld_guess(world, NULL, x, y + 1, z);
+		updateBlockWorld_guess(world, NULL, x, y - 1, z);
+		updateBlockWorld_guess(world, NULL, x, y, z + 1);
+		updateBlockWorld_guess(world, NULL, x, y, z - 1);
 	} else {
 		setBlockWorld(player->world, pre, x, y, z);
 		setBlockWorld(player->world, pre2, x, y + 1, z);
@@ -190,8 +243,8 @@ int onItemInteract_door(struct world* world, struct player* player, uint8_t slot
 	return 0;
 }
 
-int onItemInteract_itemblock(struct world* world, struct player* player, uint8_t slot_index, struct slot* slot, int32_t x, uint8_t y, int32_t z, uint8_t face) {
-	offsetCoordByFace(&x, &y, &z, face);
+int onItemInteract_itemblock(struct world* world, struct player* player, uint8_t slot_index, struct slot* slot, int32_t x, int32_t y, int32_t z, uint8_t face) {
+	if (!getBlockInfo(getBlockWorld(world, x, y, z))->material->replacable) offsetCoordByFace(&x, &y, &z, face);
 	block pre = getBlockWorld(world, x, y, z);
 	block b = pre;
 	if (slot->item == ITM_STRING) {
@@ -228,7 +281,7 @@ int onItemInteract_itemblock(struct world* world, struct player* player, uint8_t
 	return 0;
 }
 
-int onItemBreakBlock_tool(struct world* world, struct player* player, uint8_t slot_index, struct slot* slot, int32_t x, uint8_t y, int32_t z) {
+int onItemBreakBlock_tool(struct world* world, struct player* player, uint8_t slot_index, struct slot* slot, int32_t x, int32_t y, int32_t z) {
 	if (slot == NULL) return 0;
 	struct item_info* ii = getItemInfo(slot->item);
 	if (ii == NULL) return 0;
@@ -250,7 +303,7 @@ float onItemAttacked_tool(struct world* world, struct player* player, uint8_t sl
 	return ii->damage;
 }
 
-void offsetCoordByFace(int32_t* x, uint8_t* y, int32_t* z, uint8_t face) {
+void offsetCoordByFace(int32_t* x, int32_t* y, int32_t* z, uint8_t face) {
 	if (face == YN) (*y)--;
 	else if (face == YP) (*y)++;
 	else if (face == ZN) (*z)--;
@@ -259,7 +312,7 @@ void offsetCoordByFace(int32_t* x, uint8_t* y, int32_t* z, uint8_t face) {
 	else if (face == XP) (*x)++;
 }
 
-int onItemInteract_flintandsteel(struct world* world, struct player* player, uint8_t slot_index, struct slot* slot, int32_t x, uint8_t y, int32_t z, uint8_t face) {
+int onItemInteract_flintandsteel(struct world* world, struct player* player, uint8_t slot_index, struct slot* slot, int32_t x, int32_t y, int32_t z, uint8_t face) {
 	if (slot == NULL) return 0;
 	offsetCoordByFace(&x, &y, &z, face);
 	if (getBlockWorld(world, x, y, z) != 0) return 0;
@@ -274,10 +327,10 @@ int onItemInteract_flintandsteel(struct world* world, struct player* player, uin
 	return 0;
 }
 
-int onItemInteract_spawnegg(struct world* world, struct player* player, uint8_t slot_index, struct slot* slot, int32_t x, uint8_t y, int32_t z, uint8_t face) {
+int onItemInteract_spawnegg(struct world* world, struct player* player, uint8_t slot_index, struct slot* slot, int32_t x, int32_t y, int32_t z, uint8_t face) {
 	if (slot == NULL || slot->nbt == NULL) return 0;
 	//TODO: mob spawners
-	offsetCoordByFace(&x, &y, &z, face);
+	if (getBlockInfo(getBlockWorld(world, x, y, z))->boundingBox_count > 0) offsetCoordByFace(&x, &y, &z, face);
 	//if (getBlockWorld(world, x, y, z) != 0) return 0;
 	struct item_info* ii = getItemInfo(slot->item);
 	if (ii == NULL) return 0;
@@ -295,9 +348,9 @@ int onItemInteract_spawnegg(struct world* world, struct player* player, uint8_t 
 	return 0;
 }
 
-int onItemInteract_reeds(struct world* world, struct player* player, uint8_t slot_index, struct slot* slot, int32_t x, uint8_t y, int32_t z, uint8_t face) {
+int onItemInteract_reeds(struct world* world, struct player* player, uint8_t slot_index, struct slot* slot, int32_t x, int32_t y, int32_t z, uint8_t face) {
 	if (slot == NULL) return 0;
-	offsetCoordByFace(&x, &y, &z, face);
+	if (!getBlockInfo(getBlockWorld(world, x, y, z))->material->replacable) offsetCoordByFace(&x, &y, &z, face);
 	if (!canPlayerPlaceBlock(player, BLK_REEDS, x, y, z, face)) return 0;
 	if (getBlockWorld(world, x, y, z) != 0) return 0;
 	if (!canBePlaced_reeds(world, BLK_REEDS, x, y, z)) return 0;
@@ -311,9 +364,9 @@ int onItemInteract_reeds(struct world* world, struct player* player, uint8_t slo
 	return 0;
 }
 
-int onItemInteract_bucket(struct world* world, struct player* player, uint8_t slot_index, struct slot* slot, int32_t x, uint8_t y, int32_t z, uint8_t face) {
+int onItemInteract_bucket(struct world* world, struct player* player, uint8_t slot_index, struct slot* slot, int32_t x, int32_t y, int32_t z, uint8_t face) {
 	if (slot == NULL) return 0;
-	offsetCoordByFace(&x, &y, &z, face);
+	if (!getBlockInfo(getBlockWorld(world, x, y, z))->material->replacable) offsetCoordByFace(&x, &y, &z, face);
 	block b = getBlockWorld(world, x, y, z);
 	struct block_info* bi = getBlockInfo(b);
 	if (bi == NULL) return 0;
@@ -353,7 +406,7 @@ int onItemInteract_bucket(struct world* world, struct player* player, uint8_t sl
 	return 0;
 }
 
-int onItemInteract_bonemeal(struct world* world, struct player* player, uint8_t slot_index, struct slot* slot, int32_t x, uint8_t y, int32_t z, uint8_t face) {
+int onItemInteract_bonemeal(struct world* world, struct player* player, uint8_t slot_index, struct slot* slot, int32_t x, int32_t y, int32_t z, uint8_t face) {
 	if (slot == NULL) return 0;
 	if (!canPlayerPlaceBlock(player, ITM_DYEPOWDER_BLACK, x, y, z, face)) return 0;
 	block b = getBlockWorld(world, x, y, z);
@@ -409,9 +462,9 @@ int onItemInteract_bonemeal(struct world* world, struct player* player, uint8_t 
 	return 0;
 }
 
-int onItemInteract_seeds(struct world* world, struct player* player, uint8_t slot_index, struct slot* slot, int32_t x, uint8_t y, int32_t z, uint8_t face) {
+int onItemInteract_seeds(struct world* world, struct player* player, uint8_t slot_index, struct slot* slot, int32_t x, int32_t y, int32_t z, uint8_t face) {
 	if (slot == NULL) return 0;
-	offsetCoordByFace(&x, &y, &z, face);
+	if (!getBlockInfo(getBlockWorld(world, x, y, z))->material->replacable) offsetCoordByFace(&x, &y, &z, face);
 	if (!canPlayerPlaceBlock(player, ITM_DYEPOWDER_BLACK, x, y, z, face)) return 0;
 	block b = getBlockWorld(world, x, y, z);
 	if (slot->item == ITM_DYEPOWDER_BLACK) {
@@ -438,7 +491,7 @@ int onItemInteract_seeds(struct world* world, struct player* player, uint8_t slo
 	return 0;
 }
 
-int onItemInteract_hoe(struct world* world, struct player* player, uint8_t slot_index, struct slot* slot, int32_t x, uint8_t y, int32_t z, uint8_t face) {
+int onItemInteract_hoe(struct world* world, struct player* player, uint8_t slot_index, struct slot* slot, int32_t x, int32_t y, int32_t z, uint8_t face) {
 	if (slot == NULL) return 0;
 	struct item_info* ii = getItemInfo(slot->item);
 	if (ii == NULL) return 0;
@@ -454,7 +507,7 @@ int onItemInteract_hoe(struct world* world, struct player* player, uint8_t slot_
 	return 0;
 }
 
-int onItemInteract_shovel(struct world* world, struct player* player, uint8_t slot_index, struct slot* slot, int32_t x, uint8_t y, int32_t z, uint8_t face) {
+int onItemInteract_shovel(struct world* world, struct player* player, uint8_t slot_index, struct slot* slot, int32_t x, int32_t y, int32_t z, uint8_t face) {
 	if (slot == NULL) return 0;
 	struct item_info* ii = getItemInfo(slot->item);
 	if (ii == NULL) return 0;
@@ -761,6 +814,7 @@ void init_items() {
 	getItemInfo(ITM_MINECARTHOPPER)->onItemInteract = &onItemInteract_minecart;
 	getItemInfo(ITM_MINECARTCOMMANDBLOCK)->onItemInteract = &onItemInteract_minecart;
 	getItemInfo(ITM_PAINTING)->onItemInteract = &onItemInteract_painting;
+	getItemInfo(ITM_BED)->onItemInteract = &onItemInteract_bed;
 	init_food(ITM_APPLE, 4, 0.3, 0);
 	init_food(ITM_MUSHROOMSTEW, 6, 0.6, 0);
 	init_food(ITM_BREAD, 5, 0.6, 0);

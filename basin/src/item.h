@@ -18,7 +18,7 @@ typedef int16_t item;
 #include "inventory.h"
 #include "tools.h"
 
-void offsetCoordByFace(int32_t* x, uint8_t* y, int32_t* z, uint8_t face);
+void offsetCoordByFace(int32_t* x, int32_t* y, int32_t* z, uint8_t face);
 
 #define YN 0
 #define YP 1
@@ -264,8 +264,8 @@ struct item_info {
 		int (*canUseItem)(struct world* world, struct player* player, uint8_t slot_index, struct slot* slot);
 		void (*onItemUseTick)(struct world* world, struct player* player, uint8_t slot_index, struct slot* slot, int32_t ticksElapsed); // not in-world usage, nor called on last tick. ticksElapsed==0 on start., -1 on cancel
 		void (*onItemUse)(struct world* world, struct player* player, uint8_t slot_index, struct slot* slot, uint32_t ticks); // not in-world usage, when called with long use items, full duration not guaranteed
-		int (*onItemInteract)(struct world* world, struct player* player, uint8_t slot_index, struct slot* slot, int32_t x, uint8_t y, int32_t z, uint8_t face); // in-world usage, called after onItemUse
-		int (*onItemBreakBlock)(struct world* world, struct player* player, uint8_t slot_index, struct slot* slot, int32_t x, uint8_t y, int32_t z); // in-world usage
+		int (*onItemInteract)(struct world* world, struct player* player, uint8_t slot_index, struct slot* slot, int32_t x, int32_t y, int32_t z, uint8_t face); // in-world usage, called after onItemUse
+		int (*onItemBreakBlock)(struct world* world, struct player* player, uint8_t slot_index, struct slot* slot, int32_t x, int32_t y, int32_t z); // in-world usage
 		float (*onItemAttacked)(struct world* world, struct player* player, uint8_t slot_index, struct slot* slot, struct entity* entity); // entity may be NULL
 		float (*onEntityHitWhileWearing)(struct world* world, struct player* player, uint8_t slot_index, struct slot* slot, float damage); // only called for armor/shields
 		void* callback_arg;

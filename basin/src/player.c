@@ -1605,5 +1605,6 @@ int canPlayerPlaceBlock(struct player* player, block blk, int32_t x, int32_t y, 
 	if (bi != NULL && bi->canBePlaced != NULL && !(*bi->canBePlaced)(player->world, tbb, x, y, z)) {
 		return 0;
 	}
-	return 1;
+	block b = getBlockWorld(player->world, x, y, z);
+	return b == 0 || getBlockInfo(b)->material->replacable;
 }
