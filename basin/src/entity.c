@@ -830,6 +830,13 @@ int getSwingTime(struct entity* ent) {
 	return 6;
 }
 
+block entity_adjustCollision(struct world* world, struct chunk* ch, block b, int32_t x, int32_t y, int32_t z) {
+	if (b >> 4 == BLK_DOORIRON >> 4 || b >> 4 == BLK_DOOROAK >> 4 || b >> 4 == BLK_DOORSPRUCE >> 4 || b >> 4 == BLK_DOORBIRCH >> 4 || b >> 4 == BLK_DOORJUNGLE >> 4 || b >> 4 == BLK_DOORACACIA >> 4 || b >> 4 == BLK_DOORDARKOAK >> 4) {
+		if (b & 0b1000) return getBlockWorld_guess(world, ch, x, y - 1, z);
+	}
+	return b;
+}
+
 int moveEntity(struct entity* entity, double* mx, double* my, double* mz, float shrink) {
 	if (entity->immovable) return 0;
 	struct boundingbox obb;
@@ -870,11 +877,13 @@ int moveEntity(struct entity* entity, double* mx, double* my, double* mz, float 
 	pbb.minZ += shrink;
 	pbb.maxZ -= shrink;
 	double ny = *my;
+	struct chunk* ch = getChunk(entity->world, (int32_t) entity->x / 16, (int32_t) entity->z / 16);
 	for (int32_t x = floor(obb.minX); x < floor(obb.maxX + 1.); x++) {
 		for (int32_t z = floor(obb.minZ); z < floor(obb.maxZ + 1.); z++) {
 			for (int32_t y = floor(obb.minY); y < floor(obb.maxY + 1.); y++) {
-				block b = getBlockWorld(entity->world, x, y, z);
+				block b = getBlockWorld_guess(entity->world, ch, x, y, z);
 				if (b == 0) continue;
+				b = entity_adjustCollision(entity->world, ch, b, x, y, z);
 				struct block_info* bi = getBlockInfo(b);
 				if (bi == NULL) continue;
 				for (size_t i = 0; i < bi->boundingBox_count; i++) {
@@ -913,8 +922,9 @@ int moveEntity(struct entity* entity, double* mx, double* my, double* mz, float 
 	for (int32_t x = floor(obb.minX); x < floor(obb.maxX + 1.); x++) {
 		for (int32_t z = floor(obb.minZ); z < floor(obb.maxZ + 1.); z++) {
 			for (int32_t y = floor(obb.minY); y < floor(obb.maxY + 1.); y++) {
-				block b = getBlockWorld(entity->world, x, y, z);
+				block b = getBlockWorld_guess(entity->world, ch, x, y, z);
 				if (b == 0) continue;
+				b = entity_adjustCollision(entity->world, ch, b, x, y, z);
 				struct block_info* bi = getBlockInfo(b);
 				if (bi == NULL) continue;
 				for (size_t i = 0; i < bi->boundingBox_count; i++) {
@@ -948,8 +958,9 @@ int moveEntity(struct entity* entity, double* mx, double* my, double* mz, float 
 	for (int32_t x = floor(obb.minX); x < floor(obb.maxX + 1.); x++) {
 		for (int32_t z = floor(obb.minZ); z < floor(obb.maxZ + 1.); z++) {
 			for (int32_t y = floor(obb.minY); y < floor(obb.maxY + 1.); y++) {
-				block b = getBlockWorld(entity->world, x, y, z);
+				block b = getBlockWorld_guess(entity->world, ch, x, y, z);
 				if (b == 0) continue;
+				b = entity_adjustCollision(entity->world, ch, b, x, y, z);
 				struct block_info* bi = getBlockInfo(b);
 				if (bi == NULL) continue;
 				for (size_t i = 0; i < bi->boundingBox_count; i++) {
@@ -986,9 +997,9 @@ int moveEntity(struct entity* entity, double* mx, double* my, double* mz, float 
 	int32_t bx = floor(entity->x);
 	int32_t by = floor(entity->y - .20000000298023224);
 	int32_t bz = floor(entity->z);
-	block lb = getBlockWorld(entity->world, bx, by, bz);
+	block lb = getBlockWorld_guess(entity->world, ch, bx, by, bz);
 	if (lb == BLK_AIR) {
-		block lbb = getBlockWorld(entity->world, bx, by - 1, bz);
+		block lbb = getBlockWorld_guess(entity->world, ch, bx, by - 1, bz);
 		uint16_t lbi = lbb >> 4;
 		if ((lbi >= (BLK_FENCE >> 4) && lbi <= (BLK_ACACIAFENCE >> 4)) || (lbi >= (BLK_FENCEGATE >> 4) && lbi <= (BLK_ACACIAFENCEGATE >> 4)) || lbi == BLK_COBBLEWALL_NORMAL >> 4) {
 			lb = lbb;

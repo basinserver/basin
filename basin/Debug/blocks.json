@@ -5128,6 +5128,30 @@
 		"lightEmission": 0
 	},
 	"dooroak_3": {
+		"id": 1027,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.8125,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 324,
+		"dropDamage": 0,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 3.0,
+		"material": "wood",
+		"slipperiness": 0.6,
+		"isFullCube": false,
+		"canProvidePower": false,
+		"lightOpacity": 0,
+		"lightEmission": 0
+	},
+	"dooroak_4": {
 		"id": 1028,
 		"collision": {
 			"0": {
@@ -5151,7 +5175,7 @@
 		"lightOpacity": 0,
 		"lightEmission": 0
 	},
-	"dooroak_4": {
+	"dooroak_5": {
 		"id": 1029,
 		"collision": {
 			"0": {
@@ -5175,7 +5199,7 @@
 		"lightOpacity": 0,
 		"lightEmission": 0
 	},
-	"dooroak_5": {
+	"dooroak_6": {
 		"id": 1030,
 		"collision": {
 			"0": {
@@ -5200,182 +5224,14 @@
 		"lightEmission": 0
 	},
 	"dooroak_7": {
-		"id": 1032,
+		"id": 1031,
 		"collision": {
 			"0": {
-				"minX": 0.0,
-				"maxX": 1.0,
+				"minX": 0.1875,
+				"maxX": 0.0,
 				"minY": 0.0,
 				"maxY": 1.0,
-				"minZ": 0.8125,
-				"maxZ": 1.0
-			}
-		},
-		"dropItem": 0,
-		"dropDamage": 0,
-		"dropAmountMin": 1,
-		"dropAmountMax": 1,
-		"hardness": 3.0,
-		"material": "wood",
-		"slipperiness": 0.6,
-		"isFullCube": false,
-		"canProvidePower": false,
-		"lightOpacity": 0,
-		"lightEmission": 0
-	},
-	"dooroak_8": {
-		"id": 1033,
-		"collision": {
-			"0": {
-				"minX": 0.0,
-				"maxX": 1.0,
-				"minY": 0.0,
-				"maxY": 1.0,
-				"minZ": 0.8125,
-				"maxZ": 1.0
-			}
-		},
-		"dropItem": 0,
-		"dropDamage": 0,
-		"dropAmountMin": 1,
-		"dropAmountMax": 1,
-		"hardness": 3.0,
-		"material": "wood",
-		"slipperiness": 0.6,
-		"isFullCube": false,
-		"canProvidePower": false,
-		"lightOpacity": 0,
-		"lightEmission": 0
-	},
-	"dooroak_9": {
-		"id": 1034,
-		"collision": {
-			"0": {
-				"minX": 0.0,
-				"maxX": 1.0,
-				"minY": 0.0,
-				"maxY": 1.0,
-				"minZ": 0.8125,
-				"maxZ": 1.0
-			}
-		},
-		"dropItem": 0,
-		"dropDamage": 0,
-		"dropAmountMin": 1,
-		"dropAmountMax": 1,
-		"hardness": 3.0,
-		"material": "wood",
-		"slipperiness": 0.6,
-		"isFullCube": false,
-		"canProvidePower": false,
-		"lightOpacity": 0,
-		"lightEmission": 0
-	},
-	"dooroak_10": {
-		"id": 1035,
-		"collision": {
-			"0": {
-				"minX": 0.0,
-				"maxX": 1.0,
-				"minY": 0.0,
-				"maxY": 1.0,
-				"minZ": 0.8125,
-				"maxZ": 1.0
-			}
-		},
-		"dropItem": 0,
-		"dropDamage": 0,
-		"dropAmountMin": 1,
-		"dropAmountMax": 1,
-		"hardness": 3.0,
-		"material": "wood",
-		"slipperiness": 0.6,
-		"isFullCube": false,
-		"canProvidePower": false,
-		"lightOpacity": 0,
-		"lightEmission": 0
-	},
-	"dooroak_11": {
-		"id": 1036,
-		"collision": {
-			"0": {
-				"minX": 0.0,
-				"maxX": 1.0,
-				"minY": 0.0,
-				"maxY": 1.0,
-				"minZ": 0.8125,
-				"maxZ": 1.0
-			}
-		},
-		"dropItem": 0,
-		"dropDamage": 0,
-		"dropAmountMin": 1,
-		"dropAmountMax": 1,
-		"hardness": 3.0,
-		"material": "wood",
-		"slipperiness": 0.6,
-		"isFullCube": false,
-		"canProvidePower": false,
-		"lightOpacity": 0,
-		"lightEmission": 0
-	},
-	"dooroak_12": {
-		"id": 1037,
-		"collision": {
-			"0": {
-				"minX": 0.0,
-				"maxX": 1.0,
-				"minY": 0.0,
-				"maxY": 1.0,
-				"minZ": 0.8125,
-				"maxZ": 1.0
-			}
-		},
-		"dropItem": 0,
-		"dropDamage": 0,
-		"dropAmountMin": 1,
-		"dropAmountMax": 1,
-		"hardness": 3.0,
-		"material": "wood",
-		"slipperiness": 0.6,
-		"isFullCube": false,
-		"canProvidePower": false,
-		"lightOpacity": 0,
-		"lightEmission": 0
-	},
-	"dooroak_13": {
-		"id": 1038,
-		"collision": {
-			"0": {
-				"minX": 0.0,
-				"maxX": 1.0,
-				"minY": 0.0,
-				"maxY": 1.0,
-				"minZ": 0.8125,
-				"maxZ": 1.0
-			}
-		},
-		"dropItem": 0,
-		"dropDamage": 0,
-		"dropAmountMin": 1,
-		"dropAmountMax": 1,
-		"hardness": 3.0,
-		"material": "wood",
-		"slipperiness": 0.6,
-		"isFullCube": false,
-		"canProvidePower": false,
-		"lightOpacity": 0,
-		"lightEmission": 0
-	},
-	"dooroak_14": {
-		"id": 1039,
-		"collision": {
-			"0": {
-				"minX": 0.0,
-				"maxX": 1.0,
-				"minY": 0.0,
-				"maxY": 1.0,
-				"minZ": 0.8125,
+				"minZ": 0.0,
 				"maxZ": 1.0
 			}
 		},
@@ -6136,6 +5992,30 @@
 		"lightEmission": 0
 	},
 	"dooriron_3": {
+		"id": 1139,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.8125,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 330,
+		"dropDamage": 0,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 5.0,
+		"material": "iron",
+		"slipperiness": 0.6,
+		"isFullCube": false,
+		"canProvidePower": false,
+		"lightOpacity": 0,
+		"lightEmission": 0
+	},
+	"dooriron_4": {
 		"id": 1140,
 		"collision": {
 			"0": {
@@ -6159,7 +6039,7 @@
 		"lightOpacity": 0,
 		"lightEmission": 0
 	},
-	"dooriron_4": {
+	"dooriron_5": {
 		"id": 1141,
 		"collision": {
 			"0": {
@@ -6183,7 +6063,7 @@
 		"lightOpacity": 0,
 		"lightEmission": 0
 	},
-	"dooriron_5": {
+	"dooriron_6": {
 		"id": 1142,
 		"collision": {
 			"0": {
@@ -6208,182 +6088,14 @@
 		"lightEmission": 0
 	},
 	"dooriron_7": {
-		"id": 1144,
+		"id": 1143,
 		"collision": {
 			"0": {
-				"minX": 0.0,
-				"maxX": 1.0,
+				"minX": 0.1875,
+				"maxX": 0.0,
 				"minY": 0.0,
 				"maxY": 1.0,
-				"minZ": 0.8125,
-				"maxZ": 1.0
-			}
-		},
-		"dropItem": 0,
-		"dropDamage": 0,
-		"dropAmountMin": 1,
-		"dropAmountMax": 1,
-		"hardness": 5.0,
-		"material": "iron",
-		"slipperiness": 0.6,
-		"isFullCube": false,
-		"canProvidePower": false,
-		"lightOpacity": 0,
-		"lightEmission": 0
-	},
-	"dooriron_8": {
-		"id": 1145,
-		"collision": {
-			"0": {
-				"minX": 0.0,
-				"maxX": 1.0,
-				"minY": 0.0,
-				"maxY": 1.0,
-				"minZ": 0.8125,
-				"maxZ": 1.0
-			}
-		},
-		"dropItem": 0,
-		"dropDamage": 0,
-		"dropAmountMin": 1,
-		"dropAmountMax": 1,
-		"hardness": 5.0,
-		"material": "iron",
-		"slipperiness": 0.6,
-		"isFullCube": false,
-		"canProvidePower": false,
-		"lightOpacity": 0,
-		"lightEmission": 0
-	},
-	"dooriron_9": {
-		"id": 1146,
-		"collision": {
-			"0": {
-				"minX": 0.0,
-				"maxX": 1.0,
-				"minY": 0.0,
-				"maxY": 1.0,
-				"minZ": 0.8125,
-				"maxZ": 1.0
-			}
-		},
-		"dropItem": 0,
-		"dropDamage": 0,
-		"dropAmountMin": 1,
-		"dropAmountMax": 1,
-		"hardness": 5.0,
-		"material": "iron",
-		"slipperiness": 0.6,
-		"isFullCube": false,
-		"canProvidePower": false,
-		"lightOpacity": 0,
-		"lightEmission": 0
-	},
-	"dooriron_10": {
-		"id": 1147,
-		"collision": {
-			"0": {
-				"minX": 0.0,
-				"maxX": 1.0,
-				"minY": 0.0,
-				"maxY": 1.0,
-				"minZ": 0.8125,
-				"maxZ": 1.0
-			}
-		},
-		"dropItem": 0,
-		"dropDamage": 0,
-		"dropAmountMin": 1,
-		"dropAmountMax": 1,
-		"hardness": 5.0,
-		"material": "iron",
-		"slipperiness": 0.6,
-		"isFullCube": false,
-		"canProvidePower": false,
-		"lightOpacity": 0,
-		"lightEmission": 0
-	},
-	"dooriron_11": {
-		"id": 1148,
-		"collision": {
-			"0": {
-				"minX": 0.0,
-				"maxX": 1.0,
-				"minY": 0.0,
-				"maxY": 1.0,
-				"minZ": 0.8125,
-				"maxZ": 1.0
-			}
-		},
-		"dropItem": 0,
-		"dropDamage": 0,
-		"dropAmountMin": 1,
-		"dropAmountMax": 1,
-		"hardness": 5.0,
-		"material": "iron",
-		"slipperiness": 0.6,
-		"isFullCube": false,
-		"canProvidePower": false,
-		"lightOpacity": 0,
-		"lightEmission": 0
-	},
-	"dooriron_12": {
-		"id": 1149,
-		"collision": {
-			"0": {
-				"minX": 0.0,
-				"maxX": 1.0,
-				"minY": 0.0,
-				"maxY": 1.0,
-				"minZ": 0.8125,
-				"maxZ": 1.0
-			}
-		},
-		"dropItem": 0,
-		"dropDamage": 0,
-		"dropAmountMin": 1,
-		"dropAmountMax": 1,
-		"hardness": 5.0,
-		"material": "iron",
-		"slipperiness": 0.6,
-		"isFullCube": false,
-		"canProvidePower": false,
-		"lightOpacity": 0,
-		"lightEmission": 0
-	},
-	"dooriron_13": {
-		"id": 1150,
-		"collision": {
-			"0": {
-				"minX": 0.0,
-				"maxX": 1.0,
-				"minY": 0.0,
-				"maxY": 1.0,
-				"minZ": 0.8125,
-				"maxZ": 1.0
-			}
-		},
-		"dropItem": 0,
-		"dropDamage": 0,
-		"dropAmountMin": 1,
-		"dropAmountMax": 1,
-		"hardness": 5.0,
-		"material": "iron",
-		"slipperiness": 0.6,
-		"isFullCube": false,
-		"canProvidePower": false,
-		"lightOpacity": 0,
-		"lightEmission": 0
-	},
-	"dooriron_14": {
-		"id": 1151,
-		"collision": {
-			"0": {
-				"minX": 0.0,
-				"maxX": 1.0,
-				"minY": 0.0,
-				"maxY": 1.0,
-				"minZ": 0.8125,
+				"minZ": 0.0,
 				"maxZ": 1.0
 			}
 		},
@@ -20560,6 +20272,30 @@
 		"lightEmission": 0
 	},
 	"doorspruce_3": {
+		"id": 3091,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.8125,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 427,
+		"dropDamage": 0,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 3.0,
+		"material": "wood",
+		"slipperiness": 0.6,
+		"isFullCube": false,
+		"canProvidePower": false,
+		"lightOpacity": 0,
+		"lightEmission": 0
+	},
+	"doorspruce_4": {
 		"id": 3092,
 		"collision": {
 			"0": {
@@ -20583,7 +20319,7 @@
 		"lightOpacity": 0,
 		"lightEmission": 0
 	},
-	"doorspruce_4": {
+	"doorspruce_5": {
 		"id": 3093,
 		"collision": {
 			"0": {
@@ -20607,7 +20343,7 @@
 		"lightOpacity": 0,
 		"lightEmission": 0
 	},
-	"doorspruce_5": {
+	"doorspruce_6": {
 		"id": 3094,
 		"collision": {
 			"0": {
@@ -20632,182 +20368,14 @@
 		"lightEmission": 0
 	},
 	"doorspruce_7": {
-		"id": 3096,
+		"id": 3095,
 		"collision": {
 			"0": {
-				"minX": 0.0,
-				"maxX": 1.0,
+				"minX": 0.1875,
+				"maxX": 0.0,
 				"minY": 0.0,
 				"maxY": 1.0,
-				"minZ": 0.8125,
-				"maxZ": 1.0
-			}
-		},
-		"dropItem": 0,
-		"dropDamage": 0,
-		"dropAmountMin": 1,
-		"dropAmountMax": 1,
-		"hardness": 3.0,
-		"material": "wood",
-		"slipperiness": 0.6,
-		"isFullCube": false,
-		"canProvidePower": false,
-		"lightOpacity": 0,
-		"lightEmission": 0
-	},
-	"doorspruce_8": {
-		"id": 3097,
-		"collision": {
-			"0": {
-				"minX": 0.0,
-				"maxX": 1.0,
-				"minY": 0.0,
-				"maxY": 1.0,
-				"minZ": 0.8125,
-				"maxZ": 1.0
-			}
-		},
-		"dropItem": 0,
-		"dropDamage": 0,
-		"dropAmountMin": 1,
-		"dropAmountMax": 1,
-		"hardness": 3.0,
-		"material": "wood",
-		"slipperiness": 0.6,
-		"isFullCube": false,
-		"canProvidePower": false,
-		"lightOpacity": 0,
-		"lightEmission": 0
-	},
-	"doorspruce_9": {
-		"id": 3098,
-		"collision": {
-			"0": {
-				"minX": 0.0,
-				"maxX": 1.0,
-				"minY": 0.0,
-				"maxY": 1.0,
-				"minZ": 0.8125,
-				"maxZ": 1.0
-			}
-		},
-		"dropItem": 0,
-		"dropDamage": 0,
-		"dropAmountMin": 1,
-		"dropAmountMax": 1,
-		"hardness": 3.0,
-		"material": "wood",
-		"slipperiness": 0.6,
-		"isFullCube": false,
-		"canProvidePower": false,
-		"lightOpacity": 0,
-		"lightEmission": 0
-	},
-	"doorspruce_10": {
-		"id": 3099,
-		"collision": {
-			"0": {
-				"minX": 0.0,
-				"maxX": 1.0,
-				"minY": 0.0,
-				"maxY": 1.0,
-				"minZ": 0.8125,
-				"maxZ": 1.0
-			}
-		},
-		"dropItem": 0,
-		"dropDamage": 0,
-		"dropAmountMin": 1,
-		"dropAmountMax": 1,
-		"hardness": 3.0,
-		"material": "wood",
-		"slipperiness": 0.6,
-		"isFullCube": false,
-		"canProvidePower": false,
-		"lightOpacity": 0,
-		"lightEmission": 0
-	},
-	"doorspruce_11": {
-		"id": 3100,
-		"collision": {
-			"0": {
-				"minX": 0.0,
-				"maxX": 1.0,
-				"minY": 0.0,
-				"maxY": 1.0,
-				"minZ": 0.8125,
-				"maxZ": 1.0
-			}
-		},
-		"dropItem": 0,
-		"dropDamage": 0,
-		"dropAmountMin": 1,
-		"dropAmountMax": 1,
-		"hardness": 3.0,
-		"material": "wood",
-		"slipperiness": 0.6,
-		"isFullCube": false,
-		"canProvidePower": false,
-		"lightOpacity": 0,
-		"lightEmission": 0
-	},
-	"doorspruce_12": {
-		"id": 3101,
-		"collision": {
-			"0": {
-				"minX": 0.0,
-				"maxX": 1.0,
-				"minY": 0.0,
-				"maxY": 1.0,
-				"minZ": 0.8125,
-				"maxZ": 1.0
-			}
-		},
-		"dropItem": 0,
-		"dropDamage": 0,
-		"dropAmountMin": 1,
-		"dropAmountMax": 1,
-		"hardness": 3.0,
-		"material": "wood",
-		"slipperiness": 0.6,
-		"isFullCube": false,
-		"canProvidePower": false,
-		"lightOpacity": 0,
-		"lightEmission": 0
-	},
-	"doorspruce_13": {
-		"id": 3102,
-		"collision": {
-			"0": {
-				"minX": 0.0,
-				"maxX": 1.0,
-				"minY": 0.0,
-				"maxY": 1.0,
-				"minZ": 0.8125,
-				"maxZ": 1.0
-			}
-		},
-		"dropItem": 0,
-		"dropDamage": 0,
-		"dropAmountMin": 1,
-		"dropAmountMax": 1,
-		"hardness": 3.0,
-		"material": "wood",
-		"slipperiness": 0.6,
-		"isFullCube": false,
-		"canProvidePower": false,
-		"lightOpacity": 0,
-		"lightEmission": 0
-	},
-	"doorspruce_14": {
-		"id": 3103,
-		"collision": {
-			"0": {
-				"minX": 0.0,
-				"maxX": 1.0,
-				"minY": 0.0,
-				"maxY": 1.0,
-				"minZ": 0.8125,
+				"minZ": 0.0,
 				"maxZ": 1.0
 			}
 		},
@@ -20895,7 +20463,31 @@
 		"lightOpacity": 0,
 		"lightEmission": 0
 	},
-	"doorbirch_3": {
+	"doorbirch_2": {
+		"id": 3107,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.8125,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 428,
+		"dropDamage": 0,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 3.0,
+		"material": "wood",
+		"slipperiness": 0.6,
+		"isFullCube": false,
+		"canProvidePower": false,
+		"lightOpacity": 0,
+		"lightEmission": 0
+	},
+	"doorbirch_4": {
 		"id": 3108,
 		"collision": {
 			"0": {
@@ -20919,7 +20511,7 @@
 		"lightOpacity": 0,
 		"lightEmission": 0
 	},
-	"doorbirch_4": {
+	"doorbirch_5": {
 		"id": 3109,
 		"collision": {
 			"0": {
@@ -20943,7 +20535,7 @@
 		"lightOpacity": 0,
 		"lightEmission": 0
 	},
-	"doorbirch_5": {
+	"doorbirch_6": {
 		"id": 3110,
 		"collision": {
 			"0": {
@@ -20968,182 +20560,14 @@
 		"lightEmission": 0
 	},
 	"doorbirch_7": {
-		"id": 3112,
+		"id": 3111,
 		"collision": {
 			"0": {
-				"minX": 0.0,
-				"maxX": 1.0,
+				"minX": 0.1875,
+				"maxX": 0.0,
 				"minY": 0.0,
 				"maxY": 1.0,
-				"minZ": 0.8125,
-				"maxZ": 1.0
-			}
-		},
-		"dropItem": 0,
-		"dropDamage": 0,
-		"dropAmountMin": 1,
-		"dropAmountMax": 1,
-		"hardness": 3.0,
-		"material": "wood",
-		"slipperiness": 0.6,
-		"isFullCube": false,
-		"canProvidePower": false,
-		"lightOpacity": 0,
-		"lightEmission": 0
-	},
-	"doorbirch_8": {
-		"id": 3113,
-		"collision": {
-			"0": {
-				"minX": 0.0,
-				"maxX": 1.0,
-				"minY": 0.0,
-				"maxY": 1.0,
-				"minZ": 0.8125,
-				"maxZ": 1.0
-			}
-		},
-		"dropItem": 0,
-		"dropDamage": 0,
-		"dropAmountMin": 1,
-		"dropAmountMax": 1,
-		"hardness": 3.0,
-		"material": "wood",
-		"slipperiness": 0.6,
-		"isFullCube": false,
-		"canProvidePower": false,
-		"lightOpacity": 0,
-		"lightEmission": 0
-	},
-	"doorbirch_9": {
-		"id": 3114,
-		"collision": {
-			"0": {
-				"minX": 0.0,
-				"maxX": 1.0,
-				"minY": 0.0,
-				"maxY": 1.0,
-				"minZ": 0.8125,
-				"maxZ": 1.0
-			}
-		},
-		"dropItem": 0,
-		"dropDamage": 0,
-		"dropAmountMin": 1,
-		"dropAmountMax": 1,
-		"hardness": 3.0,
-		"material": "wood",
-		"slipperiness": 0.6,
-		"isFullCube": false,
-		"canProvidePower": false,
-		"lightOpacity": 0,
-		"lightEmission": 0
-	},
-	"doorbirch_10": {
-		"id": 3115,
-		"collision": {
-			"0": {
-				"minX": 0.0,
-				"maxX": 1.0,
-				"minY": 0.0,
-				"maxY": 1.0,
-				"minZ": 0.8125,
-				"maxZ": 1.0
-			}
-		},
-		"dropItem": 0,
-		"dropDamage": 0,
-		"dropAmountMin": 1,
-		"dropAmountMax": 1,
-		"hardness": 3.0,
-		"material": "wood",
-		"slipperiness": 0.6,
-		"isFullCube": false,
-		"canProvidePower": false,
-		"lightOpacity": 0,
-		"lightEmission": 0
-	},
-	"doorbirch_11": {
-		"id": 3116,
-		"collision": {
-			"0": {
-				"minX": 0.0,
-				"maxX": 1.0,
-				"minY": 0.0,
-				"maxY": 1.0,
-				"minZ": 0.8125,
-				"maxZ": 1.0
-			}
-		},
-		"dropItem": 0,
-		"dropDamage": 0,
-		"dropAmountMin": 1,
-		"dropAmountMax": 1,
-		"hardness": 3.0,
-		"material": "wood",
-		"slipperiness": 0.6,
-		"isFullCube": false,
-		"canProvidePower": false,
-		"lightOpacity": 0,
-		"lightEmission": 0
-	},
-	"doorbirch_12": {
-		"id": 3117,
-		"collision": {
-			"0": {
-				"minX": 0.0,
-				"maxX": 1.0,
-				"minY": 0.0,
-				"maxY": 1.0,
-				"minZ": 0.8125,
-				"maxZ": 1.0
-			}
-		},
-		"dropItem": 0,
-		"dropDamage": 0,
-		"dropAmountMin": 1,
-		"dropAmountMax": 1,
-		"hardness": 3.0,
-		"material": "wood",
-		"slipperiness": 0.6,
-		"isFullCube": false,
-		"canProvidePower": false,
-		"lightOpacity": 0,
-		"lightEmission": 0
-	},
-	"doorbirch_13": {
-		"id": 3118,
-		"collision": {
-			"0": {
-				"minX": 0.0,
-				"maxX": 1.0,
-				"minY": 0.0,
-				"maxY": 1.0,
-				"minZ": 0.8125,
-				"maxZ": 1.0
-			}
-		},
-		"dropItem": 0,
-		"dropDamage": 0,
-		"dropAmountMin": 1,
-		"dropAmountMax": 1,
-		"hardness": 3.0,
-		"material": "wood",
-		"slipperiness": 0.6,
-		"isFullCube": false,
-		"canProvidePower": false,
-		"lightOpacity": 0,
-		"lightEmission": 0
-	},
-	"doorbirch_14": {
-		"id": 3119,
-		"collision": {
-			"0": {
-				"minX": 0.0,
-				"maxX": 1.0,
-				"minY": 0.0,
-				"maxY": 1.0,
-				"minZ": 0.8125,
+				"minZ": 0.0,
 				"maxZ": 1.0
 			}
 		},
@@ -21232,6 +20656,30 @@
 		"lightEmission": 0
 	},
 	"doorjungle_3": {
+		"id": 3123,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.8125,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 429,
+		"dropDamage": 0,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 3.0,
+		"material": "wood",
+		"slipperiness": 0.6,
+		"isFullCube": false,
+		"canProvidePower": false,
+		"lightOpacity": 0,
+		"lightEmission": 0
+	},
+	"doorjungle_4": {
 		"id": 3124,
 		"collision": {
 			"0": {
@@ -21255,7 +20703,7 @@
 		"lightOpacity": 0,
 		"lightEmission": 0
 	},
-	"doorjungle_4": {
+	"doorjungle_5": {
 		"id": 3125,
 		"collision": {
 			"0": {
@@ -21279,7 +20727,7 @@
 		"lightOpacity": 0,
 		"lightEmission": 0
 	},
-	"doorjungle_5": {
+	"doorjungle_6": {
 		"id": 3126,
 		"collision": {
 			"0": {
@@ -21304,182 +20752,14 @@
 		"lightEmission": 0
 	},
 	"doorjungle_7": {
-		"id": 3128,
+		"id": 3127,
 		"collision": {
 			"0": {
-				"minX": 0.0,
-				"maxX": 1.0,
+				"minX": 0.1875,
+				"maxX": 0.0,
 				"minY": 0.0,
 				"maxY": 1.0,
-				"minZ": 0.8125,
-				"maxZ": 1.0
-			}
-		},
-		"dropItem": 0,
-		"dropDamage": 0,
-		"dropAmountMin": 1,
-		"dropAmountMax": 1,
-		"hardness": 3.0,
-		"material": "wood",
-		"slipperiness": 0.6,
-		"isFullCube": false,
-		"canProvidePower": false,
-		"lightOpacity": 0,
-		"lightEmission": 0
-	},
-	"doorjungle_8": {
-		"id": 3129,
-		"collision": {
-			"0": {
-				"minX": 0.0,
-				"maxX": 1.0,
-				"minY": 0.0,
-				"maxY": 1.0,
-				"minZ": 0.8125,
-				"maxZ": 1.0
-			}
-		},
-		"dropItem": 0,
-		"dropDamage": 0,
-		"dropAmountMin": 1,
-		"dropAmountMax": 1,
-		"hardness": 3.0,
-		"material": "wood",
-		"slipperiness": 0.6,
-		"isFullCube": false,
-		"canProvidePower": false,
-		"lightOpacity": 0,
-		"lightEmission": 0
-	},
-	"doorjungle_9": {
-		"id": 3130,
-		"collision": {
-			"0": {
-				"minX": 0.0,
-				"maxX": 1.0,
-				"minY": 0.0,
-				"maxY": 1.0,
-				"minZ": 0.8125,
-				"maxZ": 1.0
-			}
-		},
-		"dropItem": 0,
-		"dropDamage": 0,
-		"dropAmountMin": 1,
-		"dropAmountMax": 1,
-		"hardness": 3.0,
-		"material": "wood",
-		"slipperiness": 0.6,
-		"isFullCube": false,
-		"canProvidePower": false,
-		"lightOpacity": 0,
-		"lightEmission": 0
-	},
-	"doorjungle_10": {
-		"id": 3131,
-		"collision": {
-			"0": {
-				"minX": 0.0,
-				"maxX": 1.0,
-				"minY": 0.0,
-				"maxY": 1.0,
-				"minZ": 0.8125,
-				"maxZ": 1.0
-			}
-		},
-		"dropItem": 0,
-		"dropDamage": 0,
-		"dropAmountMin": 1,
-		"dropAmountMax": 1,
-		"hardness": 3.0,
-		"material": "wood",
-		"slipperiness": 0.6,
-		"isFullCube": false,
-		"canProvidePower": false,
-		"lightOpacity": 0,
-		"lightEmission": 0
-	},
-	"doorjungle_11": {
-		"id": 3132,
-		"collision": {
-			"0": {
-				"minX": 0.0,
-				"maxX": 1.0,
-				"minY": 0.0,
-				"maxY": 1.0,
-				"minZ": 0.8125,
-				"maxZ": 1.0
-			}
-		},
-		"dropItem": 0,
-		"dropDamage": 0,
-		"dropAmountMin": 1,
-		"dropAmountMax": 1,
-		"hardness": 3.0,
-		"material": "wood",
-		"slipperiness": 0.6,
-		"isFullCube": false,
-		"canProvidePower": false,
-		"lightOpacity": 0,
-		"lightEmission": 0
-	},
-	"doorjungle_12": {
-		"id": 3133,
-		"collision": {
-			"0": {
-				"minX": 0.0,
-				"maxX": 1.0,
-				"minY": 0.0,
-				"maxY": 1.0,
-				"minZ": 0.8125,
-				"maxZ": 1.0
-			}
-		},
-		"dropItem": 0,
-		"dropDamage": 0,
-		"dropAmountMin": 1,
-		"dropAmountMax": 1,
-		"hardness": 3.0,
-		"material": "wood",
-		"slipperiness": 0.6,
-		"isFullCube": false,
-		"canProvidePower": false,
-		"lightOpacity": 0,
-		"lightEmission": 0
-	},
-	"doorjungle_13": {
-		"id": 3134,
-		"collision": {
-			"0": {
-				"minX": 0.0,
-				"maxX": 1.0,
-				"minY": 0.0,
-				"maxY": 1.0,
-				"minZ": 0.8125,
-				"maxZ": 1.0
-			}
-		},
-		"dropItem": 0,
-		"dropDamage": 0,
-		"dropAmountMin": 1,
-		"dropAmountMax": 1,
-		"hardness": 3.0,
-		"material": "wood",
-		"slipperiness": 0.6,
-		"isFullCube": false,
-		"canProvidePower": false,
-		"lightOpacity": 0,
-		"lightEmission": 0
-	},
-	"doorjungle_14": {
-		"id": 3135,
-		"collision": {
-			"0": {
-				"minX": 0.0,
-				"maxX": 1.0,
-				"minY": 0.0,
-				"maxY": 1.0,
-				"minZ": 0.8125,
+				"minZ": 0.0,
 				"maxZ": 1.0
 			}
 		},
@@ -21568,6 +20848,30 @@
 		"lightEmission": 0
 	},
 	"dooracacia_3": {
+		"id": 3139,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.8125,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 430,
+		"dropDamage": 0,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 3.0,
+		"material": "wood",
+		"slipperiness": 0.6,
+		"isFullCube": false,
+		"canProvidePower": false,
+		"lightOpacity": 0,
+		"lightEmission": 0
+	},
+	"dooracacia_4": {
 		"id": 3140,
 		"collision": {
 			"0": {
@@ -21591,7 +20895,7 @@
 		"lightOpacity": 0,
 		"lightEmission": 0
 	},
-	"dooracacia_4": {
+	"dooracacia_5": {
 		"id": 3141,
 		"collision": {
 			"0": {
@@ -21615,7 +20919,7 @@
 		"lightOpacity": 0,
 		"lightEmission": 0
 	},
-	"dooracacia_5": {
+	"dooracacia_6": {
 		"id": 3142,
 		"collision": {
 			"0": {
@@ -21640,182 +20944,14 @@
 		"lightEmission": 0
 	},
 	"dooracacia_7": {
-		"id": 3144,
+		"id": 3143,
 		"collision": {
 			"0": {
-				"minX": 0.0,
-				"maxX": 1.0,
+				"minX": 0.1875,
+				"maxX": 0.0,
 				"minY": 0.0,
 				"maxY": 1.0,
-				"minZ": 0.8125,
-				"maxZ": 1.0
-			}
-		},
-		"dropItem": 0,
-		"dropDamage": 0,
-		"dropAmountMin": 1,
-		"dropAmountMax": 1,
-		"hardness": 3.0,
-		"material": "wood",
-		"slipperiness": 0.6,
-		"isFullCube": false,
-		"canProvidePower": false,
-		"lightOpacity": 0,
-		"lightEmission": 0
-	},
-	"dooracacia_8": {
-		"id": 3145,
-		"collision": {
-			"0": {
-				"minX": 0.0,
-				"maxX": 1.0,
-				"minY": 0.0,
-				"maxY": 1.0,
-				"minZ": 0.8125,
-				"maxZ": 1.0
-			}
-		},
-		"dropItem": 0,
-		"dropDamage": 0,
-		"dropAmountMin": 1,
-		"dropAmountMax": 1,
-		"hardness": 3.0,
-		"material": "wood",
-		"slipperiness": 0.6,
-		"isFullCube": false,
-		"canProvidePower": false,
-		"lightOpacity": 0,
-		"lightEmission": 0
-	},
-	"dooracacia_9": {
-		"id": 3146,
-		"collision": {
-			"0": {
-				"minX": 0.0,
-				"maxX": 1.0,
-				"minY": 0.0,
-				"maxY": 1.0,
-				"minZ": 0.8125,
-				"maxZ": 1.0
-			}
-		},
-		"dropItem": 0,
-		"dropDamage": 0,
-		"dropAmountMin": 1,
-		"dropAmountMax": 1,
-		"hardness": 3.0,
-		"material": "wood",
-		"slipperiness": 0.6,
-		"isFullCube": false,
-		"canProvidePower": false,
-		"lightOpacity": 0,
-		"lightEmission": 0
-	},
-	"dooracacia_10": {
-		"id": 3147,
-		"collision": {
-			"0": {
-				"minX": 0.0,
-				"maxX": 1.0,
-				"minY": 0.0,
-				"maxY": 1.0,
-				"minZ": 0.8125,
-				"maxZ": 1.0
-			}
-		},
-		"dropItem": 0,
-		"dropDamage": 0,
-		"dropAmountMin": 1,
-		"dropAmountMax": 1,
-		"hardness": 3.0,
-		"material": "wood",
-		"slipperiness": 0.6,
-		"isFullCube": false,
-		"canProvidePower": false,
-		"lightOpacity": 0,
-		"lightEmission": 0
-	},
-	"dooracacia_11": {
-		"id": 3148,
-		"collision": {
-			"0": {
-				"minX": 0.0,
-				"maxX": 1.0,
-				"minY": 0.0,
-				"maxY": 1.0,
-				"minZ": 0.8125,
-				"maxZ": 1.0
-			}
-		},
-		"dropItem": 0,
-		"dropDamage": 0,
-		"dropAmountMin": 1,
-		"dropAmountMax": 1,
-		"hardness": 3.0,
-		"material": "wood",
-		"slipperiness": 0.6,
-		"isFullCube": false,
-		"canProvidePower": false,
-		"lightOpacity": 0,
-		"lightEmission": 0
-	},
-	"dooracacia_12": {
-		"id": 3149,
-		"collision": {
-			"0": {
-				"minX": 0.0,
-				"maxX": 1.0,
-				"minY": 0.0,
-				"maxY": 1.0,
-				"minZ": 0.8125,
-				"maxZ": 1.0
-			}
-		},
-		"dropItem": 0,
-		"dropDamage": 0,
-		"dropAmountMin": 1,
-		"dropAmountMax": 1,
-		"hardness": 3.0,
-		"material": "wood",
-		"slipperiness": 0.6,
-		"isFullCube": false,
-		"canProvidePower": false,
-		"lightOpacity": 0,
-		"lightEmission": 0
-	},
-	"dooracacia_13": {
-		"id": 3150,
-		"collision": {
-			"0": {
-				"minX": 0.0,
-				"maxX": 1.0,
-				"minY": 0.0,
-				"maxY": 1.0,
-				"minZ": 0.8125,
-				"maxZ": 1.0
-			}
-		},
-		"dropItem": 0,
-		"dropDamage": 0,
-		"dropAmountMin": 1,
-		"dropAmountMax": 1,
-		"hardness": 3.0,
-		"material": "wood",
-		"slipperiness": 0.6,
-		"isFullCube": false,
-		"canProvidePower": false,
-		"lightOpacity": 0,
-		"lightEmission": 0
-	},
-	"dooracacia_14": {
-		"id": 3151,
-		"collision": {
-			"0": {
-				"minX": 0.0,
-				"maxX": 1.0,
-				"minY": 0.0,
-				"maxY": 1.0,
-				"minZ": 0.8125,
+				"minZ": 0.0,
 				"maxZ": 1.0
 			}
 		},
@@ -21904,6 +21040,30 @@
 		"lightEmission": 0
 	},
 	"doordarkoak_3": {
+		"id": 3155,
+		"collision": {
+			"0": {
+				"minX": 0.0,
+				"maxX": 1.0,
+				"minY": 0.0,
+				"maxY": 1.0,
+				"minZ": 0.8125,
+				"maxZ": 1.0
+			}
+		},
+		"dropItem": 431,
+		"dropDamage": 0,
+		"dropAmountMin": 1,
+		"dropAmountMax": 1,
+		"hardness": 3.0,
+		"material": "wood",
+		"slipperiness": 0.6,
+		"isFullCube": false,
+		"canProvidePower": false,
+		"lightOpacity": 0,
+		"lightEmission": 0
+	},
+	"doordarkoak_4": {
 		"id": 3156,
 		"collision": {
 			"0": {
@@ -21927,7 +21087,7 @@
 		"lightOpacity": 0,
 		"lightEmission": 0
 	},
-	"doordarkoak_4": {
+	"doordarkoak_5": {
 		"id": 3157,
 		"collision": {
 			"0": {
@@ -21951,7 +21111,7 @@
 		"lightOpacity": 0,
 		"lightEmission": 0
 	},
-	"doordarkoak_5": {
+	"doordarkoak_6": {
 		"id": 3158,
 		"collision": {
 			"0": {
@@ -21976,182 +21136,14 @@
 		"lightEmission": 0
 	},
 	"doordarkoak_7": {
-		"id": 3160,
+		"id": 3159,
 		"collision": {
 			"0": {
-				"minX": 0.0,
-				"maxX": 1.0,
+				"minX": 0.1875,
+				"maxX": 0.0,
 				"minY": 0.0,
 				"maxY": 1.0,
-				"minZ": 0.8125,
-				"maxZ": 1.0
-			}
-		},
-		"dropItem": 0,
-		"dropDamage": 0,
-		"dropAmountMin": 1,
-		"dropAmountMax": 1,
-		"hardness": 3.0,
-		"material": "wood",
-		"slipperiness": 0.6,
-		"isFullCube": false,
-		"canProvidePower": false,
-		"lightOpacity": 0,
-		"lightEmission": 0
-	},
-	"doordarkoak_8": {
-		"id": 3161,
-		"collision": {
-			"0": {
-				"minX": 0.0,
-				"maxX": 1.0,
-				"minY": 0.0,
-				"maxY": 1.0,
-				"minZ": 0.8125,
-				"maxZ": 1.0
-			}
-		},
-		"dropItem": 0,
-		"dropDamage": 0,
-		"dropAmountMin": 1,
-		"dropAmountMax": 1,
-		"hardness": 3.0,
-		"material": "wood",
-		"slipperiness": 0.6,
-		"isFullCube": false,
-		"canProvidePower": false,
-		"lightOpacity": 0,
-		"lightEmission": 0
-	},
-	"doordarkoak_9": {
-		"id": 3162,
-		"collision": {
-			"0": {
-				"minX": 0.0,
-				"maxX": 1.0,
-				"minY": 0.0,
-				"maxY": 1.0,
-				"minZ": 0.8125,
-				"maxZ": 1.0
-			}
-		},
-		"dropItem": 0,
-		"dropDamage": 0,
-		"dropAmountMin": 1,
-		"dropAmountMax": 1,
-		"hardness": 3.0,
-		"material": "wood",
-		"slipperiness": 0.6,
-		"isFullCube": false,
-		"canProvidePower": false,
-		"lightOpacity": 0,
-		"lightEmission": 0
-	},
-	"doordarkoak_10": {
-		"id": 3163,
-		"collision": {
-			"0": {
-				"minX": 0.0,
-				"maxX": 1.0,
-				"minY": 0.0,
-				"maxY": 1.0,
-				"minZ": 0.8125,
-				"maxZ": 1.0
-			}
-		},
-		"dropItem": 0,
-		"dropDamage": 0,
-		"dropAmountMin": 1,
-		"dropAmountMax": 1,
-		"hardness": 3.0,
-		"material": "wood",
-		"slipperiness": 0.6,
-		"isFullCube": false,
-		"canProvidePower": false,
-		"lightOpacity": 0,
-		"lightEmission": 0
-	},
-	"doordarkoak_11": {
-		"id": 3164,
-		"collision": {
-			"0": {
-				"minX": 0.0,
-				"maxX": 1.0,
-				"minY": 0.0,
-				"maxY": 1.0,
-				"minZ": 0.8125,
-				"maxZ": 1.0
-			}
-		},
-		"dropItem": 0,
-		"dropDamage": 0,
-		"dropAmountMin": 1,
-		"dropAmountMax": 1,
-		"hardness": 3.0,
-		"material": "wood",
-		"slipperiness": 0.6,
-		"isFullCube": false,
-		"canProvidePower": false,
-		"lightOpacity": 0,
-		"lightEmission": 0
-	},
-	"doordarkoak_12": {
-		"id": 3165,
-		"collision": {
-			"0": {
-				"minX": 0.0,
-				"maxX": 1.0,
-				"minY": 0.0,
-				"maxY": 1.0,
-				"minZ": 0.8125,
-				"maxZ": 1.0
-			}
-		},
-		"dropItem": 0,
-		"dropDamage": 0,
-		"dropAmountMin": 1,
-		"dropAmountMax": 1,
-		"hardness": 3.0,
-		"material": "wood",
-		"slipperiness": 0.6,
-		"isFullCube": false,
-		"canProvidePower": false,
-		"lightOpacity": 0,
-		"lightEmission": 0
-	},
-	"doordarkoak_13": {
-		"id": 3166,
-		"collision": {
-			"0": {
-				"minX": 0.0,
-				"maxX": 1.0,
-				"minY": 0.0,
-				"maxY": 1.0,
-				"minZ": 0.8125,
-				"maxZ": 1.0
-			}
-		},
-		"dropItem": 0,
-		"dropDamage": 0,
-		"dropAmountMin": 1,
-		"dropAmountMax": 1,
-		"hardness": 3.0,
-		"material": "wood",
-		"slipperiness": 0.6,
-		"isFullCube": false,
-		"canProvidePower": false,
-		"lightOpacity": 0,
-		"lightEmission": 0
-	},
-	"doordarkoak_14": {
-		"id": 3167,
-		"collision": {
-			"0": {
-				"minX": 0.0,
-				"maxX": 1.0,
-				"minY": 0.0,
-				"maxY": 1.0,
-				"minZ": 0.8125,
+				"minZ": 0.0,
 				"maxZ": 1.0
 			}
 		},

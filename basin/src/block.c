@@ -27,6 +27,23 @@
 struct collection* block_infos;
 struct collection* block_materials;
 
+int canBePlaced_door(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
+	block b = getBlockWorld(world, x, y - 1, z);
+	struct block_info* bi = getBlockInfo(b);
+	return b >> 4 == blk >> 4 || isNormalCube(bi);
+}
+
+void onBlockInteract_woodendoor(struct world* world, block blk, int32_t x, int32_t y, int32_t z, struct player* player, uint8_t face, float curPosX, float curPosY, float curPosZ) {
+	uint8_t curMeta = blk & 0x0f;
+	uint8_t isUpper = curMeta & 0b1000;
+	uint8_t lowerMeta = isUpper ? getBlockWorld(world, x, y - 1, z) & 0x0f : curMeta;
+	uint8_t open = (lowerMeta & 0b0100) >> 2;
+	printf("%i\n", open);
+	open = !open;
+	lowerMeta = (lowerMeta & 0b1011) | (open << 2);
+	setBlockWorld(world, (blk & 0xfff0) | lowerMeta, x, y + (isUpper ? -1 : 0), z);
+}
+
 void onBlockInteract_workbench(struct world* world, block blk, int32_t x, int32_t y, int32_t z, struct player* player, uint8_t face, float curPosX, float curPosY, float curPosZ) {
 	struct inventory* wb = xmalloc(sizeof(struct inventory));
 	newInventory(wb, INVTYPE_WORKBENCH, 1, 10);
@@ -1225,6 +1242,10 @@ struct block_info* getBlockInfo(block b) {
 	return block_infos->data[b & ~0x0f];
 }
 
+struct block_info* getBlockInfoLoose(block b) {
+	return block_infos->data[b & ~0x0f];
+}
+
 // index = item ID
 const char* nameToIDMap[] = { "minecraft:air", "minecraft:stone", "minecraft:grass", "minecraft:dirt", "minecraft:cobblestone", "minecraft:planks", "minecraft:sapling", "minecraft:bedrock", "", "", "", "", "minecraft:sand", "minecraft:gravel", "minecraft:gold_ore", "minecraft:iron_ore", "minecraft:coal_ore", "minecraft:log", "minecraft:leaves", "minecraft:sponge", "minecraft:glass", "minecraft:lapis_ore", "minecraft:lapis_block", "minecraft:dispenser", "minecraft:sandstone", "minecraft:noteblock", "", "minecraft:golden_rail", "minecraft:detector_rail", "minecraft:sticky_piston", "minecraft:web", "minecraft:tallgrass", "minecraft:deadbush", "minecraft:piston", "", "minecraft:wool", "", "minecraft:yellow_flower", "minecraft:red_flower", "minecraft:brown_mushroom", "minecraft:red_mushroom", "minecraft:gold_block", "minecraft:iron_block", "", "minecraft:stone_slab", "minecraft:brick_block", "minecraft:tnt", "minecraft:bookshelf", "minecraft:mossy_cobblestone", "minecraft:obsidian",
 		"minecraft:torch", "", "minecraft:mob_spawner", "minecraft:oak_stairs", "minecraft:chest", "", "minecraft:diamond_ore", "minecraft:diamond_block", "minecraft:crafting_table", "", "minecraft:farmland", "minecraft:furnace", "", "", "", "minecraft:ladder", "minecraft:rail", "minecraft:stone_stairs", "", "minecraft:lever", "minecraft:stone_pressure_plate", "", "minecraft:wooden_pressure_plate", "minecraft:redstone_ore", "", "", "minecraft:redstone_torch", "minecraft:stone_button", "minecraft:snow_layer", "minecraft:ice", "minecraft:snow", "minecraft:cactus", "minecraft:clay", "", "minecraft:jukebox", "minecraft:fence", "minecraft:pumpkin", "minecraft:netherrack", "minecraft:soul_sand", "minecraft:glowstone", "", "minecraft:lit_pumpkin", "", "", "", "minecraft:stained_glass", "minecraft:trapdoor", "minecraft:monster_egg", "minecraft:stonebrick", "minecraft:brown_mushroom_block", "minecraft:red_mushroom_block", "minecraft:iron_bars", "minecraft:glass_pane", "minecraft:melon_block",
@@ -1559,4 +1580,45 @@ void init_blocks() {
 	getBlockInfo(BLK_GRAVEL)->onBlockUpdate = &onBlockUpdate_falling;
 	getBlockInfo(BLK_ANVIL)->onBlockUpdate = &onBlockUpdate_falling;
 	getBlockInfo(BLK_SPONGE_DRY)->onBlockUpdate = &onBlockUpdate_sponge;
+	for (block b = BLK_DOOROAK; b < BLK_DOOROAK + 16; b++) {
+		tmp = getBlockInfo(b);
+		tmp->onBlockInteract = &onBlockInteract_woodendoor;
+		tmp->canBePlaced = &canBePlaced_door;
+		tmp->onBlockUpdate = &onBlockUpdate_checkPlace;
+	}
+	for (block b = BLK_DOORSPRUCE; b < BLK_DOORSPRUCE + 16; b++) {
+		tmp = getBlockInfo(b);
+		tmp->onBlockInteract = &onBlockInteract_woodendoor;
+		tmp->canBePlaced = &canBePlaced_door;
+		tmp->onBlockUpdate = &onBlockUpdate_checkPlace;
+	}
+	for (block b = BLK_DOORBIRCH; b < BLK_DOORBIRCH + 16; b++) {
+		tmp = getBlockInfo(b);
+		tmp->onBlockInteract = &onBlockInteract_woodendoor;
+		tmp->canBePlaced = &canBePlaced_door;
+		tmp->onBlockUpdate = &onBlockUpdate_checkPlace;
+	}
+	for (block b = BLK_DOORJUNGLE; b < BLK_DOORJUNGLE + 16; b++) {
+		tmp = getBlockInfo(b);
+		tmp->onBlockInteract = &onBlockInteract_woodendoor;
+		tmp->canBePlaced = &canBePlaced_door;
+		tmp->onBlockUpdate = &onBlockUpdate_checkPlace;
+	}
+	for (block b = BLK_DOORACACIA; b < BLK_DOORACACIA + 16; b++) {
+		tmp = getBlockInfo(b);
+		tmp->onBlockInteract = &onBlockInteract_woodendoor;
+		tmp->canBePlaced = &canBePlaced_door;
+		tmp->onBlockUpdate = &onBlockUpdate_checkPlace;
+	}
+	for (block b = BLK_DOORDARKOAK; b < BLK_DOORDARKOAK + 16; b++) {
+		tmp = getBlockInfo(b);
+		tmp->onBlockInteract = &onBlockInteract_woodendoor;
+		tmp->canBePlaced = &canBePlaced_door;
+		tmp->onBlockUpdate = &onBlockUpdate_checkPlace;
+	}
+	for (block b = BLK_DOORIRON; b < BLK_DOORIRON + 16; b++) {
+		tmp = getBlockInfo(b);
+		tmp->canBePlaced = &canBePlaced_door;
+		tmp->onBlockUpdate = &onBlockUpdate_checkPlace;
+	}
 }

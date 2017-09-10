@@ -19,6 +19,43 @@
 #include "game.h"
 #include "player.h"
 
+int onItemInteract_door(struct world* world, struct player* player, uint8_t slot_index, struct slot* slot, int32_t x, uint8_t y, int32_t z, uint8_t face) {
+	if (face != YP) return 0;
+	offsetCoordByFace(&x, &y, &z, face);
+	block pre = getBlockWorld(world, x, y, z);
+	block pre2 = getBlockWorld(world, x, y + 1, z);
+	block b = BLK_DOOROAK;
+	if (slot->item == ITM_DOORSPRUCE) b = BLK_DOORSPRUCE;
+	else if (slot->item == ITM_DOORBIRCH) b = BLK_DOORBIRCH;
+	else if (slot->item == ITM_DOORJUNGLE) b = ITM_DOORJUNGLE;
+	else if (slot->item == ITM_DOORACACIA) b = ITM_DOORACACIA;
+	else if (slot->item == ITM_DOORDARKOAK) b = ITM_DOORDARKOAK;
+	else if (slot->item == ITM_DOORIRON) b = ITM_DOORIRON;
+	block b2 = b;
+	uint32_t h = (uint32_t) floor(player->entity->yaw / 90. + .5) & 3;
+	if (h == 0) b |= 1;
+	else if (h == 1) b |= 2;
+	else if (h == 2) b |= 3;
+	b2 |= 0b1000;
+	if (canPlayerPlaceBlock(player, b, x, y, z, face) && !setBlockWorld(player->world, b, x, y, z)) {
+		if (!canPlayerPlaceBlock(player, b2, x, y + 1, z, face) || setBlockWorld(player->world, b2, x, y + 1, z)) {
+			setBlockWorld(player->world, pre, x, y, z);
+			setBlockWorld(player->world, pre2, x, y + 1, z);
+			setSlot(player, player->inventory, 36 + player->currentItem, slot, 1, 1);
+		} else if (player->gamemode != 1) {
+			if (--slot->itemCount <= 0) {
+				slot = NULL;
+			}
+			setSlot(player, player->inventory, 36 + player->currentItem, slot, 1, 1);
+		}
+	} else {
+		setBlockWorld(player->world, pre, x, y, z);
+		setBlockWorld(player->world, pre2, x, y + 1, z);
+		setSlot(player, player->inventory, 36 + player->currentItem, slot, 1, 1);
+	}
+	return 0;
+}
+
 int onItemInteract_itemblock(struct world* world, struct player* player, uint8_t slot_index, struct slot* slot, int32_t x, uint8_t y, int32_t z, uint8_t face) {
 	offsetCoordByFace(&x, &y, &z, face);
 	block pre = getBlockWorld(world, x, y, z);
@@ -548,6 +585,13 @@ void init_items() {
 		getItemInfo(i)->onEntityHitWhileWearing = &onEntityHitWhileWearing_armor;
 		getItemInfo(i)->onItemUse = &onItemUse_armor;
 	}
+	getItemInfo(ITM_DOOROAK)->onItemInteract = &onItemInteract_door;
+	getItemInfo(ITM_DOORSPRUCE)->onItemInteract = &onItemInteract_door;
+	getItemInfo(ITM_DOORBIRCH)->onItemInteract = &onItemInteract_door;
+	getItemInfo(ITM_DOORJUNGLE)->onItemInteract = &onItemInteract_door;
+	getItemInfo(ITM_DOORACACIA)->onItemInteract = &onItemInteract_door;
+	getItemInfo(ITM_DOORDARKOAK)->onItemInteract = &onItemInteract_door;
+	getItemInfo(ITM_DOORIRON)->onItemInteract = &onItemInteract_door;
 	getItemInfo(ITM_SEEDS)->onItemInteract = &onItemInteract_seeds;
 	getItemInfo(ITM_SEEDS_PUMPKIN)->onItemInteract = &onItemInteract_seeds;
 	getItemInfo(ITM_SEEDS_MELON)->onItemInteract = &onItemInteract_seeds;
