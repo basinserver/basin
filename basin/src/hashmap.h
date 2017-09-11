@@ -39,8 +39,8 @@ int rem_hashmap(struct hashmap* map, uint64_t data);
 
 int contains_hashmap(struct hashmap* map, uint64_t data);
 
-#define BEGIN_HASHMAP_ITERATION(hashmap) if (hashmap->mc) pthread_rwlock_rdlock(&hashmap->data_mutex); for (size_t _hmi = 0; _hmi < hashmap->bucket_count; _hmi++) {struct hashmap_entry* he = hashmap->buckets[_hmi];int _s = 1;struct hashmap_entry* nhe = NULL;while (he != NULL) {if(!_s)he = nhe;else _s=0;if(he == NULL)break;nhe = he->next;uint64_t key = he->key;void* value = he->value;
-#define END_HASHMAP_ITERATION(hashmap)	}} if (hashmap->mc) pthread_rwlock_unlock(&hashmap->data_mutex);
+#define BEGIN_HASHMAP_ITERATION(hashmap) {if (hashmap->mc) pthread_rwlock_rdlock(&hashmap->data_mutex); for (size_t _hmi = 0; _hmi < hashmap->bucket_count; _hmi++) {struct hashmap_entry* he = hashmap->buckets[_hmi];int _s = 1;struct hashmap_entry* nhe = NULL;while (he != NULL) {if(!_s)he = nhe;else _s=0;if(he == NULL)break;nhe = he->next;uint64_t key = he->key;void* value = he->value;
+#define END_HASHMAP_ITERATION(hashmap)	}} if (hashmap->mc) pthread_rwlock_unlock(&hashmap->data_mutex);}
 #define BREAK_HASHMAP_ITERATION(hashmap)	if (hashmap->mc) pthread_rwlock_unlock(&hashmap->data_mutex);
 
 #endif /* HASHMAP_H_ */
