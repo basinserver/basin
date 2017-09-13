@@ -1,0 +1,1414 @@
+{
+    "player": {
+        "id": 0,
+        "dataname": "minecraft:player",
+        "width": 0.6,
+        "height": 1.8,
+        "maxHealth": 20.0,
+        "eyeHeight": 1.62,
+        "flags": ["player", "livingbase"],
+        "packetType": "undefined",
+        "packetID": 0
+    },
+    "item": {
+        "id": 1,
+        "dataname": "minecraft:item",
+        "width": 0.25,
+        "height": 0.25,
+        "maxHealth": 0.0,
+        "eyeHeight": 0.2125,
+        "flags": ["item"],
+        "packetType": "object",
+        "packetID": 2
+    },
+    "xporb": {
+        "id": 2,
+        "dataname": "minecraft:xp_orb",
+        "width": 0.25,
+        "height": 0.25,
+        "maxHealth": 0.0,
+        "eyeHeight": 0.2125,
+        "flags": ["xporb"],
+        "packetType": "exp",
+        "packetID": 2
+    },
+    "areaeffectcloud": {
+        "id": 3,
+        "dataname": "minecraft:area_effect_cloud",
+        "width": 6.0,
+        "height": 0.5,
+        "maxHealth": 0.0,
+        "eyeHeight": 0.425,
+        "flags": ["areaeffectcloud", "fireimmune"],
+        "packetType": "object",
+        "packetID": 3
+    },
+    "elderguardian": {
+        "id": 4,
+        "dataname": "minecraft:elder_guardian",
+        "width": 1.9975,
+        "height": 1.9975,
+        "maxHealth": 80.0,
+        "loot": [
+            {
+                "id": 409,
+                "amountMin": 0,
+                "amountMax": 2
+            },
+            {
+                "id": 349
+            },
+            {
+                "id": 410
+            },
+            {
+                "id": 19,
+                "metaMin": 1,
+                "metaMax": 1
+            },
+            {
+                "id": 349,
+                "metaMin": 0,
+                "metaMax": 0
+            },
+            {
+                "id": 349,
+                "metaMin": 1,
+                "metaMax": 1
+            },
+            {
+                "id": 349,
+                "metaMin": 2,
+                "metaMax": 2
+            },
+            {
+                "id": 349,
+                "metaMin": 3,
+                "metaMax": 3
+            }
+        ],
+        "eyeHeight": 0.99875,
+        "flags": ["elderguardian", "guardian", "mob", "creature", "living", "livingbase"],
+        "packetType": "mob",
+        "packetID": 4
+    },
+    "witherskeleton": {
+        "id": 5,
+        "dataname": "minecraft:wither_skeleton",
+        "width": 0.7,
+        "height": 2.4,
+        "maxHealth": 20.0,
+        "loot": [
+            {
+                "id": 263,
+                "amountMin": -1,
+                "amountMax": 1
+            },
+            {
+                "id": 352,
+                "amountMin": 0,
+                "amountMax": 2
+            },
+            {
+                "id": 397,
+                "metaMin": 1,
+                "metaMax": 1
+            }
+        ],
+        "eyeHeight": 2.1,
+        "flags": ["witherskeleton", "abstractskeleton", "mob", "creature", "living", "livingbase", "fireimmune"],
+        "packetType": "mob",
+        "packetID": 5
+    },
+    "stray": {
+        "id": 6,
+        "dataname": "minecraft:stray",
+        "width": 0.6,
+        "height": 1.99,
+        "maxHealth": 20.0,
+        "loot": [
+            {
+                "id": 262,
+                "amountMin": 0,
+                "amountMax": 2
+            },
+            {
+                "id": 352,
+                "amountMin": 0,
+                "amountMax": 2
+            },
+            {
+                "id": 440,
+                "amountMin": 0,
+                "amountMax": 1
+            }
+        ],
+        "eyeHeight": 1.74,
+        "flags": ["stray", "abstractskeleton", "mob", "creature", "living", "livingbase"],
+        "packetType": "mob",
+        "packetID": 6
+    },
+    "thrownegg": {
+        "id": 7,
+        "dataname": "minecraft:egg",
+        "width": 0.25,
+        "height": 0.25,
+        "maxHealth": 0.0,
+        "eyeHeight": 0.2125,
+        "flags": ["egg", "throwable"],
+        "packetType": "object",
+        "packetID": 62
+    },
+    "leashknot": {
+        "id": 8,
+        "dataname": "minecraft:leash_knot",
+        "width": 0.5,
+        "height": 0.5,
+        "maxHealth": 0.0,
+        "eyeHeight": -0.0625,
+        "flags": ["leashknot", "hanging"],
+        "packetType": "object",
+        "packetID": 77
+    },
+    "painting": {
+        "id": 9,
+        "dataname": "minecraft:painting",
+        "width": 0.5,
+        "height": 0.5,
+        "maxHealth": 0.0,
+        "eyeHeight": 0.425,
+        "flags": ["painting", "hanging"],
+        "packetType": "painting",
+        "packetID": 9
+    },
+    "arrow": {
+        "id": 10,
+        "dataname": "minecraft:arrow",
+        "width": 0.5,
+        "height": 0.5,
+        "maxHealth": 0.0,
+        "eyeHeight": 0.0,
+        "flags": ["tippedarrow", "arrow"],
+        "packetType": "object",
+        "packetID": 60
+    },
+    "snowball": {
+        "id": 11,
+        "dataname": "minecraft:snowball",
+        "width": 0.25,
+        "height": 0.25,
+        "maxHealth": 0.0,
+        "eyeHeight": 0.2125,
+        "flags": ["snowball", "throwable"],
+        "packetType": "object",
+        "packetID": 61
+    },
+    "fireball": {
+        "id": 12,
+        "dataname": "minecraft:fireball",
+        "width": 1.0,
+        "height": 1.0,
+        "maxHealth": 0.0,
+        "eyeHeight": 0.85,
+        "flags": ["largefireball", "fireball"],
+        "packetType": "object",
+        "packetID": 63
+    },
+    "smallfireball": {
+        "id": 13,
+        "dataname": "minecraft:small_fireball",
+        "width": 0.3125,
+        "height": 0.3125,
+        "maxHealth": 0.0,
+        "eyeHeight": 0.265625,
+        "flags": ["smallfireball", "fireball"],
+        "packetType": "object",
+        "packetID": 64
+    },
+    "thrownenderpearl": {
+        "id": 14,
+        "dataname": "minecraft:ender_pearl",
+        "width": 0.25,
+        "height": 0.25,
+        "maxHealth": 0.0,
+        "eyeHeight": 0.2125,
+        "flags": ["enderpearl", "throwable"],
+        "packetType": "object",
+        "packetID": 65
+    },
+    "eyeofendersignal": {
+        "id": 15,
+        "dataname": "minecraft:eye_of_ender_signal",
+        "width": 0.25,
+        "height": 0.25,
+        "maxHealth": 0.0,
+        "eyeHeight": 0.2125,
+        "flags": ["endereye"],
+        "packetType": "object",
+        "packetID": 72
+    },
+    "thrownpotion": {
+        "id": 16,
+        "dataname": "minecraft:potion",
+        "width": 0.25,
+        "height": 0.25,
+        "maxHealth": 0.0,
+        "eyeHeight": 0.2125,
+        "flags": ["potion", "throwable"],
+        "packetType": "object",
+        "packetID": 73
+    },
+    "thrownexpbottle": {
+        "id": 17,
+        "dataname": "minecraft:xp_bottle",
+        "width": 0.25,
+        "height": 0.25,
+        "maxHealth": 0.0,
+        "eyeHeight": 0.2125,
+        "flags": ["expbottle", "throwable"],
+        "packetType": "object",
+        "packetID": 75
+    },
+    "itemframe": {
+        "id": 18,
+        "dataname": "minecraft:item_frame",
+        "width": 0.5,
+        "height": 0.5,
+        "maxHealth": 0.0,
+        "eyeHeight": 0.425,
+        "flags": ["itemframe", "hanging"],
+        "packetType": "object",
+        "packetID": 71
+    },
+    "witherskull": {
+        "id": 19,
+        "dataname": "minecraft:wither_skull",
+        "width": 0.3125,
+        "height": 0.3125,
+        "maxHealth": 0.0,
+        "eyeHeight": 0.265625,
+        "flags": ["witherskull", "fireball"],
+        "packetType": "object",
+        "packetID": 66
+    },
+    "primedtnt": {
+        "id": 20,
+        "dataname": "minecraft:tnt",
+        "width": 0.98,
+        "height": 0.98,
+        "maxHealth": 0.0,
+        "eyeHeight": 0.0,
+        "flags": ["tntprimed", "fireimmune"],
+        "packetType": "object",
+        "packetID": 50
+    },
+    "fallingsand": {
+        "id": 21,
+        "dataname": "minecraft:falling_block",
+        "width": 0.6,
+        "height": 1.8,
+        "maxHealth": 0.0,
+        "eyeHeight": 1.53,
+        "flags": ["fallingblock"],
+        "packetType": "object",
+        "packetID": 70
+    },
+    "fireworksrocketentity": {
+        "id": 22,
+        "dataname": "minecraft:fireworks_rocket",
+        "width": 0.25,
+        "height": 0.25,
+        "maxHealth": 0.0,
+        "eyeHeight": 0.2125,
+        "flags": ["fireworkrocket"],
+        "packetType": "object",
+        "packetID": 76
+    },
+    "husk": {
+        "id": 23,
+        "dataname": "minecraft:husk",
+        "width": 0.6,
+        "height": 1.95,
+        "maxHealth": 20.0,
+        "loot": [
+            {
+                "id": 367,
+                "amountMin": 0,
+                "amountMax": 2
+            },
+            {
+                "id": 265
+            },
+            {
+                "id": 391
+            },
+            {
+                "id": 392
+            }
+        ],
+        "eyeHeight": 1.74,
+        "flags": ["husk", "zombie", "mob", "creature", "living", "livingbase"],
+        "packetType": "mob",
+        "packetID": 23
+    },
+    "spectralarrow": {
+        "id": 24,
+        "dataname": "minecraft:spectral_arrow",
+        "width": 0.5,
+        "height": 0.5,
+        "maxHealth": 0.0,
+        "eyeHeight": 0.0,
+        "flags": ["spectralarrow", "arrow"],
+        "packetType": "object",
+        "packetID": 91
+    },
+    "shulkerbullet": {
+        "id": 25,
+        "dataname": "minecraft:shulker_bullet",
+        "width": 0.3125,
+        "height": 0.3125,
+        "maxHealth": 0.0,
+        "eyeHeight": 0.265625,
+        "flags": ["shulkerbullet"],
+        "packetType": "object",
+        "packetID": 67
+    },
+    "dragonfireball": {
+        "id": 26,
+        "dataname": "minecraft:dragon_fireball",
+        "width": 1.0,
+        "height": 1.0,
+        "maxHealth": 0.0,
+        "eyeHeight": 0.85,
+        "flags": ["dragonfireball", "fireball"],
+        "packetType": "object",
+        "packetID": 93
+    },
+    "zombievillager": {
+        "id": 27,
+        "dataname": "minecraft:zombie_villager",
+        "width": 0.6,
+        "height": 1.95,
+        "maxHealth": 20.0,
+        "loot": [
+            {
+                "id": 367,
+                "amountMin": 0,
+                "amountMax": 2
+            },
+            {
+                "id": 265
+            },
+            {
+                "id": 391
+            },
+            {
+                "id": 392
+            }
+        ],
+        "eyeHeight": 1.74,
+        "flags": ["zombievillager", "zombie", "mob", "creature", "living", "livingbase"],
+        "packetType": "mob",
+        "packetID": 27
+    },
+    "skeletonhorse": {
+        "id": 28,
+        "dataname": "minecraft:skeleton_horse",
+        "width": 1.3964844,
+        "height": 1.6,
+        "maxHealth": 15.0,
+        "loot": [
+            {
+                "id": 352,
+                "amountMin": 0,
+                "amountMax": 2
+            }
+        ],
+        "eyeHeight": 1.6,
+        "flags": ["skeletonhorse", "abstracthorse", "animal", "ageable", "creature", "living", "livingbase"],
+        "packetType": "mob",
+        "packetID": 28
+    },
+    "zombiehorse": {
+        "id": 29,
+        "dataname": "minecraft:zombie_horse",
+        "width": 1.3964844,
+        "height": 1.6,
+        "maxHealth": 15.0,
+        "loot": [
+            {
+                "id": 367,
+                "amountMin": 0,
+                "amountMax": 2
+            }
+        ],
+        "eyeHeight": 1.6,
+        "flags": ["zombiehorse", "abstracthorse", "animal", "ageable", "creature", "living", "livingbase"],
+        "packetType": "mob",
+        "packetID": 29
+    },
+    "armorstand": {
+        "id": 30,
+        "dataname": "minecraft:armor_stand",
+        "width": 0.5,
+        "height": 1.975,
+        "maxHealth": 20.0,
+        "eyeHeight": 1.7775,
+        "flags": ["armorstand", "livingbase"],
+        "packetType": "object",
+        "packetID": 78
+    },
+    "donkey": {
+        "id": 31,
+        "dataname": "minecraft:donkey",
+        "width": 1.3964844,
+        "height": 1.6,
+        "maxHealth": 18.0,
+        "loot": [
+            {
+                "id": 334,
+                "amountMin": 0,
+                "amountMax": 2
+            }
+        ],
+        "eyeHeight": 1.6,
+        "flags": ["donkey", "abstractchesthorse", "abstracthorse", "animal", "ageable", "creature", "living", "livingbase"],
+        "packetType": "mob",
+        "packetID": 31
+    },
+    "mule": {
+        "id": 32,
+        "dataname": "minecraft:mule",
+        "width": 1.3964844,
+        "height": 1.6,
+        "maxHealth": 26.0,
+        "loot": [
+            {
+                "id": 334,
+                "amountMin": 0,
+                "amountMax": 2
+            }
+        ],
+        "eyeHeight": 1.6,
+        "flags": ["mule", "abstractchesthorse", "abstracthorse", "animal", "ageable", "creature", "living", "livingbase"],
+        "packetType": "mob",
+        "packetID": 32
+    },
+    "evocationfangs": {
+        "id": 33,
+        "dataname": "minecraft:evocation_fangs",
+        "width": 0.5,
+        "height": 0.8,
+        "maxHealth": 0.0,
+        "eyeHeight": 0.68,
+        "flags": ["evokerfangs"],
+        "packetType": "object",
+        "packetID": 79
+    },
+    "evocationillager": {
+        "id": 34,
+        "dataname": "minecraft:evocation_illager",
+        "width": 0.6,
+        "height": 1.95,
+        "maxHealth": 24.0,
+        "loot": [
+            {
+                "id": 449
+            },
+            {
+                "id": 388,
+                "amountMin": 0,
+                "amountMax": 1
+            }
+        ],
+        "eyeHeight": 1.6575,
+        "flags": ["evoker", "spellcasterillager", "abstractillager", "mob", "creature", "living", "livingbase"],
+        "packetType": "mob",
+        "packetID": 34
+    },
+    "vex": {
+        "id": 35,
+        "dataname": "minecraft:vex",
+        "width": 0.4,
+        "height": 0.8,
+        "maxHealth": 14.0,
+        "loot": [
+        ],
+        "eyeHeight": 0.68,
+        "flags": ["vex", "mob", "creature", "living", "livingbase", "fireimmune"],
+        "packetType": "mob",
+        "packetID": 35
+    },
+    "vindicationillager": {
+        "id": 36,
+        "dataname": "minecraft:vindication_illager",
+        "width": 0.6,
+        "height": 1.95,
+        "maxHealth": 24.0,
+        "loot": [
+            {
+                "id": 388,
+                "amountMin": 0,
+                "amountMax": 1
+            }
+        ],
+        "eyeHeight": 1.6575,
+        "flags": ["vindicator", "abstractillager", "mob", "creature", "living", "livingbase"],
+        "packetType": "mob",
+        "packetID": 36
+    },
+    "illusionillager": {
+        "id": 37,
+        "dataname": "minecraft:illusion_illager",
+        "width": 0.6,
+        "height": 1.95,
+        "maxHealth": 32.0,
+        "loot": [
+        ],
+        "eyeHeight": 1.6575,
+        "flags": ["illusionillager", "spellcasterillager", "abstractillager", "mob", "creature", "living", "livingbase"],
+        "packetType": "mob",
+        "packetID": 37
+    },
+    "minecartcommandblock": {
+        "id": 40,
+        "dataname": "minecraft:commandblock_minecart",
+        "width": 0.98,
+        "height": 0.7,
+        "maxHealth": 0.0,
+        "eyeHeight": 0.595,
+        "flags": ["minecartcommandblock", "minecart"],
+        "packetType": "object",
+        "packetID": 10
+    },
+    "boat": {
+        "id": 41,
+        "dataname": "minecraft:boat",
+        "width": 1.375,
+        "height": 0.5625,
+        "maxHealth": 0.0,
+        "eyeHeight": 0.478125,
+        "flags": ["boat"],
+        "packetType": "object",
+        "packetID": 1
+    },
+    "minecartrideable": {
+        "id": 42,
+        "dataname": "minecraft:minecart",
+        "width": 0.98,
+        "height": 0.7,
+        "maxHealth": 0.0,
+        "eyeHeight": 0.595,
+        "flags": ["minecartempty", "minecart"],
+        "packetType": "object",
+        "packetID": 10
+    },
+    "minecartchest": {
+        "id": 43,
+        "dataname": "minecraft:chest_minecart",
+        "width": 0.98,
+        "height": 0.7,
+        "maxHealth": 0.0,
+        "eyeHeight": 0.595,
+        "flags": ["minecartchest", "minecartcontainer", "minecart"],
+        "packetType": "object",
+        "packetID": 10
+    },
+    "minecartfurnace": {
+        "id": 44,
+        "dataname": "minecraft:furnace_minecart",
+        "width": 0.98,
+        "height": 0.7,
+        "maxHealth": 0.0,
+        "eyeHeight": 0.595,
+        "flags": ["minecartfurnace", "minecart"],
+        "packetType": "object",
+        "packetID": 10
+    },
+    "minecarttnt": {
+        "id": 45,
+        "dataname": "minecraft:tnt_minecart",
+        "width": 0.98,
+        "height": 0.7,
+        "maxHealth": 0.0,
+        "eyeHeight": 0.595,
+        "flags": ["minecarttnt", "minecart"],
+        "packetType": "object",
+        "packetID": 10
+    },
+    "minecarthopper": {
+        "id": 46,
+        "dataname": "minecraft:hopper_minecart",
+        "width": 0.98,
+        "height": 0.7,
+        "maxHealth": 0.0,
+        "eyeHeight": 0.595,
+        "flags": ["minecarthopper", "minecartcontainer", "minecart"],
+        "packetType": "object",
+        "packetID": 10
+    },
+    "minecartspawner": {
+        "id": 47,
+        "dataname": "minecraft:spawner_minecart",
+        "width": 0.98,
+        "height": 0.7,
+        "maxHealth": 0.0,
+        "eyeHeight": 0.595,
+        "flags": ["minecartmobspawner", "minecart"],
+        "packetType": "object",
+        "packetID": 10
+    },
+    "creeper": {
+        "id": 50,
+        "dataname": "minecraft:creeper",
+        "width": 0.6,
+        "height": 1.7,
+        "maxHealth": 20.0,
+        "loot": [
+            {
+                "id": 289,
+                "amountMin": 0,
+                "amountMax": 2
+            }
+        ],
+        "eyeHeight": 1.445,
+        "flags": ["creeper", "mob", "creature", "living", "livingbase"],
+        "packetType": "mob",
+        "packetID": 50
+    },
+    "skeleton": {
+        "id": 51,
+        "dataname": "minecraft:skeleton",
+        "width": 0.6,
+        "height": 1.99,
+        "maxHealth": 20.0,
+        "loot": [
+            {
+                "id": 262,
+                "amountMin": 0,
+                "amountMax": 2
+            },
+            {
+                "id": 352,
+                "amountMin": 0,
+                "amountMax": 2
+            }
+        ],
+        "eyeHeight": 1.74,
+        "flags": ["skeleton", "abstractskeleton", "mob", "creature", "living", "livingbase"],
+        "packetType": "mob",
+        "packetID": 51
+    },
+    "spider": {
+        "id": 52,
+        "dataname": "minecraft:spider",
+        "width": 1.4,
+        "height": 0.9,
+        "maxHealth": 16.0,
+        "loot": [
+            {
+                "id": 287,
+                "amountMin": 0,
+                "amountMax": 2
+            },
+            {
+                "id": 375,
+                "amountMin": -1,
+                "amountMax": 1
+            }
+        ],
+        "eyeHeight": 0.65,
+        "flags": ["spider", "mob", "creature", "living", "livingbase"],
+        "packetType": "mob",
+        "packetID": 52
+    },
+    "giant": {
+        "id": 53,
+        "dataname": "minecraft:giant",
+        "width": 3.6000001,
+        "height": 10.799999,
+        "maxHealth": 100.0,
+        "loot": [
+        ],
+        "eyeHeight": 10.440001,
+        "flags": ["giantzombie", "mob", "creature", "living", "livingbase"],
+        "packetType": "mob",
+        "packetID": 53
+    },
+    "zombie": {
+        "id": 54,
+        "dataname": "minecraft:zombie",
+        "width": 0.6,
+        "height": 1.95,
+        "maxHealth": 20.0,
+        "loot": [
+            {
+                "id": 367,
+                "amountMin": 0,
+                "amountMax": 2
+            },
+            {
+                "id": 265
+            },
+            {
+                "id": 391
+            },
+            {
+                "id": 392
+            }
+        ],
+        "eyeHeight": 1.74,
+        "flags": ["zombie", "mob", "creature", "living", "livingbase"],
+        "packetType": "mob",
+        "packetID": 54
+    },
+    "slime": {
+        "id": 55,
+        "dataname": "minecraft:slime",
+        "width": 0.6,
+        "height": 1.8,
+        "maxHealth": 20.0,
+        "loot": [
+            {
+                "id": 341,
+                "amountMin": 0,
+                "amountMax": 2
+            }
+        ],
+        "eyeHeight": 1.125,
+        "flags": ["slime", "living", "livingbase"],
+        "packetType": "mob",
+        "packetID": 55
+    },
+    "ghast": {
+        "id": 56,
+        "dataname": "minecraft:ghast",
+        "width": 4.0,
+        "height": 4.0,
+        "maxHealth": 10.0,
+        "loot": [
+            {
+                "id": 370,
+                "amountMin": 0,
+                "amountMax": 1
+            },
+            {
+                "id": 289,
+                "amountMin": 0,
+                "amountMax": 2
+            }
+        ],
+        "eyeHeight": 2.6,
+        "flags": ["ghast", "flying", "living", "livingbase", "fireimmune"],
+        "packetType": "mob",
+        "packetID": 56
+    },
+    "pigzombie": {
+        "id": 57,
+        "dataname": "minecraft:zombie_pigman",
+        "width": 0.6,
+        "height": 1.95,
+        "maxHealth": 20.0,
+        "loot": [
+            {
+                "id": 367,
+                "amountMin": 0,
+                "amountMax": 1
+            },
+            {
+                "id": 371,
+                "amountMin": 0,
+                "amountMax": 1
+            },
+            {
+                "id": 266
+            }
+        ],
+        "eyeHeight": 1.74,
+        "flags": ["pigzombie", "zombie", "mob", "creature", "living", "livingbase", "fireimmune"],
+        "packetType": "mob",
+        "packetID": 57
+    },
+    "enderman": {
+        "id": 58,
+        "dataname": "minecraft:enderman",
+        "width": 0.6,
+        "height": 2.9,
+        "maxHealth": 40.0,
+        "loot": [
+            {
+                "id": 368,
+                "amountMin": 0,
+                "amountMax": 1
+            }
+        ],
+        "eyeHeight": 2.55,
+        "flags": ["enderman", "mob", "creature", "living", "livingbase"],
+        "packetType": "mob",
+        "packetID": 58
+    },
+    "cavespider": {
+        "id": 59,
+        "dataname": "minecraft:cave_spider",
+        "width": 0.7,
+        "height": 0.5,
+        "maxHealth": 12.0,
+        "loot": [
+            {
+                "id": 287,
+                "amountMin": 0,
+                "amountMax": 2
+            },
+            {
+                "id": 375,
+                "amountMin": -1,
+                "amountMax": 1
+            }
+        ],
+        "eyeHeight": 0.45,
+        "flags": ["cavespider", "spider", "mob", "creature", "living", "livingbase"],
+        "packetType": "mob",
+        "packetID": 59
+    },
+    "silverfish": {
+        "id": 60,
+        "dataname": "minecraft:silverfish",
+        "width": 0.4,
+        "height": 0.3,
+        "maxHealth": 8.0,
+        "loot": [
+        ],
+        "eyeHeight": 0.1,
+        "flags": ["silverfish", "mob", "creature", "living", "livingbase"],
+        "packetType": "mob",
+        "packetID": 60
+    },
+    "blaze": {
+        "id": 61,
+        "dataname": "minecraft:blaze",
+        "width": 0.6,
+        "height": 1.8,
+        "maxHealth": 20.0,
+        "loot": [
+            {
+                "id": 369,
+                "amountMin": 0,
+                "amountMax": 1
+            }
+        ],
+        "eyeHeight": 1.53,
+        "flags": ["blaze", "mob", "creature", "living", "livingbase", "fireimmune"],
+        "packetType": "mob",
+        "packetID": 61
+    },
+    "lavaslime": {
+        "id": 62,
+        "dataname": "minecraft:magma_cube",
+        "width": 0.6,
+        "height": 1.8,
+        "maxHealth": 20.0,
+        "loot": [
+        ],
+        "eyeHeight": 1.125,
+        "flags": ["magmacube", "slime", "living", "livingbase", "fireimmune"],
+        "packetType": "mob",
+        "packetID": 62
+    },
+    "enderdragon": {
+        "id": 63,
+        "dataname": "minecraft:ender_dragon",
+        "width": 16.0,
+        "height": 8.0,
+        "maxHealth": 200.0,
+        "loot": [
+        ],
+        "eyeHeight": 6.8,
+        "flags": ["dragon", "living", "livingbase", "fireimmune"],
+        "packetType": "mob",
+        "packetID": 63
+    },
+    "witherboss": {
+        "id": 64,
+        "dataname": "minecraft:wither",
+        "width": 0.9,
+        "height": 3.5,
+        "maxHealth": 300.0,
+        "loot": [
+        ],
+        "eyeHeight": 2.9750001,
+        "flags": ["wither", "mob", "creature", "living", "livingbase", "fireimmune"],
+        "packetType": "mob",
+        "packetID": 64
+    },
+    "bat": {
+        "id": 65,
+        "dataname": "minecraft:bat",
+        "width": 0.5,
+        "height": 0.9,
+        "maxHealth": 6.0,
+        "loot": [
+        ],
+        "eyeHeight": 0.45,
+        "flags": ["bat", "ambientcreature", "living", "livingbase"],
+        "packetType": "mob",
+        "packetID": 65
+    },
+    "witch": {
+        "id": 66,
+        "dataname": "minecraft:witch",
+        "width": 0.6,
+        "height": 1.95,
+        "maxHealth": 26.0,
+        "loot": [
+            {
+                "id": 348,
+                "amountMin": 0,
+                "amountMax": 2
+            },
+            {
+                "id": 353,
+                "amountMin": 0,
+                "amountMax": 2
+            },
+            {
+                "id": 331,
+                "amountMin": 0,
+                "amountMax": 2
+            },
+            {
+                "id": 375,
+                "amountMin": 0,
+                "amountMax": 2
+            },
+            {
+                "id": 374,
+                "amountMin": 0,
+                "amountMax": 2
+            },
+            {
+                "id": 289,
+                "amountMin": 0,
+                "amountMax": 2
+            },
+            {
+                "id": 280,
+                "amountMin": 0,
+                "amountMax": 2
+            }
+        ],
+        "eyeHeight": 1.62,
+        "flags": ["witch", "mob", "creature", "living", "livingbase"],
+        "packetType": "mob",
+        "packetID": 66
+    },
+    "endermite": {
+        "id": 67,
+        "dataname": "minecraft:endermite",
+        "width": 0.4,
+        "height": 0.3,
+        "maxHealth": 8.0,
+        "loot": [
+        ],
+        "eyeHeight": 0.1,
+        "flags": ["endermite", "mob", "creature", "living", "livingbase"],
+        "packetType": "mob",
+        "packetID": 67
+    },
+    "guardian": {
+        "id": 68,
+        "dataname": "minecraft:guardian",
+        "width": 0.85,
+        "height": 0.85,
+        "maxHealth": 30.0,
+        "loot": [
+            {
+                "id": 409,
+                "amountMin": 0,
+                "amountMax": 2
+            },
+            {
+                "id": 349
+            },
+            {
+                "id": 410
+            },
+            {
+                "id": 349,
+                "metaMin": 0,
+                "metaMax": 0
+            },
+            {
+                "id": 349,
+                "metaMin": 1,
+                "metaMax": 1
+            },
+            {
+                "id": 349,
+                "metaMin": 2,
+                "metaMax": 2
+            },
+            {
+                "id": 349,
+                "metaMin": 3,
+                "metaMax": 3
+            }
+        ],
+        "eyeHeight": 0.425,
+        "flags": ["guardian", "mob", "creature", "living", "livingbase"],
+        "packetType": "mob",
+        "packetID": 68
+    },
+    "shulker": {
+        "id": 69,
+        "dataname": "minecraft:shulker",
+        "width": 1.0,
+        "height": 1.0,
+        "maxHealth": 30.0,
+        "loot": [
+            {
+                "id": 450
+            }
+        ],
+        "eyeHeight": 0.5,
+        "flags": ["shulker", "golem", "creature", "living", "livingbase", "fireimmune"],
+        "packetType": "mob",
+        "packetID": 69
+    },
+    "pig": {
+        "id": 90,
+        "dataname": "minecraft:pig",
+        "width": 0.9,
+        "height": 0.9,
+        "maxHealth": 10.0,
+        "loot": [
+            {
+                "id": 319,
+                "amountMin": 1,
+                "amountMax": 3
+            }
+        ],
+        "eyeHeight": 0.765,
+        "flags": ["pig", "animal", "ageable", "creature", "living", "livingbase"],
+        "packetType": "mob",
+        "packetID": 90
+    },
+    "sheep": {
+        "id": 91,
+        "dataname": "minecraft:sheep",
+        "width": 0.9,
+        "height": 1.3,
+        "maxHealth": 8.0,
+        "loot": [
+            {
+                "id": 35,
+                "metaMin": 0,
+                "metaMax": 0
+            },
+            {
+                "id": 423,
+                "amountMin": 1,
+                "amountMax": 2
+            }
+        ],
+        "eyeHeight": 1.2349999,
+        "flags": ["sheep", "animal", "ageable", "creature", "living", "livingbase"],
+        "packetType": "mob",
+        "packetID": 91
+    },
+    "cow": {
+        "id": 92,
+        "dataname": "minecraft:cow",
+        "width": 0.9,
+        "height": 1.4,
+        "maxHealth": 10.0,
+        "loot": [
+            {
+                "id": 334,
+                "amountMin": 0,
+                "amountMax": 2
+            },
+            {
+                "id": 363,
+                "amountMin": 1,
+                "amountMax": 3
+            }
+        ],
+        "eyeHeight": 1.3,
+        "flags": ["cow", "animal", "ageable", "creature", "living", "livingbase"],
+        "packetType": "mob",
+        "packetID": 92
+    },
+    "chicken": {
+        "id": 93,
+        "dataname": "minecraft:chicken",
+        "width": 0.4,
+        "height": 0.7,
+        "maxHealth": 4.0,
+        "loot": [
+            {
+                "id": 288,
+                "amountMin": 0,
+                "amountMax": 2
+            },
+            {
+                "id": 365
+            }
+        ],
+        "eyeHeight": 0.7,
+        "flags": ["chicken", "animal", "ageable", "creature", "living", "livingbase"],
+        "packetType": "mob",
+        "packetID": 93
+    },
+    "squid": {
+        "id": 94,
+        "dataname": "minecraft:squid",
+        "width": 0.8,
+        "height": 0.8,
+        "maxHealth": 10.0,
+        "loot": [
+            {
+                "id": 351,
+                "amountMin": 1,
+                "amountMax": 3,
+                "metaMin": 0,
+                "metaMax": 0
+            }
+        ],
+        "eyeHeight": 0.4,
+        "flags": ["squid", "watermob", "living", "livingbase", "waterbreathing"],
+        "packetType": "mob",
+        "packetID": 94
+    },
+    "wolf": {
+        "id": 95,
+        "dataname": "minecraft:wolf",
+        "width": 0.6,
+        "height": 0.85,
+        "maxHealth": 8.0,
+        "loot": [
+        ],
+        "eyeHeight": 0.68,
+        "flags": ["wolf", "tameable", "animal", "ageable", "creature", "living", "livingbase"],
+        "packetType": "mob",
+        "packetID": 95
+    },
+    "mushroomcow": {
+        "id": 96,
+        "dataname": "minecraft:mooshroom",
+        "width": 0.9,
+        "height": 1.4,
+        "maxHealth": 10.0,
+        "loot": [
+            {
+                "id": 334,
+                "amountMin": 0,
+                "amountMax": 2
+            },
+            {
+                "id": 363,
+                "amountMin": 1,
+                "amountMax": 3
+            }
+        ],
+        "eyeHeight": 1.3,
+        "flags": ["mooshroom", "cow", "animal", "ageable", "creature", "living", "livingbase"],
+        "packetType": "mob",
+        "packetID": 96
+    },
+    "snowman": {
+        "id": 97,
+        "dataname": "minecraft:snowman",
+        "width": 0.7,
+        "height": 1.9,
+        "maxHealth": 4.0,
+        "loot": [
+            {
+                "id": 332,
+                "amountMin": 0,
+                "amountMax": 15
+            }
+        ],
+        "eyeHeight": 1.7,
+        "flags": ["snowman", "golem", "creature", "living", "livingbase"],
+        "packetType": "mob",
+        "packetID": 97
+    },
+    "ozelot": {
+        "id": 98,
+        "dataname": "minecraft:ocelot",
+        "width": 0.6,
+        "height": 0.7,
+        "maxHealth": 10.0,
+        "loot": [
+        ],
+        "eyeHeight": 0.595,
+        "flags": ["ocelot", "tameable", "animal", "ageable", "creature", "living", "livingbase"],
+        "packetType": "mob",
+        "packetID": 98
+    },
+    "villagergolem": {
+        "id": 99,
+        "dataname": "minecraft:villager_golem",
+        "width": 1.4,
+        "height": 2.7,
+        "maxHealth": 100.0,
+        "loot": [
+            {
+                "id": 38,
+                "amountMin": 0,
+                "amountMax": 2
+            },
+            {
+                "id": 265,
+                "amountMin": 3,
+                "amountMax": 5
+            }
+        ],
+        "eyeHeight": 2.295,
+        "flags": ["irongolem", "golem", "creature", "living", "livingbase"],
+        "packetType": "mob",
+        "packetID": 99
+    },
+    "horse": {
+        "id": 100,
+        "dataname": "minecraft:horse",
+        "width": 1.3964844,
+        "height": 1.6,
+        "maxHealth": 26.0,
+        "loot": [
+            {
+                "id": 334,
+                "amountMin": 0,
+                "amountMax": 2
+            }
+        ],
+        "eyeHeight": 1.6,
+        "flags": ["horse", "abstracthorse", "animal", "ageable", "creature", "living", "livingbase"],
+        "packetType": "mob",
+        "packetID": 100
+    },
+    "rabbit": {
+        "id": 101,
+        "dataname": "minecraft:rabbit",
+        "width": 0.4,
+        "height": 0.5,
+        "maxHealth": 3.0,
+        "loot": [
+            {
+                "id": 415,
+                "amountMin": 0,
+                "amountMax": 1
+            },
+            {
+                "id": 411,
+                "amountMin": 0,
+                "amountMax": 1
+            },
+            {
+                "id": 414
+            }
+        ],
+        "eyeHeight": 0.425,
+        "flags": ["rabbit", "animal", "ageable", "creature", "living", "livingbase"],
+        "packetType": "mob",
+        "packetID": 101
+    },
+    "polarbear": {
+        "id": 102,
+        "dataname": "minecraft:polar_bear",
+        "width": 1.3,
+        "height": 1.4,
+        "maxHealth": 30.0,
+        "loot": [
+            {
+                "id": 349,
+                "amountMin": 0,
+                "amountMax": 2,
+                "metaMin": 0,
+                "metaMax": 0
+            },
+            {
+                "id": 349,
+                "amountMin": 0,
+                "amountMax": 2,
+                "metaMin": 1,
+                "metaMax": 1
+            }
+        ],
+        "eyeHeight": 1.19,
+        "flags": ["polarbear", "animal", "ageable", "creature", "living", "livingbase"],
+        "packetType": "mob",
+        "packetID": 102
+    },
+    "llama": {
+        "id": 103,
+        "dataname": "minecraft:llama",
+        "width": 1.3964844,
+        "height": 1.6,
+        "maxHealth": 23.0,
+        "loot": [
+            {
+                "id": 334,
+                "amountMin": 0,
+                "amountMax": 2
+            }
+        ],
+        "eyeHeight": 1.6,
+        "flags": ["llama", "abstractchesthorse", "abstracthorse", "animal", "ageable", "creature", "living", "livingbase"],
+        "packetType": "mob",
+        "packetID": 103
+    },
+    "llamaspit": {
+        "id": 104,
+        "dataname": "minecraft:llama_spit",
+        "width": 0.6,
+        "height": 1.8,
+        "maxHealth": 0.0,
+        "eyeHeight": 1.53,
+        "flags": ["llamaspit"],
+        "packetType": "object",
+        "packetID": 68
+    },
+    "parrot": {
+        "id": 105,
+        "dataname": "minecraft:parrot",
+        "width": 0.5,
+        "height": 0.9,
+        "maxHealth": 6.0,
+        "loot": [
+            {
+                "id": 288,
+                "amountMin": 1,
+                "amountMax": 2
+            }
+        ],
+        "eyeHeight": 0.54,
+        "flags": ["parrot", "shoulderriding", "tameable", "animal", "ageable", "creature", "living", "livingbase"],
+        "packetType": "mob",
+        "packetID": 105
+    },
+    "villager": {
+        "id": 120,
+        "dataname": "minecraft:villager",
+        "width": 0.6,
+        "height": 1.95,
+        "maxHealth": 20.0,
+        "loot": [
+        ],
+        "eyeHeight": 1.62,
+        "flags": ["villager", "ageable", "creature", "living", "livingbase"],
+        "packetType": "mob",
+        "packetID": 120
+    },
+    "endercrystal": {
+        "id": 200,
+        "dataname": "minecraft:ender_crystal",
+        "width": 2.0,
+        "height": 2.0,
+        "maxHealth": 0.0,
+        "eyeHeight": 1.7,
+        "flags": ["endercrystal"],
+        "packetType": "object",
+        "packetID": 51
+    }
+}
