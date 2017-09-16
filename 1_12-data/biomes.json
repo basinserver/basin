@@ -1,0 +1,2420 @@
+[
+    {
+        "id": 0,
+        "name": "ocean",
+        "displayName": "Ocean",
+        "baseHeight": -1.0,
+        "heightVariation": 0.1,
+        "temperature": 0.5,
+        "rainfall": 0.5,
+        "waterColor": 16777215,
+        "enableSnow": false,
+        "enableRain": true,
+        "baseBiome": "null",
+        "spawnableCreatures": {
+            "monster": {
+                "entities": [52, 54, 27, 51, 50, 55, 58, 66],
+                "maxNumber": 70,
+                "isPeacefulCreature": false,
+                "isAnimal": false
+            },
+            "creature": {
+                "entities": [],
+                "maxNumber": 10,
+                "isPeacefulCreature": true,
+                "isAnimal": true
+            },
+            "ambient": {
+                "entities": [65],
+                "maxNumber": 15,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            },
+            "water_creature": {
+                "entities": [94],
+                "maxNumber": 5,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            }
+        }
+    },
+    {
+        "id": 1,
+        "name": "plains",
+        "displayName": "Plains",
+        "baseHeight": 0.125,
+        "heightVariation": 0.05,
+        "temperature": 0.8,
+        "rainfall": 0.4,
+        "waterColor": 16777215,
+        "enableSnow": false,
+        "enableRain": true,
+        "baseBiome": "null",
+        "spawnableCreatures": {
+            "monster": {
+                "entities": [52, 54, 27, 51, 50, 55, 58, 66],
+                "maxNumber": 70,
+                "isPeacefulCreature": false,
+                "isAnimal": false
+            },
+            "creature": {
+                "entities": [91, 90, 93, 92, 100, 31],
+                "maxNumber": 10,
+                "isPeacefulCreature": true,
+                "isAnimal": true
+            },
+            "ambient": {
+                "entities": [65],
+                "maxNumber": 15,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            },
+            "water_creature": {
+                "entities": [94],
+                "maxNumber": 5,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            }
+        }
+    },
+    {
+        "id": 2,
+        "name": "desert",
+        "displayName": "Desert",
+        "baseHeight": 0.125,
+        "heightVariation": 0.05,
+        "temperature": 2.0,
+        "rainfall": 0.0,
+        "waterColor": 16777215,
+        "enableSnow": false,
+        "enableRain": false,
+        "baseBiome": "null",
+        "spawnableCreatures": {
+            "monster": {
+                "entities": [52, 51, 50, 55, 58, 66, 54, 27, 23],
+                "maxNumber": 70,
+                "isPeacefulCreature": false,
+                "isAnimal": false
+            },
+            "creature": {
+                "entities": [101],
+                "maxNumber": 10,
+                "isPeacefulCreature": true,
+                "isAnimal": true
+            },
+            "ambient": {
+                "entities": [65],
+                "maxNumber": 15,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            },
+            "water_creature": {
+                "entities": [94],
+                "maxNumber": 5,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            }
+        }
+    },
+    {
+        "id": 3,
+        "name": "extreme_hills",
+        "displayName": "Extreme Hills",
+        "baseHeight": 1.0,
+        "heightVariation": 0.5,
+        "temperature": 0.2,
+        "rainfall": 0.3,
+        "waterColor": 16777215,
+        "enableSnow": false,
+        "enableRain": true,
+        "baseBiome": "null",
+        "spawnableCreatures": {
+            "monster": {
+                "entities": [52, 54, 27, 51, 50, 55, 58, 66],
+                "maxNumber": 70,
+                "isPeacefulCreature": false,
+                "isAnimal": false
+            },
+            "creature": {
+                "entities": [91, 90, 93, 92, 103],
+                "maxNumber": 10,
+                "isPeacefulCreature": true,
+                "isAnimal": true
+            },
+            "ambient": {
+                "entities": [65],
+                "maxNumber": 15,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            },
+            "water_creature": {
+                "entities": [94],
+                "maxNumber": 5,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            }
+        }
+    },
+    {
+        "id": 4,
+        "name": "forest",
+        "displayName": "Forest",
+        "baseHeight": 0.1,
+        "heightVariation": 0.2,
+        "temperature": 0.7,
+        "rainfall": 0.8,
+        "waterColor": 16777215,
+        "enableSnow": false,
+        "enableRain": true,
+        "baseBiome": "null",
+        "spawnableCreatures": {
+            "monster": {
+                "entities": [52, 54, 27, 51, 50, 55, 58, 66],
+                "maxNumber": 70,
+                "isPeacefulCreature": false,
+                "isAnimal": false
+            },
+            "creature": {
+                "entities": [91, 90, 93, 92, 95],
+                "maxNumber": 10,
+                "isPeacefulCreature": true,
+                "isAnimal": true
+            },
+            "ambient": {
+                "entities": [65],
+                "maxNumber": 15,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            },
+            "water_creature": {
+                "entities": [94],
+                "maxNumber": 5,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            }
+        }
+    },
+    {
+        "id": 5,
+        "name": "taiga",
+        "displayName": "Taiga",
+        "baseHeight": 0.2,
+        "heightVariation": 0.2,
+        "temperature": 0.25,
+        "rainfall": 0.8,
+        "waterColor": 16777215,
+        "enableSnow": false,
+        "enableRain": true,
+        "baseBiome": "null",
+        "spawnableCreatures": {
+            "monster": {
+                "entities": [52, 54, 27, 51, 50, 55, 58, 66],
+                "maxNumber": 70,
+                "isPeacefulCreature": false,
+                "isAnimal": false
+            },
+            "creature": {
+                "entities": [91, 90, 93, 92, 95, 101],
+                "maxNumber": 10,
+                "isPeacefulCreature": true,
+                "isAnimal": true
+            },
+            "ambient": {
+                "entities": [65],
+                "maxNumber": 15,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            },
+            "water_creature": {
+                "entities": [94],
+                "maxNumber": 5,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            }
+        }
+    },
+    {
+        "id": 6,
+        "name": "swampland",
+        "displayName": "Swampland",
+        "baseHeight": -0.2,
+        "heightVariation": 0.1,
+        "temperature": 0.8,
+        "rainfall": 0.9,
+        "waterColor": 14745518,
+        "enableSnow": false,
+        "enableRain": true,
+        "baseBiome": "null",
+        "spawnableCreatures": {
+            "monster": {
+                "entities": [52, 54, 27, 51, 50, 55, 58, 66, 55],
+                "maxNumber": 70,
+                "isPeacefulCreature": false,
+                "isAnimal": false
+            },
+            "creature": {
+                "entities": [91, 90, 93, 92],
+                "maxNumber": 10,
+                "isPeacefulCreature": true,
+                "isAnimal": true
+            },
+            "ambient": {
+                "entities": [65],
+                "maxNumber": 15,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            },
+            "water_creature": {
+                "entities": [94],
+                "maxNumber": 5,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            }
+        }
+    },
+    {
+        "id": 7,
+        "name": "river",
+        "displayName": "River",
+        "baseHeight": -0.5,
+        "heightVariation": 0.0,
+        "temperature": 0.5,
+        "rainfall": 0.5,
+        "waterColor": 16777215,
+        "enableSnow": false,
+        "enableRain": true,
+        "baseBiome": "null",
+        "spawnableCreatures": {
+            "monster": {
+                "entities": [52, 54, 27, 51, 50, 55, 58, 66],
+                "maxNumber": 70,
+                "isPeacefulCreature": false,
+                "isAnimal": false
+            },
+            "creature": {
+                "entities": [],
+                "maxNumber": 10,
+                "isPeacefulCreature": true,
+                "isAnimal": true
+            },
+            "ambient": {
+                "entities": [65],
+                "maxNumber": 15,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            },
+            "water_creature": {
+                "entities": [94],
+                "maxNumber": 5,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            }
+        }
+    },
+    {
+        "id": 8,
+        "name": "hell",
+        "displayName": "Hell",
+        "baseHeight": 0.1,
+        "heightVariation": 0.2,
+        "temperature": 2.0,
+        "rainfall": 0.0,
+        "waterColor": 16777215,
+        "enableSnow": false,
+        "enableRain": false,
+        "baseBiome": "null",
+        "spawnableCreatures": {
+            "monster": {
+                "entities": [56, 57, 62, 58],
+                "maxNumber": 70,
+                "isPeacefulCreature": false,
+                "isAnimal": false
+            },
+            "creature": {
+                "entities": [],
+                "maxNumber": 10,
+                "isPeacefulCreature": true,
+                "isAnimal": true
+            },
+            "ambient": {
+                "entities": [],
+                "maxNumber": 15,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            },
+            "water_creature": {
+                "entities": [],
+                "maxNumber": 5,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            }
+        }
+    },
+    {
+        "id": 9,
+        "name": "sky",
+        "displayName": "The End",
+        "baseHeight": 0.1,
+        "heightVariation": 0.2,
+        "temperature": 0.5,
+        "rainfall": 0.5,
+        "waterColor": 16777215,
+        "enableSnow": false,
+        "enableRain": false,
+        "baseBiome": "null",
+        "spawnableCreatures": {
+            "monster": {
+                "entities": [58],
+                "maxNumber": 70,
+                "isPeacefulCreature": false,
+                "isAnimal": false
+            },
+            "creature": {
+                "entities": [],
+                "maxNumber": 10,
+                "isPeacefulCreature": true,
+                "isAnimal": true
+            },
+            "ambient": {
+                "entities": [],
+                "maxNumber": 15,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            },
+            "water_creature": {
+                "entities": [],
+                "maxNumber": 5,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            }
+        }
+    },
+    {
+        "id": 10,
+        "name": "frozen_ocean",
+        "displayName": "FrozenOcean",
+        "baseHeight": -1.0,
+        "heightVariation": 0.1,
+        "temperature": 0.0,
+        "rainfall": 0.5,
+        "waterColor": 16777215,
+        "enableSnow": true,
+        "enableRain": false,
+        "baseBiome": "null",
+        "spawnableCreatures": {
+            "monster": {
+                "entities": [52, 54, 27, 51, 50, 55, 58, 66],
+                "maxNumber": 70,
+                "isPeacefulCreature": false,
+                "isAnimal": false
+            },
+            "creature": {
+                "entities": [],
+                "maxNumber": 10,
+                "isPeacefulCreature": true,
+                "isAnimal": true
+            },
+            "ambient": {
+                "entities": [65],
+                "maxNumber": 15,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            },
+            "water_creature": {
+                "entities": [94],
+                "maxNumber": 5,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            }
+        }
+    },
+    {
+        "id": 11,
+        "name": "frozen_river",
+        "displayName": "FrozenRiver",
+        "baseHeight": -0.5,
+        "heightVariation": 0.0,
+        "temperature": 0.0,
+        "rainfall": 0.5,
+        "waterColor": 16777215,
+        "enableSnow": true,
+        "enableRain": false,
+        "baseBiome": "null",
+        "spawnableCreatures": {
+            "monster": {
+                "entities": [52, 54, 27, 51, 50, 55, 58, 66],
+                "maxNumber": 70,
+                "isPeacefulCreature": false,
+                "isAnimal": false
+            },
+            "creature": {
+                "entities": [],
+                "maxNumber": 10,
+                "isPeacefulCreature": true,
+                "isAnimal": true
+            },
+            "ambient": {
+                "entities": [65],
+                "maxNumber": 15,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            },
+            "water_creature": {
+                "entities": [94],
+                "maxNumber": 5,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            }
+        }
+    },
+    {
+        "id": 12,
+        "name": "ice_flats",
+        "displayName": "Ice Plains",
+        "baseHeight": 0.125,
+        "heightVariation": 0.05,
+        "temperature": 0.0,
+        "rainfall": 0.5,
+        "waterColor": 16777215,
+        "enableSnow": true,
+        "enableRain": false,
+        "baseBiome": "null",
+        "spawnableCreatures": {
+            "monster": {
+                "entities": [52, 54, 27, 50, 55, 58, 66, 51, 6],
+                "maxNumber": 70,
+                "isPeacefulCreature": false,
+                "isAnimal": false
+            },
+            "creature": {
+                "entities": [101, 102],
+                "maxNumber": 10,
+                "isPeacefulCreature": true,
+                "isAnimal": true
+            },
+            "ambient": {
+                "entities": [65],
+                "maxNumber": 15,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            },
+            "water_creature": {
+                "entities": [94],
+                "maxNumber": 5,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            }
+        }
+    },
+    {
+        "id": 13,
+        "name": "ice_mountains",
+        "displayName": "Ice Mountains",
+        "baseHeight": 0.45,
+        "heightVariation": 0.3,
+        "temperature": 0.0,
+        "rainfall": 0.5,
+        "waterColor": 16777215,
+        "enableSnow": true,
+        "enableRain": false,
+        "baseBiome": "null",
+        "spawnableCreatures": {
+            "monster": {
+                "entities": [52, 54, 27, 50, 55, 58, 66, 51, 6],
+                "maxNumber": 70,
+                "isPeacefulCreature": false,
+                "isAnimal": false
+            },
+            "creature": {
+                "entities": [101, 102],
+                "maxNumber": 10,
+                "isPeacefulCreature": true,
+                "isAnimal": true
+            },
+            "ambient": {
+                "entities": [65],
+                "maxNumber": 15,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            },
+            "water_creature": {
+                "entities": [94],
+                "maxNumber": 5,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            }
+        }
+    },
+    {
+        "id": 14,
+        "name": "mushroom_island",
+        "displayName": "MushroomIsland",
+        "baseHeight": 0.2,
+        "heightVariation": 0.3,
+        "temperature": 0.9,
+        "rainfall": 1.0,
+        "waterColor": 16777215,
+        "enableSnow": false,
+        "enableRain": true,
+        "baseBiome": "null",
+        "spawnableCreatures": {
+            "monster": {
+                "entities": [],
+                "maxNumber": 70,
+                "isPeacefulCreature": false,
+                "isAnimal": false
+            },
+            "creature": {
+                "entities": [96],
+                "maxNumber": 10,
+                "isPeacefulCreature": true,
+                "isAnimal": true
+            },
+            "ambient": {
+                "entities": [65],
+                "maxNumber": 15,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            },
+            "water_creature": {
+                "entities": [],
+                "maxNumber": 5,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            }
+        }
+    },
+    {
+        "id": 15,
+        "name": "mushroom_island_shore",
+        "displayName": "MushroomIslandShore",
+        "baseHeight": 0.0,
+        "heightVariation": 0.025,
+        "temperature": 0.9,
+        "rainfall": 1.0,
+        "waterColor": 16777215,
+        "enableSnow": false,
+        "enableRain": true,
+        "baseBiome": "null",
+        "spawnableCreatures": {
+            "monster": {
+                "entities": [],
+                "maxNumber": 70,
+                "isPeacefulCreature": false,
+                "isAnimal": false
+            },
+            "creature": {
+                "entities": [96],
+                "maxNumber": 10,
+                "isPeacefulCreature": true,
+                "isAnimal": true
+            },
+            "ambient": {
+                "entities": [65],
+                "maxNumber": 15,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            },
+            "water_creature": {
+                "entities": [],
+                "maxNumber": 5,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            }
+        }
+    },
+    {
+        "id": 16,
+        "name": "beaches",
+        "displayName": "Beach",
+        "baseHeight": 0.0,
+        "heightVariation": 0.025,
+        "temperature": 0.8,
+        "rainfall": 0.4,
+        "waterColor": 16777215,
+        "enableSnow": false,
+        "enableRain": true,
+        "baseBiome": "null",
+        "spawnableCreatures": {
+            "monster": {
+                "entities": [52, 54, 27, 51, 50, 55, 58, 66],
+                "maxNumber": 70,
+                "isPeacefulCreature": false,
+                "isAnimal": false
+            },
+            "creature": {
+                "entities": [],
+                "maxNumber": 10,
+                "isPeacefulCreature": true,
+                "isAnimal": true
+            },
+            "ambient": {
+                "entities": [65],
+                "maxNumber": 15,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            },
+            "water_creature": {
+                "entities": [94],
+                "maxNumber": 5,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            }
+        }
+    },
+    {
+        "id": 17,
+        "name": "desert_hills",
+        "displayName": "DesertHills",
+        "baseHeight": 0.45,
+        "heightVariation": 0.3,
+        "temperature": 2.0,
+        "rainfall": 0.0,
+        "waterColor": 16777215,
+        "enableSnow": false,
+        "enableRain": false,
+        "baseBiome": "null",
+        "spawnableCreatures": {
+            "monster": {
+                "entities": [52, 51, 50, 55, 58, 66, 54, 27, 23],
+                "maxNumber": 70,
+                "isPeacefulCreature": false,
+                "isAnimal": false
+            },
+            "creature": {
+                "entities": [101],
+                "maxNumber": 10,
+                "isPeacefulCreature": true,
+                "isAnimal": true
+            },
+            "ambient": {
+                "entities": [65],
+                "maxNumber": 15,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            },
+            "water_creature": {
+                "entities": [94],
+                "maxNumber": 5,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            }
+        }
+    },
+    {
+        "id": 18,
+        "name": "forest_hills",
+        "displayName": "ForestHills",
+        "baseHeight": 0.45,
+        "heightVariation": 0.3,
+        "temperature": 0.7,
+        "rainfall": 0.8,
+        "waterColor": 16777215,
+        "enableSnow": false,
+        "enableRain": true,
+        "baseBiome": "null",
+        "spawnableCreatures": {
+            "monster": {
+                "entities": [52, 54, 27, 51, 50, 55, 58, 66],
+                "maxNumber": 70,
+                "isPeacefulCreature": false,
+                "isAnimal": false
+            },
+            "creature": {
+                "entities": [91, 90, 93, 92, 95],
+                "maxNumber": 10,
+                "isPeacefulCreature": true,
+                "isAnimal": true
+            },
+            "ambient": {
+                "entities": [65],
+                "maxNumber": 15,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            },
+            "water_creature": {
+                "entities": [94],
+                "maxNumber": 5,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            }
+        }
+    },
+    {
+        "id": 19,
+        "name": "taiga_hills",
+        "displayName": "TaigaHills",
+        "baseHeight": 0.45,
+        "heightVariation": 0.3,
+        "temperature": 0.25,
+        "rainfall": 0.8,
+        "waterColor": 16777215,
+        "enableSnow": false,
+        "enableRain": true,
+        "baseBiome": "null",
+        "spawnableCreatures": {
+            "monster": {
+                "entities": [52, 54, 27, 51, 50, 55, 58, 66],
+                "maxNumber": 70,
+                "isPeacefulCreature": false,
+                "isAnimal": false
+            },
+            "creature": {
+                "entities": [91, 90, 93, 92, 95, 101],
+                "maxNumber": 10,
+                "isPeacefulCreature": true,
+                "isAnimal": true
+            },
+            "ambient": {
+                "entities": [65],
+                "maxNumber": 15,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            },
+            "water_creature": {
+                "entities": [94],
+                "maxNumber": 5,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            }
+        }
+    },
+    {
+        "id": 20,
+        "name": "smaller_extreme_hills",
+        "displayName": "Extreme Hills Edge",
+        "baseHeight": 0.8,
+        "heightVariation": 0.3,
+        "temperature": 0.2,
+        "rainfall": 0.3,
+        "waterColor": 16777215,
+        "enableSnow": false,
+        "enableRain": true,
+        "baseBiome": "null",
+        "spawnableCreatures": {
+            "monster": {
+                "entities": [52, 54, 27, 51, 50, 55, 58, 66],
+                "maxNumber": 70,
+                "isPeacefulCreature": false,
+                "isAnimal": false
+            },
+            "creature": {
+                "entities": [91, 90, 93, 92, 103],
+                "maxNumber": 10,
+                "isPeacefulCreature": true,
+                "isAnimal": true
+            },
+            "ambient": {
+                "entities": [65],
+                "maxNumber": 15,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            },
+            "water_creature": {
+                "entities": [94],
+                "maxNumber": 5,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            }
+        }
+    },
+    {
+        "id": 21,
+        "name": "jungle",
+        "displayName": "Jungle",
+        "baseHeight": 0.1,
+        "heightVariation": 0.2,
+        "temperature": 0.95,
+        "rainfall": 0.9,
+        "waterColor": 16777215,
+        "enableSnow": false,
+        "enableRain": true,
+        "baseBiome": "null",
+        "spawnableCreatures": {
+            "monster": {
+                "entities": [52, 54, 27, 51, 50, 55, 58, 66, 98],
+                "maxNumber": 70,
+                "isPeacefulCreature": false,
+                "isAnimal": false
+            },
+            "creature": {
+                "entities": [91, 90, 93, 92, 105, 93],
+                "maxNumber": 10,
+                "isPeacefulCreature": true,
+                "isAnimal": true
+            },
+            "ambient": {
+                "entities": [65],
+                "maxNumber": 15,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            },
+            "water_creature": {
+                "entities": [94],
+                "maxNumber": 5,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            }
+        }
+    },
+    {
+        "id": 22,
+        "name": "jungle_hills",
+        "displayName": "JungleHills",
+        "baseHeight": 0.45,
+        "heightVariation": 0.3,
+        "temperature": 0.95,
+        "rainfall": 0.9,
+        "waterColor": 16777215,
+        "enableSnow": false,
+        "enableRain": true,
+        "baseBiome": "null",
+        "spawnableCreatures": {
+            "monster": {
+                "entities": [52, 54, 27, 51, 50, 55, 58, 66, 98],
+                "maxNumber": 70,
+                "isPeacefulCreature": false,
+                "isAnimal": false
+            },
+            "creature": {
+                "entities": [91, 90, 93, 92, 105, 93],
+                "maxNumber": 10,
+                "isPeacefulCreature": true,
+                "isAnimal": true
+            },
+            "ambient": {
+                "entities": [65],
+                "maxNumber": 15,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            },
+            "water_creature": {
+                "entities": [94],
+                "maxNumber": 5,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            }
+        }
+    },
+    {
+        "id": 23,
+        "name": "jungle_edge",
+        "displayName": "JungleEdge",
+        "baseHeight": 0.1,
+        "heightVariation": 0.2,
+        "temperature": 0.95,
+        "rainfall": 0.8,
+        "waterColor": 16777215,
+        "enableSnow": false,
+        "enableRain": true,
+        "baseBiome": "null",
+        "spawnableCreatures": {
+            "monster": {
+                "entities": [52, 54, 27, 51, 50, 55, 58, 66],
+                "maxNumber": 70,
+                "isPeacefulCreature": false,
+                "isAnimal": false
+            },
+            "creature": {
+                "entities": [91, 90, 93, 92, 105, 93],
+                "maxNumber": 10,
+                "isPeacefulCreature": true,
+                "isAnimal": true
+            },
+            "ambient": {
+                "entities": [65],
+                "maxNumber": 15,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            },
+            "water_creature": {
+                "entities": [94],
+                "maxNumber": 5,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            }
+        }
+    },
+    {
+        "id": 24,
+        "name": "deep_ocean",
+        "displayName": "Deep Ocean",
+        "baseHeight": -1.8,
+        "heightVariation": 0.1,
+        "temperature": 0.5,
+        "rainfall": 0.5,
+        "waterColor": 16777215,
+        "enableSnow": false,
+        "enableRain": true,
+        "baseBiome": "null",
+        "spawnableCreatures": {
+            "monster": {
+                "entities": [52, 54, 27, 51, 50, 55, 58, 66],
+                "maxNumber": 70,
+                "isPeacefulCreature": false,
+                "isAnimal": false
+            },
+            "creature": {
+                "entities": [],
+                "maxNumber": 10,
+                "isPeacefulCreature": true,
+                "isAnimal": true
+            },
+            "ambient": {
+                "entities": [65],
+                "maxNumber": 15,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            },
+            "water_creature": {
+                "entities": [94],
+                "maxNumber": 5,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            }
+        }
+    },
+    {
+        "id": 25,
+        "name": "stone_beach",
+        "displayName": "Stone Beach",
+        "baseHeight": 0.1,
+        "heightVariation": 0.8,
+        "temperature": 0.2,
+        "rainfall": 0.3,
+        "waterColor": 16777215,
+        "enableSnow": false,
+        "enableRain": true,
+        "baseBiome": "null",
+        "spawnableCreatures": {
+            "monster": {
+                "entities": [52, 54, 27, 51, 50, 55, 58, 66],
+                "maxNumber": 70,
+                "isPeacefulCreature": false,
+                "isAnimal": false
+            },
+            "creature": {
+                "entities": [],
+                "maxNumber": 10,
+                "isPeacefulCreature": true,
+                "isAnimal": true
+            },
+            "ambient": {
+                "entities": [65],
+                "maxNumber": 15,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            },
+            "water_creature": {
+                "entities": [94],
+                "maxNumber": 5,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            }
+        }
+    },
+    {
+        "id": 26,
+        "name": "cold_beach",
+        "displayName": "Cold Beach",
+        "baseHeight": 0.0,
+        "heightVariation": 0.025,
+        "temperature": 0.05,
+        "rainfall": 0.3,
+        "waterColor": 16777215,
+        "enableSnow": true,
+        "enableRain": false,
+        "baseBiome": "null",
+        "spawnableCreatures": {
+            "monster": {
+                "entities": [52, 54, 27, 51, 50, 55, 58, 66],
+                "maxNumber": 70,
+                "isPeacefulCreature": false,
+                "isAnimal": false
+            },
+            "creature": {
+                "entities": [],
+                "maxNumber": 10,
+                "isPeacefulCreature": true,
+                "isAnimal": true
+            },
+            "ambient": {
+                "entities": [65],
+                "maxNumber": 15,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            },
+            "water_creature": {
+                "entities": [94],
+                "maxNumber": 5,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            }
+        }
+    },
+    {
+        "id": 27,
+        "name": "birch_forest",
+        "displayName": "Birch Forest",
+        "baseHeight": 0.1,
+        "heightVariation": 0.2,
+        "temperature": 0.6,
+        "rainfall": 0.6,
+        "waterColor": 16777215,
+        "enableSnow": false,
+        "enableRain": true,
+        "baseBiome": "null",
+        "spawnableCreatures": {
+            "monster": {
+                "entities": [52, 54, 27, 51, 50, 55, 58, 66],
+                "maxNumber": 70,
+                "isPeacefulCreature": false,
+                "isAnimal": false
+            },
+            "creature": {
+                "entities": [91, 90, 93, 92],
+                "maxNumber": 10,
+                "isPeacefulCreature": true,
+                "isAnimal": true
+            },
+            "ambient": {
+                "entities": [65],
+                "maxNumber": 15,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            },
+            "water_creature": {
+                "entities": [94],
+                "maxNumber": 5,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            }
+        }
+    },
+    {
+        "id": 28,
+        "name": "birch_forest_hills",
+        "displayName": "Birch Forest Hills",
+        "baseHeight": 0.45,
+        "heightVariation": 0.3,
+        "temperature": 0.6,
+        "rainfall": 0.6,
+        "waterColor": 16777215,
+        "enableSnow": false,
+        "enableRain": true,
+        "baseBiome": "null",
+        "spawnableCreatures": {
+            "monster": {
+                "entities": [52, 54, 27, 51, 50, 55, 58, 66],
+                "maxNumber": 70,
+                "isPeacefulCreature": false,
+                "isAnimal": false
+            },
+            "creature": {
+                "entities": [91, 90, 93, 92],
+                "maxNumber": 10,
+                "isPeacefulCreature": true,
+                "isAnimal": true
+            },
+            "ambient": {
+                "entities": [65],
+                "maxNumber": 15,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            },
+            "water_creature": {
+                "entities": [94],
+                "maxNumber": 5,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            }
+        }
+    },
+    {
+        "id": 29,
+        "name": "roofed_forest",
+        "displayName": "Roofed Forest",
+        "baseHeight": 0.1,
+        "heightVariation": 0.2,
+        "temperature": 0.7,
+        "rainfall": 0.8,
+        "waterColor": 16777215,
+        "enableSnow": false,
+        "enableRain": true,
+        "baseBiome": "null",
+        "spawnableCreatures": {
+            "monster": {
+                "entities": [52, 54, 27, 51, 50, 55, 58, 66],
+                "maxNumber": 70,
+                "isPeacefulCreature": false,
+                "isAnimal": false
+            },
+            "creature": {
+                "entities": [91, 90, 93, 92],
+                "maxNumber": 10,
+                "isPeacefulCreature": true,
+                "isAnimal": true
+            },
+            "ambient": {
+                "entities": [65],
+                "maxNumber": 15,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            },
+            "water_creature": {
+                "entities": [94],
+                "maxNumber": 5,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            }
+        }
+    },
+    {
+        "id": 30,
+        "name": "taiga_cold",
+        "displayName": "Cold Taiga",
+        "baseHeight": 0.2,
+        "heightVariation": 0.2,
+        "temperature": -0.5,
+        "rainfall": 0.4,
+        "waterColor": 16777215,
+        "enableSnow": true,
+        "enableRain": false,
+        "baseBiome": "null",
+        "spawnableCreatures": {
+            "monster": {
+                "entities": [52, 54, 27, 51, 50, 55, 58, 66],
+                "maxNumber": 70,
+                "isPeacefulCreature": false,
+                "isAnimal": false
+            },
+            "creature": {
+                "entities": [91, 90, 93, 92, 95, 101],
+                "maxNumber": 10,
+                "isPeacefulCreature": true,
+                "isAnimal": true
+            },
+            "ambient": {
+                "entities": [65],
+                "maxNumber": 15,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            },
+            "water_creature": {
+                "entities": [94],
+                "maxNumber": 5,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            }
+        }
+    },
+    {
+        "id": 31,
+        "name": "taiga_cold_hills",
+        "displayName": "Cold Taiga Hills",
+        "baseHeight": 0.45,
+        "heightVariation": 0.3,
+        "temperature": -0.5,
+        "rainfall": 0.4,
+        "waterColor": 16777215,
+        "enableSnow": true,
+        "enableRain": false,
+        "baseBiome": "null",
+        "spawnableCreatures": {
+            "monster": {
+                "entities": [52, 54, 27, 51, 50, 55, 58, 66],
+                "maxNumber": 70,
+                "isPeacefulCreature": false,
+                "isAnimal": false
+            },
+            "creature": {
+                "entities": [91, 90, 93, 92, 95, 101],
+                "maxNumber": 10,
+                "isPeacefulCreature": true,
+                "isAnimal": true
+            },
+            "ambient": {
+                "entities": [65],
+                "maxNumber": 15,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            },
+            "water_creature": {
+                "entities": [94],
+                "maxNumber": 5,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            }
+        }
+    },
+    {
+        "id": 32,
+        "name": "redwood_taiga",
+        "displayName": "Mega Taiga",
+        "baseHeight": 0.2,
+        "heightVariation": 0.2,
+        "temperature": 0.3,
+        "rainfall": 0.8,
+        "waterColor": 16777215,
+        "enableSnow": false,
+        "enableRain": true,
+        "baseBiome": "null",
+        "spawnableCreatures": {
+            "monster": {
+                "entities": [52, 54, 27, 51, 50, 55, 58, 66],
+                "maxNumber": 70,
+                "isPeacefulCreature": false,
+                "isAnimal": false
+            },
+            "creature": {
+                "entities": [91, 90, 93, 92, 95, 101],
+                "maxNumber": 10,
+                "isPeacefulCreature": true,
+                "isAnimal": true
+            },
+            "ambient": {
+                "entities": [65],
+                "maxNumber": 15,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            },
+            "water_creature": {
+                "entities": [94],
+                "maxNumber": 5,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            }
+        }
+    },
+    {
+        "id": 33,
+        "name": "redwood_taiga_hills",
+        "displayName": "Mega Taiga Hills",
+        "baseHeight": 0.45,
+        "heightVariation": 0.3,
+        "temperature": 0.3,
+        "rainfall": 0.8,
+        "waterColor": 16777215,
+        "enableSnow": false,
+        "enableRain": true,
+        "baseBiome": "null",
+        "spawnableCreatures": {
+            "monster": {
+                "entities": [52, 54, 27, 51, 50, 55, 58, 66],
+                "maxNumber": 70,
+                "isPeacefulCreature": false,
+                "isAnimal": false
+            },
+            "creature": {
+                "entities": [91, 90, 93, 92, 95, 101],
+                "maxNumber": 10,
+                "isPeacefulCreature": true,
+                "isAnimal": true
+            },
+            "ambient": {
+                "entities": [65],
+                "maxNumber": 15,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            },
+            "water_creature": {
+                "entities": [94],
+                "maxNumber": 5,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            }
+        }
+    },
+    {
+        "id": 34,
+        "name": "extreme_hills_with_trees",
+        "displayName": "Extreme Hills+",
+        "baseHeight": 1.0,
+        "heightVariation": 0.5,
+        "temperature": 0.2,
+        "rainfall": 0.3,
+        "waterColor": 16777215,
+        "enableSnow": false,
+        "enableRain": true,
+        "baseBiome": "null",
+        "spawnableCreatures": {
+            "monster": {
+                "entities": [52, 54, 27, 51, 50, 55, 58, 66],
+                "maxNumber": 70,
+                "isPeacefulCreature": false,
+                "isAnimal": false
+            },
+            "creature": {
+                "entities": [91, 90, 93, 92, 103],
+                "maxNumber": 10,
+                "isPeacefulCreature": true,
+                "isAnimal": true
+            },
+            "ambient": {
+                "entities": [65],
+                "maxNumber": 15,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            },
+            "water_creature": {
+                "entities": [94],
+                "maxNumber": 5,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            }
+        }
+    },
+    {
+        "id": 35,
+        "name": "savanna",
+        "displayName": "Savanna",
+        "baseHeight": 0.125,
+        "heightVariation": 0.05,
+        "temperature": 1.2,
+        "rainfall": 0.0,
+        "waterColor": 16777215,
+        "enableSnow": false,
+        "enableRain": false,
+        "baseBiome": "null",
+        "spawnableCreatures": {
+            "monster": {
+                "entities": [52, 54, 27, 51, 50, 55, 58, 66],
+                "maxNumber": 70,
+                "isPeacefulCreature": false,
+                "isAnimal": false
+            },
+            "creature": {
+                "entities": [91, 90, 93, 92, 100, 31],
+                "maxNumber": 10,
+                "isPeacefulCreature": true,
+                "isAnimal": true
+            },
+            "ambient": {
+                "entities": [65],
+                "maxNumber": 15,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            },
+            "water_creature": {
+                "entities": [94],
+                "maxNumber": 5,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            }
+        }
+    },
+    {
+        "id": 36,
+        "name": "savanna_rock",
+        "displayName": "Savanna Plateau",
+        "baseHeight": 1.5,
+        "heightVariation": 0.025,
+        "temperature": 1.0,
+        "rainfall": 0.0,
+        "waterColor": 16777215,
+        "enableSnow": false,
+        "enableRain": false,
+        "baseBiome": "null",
+        "spawnableCreatures": {
+            "monster": {
+                "entities": [52, 54, 27, 51, 50, 55, 58, 66],
+                "maxNumber": 70,
+                "isPeacefulCreature": false,
+                "isAnimal": false
+            },
+            "creature": {
+                "entities": [91, 90, 93, 92, 100, 31, 103],
+                "maxNumber": 10,
+                "isPeacefulCreature": true,
+                "isAnimal": true
+            },
+            "ambient": {
+                "entities": [65],
+                "maxNumber": 15,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            },
+            "water_creature": {
+                "entities": [94],
+                "maxNumber": 5,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            }
+        }
+    },
+    {
+        "id": 37,
+        "name": "mesa",
+        "displayName": "Mesa",
+        "baseHeight": 0.1,
+        "heightVariation": 0.2,
+        "temperature": 2.0,
+        "rainfall": 0.0,
+        "waterColor": 16777215,
+        "enableSnow": false,
+        "enableRain": false,
+        "baseBiome": "null",
+        "spawnableCreatures": {
+            "monster": {
+                "entities": [52, 54, 27, 51, 50, 55, 58, 66],
+                "maxNumber": 70,
+                "isPeacefulCreature": false,
+                "isAnimal": false
+            },
+            "creature": {
+                "entities": [],
+                "maxNumber": 10,
+                "isPeacefulCreature": true,
+                "isAnimal": true
+            },
+            "ambient": {
+                "entities": [65],
+                "maxNumber": 15,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            },
+            "water_creature": {
+                "entities": [94],
+                "maxNumber": 5,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            }
+        }
+    },
+    {
+        "id": 38,
+        "name": "mesa_rock",
+        "displayName": "Mesa Plateau F",
+        "baseHeight": 1.5,
+        "heightVariation": 0.025,
+        "temperature": 2.0,
+        "rainfall": 0.0,
+        "waterColor": 16777215,
+        "enableSnow": false,
+        "enableRain": false,
+        "baseBiome": "null",
+        "spawnableCreatures": {
+            "monster": {
+                "entities": [52, 54, 27, 51, 50, 55, 58, 66],
+                "maxNumber": 70,
+                "isPeacefulCreature": false,
+                "isAnimal": false
+            },
+            "creature": {
+                "entities": [],
+                "maxNumber": 10,
+                "isPeacefulCreature": true,
+                "isAnimal": true
+            },
+            "ambient": {
+                "entities": [65],
+                "maxNumber": 15,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            },
+            "water_creature": {
+                "entities": [94],
+                "maxNumber": 5,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            }
+        }
+    },
+    {
+        "id": 39,
+        "name": "mesa_clear_rock",
+        "displayName": "Mesa Plateau",
+        "baseHeight": 1.5,
+        "heightVariation": 0.025,
+        "temperature": 2.0,
+        "rainfall": 0.0,
+        "waterColor": 16777215,
+        "enableSnow": false,
+        "enableRain": false,
+        "baseBiome": "null",
+        "spawnableCreatures": {
+            "monster": {
+                "entities": [52, 54, 27, 51, 50, 55, 58, 66],
+                "maxNumber": 70,
+                "isPeacefulCreature": false,
+                "isAnimal": false
+            },
+            "creature": {
+                "entities": [],
+                "maxNumber": 10,
+                "isPeacefulCreature": true,
+                "isAnimal": true
+            },
+            "ambient": {
+                "entities": [65],
+                "maxNumber": 15,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            },
+            "water_creature": {
+                "entities": [94],
+                "maxNumber": 5,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            }
+        }
+    },
+    {
+        "id": 127,
+        "name": "void",
+        "displayName": "The Void",
+        "baseHeight": 0.1,
+        "heightVariation": 0.2,
+        "temperature": 0.5,
+        "rainfall": 0.5,
+        "waterColor": 16777215,
+        "enableSnow": false,
+        "enableRain": false,
+        "baseBiome": "null",
+        "spawnableCreatures": {
+            "monster": {
+                "entities": [],
+                "maxNumber": 70,
+                "isPeacefulCreature": false,
+                "isAnimal": false
+            },
+            "creature": {
+                "entities": [],
+                "maxNumber": 10,
+                "isPeacefulCreature": true,
+                "isAnimal": true
+            },
+            "ambient": {
+                "entities": [],
+                "maxNumber": 15,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            },
+            "water_creature": {
+                "entities": [],
+                "maxNumber": 5,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            }
+        }
+    },
+    {
+        "id": 129,
+        "name": "mutated_plains",
+        "displayName": "Sunflower Plains",
+        "baseHeight": 0.125,
+        "heightVariation": 0.05,
+        "temperature": 0.8,
+        "rainfall": 0.4,
+        "waterColor": 16777215,
+        "enableSnow": false,
+        "enableRain": true,
+        "baseBiome": "plains",
+        "spawnableCreatures": {
+            "monster": {
+                "entities": [52, 54, 27, 51, 50, 55, 58, 66],
+                "maxNumber": 70,
+                "isPeacefulCreature": false,
+                "isAnimal": false
+            },
+            "creature": {
+                "entities": [91, 90, 93, 92, 100, 31],
+                "maxNumber": 10,
+                "isPeacefulCreature": true,
+                "isAnimal": true
+            },
+            "ambient": {
+                "entities": [65],
+                "maxNumber": 15,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            },
+            "water_creature": {
+                "entities": [94],
+                "maxNumber": 5,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            }
+        }
+    },
+    {
+        "id": 130,
+        "name": "mutated_desert",
+        "displayName": "Desert M",
+        "baseHeight": 0.225,
+        "heightVariation": 0.25,
+        "temperature": 2.0,
+        "rainfall": 0.0,
+        "waterColor": 16777215,
+        "enableSnow": false,
+        "enableRain": false,
+        "baseBiome": "desert",
+        "spawnableCreatures": {
+            "monster": {
+                "entities": [52, 51, 50, 55, 58, 66, 54, 27, 23],
+                "maxNumber": 70,
+                "isPeacefulCreature": false,
+                "isAnimal": false
+            },
+            "creature": {
+                "entities": [101],
+                "maxNumber": 10,
+                "isPeacefulCreature": true,
+                "isAnimal": true
+            },
+            "ambient": {
+                "entities": [65],
+                "maxNumber": 15,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            },
+            "water_creature": {
+                "entities": [94],
+                "maxNumber": 5,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            }
+        }
+    },
+    {
+        "id": 131,
+        "name": "mutated_extreme_hills",
+        "displayName": "Extreme Hills M",
+        "baseHeight": 1.0,
+        "heightVariation": 0.5,
+        "temperature": 0.2,
+        "rainfall": 0.3,
+        "waterColor": 16777215,
+        "enableSnow": false,
+        "enableRain": true,
+        "baseBiome": "extreme_hills",
+        "spawnableCreatures": {
+            "monster": {
+                "entities": [52, 54, 27, 51, 50, 55, 58, 66],
+                "maxNumber": 70,
+                "isPeacefulCreature": false,
+                "isAnimal": false
+            },
+            "creature": {
+                "entities": [91, 90, 93, 92, 103],
+                "maxNumber": 10,
+                "isPeacefulCreature": true,
+                "isAnimal": true
+            },
+            "ambient": {
+                "entities": [65],
+                "maxNumber": 15,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            },
+            "water_creature": {
+                "entities": [94],
+                "maxNumber": 5,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            }
+        }
+    },
+    {
+        "id": 132,
+        "name": "mutated_forest",
+        "displayName": "Flower Forest",
+        "baseHeight": 0.1,
+        "heightVariation": 0.4,
+        "temperature": 0.7,
+        "rainfall": 0.8,
+        "waterColor": 16777215,
+        "enableSnow": false,
+        "enableRain": true,
+        "baseBiome": "forest",
+        "spawnableCreatures": {
+            "monster": {
+                "entities": [52, 54, 27, 51, 50, 55, 58, 66],
+                "maxNumber": 70,
+                "isPeacefulCreature": false,
+                "isAnimal": false
+            },
+            "creature": {
+                "entities": [91, 90, 93, 92, 101],
+                "maxNumber": 10,
+                "isPeacefulCreature": true,
+                "isAnimal": true
+            },
+            "ambient": {
+                "entities": [65],
+                "maxNumber": 15,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            },
+            "water_creature": {
+                "entities": [94],
+                "maxNumber": 5,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            }
+        }
+    },
+    {
+        "id": 133,
+        "name": "mutated_taiga",
+        "displayName": "Taiga M",
+        "baseHeight": 0.3,
+        "heightVariation": 0.4,
+        "temperature": 0.25,
+        "rainfall": 0.8,
+        "waterColor": 16777215,
+        "enableSnow": false,
+        "enableRain": true,
+        "baseBiome": "taiga",
+        "spawnableCreatures": {
+            "monster": {
+                "entities": [52, 54, 27, 51, 50, 55, 58, 66],
+                "maxNumber": 70,
+                "isPeacefulCreature": false,
+                "isAnimal": false
+            },
+            "creature": {
+                "entities": [91, 90, 93, 92, 95, 101],
+                "maxNumber": 10,
+                "isPeacefulCreature": true,
+                "isAnimal": true
+            },
+            "ambient": {
+                "entities": [65],
+                "maxNumber": 15,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            },
+            "water_creature": {
+                "entities": [94],
+                "maxNumber": 5,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            }
+        }
+    },
+    {
+        "id": 134,
+        "name": "mutated_swampland",
+        "displayName": "Swampland M",
+        "baseHeight": -0.1,
+        "heightVariation": 0.3,
+        "temperature": 0.8,
+        "rainfall": 0.9,
+        "waterColor": 14745518,
+        "enableSnow": false,
+        "enableRain": true,
+        "baseBiome": "swampland",
+        "spawnableCreatures": {
+            "monster": {
+                "entities": [52, 54, 27, 51, 50, 55, 58, 66, 55],
+                "maxNumber": 70,
+                "isPeacefulCreature": false,
+                "isAnimal": false
+            },
+            "creature": {
+                "entities": [91, 90, 93, 92],
+                "maxNumber": 10,
+                "isPeacefulCreature": true,
+                "isAnimal": true
+            },
+            "ambient": {
+                "entities": [65],
+                "maxNumber": 15,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            },
+            "water_creature": {
+                "entities": [94],
+                "maxNumber": 5,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            }
+        }
+    },
+    {
+        "id": 140,
+        "name": "mutated_ice_flats",
+        "displayName": "Ice Plains Spikes",
+        "baseHeight": 0.425,
+        "heightVariation": 0.45000002,
+        "temperature": 0.0,
+        "rainfall": 0.5,
+        "waterColor": 16777215,
+        "enableSnow": true,
+        "enableRain": false,
+        "baseBiome": "ice_flats",
+        "spawnableCreatures": {
+            "monster": {
+                "entities": [52, 54, 27, 50, 55, 58, 66, 51, 6],
+                "maxNumber": 70,
+                "isPeacefulCreature": false,
+                "isAnimal": false
+            },
+            "creature": {
+                "entities": [101, 102],
+                "maxNumber": 10,
+                "isPeacefulCreature": true,
+                "isAnimal": true
+            },
+            "ambient": {
+                "entities": [65],
+                "maxNumber": 15,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            },
+            "water_creature": {
+                "entities": [94],
+                "maxNumber": 5,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            }
+        }
+    },
+    {
+        "id": 149,
+        "name": "mutated_jungle",
+        "displayName": "Jungle M",
+        "baseHeight": 0.2,
+        "heightVariation": 0.4,
+        "temperature": 0.95,
+        "rainfall": 0.9,
+        "waterColor": 16777215,
+        "enableSnow": false,
+        "enableRain": true,
+        "baseBiome": "jungle",
+        "spawnableCreatures": {
+            "monster": {
+                "entities": [52, 54, 27, 51, 50, 55, 58, 66, 98],
+                "maxNumber": 70,
+                "isPeacefulCreature": false,
+                "isAnimal": false
+            },
+            "creature": {
+                "entities": [91, 90, 93, 92, 105, 93],
+                "maxNumber": 10,
+                "isPeacefulCreature": true,
+                "isAnimal": true
+            },
+            "ambient": {
+                "entities": [65],
+                "maxNumber": 15,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            },
+            "water_creature": {
+                "entities": [94],
+                "maxNumber": 5,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            }
+        }
+    },
+    {
+        "id": 151,
+        "name": "mutated_jungle_edge",
+        "displayName": "JungleEdge M",
+        "baseHeight": 0.2,
+        "heightVariation": 0.4,
+        "temperature": 0.95,
+        "rainfall": 0.8,
+        "waterColor": 16777215,
+        "enableSnow": false,
+        "enableRain": true,
+        "baseBiome": "jungle_edge",
+        "spawnableCreatures": {
+            "monster": {
+                "entities": [52, 54, 27, 51, 50, 55, 58, 66],
+                "maxNumber": 70,
+                "isPeacefulCreature": false,
+                "isAnimal": false
+            },
+            "creature": {
+                "entities": [91, 90, 93, 92, 105, 93],
+                "maxNumber": 10,
+                "isPeacefulCreature": true,
+                "isAnimal": true
+            },
+            "ambient": {
+                "entities": [65],
+                "maxNumber": 15,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            },
+            "water_creature": {
+                "entities": [94],
+                "maxNumber": 5,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            }
+        }
+    },
+    {
+        "id": 155,
+        "name": "mutated_birch_forest",
+        "displayName": "Birch Forest M",
+        "baseHeight": 0.2,
+        "heightVariation": 0.4,
+        "temperature": 0.6,
+        "rainfall": 0.6,
+        "waterColor": 16777215,
+        "enableSnow": false,
+        "enableRain": true,
+        "baseBiome": "birch_forest",
+        "spawnableCreatures": {
+            "monster": {
+                "entities": [52, 54, 27, 51, 50, 55, 58, 66],
+                "maxNumber": 70,
+                "isPeacefulCreature": false,
+                "isAnimal": false
+            },
+            "creature": {
+                "entities": [91, 90, 93, 92],
+                "maxNumber": 10,
+                "isPeacefulCreature": true,
+                "isAnimal": true
+            },
+            "ambient": {
+                "entities": [65],
+                "maxNumber": 15,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            },
+            "water_creature": {
+                "entities": [94],
+                "maxNumber": 5,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            }
+        }
+    },
+    {
+        "id": 156,
+        "name": "mutated_birch_forest_hills",
+        "displayName": "Birch Forest Hills M",
+        "baseHeight": 0.55,
+        "heightVariation": 0.5,
+        "temperature": 0.6,
+        "rainfall": 0.6,
+        "waterColor": 16777215,
+        "enableSnow": false,
+        "enableRain": true,
+        "baseBiome": "birch_forest_hills",
+        "spawnableCreatures": {
+            "monster": {
+                "entities": [52, 54, 27, 51, 50, 55, 58, 66],
+                "maxNumber": 70,
+                "isPeacefulCreature": false,
+                "isAnimal": false
+            },
+            "creature": {
+                "entities": [91, 90, 93, 92],
+                "maxNumber": 10,
+                "isPeacefulCreature": true,
+                "isAnimal": true
+            },
+            "ambient": {
+                "entities": [65],
+                "maxNumber": 15,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            },
+            "water_creature": {
+                "entities": [94],
+                "maxNumber": 5,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            }
+        }
+    },
+    {
+        "id": 157,
+        "name": "mutated_roofed_forest",
+        "displayName": "Roofed Forest M",
+        "baseHeight": 0.2,
+        "heightVariation": 0.4,
+        "temperature": 0.7,
+        "rainfall": 0.8,
+        "waterColor": 16777215,
+        "enableSnow": false,
+        "enableRain": true,
+        "baseBiome": "roofed_forest",
+        "spawnableCreatures": {
+            "monster": {
+                "entities": [52, 54, 27, 51, 50, 55, 58, 66],
+                "maxNumber": 70,
+                "isPeacefulCreature": false,
+                "isAnimal": false
+            },
+            "creature": {
+                "entities": [91, 90, 93, 92],
+                "maxNumber": 10,
+                "isPeacefulCreature": true,
+                "isAnimal": true
+            },
+            "ambient": {
+                "entities": [65],
+                "maxNumber": 15,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            },
+            "water_creature": {
+                "entities": [94],
+                "maxNumber": 5,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            }
+        }
+    },
+    {
+        "id": 158,
+        "name": "mutated_taiga_cold",
+        "displayName": "Cold Taiga M",
+        "baseHeight": 0.3,
+        "heightVariation": 0.4,
+        "temperature": -0.5,
+        "rainfall": 0.4,
+        "waterColor": 16777215,
+        "enableSnow": true,
+        "enableRain": false,
+        "baseBiome": "taiga_cold",
+        "spawnableCreatures": {
+            "monster": {
+                "entities": [52, 54, 27, 51, 50, 55, 58, 66],
+                "maxNumber": 70,
+                "isPeacefulCreature": false,
+                "isAnimal": false
+            },
+            "creature": {
+                "entities": [91, 90, 93, 92, 95, 101],
+                "maxNumber": 10,
+                "isPeacefulCreature": true,
+                "isAnimal": true
+            },
+            "ambient": {
+                "entities": [65],
+                "maxNumber": 15,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            },
+            "water_creature": {
+                "entities": [94],
+                "maxNumber": 5,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            }
+        }
+    },
+    {
+        "id": 160,
+        "name": "mutated_redwood_taiga",
+        "displayName": "Mega Spruce Taiga",
+        "baseHeight": 0.2,
+        "heightVariation": 0.2,
+        "temperature": 0.25,
+        "rainfall": 0.8,
+        "waterColor": 16777215,
+        "enableSnow": false,
+        "enableRain": true,
+        "baseBiome": "redwood_taiga",
+        "spawnableCreatures": {
+            "monster": {
+                "entities": [52, 54, 27, 51, 50, 55, 58, 66],
+                "maxNumber": 70,
+                "isPeacefulCreature": false,
+                "isAnimal": false
+            },
+            "creature": {
+                "entities": [91, 90, 93, 92, 95, 101],
+                "maxNumber": 10,
+                "isPeacefulCreature": true,
+                "isAnimal": true
+            },
+            "ambient": {
+                "entities": [65],
+                "maxNumber": 15,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            },
+            "water_creature": {
+                "entities": [94],
+                "maxNumber": 5,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            }
+        }
+    },
+    {
+        "id": 161,
+        "name": "mutated_redwood_taiga_hills",
+        "displayName": "Redwood Taiga Hills M",
+        "baseHeight": 0.2,
+        "heightVariation": 0.2,
+        "temperature": 0.25,
+        "rainfall": 0.8,
+        "waterColor": 16777215,
+        "enableSnow": false,
+        "enableRain": true,
+        "baseBiome": "redwood_taiga_hills",
+        "spawnableCreatures": {
+            "monster": {
+                "entities": [52, 54, 27, 51, 50, 55, 58, 66],
+                "maxNumber": 70,
+                "isPeacefulCreature": false,
+                "isAnimal": false
+            },
+            "creature": {
+                "entities": [91, 90, 93, 92, 95, 101],
+                "maxNumber": 10,
+                "isPeacefulCreature": true,
+                "isAnimal": true
+            },
+            "ambient": {
+                "entities": [65],
+                "maxNumber": 15,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            },
+            "water_creature": {
+                "entities": [94],
+                "maxNumber": 5,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            }
+        }
+    },
+    {
+        "id": 162,
+        "name": "mutated_extreme_hills_with_trees",
+        "displayName": "Extreme Hills+ M",
+        "baseHeight": 1.0,
+        "heightVariation": 0.5,
+        "temperature": 0.2,
+        "rainfall": 0.3,
+        "waterColor": 16777215,
+        "enableSnow": false,
+        "enableRain": true,
+        "baseBiome": "extreme_hills_with_trees",
+        "spawnableCreatures": {
+            "monster": {
+                "entities": [52, 54, 27, 51, 50, 55, 58, 66],
+                "maxNumber": 70,
+                "isPeacefulCreature": false,
+                "isAnimal": false
+            },
+            "creature": {
+                "entities": [91, 90, 93, 92, 103],
+                "maxNumber": 10,
+                "isPeacefulCreature": true,
+                "isAnimal": true
+            },
+            "ambient": {
+                "entities": [65],
+                "maxNumber": 15,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            },
+            "water_creature": {
+                "entities": [94],
+                "maxNumber": 5,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            }
+        }
+    },
+    {
+        "id": 163,
+        "name": "mutated_savanna",
+        "displayName": "Savanna M",
+        "baseHeight": 0.3625,
+        "heightVariation": 1.225,
+        "temperature": 1.1,
+        "rainfall": 0.0,
+        "waterColor": 16777215,
+        "enableSnow": false,
+        "enableRain": false,
+        "baseBiome": "savanna",
+        "spawnableCreatures": {
+            "monster": {
+                "entities": [52, 54, 27, 51, 50, 55, 58, 66],
+                "maxNumber": 70,
+                "isPeacefulCreature": false,
+                "isAnimal": false
+            },
+            "creature": {
+                "entities": [91, 90, 93, 92, 100, 31],
+                "maxNumber": 10,
+                "isPeacefulCreature": true,
+                "isAnimal": true
+            },
+            "ambient": {
+                "entities": [65],
+                "maxNumber": 15,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            },
+            "water_creature": {
+                "entities": [94],
+                "maxNumber": 5,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            }
+        }
+    },
+    {
+        "id": 164,
+        "name": "mutated_savanna_rock",
+        "displayName": "Savanna Plateau M",
+        "baseHeight": 1.05,
+        "heightVariation": 1.2125001,
+        "temperature": 1.0,
+        "rainfall": 0.0,
+        "waterColor": 16777215,
+        "enableSnow": false,
+        "enableRain": false,
+        "baseBiome": "savanna_rock",
+        "spawnableCreatures": {
+            "monster": {
+                "entities": [52, 54, 27, 51, 50, 55, 58, 66],
+                "maxNumber": 70,
+                "isPeacefulCreature": false,
+                "isAnimal": false
+            },
+            "creature": {
+                "entities": [91, 90, 93, 92, 100, 31],
+                "maxNumber": 10,
+                "isPeacefulCreature": true,
+                "isAnimal": true
+            },
+            "ambient": {
+                "entities": [65],
+                "maxNumber": 15,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            },
+            "water_creature": {
+                "entities": [94],
+                "maxNumber": 5,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            }
+        }
+    },
+    {
+        "id": 165,
+        "name": "mutated_mesa",
+        "displayName": "Mesa (Bryce)",
+        "baseHeight": 0.1,
+        "heightVariation": 0.2,
+        "temperature": 2.0,
+        "rainfall": 0.0,
+        "waterColor": 16777215,
+        "enableSnow": false,
+        "enableRain": false,
+        "baseBiome": "mesa",
+        "spawnableCreatures": {
+            "monster": {
+                "entities": [52, 54, 27, 51, 50, 55, 58, 66],
+                "maxNumber": 70,
+                "isPeacefulCreature": false,
+                "isAnimal": false
+            },
+            "creature": {
+                "entities": [],
+                "maxNumber": 10,
+                "isPeacefulCreature": true,
+                "isAnimal": true
+            },
+            "ambient": {
+                "entities": [65],
+                "maxNumber": 15,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            },
+            "water_creature": {
+                "entities": [94],
+                "maxNumber": 5,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            }
+        }
+    },
+    {
+        "id": 166,
+        "name": "mutated_mesa_rock",
+        "displayName": "Mesa Plateau F M",
+        "baseHeight": 0.45,
+        "heightVariation": 0.3,
+        "temperature": 2.0,
+        "rainfall": 0.0,
+        "waterColor": 16777215,
+        "enableSnow": false,
+        "enableRain": false,
+        "baseBiome": "mesa_rock",
+        "spawnableCreatures": {
+            "monster": {
+                "entities": [52, 54, 27, 51, 50, 55, 58, 66],
+                "maxNumber": 70,
+                "isPeacefulCreature": false,
+                "isAnimal": false
+            },
+            "creature": {
+                "entities": [],
+                "maxNumber": 10,
+                "isPeacefulCreature": true,
+                "isAnimal": true
+            },
+            "ambient": {
+                "entities": [65],
+                "maxNumber": 15,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            },
+            "water_creature": {
+                "entities": [94],
+                "maxNumber": 5,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            }
+        }
+    },
+    {
+        "id": 167,
+        "name": "mutated_mesa_clear_rock",
+        "displayName": "Mesa Plateau M",
+        "baseHeight": 0.45,
+        "heightVariation": 0.3,
+        "temperature": 2.0,
+        "rainfall": 0.0,
+        "waterColor": 16777215,
+        "enableSnow": false,
+        "enableRain": false,
+        "baseBiome": "mesa_clear_rock",
+        "spawnableCreatures": {
+            "monster": {
+                "entities": [52, 54, 27, 51, 50, 55, 58, 66],
+                "maxNumber": 70,
+                "isPeacefulCreature": false,
+                "isAnimal": false
+            },
+            "creature": {
+                "entities": [],
+                "maxNumber": 10,
+                "isPeacefulCreature": true,
+                "isAnimal": true
+            },
+            "ambient": {
+                "entities": [65],
+                "maxNumber": 15,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            },
+            "water_creature": {
+                "entities": [94],
+                "maxNumber": 5,
+                "isPeacefulCreature": true,
+                "isAnimal": false
+            }
+        }
+    }
+]
