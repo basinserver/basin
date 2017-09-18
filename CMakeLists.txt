@@ -2,14 +2,19 @@ cmake_minimum_required(VERSION 3.6)
 project(Basin)
 
 set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_C_STANDARD 11)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/basin/Debug)
 
 set(SOURCE_FILES
         basin/src/accept.c
         basin/src/accept.h
+        basin/src/ai.c
+        basin/src/ai.h
         basin/src/anticheat.c
         basin/src/anticheat.h
+        basin/src/basin.h
+        basin/src/biome.h
         basin/src/block.c
         basin/src/block.h
         basin/src/collection.c
@@ -42,8 +47,12 @@ set(SOURCE_FILES
         basin/src/network.h
         basin/src/packet.c
         basin/src/packet.h
+        basin/src/perlin.c
+        basin/src/perlin.h
         basin/src/player.c
         basin/src/player.h
+        basin/src/plugin.c
+        basin/src/plugin.h
         basin/src/profile.c
         basin/src/profile.h
         basin/src/queue.c
@@ -67,9 +76,8 @@ set(SOURCE_FILES
         basin/src/worldmanager.c
         basin/src/worldmanager.h
         basin/src/xstring.c
-        basin/src/xstring.h
-        basin/src/basin.h)
+        basin/src/xstring.h)
 
 add_executable(Basin ${SOURCE_FILES})
 
-target_link_libraries(Basin pthread crypto ssl m z)
+target_link_libraries(Basin pthread crypto ssl m z dl)
