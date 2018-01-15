@@ -16,7 +16,7 @@ A high performance Minecraft server implementation written in C.
 * C Plugin System
 * Block & Sky Lighting
 
-# Planned Features
+## Planned Features
 * Natural Mob Spawning & AI
 * Lua Plugin Systems
 * Comprehensive permissions & commands system
@@ -25,3 +25,23 @@ A high performance Minecraft server implementation written in C.
 * World generation
 * Comprehensive opt-in Anticheat
 * GPU accelerated world generation, AI, and more(?).
+
+# Compiling
+To compile Basin, you can use Make directly or use CMake if you choose. Output is always put in basin/Debug regardless of build system.
+
+### Make:
+To compile: `cd basin/Debug; make`
+To clean: `make clean` (in Debug)
+
+### CMake:
+To compile:
+```
+mkdir cmake-build-debug
+cd cmake-build-debug
+cmake ..
+make -j 4
+```
+To clean: `make clean` (in cmake-build-debug)
+
+# Running Basin
+To run Basin, simply invoke the binary `./basin`. Ensure that the binary is located with the relevant data files (the JSONs).
