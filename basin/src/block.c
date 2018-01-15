@@ -27,6 +27,194 @@
 struct collection* block_infos;
 struct collection* block_materials;
 
+uint8_t getBlockPower_block(struct world* world, block blk, int32_t x, int32_t y, int32_t z, uint8_t face) {
+	if (blk >> 4 == BLK_REDSTONEDUST >> 4) {
+		return blk & 0x0f;
+	} else if (blk >> 4 == BLK_NOTGATE_1 >> 4) {
+		return 16; // TODO: transmit thru blocks
+	} else if (blk >> 4 == BLK_DIODE_1 >> 4) {
+		uint8_t ori = blk & 0x03;
+		if ((ori == 0 && face == NORTH) || (ori == 1 && face == EAST) || (ori == 2 && face == SOUTH) || (ori == 3 && face == WEST)) return 16;
+	} else if (blk >> 4 == BLK_BLOCKREDSTONE >> 4) {
+		return 16;
+	}
+	return 0;
+}
+
+uint8_t getPropogatedPower_block(struct world* world, struct chunk* ch, int32_t x, int32_t y, int32_t z, uint8_t excludeFace) {
+	uint8_t maxPower = 0;
+	uint8_t cPower = 0;
+	if (excludeFace != XP && (cPower = getBlockPower_block(world, getBlockWorld_guess(world, ch, x + 1, y, z), x + 1, y, z, XN)) > maxPower) maxPower = cPower;
+	if (excludeFace != XN && (cPower = getBlockPower_block(world, getBlockWorld_guess(world, ch, x - 1, y, z), x - 1, y, z, XP)) > maxPower) maxPower = cPower;
+	if (excludeFace != ZP && (cPower = getBlockPower_block(world, getBlockWorld_guess(world, ch, x, y, z + 1), x, y, z + 1, ZN)) > maxPower) maxPower = cPower;
+	if (excludeFace != ZN && (cPower = getBlockPower_block(world, getBlockWorld_guess(world, ch, x, y, z - 1), x, y, z - 1, ZP)) > maxPower) maxPower = cPower;
+	if (excludeFace != YP && (cPower = getBlockPower_block(world, getBlockWorld_guess(world, ch, x, y + 1, z), x, y + 1, z, YN)) > maxPower) maxPower = cPower;
+	if (excludeFace != YN && (cPower = getBlockPower_block(world, getBlockWorld_guess(world, ch, x, y - 1, z), x, y - 1, z, YP)) > maxPower) maxPower = cPower;
+	if (maxPower > 0) {
+		maxPower--;
+	}
+	if (maxPower > 15) maxPower = 15;
+	return maxPower;
+}
+
+uint8_t getSpecificPower_block(struct world* world, struct chunk* ch, int32_t x, int32_t y, int32_t z, uint8_t face) {
+	uint8_t maxPower = 0;
+	uint8_t cPower = 0;
+	if (face == XP && (cPower = getBlockPower_block(world, getBlockWorld_guess(world, ch, x + 1, y, z), x + 1, y, z, XN)) > maxPower) maxPower = cPower;
+	if (face == XN && (cPower = getBlockPower_block(world, getBlockWorld_guess(world, ch, x - 1, y, z), x - 1, y, z, XP)) > maxPower) maxPower = cPower;
+	if (face == ZP && (cPower = getBlockPower_block(world, getBlockWorld_guess(world, ch, x, y, z + 1), x, y, z + 1, ZN)) > maxPower) maxPower = cPower;
+	if (face == ZN && (cPower = getBlockPower_block(world, getBlockWorld_guess(world, ch, x, y, z - 1), x, y, z - 1, ZP)) > maxPower) maxPower = cPower;
+	if (face == YP && (cPower = getBlockPower_block(world, getBlockWorld_guess(world, ch, x, y + 1, z), x, y + 1, z, YN)) > maxPower) maxPower = cPower;
+	if (face == YN && (cPower = getBlockPower_block(world, getBlockWorld_guess(world, ch, x, y - 1, z), x, y - 1, z, YP)) > maxPower) maxPower = cPower;
+	if (maxPower > 0) {
+		maxPower--;
+	}
+	if (maxPower > 15) maxPower = 15;
+	return maxPower;
+}
+
+int canBePlaced_torch(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
+	uint8_t ori = blk & 0x0f;
+	int32_t ax = x;
+	int32_t ay = y;
+	int32_t az = z;
+	uint8_t rori = YN;
+	if (ori == 1) rori = EAST;
+	else if (ori == 2) rori = WEST;
+	else if (ori == 3) rori = NORTH;
+	else if (ori == 4) rori = SOUTH;
+	else if (ori == 5) rori = YP;
+	offsetCoordByFace(&ax, &ay, &az, rori);
+	block b = getBlockWorld(world, ax, ay, az);
+	struct block_info* bi = getBlockInfo(b);
+	if (rori == YN) {
+		if (bi->lightOpacity == 255) return 1;
+		if (b >> 4 == BLK_FENCE >> 4 || b >> 4 == BLK_NETHERFENCE >> 4 || b >> 4 == BLK_SPRUCEFENCE >> 4 || b >> 4 == BLK_BIRCHFENCE >> 4 || b >> 4 == BLK_JUNGLEFENCE >> 4 || b >> 4 == BLK_DARKOAKFENCE >> 4 || b >> 4 == BLK_ACACIAFENCE >> 4 || b >> 4 == BLK_GLASS >> 4 || b >> 4 == BLK_COBBLEWALL_NORMAL >> 4 || b >> 4 == BLK_STAINEDGLASS_WHITE >> 4) return 1;
+	} else if (isNormalCube(bi)) return 1;
+	return 0;
+}
+
+//TODO: burnout on redstone torches
+
+void onBlockUpdate_redstonetorch(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
+	onBlockUpdate_checkPlace(world, blk, x, y, z);
+	uint8_t ori = blk & 0x0f;
+	int32_t ax = x;
+	int32_t ay = y;
+	int32_t az = z;
+	uint8_t rori = YP;
+	if (ori == 1) rori = WEST;
+	else if (ori == 2) rori = EAST;
+	else if (ori == 3) rori = SOUTH;
+	else if (ori == 4) rori = NORTH;
+	else if (ori == 5) rori = YN;
+	offsetCoordByFace(&ax, &ay, &az, rori);
+	block b = getBlockWorld(world, ax, ay, az);
+	uint8_t arori = YN;
+	if (rori == WEST) arori = EAST;
+	else if (rori == EAST) arori = WEST;
+	else if (rori == NORTH) arori = SOUTH;
+	else if (rori == SOUTH) arori = NORTH;
+	else if (rori == YN) arori = YP;
+	uint8_t ppower = getPropogatedPower_block(world, getChunk(world, ax >> 4, az >> 4), ax, ay, az, arori);
+	printf("torch: %u\n", ppower);
+	if (blk >> 4 == BLK_NOTGATE >> 4 && ppower == 0) {
+		setBlockWorld(world, BLK_NOTGATE_1 | (blk & 0x0f), x, y, z);
+	} else if (blk >> 4 == BLK_NOTGATE_1 >> 4 && ppower > 1) {
+		setBlockWorld(world, BLK_NOTGATE | (blk & 0x0f), x, y, z);
+	}
+}
+
+void onBlockUpdate_redstonedust(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
+	struct chunk* ch = getChunk(world, x >> 4, z >> 4);
+	uint8_t maxPower = getPropogatedPower_block(world, ch, x, y, z, -1);
+	printf("maxdust: %u\n", maxPower);
+	if (maxPower != (blk & 0x0f)) {
+		setBlockWorld_guess(world, ch, BLK_REDSTONEDUST | maxPower, x, y, z);
+	}
+	onBlockUpdate_checkPlace(world, blk, x, y, z);
+}
+
+void onBlockUpdate_repeater(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
+	onBlockUpdate_checkPlace(world, blk, x, y, z);
+	scheduleBlockTick(world, x, y, z, 2 * (((blk & 0x0f) >> 2) + 1));
+}
+
+int scheduledTick_repeater(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
+	uint8_t ori = blk & 0x03;
+	/*int32_t sx = x;
+	 int32_t sy = y;
+	 int32_t sz = z;
+	 if (ori == 0) {
+	 offsetCoordByFace(&sx, &sy, &sz, SOUTH);
+	 } else if (ori == 1) {
+	 offsetCoordByFace(&sx, &sy, &sz, WEST);
+	 } else if (ori == 2) {
+	 offsetCoordByFace(&sx, &sy, &sz, NORTH);
+	 } else if (ori == 3) {
+	 offsetCoordByFace(&sx, &sy, &sz, EAST);
+	 }*/
+	uint8_t excl = 0;
+	uint8_t lock1 = NORTH;
+	uint8_t mLock1 = 2;
+	uint8_t mLock2 = 0;
+	uint8_t lock2 = SOUTH;
+	if (ori == 0) {
+		excl = SOUTH;
+		lock1 = EAST;
+		lock2 = WEST;
+		mLock1 = 3;
+		mLock2 = 1;
+	} else if (ori == 1) {
+		excl = WEST;
+	} else if (ori == 2) {
+		excl = NORTH;
+		lock1 = EAST;
+		lock2 = WEST;
+		mLock1 = 3;
+		mLock2 = 1;
+	} else if (ori == 3) {
+		excl = EAST;
+	}
+	{
+		int32_t sx = x;
+		int32_t sy = y;
+		int32_t sz = z;
+		offsetCoordByFace(&sx, &sy, &sz, lock1);
+		block b = getBlockWorld(world, sx, sy, sz);
+		if (b >> 4 == BLK_DIODE_1 >> 4 && (b & 0x03) == mLock1) {
+			return 0;
+		}
+	}
+	{
+		int32_t sx = x;
+		int32_t sy = y;
+		int32_t sz = z;
+		offsetCoordByFace(&sx, &sy, &sz, lock2);
+		block b = getBlockWorld(world, sx, sy, sz);
+		if (b >> 4 == BLK_DIODE_1 >> 4 && (b & 0x03) == mLock2) {
+			return 0;
+		}
+	}
+	uint8_t sPower = getSpecificPower_block(world, getChunk(world, x >> 4, z >> 4), x, y, z, excl);
+	if (sPower > 0 && blk >> 4 == BLK_DIODE >> 4) {
+		setBlockWorld(world, BLK_DIODE_1 | (blk & 0x0f), x, y, z);
+	} else if (sPower <= 0 && blk >> 4 == BLK_DIODE_1 >> 4) {
+		setBlockWorld(world, BLK_DIODE | (blk & 0x0f), x, y, z);
+	}
+	return 0;
+}
+
+void onBlockInteract_repeater(struct world* world, block blk, int32_t x, int32_t y, int32_t z, struct player* player, uint8_t face, float curPosX, float curPosY, float curPosZ) {
+	setBlockWorld(world, (blk >> 4 << 4) | (((((blk & 0x0f) >> 2) + 1) & 0x03) << 2) | (blk & 0x03), x, y, z);
+}
+
+int canBePlaced_redstone(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
+	block b = getBlockWorld(world, x, y - 1, z);
+	struct block_info* bi = getBlockInfo(b);
+	return isNormalCube(bi);
+}
+
 int canBePlaced_bed(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
 	block b = getBlockWorld(world, x, y - 1, z);
 	struct block_info* bi = getBlockInfo(b);
@@ -1670,5 +1858,21 @@ void init_blocks() {
 	tmp = getBlockInfo(BLK_BED);
 	tmp->canBePlaced = &canBePlaced_bed;
 	tmp->onBlockUpdate = &onBlockUpdate_bed;
-
+	getBlockInfo(BLK_REDSTONEDUST)->onBlockUpdate = &onBlockUpdate_redstonedust;
+	getBlockInfo(BLK_REDSTONEDUST)->canBePlaced = &canBePlaced_redstone;
+	getBlockInfo(BLK_TORCH)->canBePlaced = &canBePlaced_torch;
+	getBlockInfo(BLK_TORCH)->onBlockUpdate = &onBlockUpdate_checkPlace;
+	getBlockInfo(BLK_NOTGATE)->canBePlaced = &canBePlaced_torch;
+	getBlockInfo(BLK_NOTGATE_1)->canBePlaced = &canBePlaced_torch;
+	getBlockInfo(BLK_NOTGATE)->onBlockUpdate = &onBlockUpdate_redstonetorch;
+	getBlockInfo(BLK_NOTGATE_1)->onBlockUpdate = &onBlockUpdate_redstonetorch;
+	getBlockInfo(BLK_DIODE)->onBlockUpdate = &onBlockUpdate_repeater;
+	getBlockInfo(BLK_DIODE_1)->onBlockUpdate = &onBlockUpdate_repeater;
+	getBlockInfo(BLK_DIODE)->scheduledTick = &scheduledTick_repeater;
+	getBlockInfo(BLK_DIODE_1)->scheduledTick = &scheduledTick_repeater;
+	getBlockInfo(BLK_DIODE)->onBlockInteract = &onBlockInteract_repeater;
+	getBlockInfo(BLK_DIODE_1)->onBlockInteract = &onBlockInteract_repeater;
+	getBlockInfo(BLK_DIODE)->canBePlaced = &canBePlaced_redstone;
+	getBlockInfo(BLK_DIODE_1)->canBePlaced = &canBePlaced_redstone;
+//TODO: redstone torch burnout
 }

@@ -29,6 +29,10 @@
 								<option id="gnu.c.compiler.exe.debug.option.debugging.level.1202660524" name="Debug Level" superClass="gnu.c.compiler.exe.debug.option.debugging.level" value="gnu.c.debugging.level.max" valueType="enumerated"/>
 								<option id="gnu.c.compiler.option.dialect.std.1846139639" name="Language standard" superClass="gnu.c.compiler.option.dialect.std" value="gnu.c.compiler.dialect.default" valueType="enumerated"/>
 								<option id="gnu.c.compiler.option.dialect.flags.767216746" name="Other dialect flags" superClass="gnu.c.compiler.option.dialect.flags" value="-std=gnu11" valueType="string"/>
+								<option id="gnu.c.compiler.option.include.paths.1611456919" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
+									<listOptionValue builtIn="false" value="&quot;${JAVA_HOME}/include/&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${JAVA_HOME}/include/linux/&quot;"/>
+								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.929664948" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 							</tool>
 							<tool errorParsers="org.eclipse.cdt.core.GLDErrorParser" id="cdt.managedbuild.tool.gnu.c.linker.exe.debug.1069626255" name="GCC C Linker" superClass="cdt.managedbuild.tool.gnu.c.linker.exe.debug">
@@ -50,6 +54,14 @@
 							</tool>
 						</toolChain>
 					</folderInfo>
+					<fileInfo id="cdt.managedbuild.config.gnu.exe.debug.1769467163.805022634" name="plugin.c" rcbsApplicability="disable" resourcePath="src/plugin.c" toolsToInvoke="cdt.managedbuild.tool.gnu.c.compiler.exe.debug.287902410.734747101">
+						<tool id="cdt.managedbuild.tool.gnu.c.compiler.exe.debug.287902410.734747101" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.exe.debug.287902410">
+							<option id="gnu.c.compiler.option.include.paths.1420764305" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
+								<listOptionValue builtIn="false" value="&quot;${JAVA_HOME}/jre/lib/amd64/server/&quot;"/>
+							</option>
+							<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.74578801" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
+						</tool>
+					</fileInfo>
 					<sourceEntries>
 						<entry excluding="src" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
