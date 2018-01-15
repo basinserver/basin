@@ -12,8 +12,13 @@
 #include "world.h"
 #include <stdint.h>
 #include "block.h"
+#include <jni.h>
 
 struct hashmap* plugins;
+
+#define PLUGIN_BASIN 0
+#define PLUGIN_BUKKIT 1
+#define PLUGIN_LUA 2
 
 struct plugin {
 		void* hnd;
@@ -44,6 +49,10 @@ struct plugin {
 		void (*onPlayerSpawn)(struct world* world, struct player* player); // called after a player spawns
 		void (*onPlayerFullySpawned)(struct world* world, struct player* player); // called after a player spawns and has moved
 		struct chunk* (*generateChunk)(struct world* world, struct chunk* chunk); // if set and returns a non-null valid chunk, will use it as a world generator
+		uint8_t type;
+		JavaVM* javaVM;
+		JNIEnv* jniEnv;
+		jclass mainClass;
 };
 
 void init_plugins();

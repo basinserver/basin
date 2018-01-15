@@ -246,6 +246,12 @@ int onItemInteract_door(struct world* world, struct player* player, uint8_t slot
 int onItemInteract_itemblock(struct world* world, struct player* player, uint8_t slot_index, struct slot* slot, int32_t x, int32_t y, int32_t z, uint8_t face) {
 	if (!getBlockInfo(getBlockWorld(world, x, y, z))->material->replacable) offsetCoordByFace(&x, &y, &z, face);
 	block pre = getBlockWorld(world, x, y, z);
+	uint8_t f = 0;
+	uint32_t h = (uint32_t) floor(player->entity->yaw / 90. + .5) & 3;
+	if (h == 0) f = SOUTH;
+	else if (h == 1) f = WEST;
+	else if (h == 2) f = NORTH;
+	else if (h == 3) f = EAST;
 	block b = pre;
 	if (slot->item == ITM_STRING) {
 		b = BLK_TRIPWIRE;
@@ -255,6 +261,15 @@ int onItemInteract_itemblock(struct world* world, struct player* player, uint8_t
 		b = BLK_CAKE;
 	} else if (slot->item == ITM_DIODE) {
 		b = BLK_DIODE;
+		if (f == SOUTH) {
+			b |= 2;
+		} else if (f == WEST) {
+			b |= 3;
+		} else if (f == NORTH) {
+			b |= 0;
+		} else if (f == EAST) {
+			b |= 1;
+		}
 	} else if (slot->item == ITM_BREWINGSTAND) {
 		b = BLK_BREWINGSTAND;
 	} else if (slot->item == ITM_CAULDRON) {
