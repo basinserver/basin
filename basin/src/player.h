@@ -91,6 +91,6 @@ void setPlayerGamemode(struct player* player, int gamemode);
 
 void freePlayer(struct player* player);
 
-int canPlayerPlaceBlock(struct player* player, uint16_t blk, int32_t x, int32_t y, int32_t z, uint8_t face);
+block canPlayerPlaceBlock(struct player* player, uint16_t blk, int32_t x, int32_t y, int32_t z, uint8_t face);
 
 #endif /* PLAYER_H_ */

@@ -59,7 +59,7 @@ void add_entity_info(uint32_t eid, struct entity_info* bm) {
 }
 
 int onTick_fallingblock(struct world* world, struct entity* ent) {
-	// mc has some methods to prevent dupes here, we should see if basin is afflicted
+	// TODO: mc has some methods to prevent dupes here, we should see if basin is afflicted
 	if (ent->onGround && ent->age > 1) {
 		block b = getBlockWorld(world, (int32_t) floor(ent->x), (int32_t) floor(ent->y), (int32_t) floor(ent->z));
 		if (!falling_canFallThrough(b)) {

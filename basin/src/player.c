@@ -533,7 +533,7 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 				//}
 				//}
 				if (!bad) {
-					if (canPlayerPlaceBlock(player, tbb, x, y, z, face)) {
+					if ((tbb = canPlayerPlaceBlock(player, tbb, x, y, z, face))) {
 						if (setBlockWorld(player->world, tbb, x, y, z)) {
 							setBlockWorld(player->world, b2, x, y, z);
 							setSlot(player, player->inventory, 36 + player->currentItem, ci, 1, 1);
@@ -1593,7 +1593,7 @@ void freePlayer(struct player* player) {
 	xfree(player);
 }
 
-int canPlayerPlaceBlock(struct player* player, block blk, int32_t x, int32_t y, int32_t z, uint8_t face) {
+block canPlayerPlaceBlock(struct player* player, block blk, int32_t x, int32_t y, int32_t z, uint8_t face) {
 	struct block_info* bi = getBlockInfo(blk);
 	block tbb = blk;
 	if (bi != NULL && bi->onBlockPlacedPlayer != NULL) tbb = (*bi->onBlockPlacedPlayer)(player, player->world, tbb, x, y, z, face);
@@ -1606,5 +1606,5 @@ int canPlayerPlaceBlock(struct player* player, block blk, int32_t x, int32_t y, 
 		return 0;
 	}
 	block b = getBlockWorld(player->world, x, y, z);
-	return b == 0 || getBlockInfo(b)->material->replacable;
+	return (b == 0 || getBlockInfo(b)->material->replacable) ? tbb : 0;
 }

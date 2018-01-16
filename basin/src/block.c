@@ -23,9 +23,18 @@
 #include "item.h"
 #include "block.h"
 #include <unistd.h>
+#include <math.h>
 
 struct collection* block_infos;
 struct collection* block_materials;
+
+void onBlockUpdate_checkPlace(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
+	struct block_info* bi = getBlockInfo(blk);
+	if (bi != NULL && bi->canBePlaced != NULL && !(*bi->canBePlaced)(world, blk, x, y, z)) {
+		setBlockWorld(world, 0, x, y, z);
+		dropBlockDrops(world, blk, NULL, x, y, z);
+	}
+}
 
 uint8_t getBlockPower_block(struct world* world, block blk, int32_t x, int32_t y, int32_t z, uint8_t face) {
 	if (blk >> 4 == BLK_REDSTONEDUST >> 4) {
@@ -35,8 +44,14 @@ uint8_t getBlockPower_block(struct world* world, block blk, int32_t x, int32_t y
 	} else if (blk >> 4 == BLK_DIODE_1 >> 4) {
 		uint8_t ori = blk & 0x03;
 		if ((ori == 0 && face == NORTH) || (ori == 1 && face == EAST) || (ori == 2 && face == SOUTH) || (ori == 3 && face == WEST)) return 16;
-	} else if (blk >> 4 == BLK_BLOCKREDSTONE >> 4) {
+	} else if (blk >> 4 == BLK_BLOCKREDSTONE >> 4 || blk == (BLK_PRESSUREPLATEWOOD | 0x01) || blk == (BLK_PRESSUREPLATESTONE | 0x01)) {
 		return 16;
+	} else if (blk >> 4 == BLK_WEIGHTEDPLATE_LIGHT >> 4 || blk >> 4 == BLK_WEIGHTEDPLATE_HEAVY >> 4 || blk >> 4 == BLK_DAYLIGHTDETECTOR >> 4) {
+		return blk & 0x0f;
+	} else if ((blk >> 4 == BLK_DETECTORRAIL >> 4 || blk >> 4 == BLK_TRIPWIRESOURCE >> 4 || blk >> 4 == BLK_LEVER >> 4 || blk >> 4 == BLK_BUTTON >> 4 || blk >> 4 == BLK_BUTTON_1 >> 4) && (blk & 0x08)) {
+		return 16;
+	} else if (blk >> 4 == BLK_COMPARATOR_1 >> 4) {
+		//TODO:
 	}
 	return 0;
 }
@@ -94,6 +109,22 @@ int canBePlaced_torch(struct world* world, block blk, int32_t x, int32_t y, int3
 	return 0;
 }
 
+block onBlockPlacedPlayer_lever(struct player* player, struct world* world, block blk, int32_t x, int32_t y, int32_t z, uint8_t face) {
+	uint32_t h = (uint32_t) floor(player->entity->yaw / 90. + .5) & 3;
+	uint8_t f = 0;
+	if (h == 0) f = SOUTH;
+	else if (h == 1) f = WEST;
+	else if (h == 2) f = NORTH;
+	else if (h == 3) f = EAST;
+	if (face == NORTH) return blk | 0x04;
+	else if (face == SOUTH) return blk | 0x03;
+	else if (face == EAST) return blk | 0x01;
+	else if (face == WEST) return blk | 0x02;
+	else if (face == YN) return blk | (f == EAST || f == WEST ? 0x00 : 0x07);
+	else if (face == YP) return blk | (f == NORTH || f == SOUTH ? 0x05 : 0x06);
+	return blk;
+}
+
 //TODO: burnout on redstone torches
 
 void onBlockUpdate_redstonetorch(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
@@ -109,7 +140,6 @@ void onBlockUpdate_redstonetorch(struct world* world, block blk, int32_t x, int3
 	else if (ori == 4) rori = NORTH;
 	else if (ori == 5) rori = YN;
 	offsetCoordByFace(&ax, &ay, &az, rori);
-	block b = getBlockWorld(world, ax, ay, az);
 	uint8_t arori = YN;
 	if (rori == WEST) arori = EAST;
 	else if (rori == EAST) arori = WEST;
@@ -117,7 +147,6 @@ void onBlockUpdate_redstonetorch(struct world* world, block blk, int32_t x, int3
 	else if (rori == SOUTH) arori = NORTH;
 	else if (rori == YN) arori = YP;
 	uint8_t ppower = getPropogatedPower_block(world, getChunk(world, ax >> 4, az >> 4), ax, ay, az, arori);
-	printf("torch: %u\n", ppower);
 	if (blk >> 4 == BLK_NOTGATE >> 4 && ppower == 0) {
 		setBlockWorld(world, BLK_NOTGATE_1 | (blk & 0x0f), x, y, z);
 	} else if (blk >> 4 == BLK_NOTGATE_1 >> 4 && ppower > 1) {
@@ -128,7 +157,6 @@ void onBlockUpdate_redstonetorch(struct world* world, block blk, int32_t x, int3
 void onBlockUpdate_redstonedust(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
 	struct chunk* ch = getChunk(world, x >> 4, z >> 4);
 	uint8_t maxPower = getPropogatedPower_block(world, ch, x, y, z, -1);
-	printf("maxdust: %u\n", maxPower);
 	if (maxPower != (blk & 0x0f)) {
 		setBlockWorld_guess(world, ch, BLK_REDSTONEDUST | maxPower, x, y, z);
 	}
@@ -138,6 +166,16 @@ void onBlockUpdate_redstonedust(struct world* world, block blk, int32_t x, int32
 void onBlockUpdate_repeater(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
 	onBlockUpdate_checkPlace(world, blk, x, y, z);
 	scheduleBlockTick(world, x, y, z, 2 * (((blk & 0x0f) >> 2) + 1));
+}
+
+void onBlockUpdate_lamp(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
+	struct chunk* ch = getChunk(world, x >> 4, z >> 4);
+	uint8_t maxPower = getPropogatedPower_block(world, ch, x, y, z, -1);
+	if (maxPower > 0 && blk >> 4 == BLK_REDSTONELIGHT >> 4) {
+		setBlockWorld_guess(world, ch, BLK_REDSTONELIGHT_1, x, y, z);
+	} else if (maxPower == 0 && blk >> 4 == BLK_REDSTONELIGHT_1 >> 4) {
+		setBlockWorld_guess(world, ch, BLK_REDSTONELIGHT, x, y, z);
+	}
 }
 
 int scheduledTick_repeater(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
@@ -209,6 +247,14 @@ void onBlockInteract_repeater(struct world* world, block blk, int32_t x, int32_t
 	setBlockWorld(world, (blk >> 4 << 4) | (((((blk & 0x0f) >> 2) + 1) & 0x03) << 2) | (blk & 0x03), x, y, z);
 }
 
+void onBlockInteract_lever(struct world* world, block blk, int32_t x, int32_t y, int32_t z, struct player* player, uint8_t face, float curPosX, float curPosY, float curPosZ) {
+	if (blk >> 4 == BLK_LEVER >> 4 && (blk & 0x08)) {
+		setBlockWorld(world, BLK_LEVER | (blk & 0x07), x, y, z);
+	} else if (blk >> 4 == BLK_LEVER >> 4 && !(blk & 0x08)) {
+		setBlockWorld(world, BLK_LEVER | (blk & 0x07) | 0x08, x, y, z);
+	}
+}
+
 int canBePlaced_redstone(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
 	block b = getBlockWorld(world, x, y - 1, z);
 	struct block_info* bi = getBlockInfo(b);
@@ -261,7 +307,10 @@ void onBlockUpdate_door(struct world* world, block blk, int32_t x, int32_t y, in
 	int upper = blk & 0b1000;
 	if (!upper && !isNormalCube(bi)) goto delete;
 	b = getBlockWorld(world, x, y + (upper ? -1 : 1), z);
-	if (b >> 4 == blk >> 4) return;
+	if (b >> 4 == blk >> 4) {
+		//TODO: power open
+		return;
+	}
 	delete:;
 	setBlockWorld(world, 0, x, y, z);
 	if (!upper) dropBlockDrops(world, blk, NULL, x, y, z);
@@ -272,7 +321,6 @@ void onBlockInteract_woodendoor(struct world* world, block blk, int32_t x, int32
 	uint8_t isUpper = curMeta & 0b1000;
 	uint8_t lowerMeta = isUpper ? getBlockWorld(world, x, y - 1, z) & 0x0f : curMeta;
 	uint8_t open = (lowerMeta & 0b0100) >> 2;
-	printf("%i\n", open);
 	open = !open;
 	lowerMeta = (lowerMeta & 0b1011) | (open << 2);
 	setBlockWorld(world, (blk & 0xfff0) | lowerMeta, x, y + (isUpper ? -1 : 0), z);
@@ -556,12 +604,19 @@ int falling_canFallThrough(block b) {
 
 void onBlockUpdate_falling(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
 	if (y > 0 && falling_canFallThrough(getBlockWorld(world, x, y - 1, z))) {
+		scheduleBlockTick(world, x, y, z, 4);
+	}
+}
+
+int scheduledTick_falling(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
+	if (y > 0 && falling_canFallThrough(getBlockWorld(world, x, y - 1, z))) {
 		setBlockWorld(world, 0, x, y, z);
 		struct entity* e = newEntity(nextEntityID++, (double) x + .5, (double) y, (double) z + .5, ENT_FALLINGBLOCK, 0., 0.);
 		e->data.fallingblock.b = blk;
 		e->objectData = blk >> 4;
 		spawnEntity(world, e);
 	}
+	return 0;
 }
 
 void sponge_floodfill(struct world* world, int32_t x, int32_t y, int32_t z, int32_t* pos, uint32_t* removed) {
@@ -766,14 +821,6 @@ int canBePlaced_requirefarmland(struct world* world, block blk, int32_t x, int32
 int canBePlaced_requiresoulsand(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
 	block b = getBlockWorld(world, x, y - 1, z);
 	return b == BLK_HELLSAND;
-}
-
-void onBlockUpdate_checkPlace(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
-	struct block_info* bi = getBlockInfo(blk);
-	if (bi != NULL && bi->canBePlaced != NULL && !(*bi->canBePlaced)(world, blk, x, y, z)) {
-		setBlockWorld(world, 0, x, y, z);
-		dropBlockDrops(world, blk, NULL, x, y, z);
-	}
 }
 
 void dropItems_hugemushroom(struct world* world, block blk, int32_t x, int32_t y, int32_t z, int fortune) {
@@ -1811,8 +1858,11 @@ void init_blocks() {
 	tmp = getBlockInfo(BLK_FARMLAND);
 	tmp->randomTick = &randomTick_farmland;
 	getBlockInfo(BLK_SAND)->onBlockUpdate = &onBlockUpdate_falling;
+	getBlockInfo(BLK_SAND)->scheduledTick = &scheduledTick_falling;
 	getBlockInfo(BLK_GRAVEL)->onBlockUpdate = &onBlockUpdate_falling;
+	getBlockInfo(BLK_GRAVEL)->scheduledTick = &scheduledTick_falling;
 	getBlockInfo(BLK_ANVIL)->onBlockUpdate = &onBlockUpdate_falling;
+	getBlockInfo(BLK_ANVIL)->scheduledTick = &scheduledTick_falling;
 	getBlockInfo(BLK_SPONGE_DRY)->onBlockUpdate = &onBlockUpdate_sponge;
 	for (block b = BLK_DOOROAK; b < BLK_DOOROAK + 16; b++) {
 		tmp = getBlockInfo(b);
@@ -1874,5 +1924,9 @@ void init_blocks() {
 	getBlockInfo(BLK_DIODE_1)->onBlockInteract = &onBlockInteract_repeater;
 	getBlockInfo(BLK_DIODE)->canBePlaced = &canBePlaced_redstone;
 	getBlockInfo(BLK_DIODE_1)->canBePlaced = &canBePlaced_redstone;
+	getBlockInfo(BLK_REDSTONELIGHT)->onBlockUpdate = &onBlockUpdate_lamp;
+	getBlockInfo(BLK_REDSTONELIGHT_1)->onBlockUpdate = &onBlockUpdate_lamp;
+	getBlockInfo(BLK_LEVER)->onBlockInteract = &onBlockInteract_lever;
+	getBlockInfo(BLK_LEVER)->onBlockPlacedPlayer = &onBlockPlacedPlayer_lever;
 //TODO: redstone torch burnout
 }
