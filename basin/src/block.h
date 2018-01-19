@@ -537,6 +537,7 @@ struct block_info {
 		uint8_t canProvidePower;
 		uint8_t lightOpacity;
 		uint8_t lightEmission;
+		float resistance;
 };
 
 int falling_canFallThrough(block b);

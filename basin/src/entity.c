@@ -58,6 +58,16 @@ void add_entity_info(uint32_t eid, struct entity_info* bm) {
 	entity_infos->count++;
 }
 
+int onTick_tnt(struct world* world, struct entity* ent) {
+	if (ent->data.tnt.fuse-- <= 0) {
+		despawnEntity(world, ent);
+		explode(world, NULL, ent->x, ent->y + .5, ent->z, 4.);
+		freeEntity(ent);
+		return 1;
+	}
+	return 0;
+}
+
 int onTick_fallingblock(struct world* world, struct entity* ent) {
 	// TODO: mc has some methods to prevent dupes here, we should see if basin is afflicted
 	if (ent->onGround && ent->age > 1) {
@@ -449,6 +459,7 @@ void init_entities() {
 	getEntityInfo(ENT_ZOMBIE)->onAITick = &ai_handletasks;
 	getEntityInfo(ENT_ZOMBIE)->initAI = &initai_zombie;
 	getEntityInfo(ENT_FALLINGBLOCK)->onTick = &onTick_fallingblock;
+	getEntityInfo(ENT_PRIMEDTNT)->onTick = &onTick_tnt;
 	getEntityInfo(ENT_ITEM)->onTick = &tick_itemstack;
 	getEntityInfo(ENT_ARROW)->onTick = &tick_arrow;
 	getEntityInfo(ENT_SPECTRALARROW)->onTick = &tick_arrow;
@@ -1381,7 +1392,7 @@ void tick_entity(struct world* world, struct entity* entity) {
 				entity->motY -= .02;
 				//TODO: upswells
 			} else entity->motY -= .08;
-		} else if (entity->type == ENT_FALLINGBLOCK) {
+		} else if (entity->type == ENT_FALLINGBLOCK || entity->type == ENT_PRIMEDTNT) {
 			gravity = .04;
 		}
 		if (gravity != 0. && !entity->immovable) entity->motY -= gravity;

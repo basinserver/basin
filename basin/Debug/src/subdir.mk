@@ -32,7 +32,8 @@ C_SRCS += \
 ../src/plugin.c \
 ../src/ai.c \
 ../src/perlin.c \
-../src/xstring.c 
+../src/xstring.c \
+../src/prqueue.c
 
 OBJS += \
 ./src/accept.o \
@@ -67,7 +68,8 @@ OBJS += \
 ./src/plugin.o \
 ./src/ai.o \
 ./src/perlin.o \
-./src/xstring.o 
+./src/xstring.o \
+./src/prqueue.o
 
 C_DEPS += \
 ./src/accept.d \
@@ -102,7 +104,8 @@ C_DEPS += \
 ./src/plugin.d \
 ./src/ai.d \
 ./src/perlin.d \
-./src/xstring.d 
+./src/xstring.d \
+./src/prqueue.d
 
 
 # Each subdirectory must supply rules for building sources it contributes

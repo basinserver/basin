@@ -301,7 +301,7 @@ void dropEntityItem_explode(struct entity* entity, struct slot* drop) {
 
 void dropBlockDrops(struct world* world, block blk, struct player* breaker, int32_t x, int32_t y, int32_t z) {
 	struct block_info* bi = getBlockInfo(blk);
-	int badtool = !bi->material->requiresnotool;
+	int badtool = !bi->material->requiresnotool && breaker != NULL;
 	if (badtool) {
 		struct slot* ci = getSlot(breaker, breaker->inventory, 36 + breaker->currentItem);
 		if (ci != NULL) {

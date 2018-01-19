@@ -9,6 +9,7 @@
 #define PLAYER_H_
 
 #include "network.h"
+#include "block.h"
 
 typedef struct _acstate {
 } acstate_t;

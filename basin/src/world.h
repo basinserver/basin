@@ -160,6 +160,8 @@ struct scheduled_tick {
 		int32_t y;
 		int32_t z;
 		int32_t ticksLeft;
+		float priority;
+		block src;
 };
 
 struct world {
@@ -191,7 +193,7 @@ int world_rayTrace(struct world* world, double x, double y, double z, double ex,
 
 struct chunk_section* newChunkSection(struct chunk* chunk, int ymj, int skylight);
 
-void scheduleBlockTick(struct world* world, int32_t x, int32_t y, int32_t z, int32_t ticksFromNow);
+void scheduleBlockTick(struct world* world, int32_t x, int32_t y, int32_t z, int32_t ticksFromNow, float priority);
 
 int setBlockWorld_noupdate(struct world* world, block blk, int32_t x, int32_t y, int32_t z);
 
@@ -202,6 +204,10 @@ void tick_world(struct world* world);
 struct chunk* getEntityChunk(struct entity* entity);
 
 int isChunkLoaded(struct world* world, int32_t x, int32_t z);
+
+void explode(struct world* world, struct chunk* ch, double x, double y, double z, float strength);
+
+int32_t isBlockTickScheduled(struct world* world, int32_t x, int32_t y, int32_t z);
 
 int loadWorld(struct world* world, char* path);
 

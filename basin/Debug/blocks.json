@@ -1,8 +1,7 @@
 {
 	"air": {
 		"id": 0,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 0,
 		"dropDamage": 0,
 		"dropAmountMin": 1,
@@ -37,7 +36,8 @@
 		"isFullCube": true,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 10
 	},
 	"stone_granite": {
 		"id": 17,
@@ -61,7 +61,8 @@
 		"isFullCube": true,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 10
 	},
 	"stone_granitesmooth": {
 		"id": 18,
@@ -85,7 +86,8 @@
 		"isFullCube": true,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 10
 	},
 	"stone_diorite": {
 		"id": 19,
@@ -109,7 +111,8 @@
 		"isFullCube": true,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 10
 	},
 	"stone_dioritesmooth": {
 		"id": 20,
@@ -133,7 +136,8 @@
 		"isFullCube": true,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 10
 	},
 	"stone_andesite": {
 		"id": 21,
@@ -157,7 +161,8 @@
 		"isFullCube": true,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 10
 	},
 	"stone_andesitesmooth": {
 		"id": 22,
@@ -181,7 +186,8 @@
 		"isFullCube": true,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 10
 	},
 	"grass": {
 		"id": 32,
@@ -205,7 +211,8 @@
 		"isFullCube": true,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 10
 	},
 	"dirt": {
 		"id": 48,
@@ -277,7 +284,8 @@
 		"isFullCube": true,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 10
 	},
 	"wood_oak": {
 		"id": 80,
@@ -301,7 +309,8 @@
 		"isFullCube": true,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"wood_spruce": {
 		"id": 81,
@@ -325,7 +334,8 @@
 		"isFullCube": true,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"wood_birch": {
 		"id": 82,
@@ -349,7 +359,8 @@
 		"isFullCube": true,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"wood_jungle": {
 		"id": 83,
@@ -373,7 +384,8 @@
 		"isFullCube": true,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"wood_acacia": {
 		"id": 84,
@@ -397,7 +409,8 @@
 		"isFullCube": true,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"wood_big_oak": {
 		"id": 85,
@@ -421,12 +434,12 @@
 		"isFullCube": true,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"sapling_oak": {
 		"id": 96,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 6,
 		"dropDamage": 0,
 		"dropAmountMin": 1,
@@ -441,8 +454,7 @@
 	},
 	"sapling_spruce": {
 		"id": 97,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 6,
 		"dropDamage": 1,
 		"dropAmountMin": 1,
@@ -457,8 +469,7 @@
 	},
 	"sapling_birch": {
 		"id": 98,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 6,
 		"dropDamage": 2,
 		"dropAmountMin": 1,
@@ -473,8 +484,7 @@
 	},
 	"sapling_jungle": {
 		"id": 99,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 6,
 		"dropDamage": 3,
 		"dropAmountMin": 1,
@@ -489,8 +499,7 @@
 	},
 	"sapling_acacia": {
 		"id": 100,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 6,
 		"dropDamage": 4,
 		"dropAmountMin": 1,
@@ -505,8 +514,7 @@
 	},
 	"sapling_big_oak": {
 		"id": 101,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 6,
 		"dropDamage": 5,
 		"dropAmountMin": 1,
@@ -521,8 +529,7 @@
 	},
 	"sapling_oak_2": {
 		"id": 105,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 6,
 		"dropDamage": 1,
 		"dropAmountMin": 1,
@@ -537,8 +544,7 @@
 	},
 	"sapling_oak_3": {
 		"id": 106,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 6,
 		"dropDamage": 2,
 		"dropAmountMin": 1,
@@ -553,8 +559,7 @@
 	},
 	"sapling_oak_4": {
 		"id": 107,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 6,
 		"dropDamage": 3,
 		"dropAmountMin": 1,
@@ -569,8 +574,7 @@
 	},
 	"sapling_oak_5": {
 		"id": 108,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 6,
 		"dropDamage": 4,
 		"dropAmountMin": 1,
@@ -585,8 +589,7 @@
 	},
 	"sapling_oak_6": {
 		"id": 109,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 6,
 		"dropDamage": 5,
 		"dropAmountMin": 1,
@@ -621,12 +624,12 @@
 		"isFullCube": true,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 6000000
 	},
 	"water": {
 		"id": 128,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 0,
 		"dropDamage": 0,
 		"dropAmountMin": 0,
@@ -641,8 +644,7 @@
 	},
 	"water_16": {
 		"id": 144,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 0,
 		"dropDamage": 0,
 		"dropAmountMin": 0,
@@ -657,8 +659,7 @@
 	},
 	"lava": {
 		"id": 160,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 0,
 		"dropDamage": 0,
 		"dropAmountMin": 0,
@@ -673,8 +674,7 @@
 	},
 	"lava_16": {
 		"id": 176,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 0,
 		"dropDamage": 0,
 		"dropAmountMin": 0,
@@ -781,7 +781,8 @@
 		"isFullCube": true,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"oreiron": {
 		"id": 240,
@@ -805,7 +806,8 @@
 		"isFullCube": true,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"orecoal": {
 		"id": 256,
@@ -829,7 +831,8 @@
 		"isFullCube": true,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"log_oak": {
 		"id": 272,
@@ -1717,7 +1720,8 @@
 		"isFullCube": true,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"blocklapis": {
 		"id": 352,
@@ -1741,7 +1745,8 @@
 		"isFullCube": true,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"dispenser": {
 		"id": 368,
@@ -1889,8 +1894,7 @@
 	},
 	"goldenrail": {
 		"id": 432,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 27,
 		"dropDamage": 0,
 		"dropAmountMin": 1,
@@ -1905,8 +1909,7 @@
 	},
 	"detectorrail": {
 		"id": 448,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 28,
 		"dropDamage": 0,
 		"dropAmountMin": 1,
@@ -2089,8 +2092,7 @@
 	},
 	"web": {
 		"id": 480,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 287,
 		"dropDamage": 0,
 		"dropAmountMin": 1,
@@ -2105,8 +2107,7 @@
 	},
 	"tallgrass_shrub": {
 		"id": 496,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 280,
 		"dropDamage": 0,
 		"dropAmountMin": 0,
@@ -2121,8 +2122,7 @@
 	},
 	"tallgrass_grass": {
 		"id": 497,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": -1,
 		"dropDamage": 0,
 		"dropAmountMin": 1,
@@ -2137,8 +2137,7 @@
 	},
 	"tallgrass_fern": {
 		"id": 498,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": -1,
 		"dropDamage": 0,
 		"dropAmountMin": 1,
@@ -2153,8 +2152,7 @@
 	},
 	"deadbush": {
 		"id": 512,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 280,
 		"dropDamage": 0,
 		"dropAmountMin": 0,
@@ -3041,8 +3039,7 @@
 	},
 	"null": {
 		"id": 576,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 0,
 		"dropDamage": 0,
 		"dropAmountMin": 1,
@@ -3057,8 +3054,7 @@
 	},
 	"flower1_dandelion": {
 		"id": 592,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 37,
 		"dropDamage": 0,
 		"dropAmountMin": 1,
@@ -3073,8 +3069,7 @@
 	},
 	"flower2_poppy": {
 		"id": 608,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 38,
 		"dropDamage": 0,
 		"dropAmountMin": 1,
@@ -3089,8 +3084,7 @@
 	},
 	"flower2_blueorchid": {
 		"id": 609,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 38,
 		"dropDamage": 1,
 		"dropAmountMin": 1,
@@ -3105,8 +3099,7 @@
 	},
 	"flower2_allium": {
 		"id": 610,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 38,
 		"dropDamage": 2,
 		"dropAmountMin": 1,
@@ -3121,8 +3114,7 @@
 	},
 	"flower2_houstonia": {
 		"id": 611,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 38,
 		"dropDamage": 3,
 		"dropAmountMin": 1,
@@ -3137,8 +3129,7 @@
 	},
 	"flower2_tulipred": {
 		"id": 612,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 38,
 		"dropDamage": 4,
 		"dropAmountMin": 1,
@@ -3153,8 +3144,7 @@
 	},
 	"flower2_tuliporange": {
 		"id": 613,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 38,
 		"dropDamage": 5,
 		"dropAmountMin": 1,
@@ -3169,8 +3159,7 @@
 	},
 	"flower2_tulipwhite": {
 		"id": 614,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 38,
 		"dropDamage": 6,
 		"dropAmountMin": 1,
@@ -3185,8 +3174,7 @@
 	},
 	"flower2_tulippink": {
 		"id": 615,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 38,
 		"dropDamage": 7,
 		"dropAmountMin": 1,
@@ -3201,8 +3189,7 @@
 	},
 	"flower2_oxeyedaisy": {
 		"id": 616,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 38,
 		"dropDamage": 8,
 		"dropAmountMin": 1,
@@ -3217,8 +3204,7 @@
 	},
 	"mushroom": {
 		"id": 624,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 39,
 		"dropDamage": 0,
 		"dropAmountMin": 1,
@@ -3233,8 +3219,7 @@
 	},
 	"mushroom_1": {
 		"id": 640,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 40,
 		"dropDamage": 0,
 		"dropAmountMin": 1,
@@ -3269,7 +3254,8 @@
 		"isFullCube": true,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"blockiron": {
 		"id": 672,
@@ -3293,7 +3279,8 @@
 		"isFullCube": true,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"stoneslab": {
 		"id": 688,
@@ -3317,7 +3304,8 @@
 		"isFullCube": true,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 10
 	},
 	"stoneslab_1": {
 		"id": 689,
@@ -3341,7 +3329,8 @@
 		"isFullCube": true,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 10
 	},
 	"stoneslab_2": {
 		"id": 690,
@@ -3365,7 +3354,8 @@
 		"isFullCube": true,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 10
 	},
 	"stoneslab_3": {
 		"id": 691,
@@ -3389,7 +3379,8 @@
 		"isFullCube": true,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 10
 	},
 	"stoneslab_4": {
 		"id": 692,
@@ -3413,7 +3404,8 @@
 		"isFullCube": true,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 10
 	},
 	"stoneslab_5": {
 		"id": 693,
@@ -3437,7 +3429,8 @@
 		"isFullCube": true,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 10
 	},
 	"stoneslab_6": {
 		"id": 694,
@@ -3461,7 +3454,8 @@
 		"isFullCube": true,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 10
 	},
 	"stoneslab_7": {
 		"id": 695,
@@ -3485,7 +3479,8 @@
 		"isFullCube": true,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 10
 	},
 	"stoneslab_9": {
 		"id": 697,
@@ -3509,7 +3504,8 @@
 		"isFullCube": true,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 10
 	},
 	"stoneslab_10": {
 		"id": 698,
@@ -3533,7 +3529,8 @@
 		"isFullCube": true,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 10
 	},
 	"stoneslab_11": {
 		"id": 699,
@@ -3557,7 +3554,8 @@
 		"isFullCube": true,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 10
 	},
 	"stoneslab_12": {
 		"id": 700,
@@ -3581,7 +3579,8 @@
 		"isFullCube": true,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 10
 	},
 	"stoneslab_13": {
 		"id": 701,
@@ -3605,7 +3604,8 @@
 		"isFullCube": true,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 10
 	},
 	"stoneslab_14": {
 		"id": 702,
@@ -3629,7 +3629,8 @@
 		"isFullCube": true,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 10
 	},
 	"stoneslab_15": {
 		"id": 703,
@@ -3653,7 +3654,8 @@
 		"isFullCube": true,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 10
 	},
 	"stoneslab_stone": {
 		"id": 704,
@@ -3677,7 +3679,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 10
 	},
 	"stoneslab_sand": {
 		"id": 705,
@@ -3701,7 +3704,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 10
 	},
 	"stoneslab_wood": {
 		"id": 706,
@@ -3725,7 +3729,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 10
 	},
 	"stoneslab_cobble": {
 		"id": 707,
@@ -3749,7 +3754,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 10
 	},
 	"stoneslab_brick": {
 		"id": 708,
@@ -3773,7 +3779,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 10
 	},
 	"stoneslab_smoothstonebrick": {
 		"id": 709,
@@ -3797,7 +3804,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 10
 	},
 	"stoneslab_netherbrick": {
 		"id": 710,
@@ -3821,7 +3829,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 10
 	},
 	"stoneslab_quartz": {
 		"id": 711,
@@ -3845,7 +3854,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 10
 	},
 	"stoneslab_stone_1": {
 		"id": 712,
@@ -3869,7 +3879,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 10
 	},
 	"stoneslab_stone_2": {
 		"id": 713,
@@ -3893,7 +3904,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 10
 	},
 	"stoneslab_stone_3": {
 		"id": 714,
@@ -3917,7 +3929,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 10
 	},
 	"stoneslab_stone_4": {
 		"id": 715,
@@ -3941,7 +3954,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 10
 	},
 	"stoneslab_stone_5": {
 		"id": 716,
@@ -3965,7 +3979,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 10
 	},
 	"stoneslab_stone_6": {
 		"id": 717,
@@ -3989,7 +4004,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 10
 	},
 	"stoneslab_stone_7": {
 		"id": 718,
@@ -4013,7 +4029,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 10
 	},
 	"stoneslab_stone_8": {
 		"id": 719,
@@ -4037,7 +4054,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 10
 	},
 	"brick": {
 		"id": 720,
@@ -4061,7 +4079,8 @@
 		"isFullCube": true,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 10
 	},
 	"tnt": {
 		"id": 736,
@@ -4133,7 +4152,8 @@
 		"isFullCube": true,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 10
 	},
 	"obsidian": {
 		"id": 784,
@@ -4157,12 +4177,12 @@
 		"isFullCube": true,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 2000
 	},
 	"torch": {
 		"id": 800,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 50,
 		"dropDamage": 0,
 		"dropAmountMin": 1,
@@ -4177,8 +4197,7 @@
 	},
 	"fire": {
 		"id": 816,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 0,
 		"dropDamage": 0,
 		"dropAmountMin": 0,
@@ -4657,8 +4676,7 @@
 	},
 	"redstonedust": {
 		"id": 880,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 331,
 		"dropDamage": 0,
 		"dropAmountMin": 1,
@@ -4693,7 +4711,8 @@
 		"isFullCube": true,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"blockdiamond": {
 		"id": 912,
@@ -4717,7 +4736,8 @@
 		"isFullCube": true,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"workbench": {
 		"id": 928,
@@ -4745,8 +4765,7 @@
 	},
 	"crops": {
 		"id": 944,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 295,
 		"dropDamage": 0,
 		"dropAmountMin": 1,
@@ -4761,8 +4780,7 @@
 	},
 	"crops_7": {
 		"id": 951,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 296,
 		"dropDamage": 0,
 		"dropAmountMin": 1,
@@ -4849,8 +4867,7 @@
 	},
 	"sign": {
 		"id": 1008,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 323,
 		"dropDamage": 0,
 		"dropAmountMin": 1,
@@ -5249,8 +5266,7 @@
 	},
 	"rail": {
 		"id": 1056,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 66,
 		"dropDamage": 0,
 		"dropAmountMin": 1,
@@ -5681,8 +5697,7 @@
 	},
 	"sign_16": {
 		"id": 1088,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 323,
 		"dropDamage": 0,
 		"dropAmountMin": 1,
@@ -5697,8 +5712,7 @@
 	},
 	"lever": {
 		"id": 1104,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 69,
 		"dropDamage": 0,
 		"dropAmountMin": 1,
@@ -5713,8 +5727,7 @@
 	},
 	"pressureplatestone": {
 		"id": 1120,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 70,
 		"dropDamage": 0,
 		"dropAmountMin": 1,
@@ -5921,8 +5934,7 @@
 	},
 	"pressureplatewood": {
 		"id": 1152,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 72,
 		"dropDamage": 0,
 		"dropAmountMin": 1,
@@ -5957,7 +5969,8 @@
 		"isFullCube": true,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"oreredstone_1": {
 		"id": 1184,
@@ -5981,12 +5994,12 @@
 		"isFullCube": true,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 9
+		"lightEmission": 9,
+		"resistance": 5
 	},
 	"notgate": {
 		"id": 1200,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 76,
 		"dropDamage": 0,
 		"dropAmountMin": 1,
@@ -6001,8 +6014,7 @@
 	},
 	"notgate_5": {
 		"id": 1216,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 76,
 		"dropDamage": 0,
 		"dropAmountMin": 1,
@@ -6017,8 +6029,7 @@
 	},
 	"button": {
 		"id": 1232,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 77,
 		"dropDamage": 0,
 		"dropAmountMin": 1,
@@ -6489,8 +6500,7 @@
 	},
 	"reeds": {
 		"id": 1328,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 338,
 		"dropDamage": 0,
 		"dropAmountMin": 1,
@@ -6525,7 +6535,8 @@
 		"isFullCube": true,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 10
 	},
 	"fence": {
 		"id": 1360,
@@ -6581,7 +6592,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"pumpkin": {
 		"id": 1376,
@@ -6681,8 +6693,7 @@
 	},
 	"portal": {
 		"id": 1440,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 0,
 		"dropDamage": 0,
 		"dropAmountMin": 0,
@@ -7677,7 +7688,8 @@
 		"isFullCube": true,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 10
 	},
 	"stonebricksmooth_mossy": {
 		"id": 1569,
@@ -7701,7 +7713,8 @@
 		"isFullCube": true,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 10
 	},
 	"stonebricksmooth_cracked": {
 		"id": 1570,
@@ -7725,7 +7738,8 @@
 		"isFullCube": true,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 10
 	},
 	"stonebricksmooth_chiseled": {
 		"id": 1571,
@@ -7749,7 +7763,8 @@
 		"isFullCube": true,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 10
 	},
 	"mushroom_2": {
 		"id": 1584,
@@ -7853,7 +7868,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 10
 	},
 	"thinglass": {
 		"id": 1632,
@@ -7937,8 +7953,7 @@
 	},
 	"pumpkinstem": {
 		"id": 1664,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 0,
 		"dropDamage": 0,
 		"dropAmountMin": 1,
@@ -7953,8 +7968,7 @@
 	},
 	"pumpkinstem_8": {
 		"id": 1680,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 0,
 		"dropDamage": 0,
 		"dropAmountMin": 1,
@@ -7969,8 +7983,7 @@
 	},
 	"vine": {
 		"id": 1696,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 0,
 		"dropDamage": 0,
 		"dropAmountMin": 0,
@@ -8005,7 +8018,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"fencegate_1": {
 		"id": 1713,
@@ -8029,7 +8043,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"fencegate_2": {
 		"id": 1715,
@@ -8053,12 +8068,12 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"fencegate_3": {
 		"id": 1716,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 107,
 		"dropDamage": 0,
 		"dropAmountMin": 1,
@@ -8069,12 +8084,12 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"fencegate_4": {
 		"id": 1717,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 107,
 		"dropDamage": 0,
 		"dropAmountMin": 1,
@@ -8085,12 +8100,12 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"fencegate_5": {
 		"id": 1718,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 107,
 		"dropDamage": 0,
 		"dropAmountMin": 1,
@@ -8101,12 +8116,12 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"fencegate_6": {
 		"id": 1719,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 107,
 		"dropDamage": 0,
 		"dropAmountMin": 1,
@@ -8117,7 +8132,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"fencegate_8": {
 		"id": 1721,
@@ -8141,7 +8157,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"fencegate_10": {
 		"id": 1723,
@@ -8165,12 +8182,12 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"fencegate_11": {
 		"id": 1724,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 107,
 		"dropDamage": 0,
 		"dropAmountMin": 1,
@@ -8181,12 +8198,12 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"fencegate_12": {
 		"id": 1725,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 107,
 		"dropDamage": 0,
 		"dropAmountMin": 1,
@@ -8197,12 +8214,12 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"fencegate_13": {
 		"id": 1726,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 107,
 		"dropDamage": 0,
 		"dropAmountMin": 1,
@@ -8213,12 +8230,12 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"fencegate_14": {
 		"id": 1727,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 107,
 		"dropDamage": 0,
 		"dropAmountMin": 1,
@@ -8229,7 +8246,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"stairsbrick": {
 		"id": 1728,
@@ -9133,7 +9151,8 @@
 		"isFullCube": true,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 10
 	},
 	"netherfence": {
 		"id": 1808,
@@ -9189,7 +9208,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 10
 	},
 	"stairsnetherbrick": {
 		"id": 1824,
@@ -9609,8 +9629,7 @@
 	},
 	"netherstalk": {
 		"id": 1840,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 0,
 		"dropDamage": 0,
 		"dropAmountMin": 0,
@@ -9645,7 +9664,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 2000
 	},
 	"brewingstand": {
 		"id": 1872,
@@ -9737,8 +9757,7 @@
 	},
 	"null_11": {
 		"id": 1904,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 0,
 		"dropDamage": 0,
 		"dropAmountMin": 0,
@@ -9749,7 +9768,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 15
+		"lightEmission": 15,
+		"resistance": 6000000
 	},
 	"endportalframe": {
 		"id": 1920,
@@ -9773,7 +9793,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 1
+		"lightEmission": 1,
+		"resistance": 6000000
 	},
 	"endportalframe_3": {
 		"id": 1924,
@@ -9805,7 +9826,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 1
+		"lightEmission": 1,
+		"resistance": 6000000
 	},
 	"endportalframe_4": {
 		"id": 1925,
@@ -9837,7 +9859,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 1
+		"lightEmission": 1,
+		"resistance": 6000000
 	},
 	"endportalframe_5": {
 		"id": 1926,
@@ -9869,7 +9892,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 1
+		"lightEmission": 1,
+		"resistance": 6000000
 	},
 	"endportalframe_6": {
 		"id": 1927,
@@ -9901,7 +9925,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 1
+		"lightEmission": 1,
+		"resistance": 6000000
 	},
 	"endportalframe_10": {
 		"id": 1932,
@@ -9933,7 +9958,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 1
+		"lightEmission": 1,
+		"resistance": 6000000
 	},
 	"endportalframe_11": {
 		"id": 1933,
@@ -9965,7 +9991,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 1
+		"lightEmission": 1,
+		"resistance": 6000000
 	},
 	"endportalframe_12": {
 		"id": 1934,
@@ -9997,7 +10024,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 1
+		"lightEmission": 1,
+		"resistance": 6000000
 	},
 	"endportalframe_13": {
 		"id": 1935,
@@ -10029,7 +10057,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 1
+		"lightEmission": 1,
+		"resistance": 6000000
 	},
 	"whitestone": {
 		"id": 1936,
@@ -10053,7 +10082,8 @@
 		"isFullCube": true,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 15
 	},
 	"dragonegg": {
 		"id": 1952,
@@ -10077,7 +10107,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 1
+		"lightEmission": 1,
+		"resistance": 15
 	},
 	"redstonelight": {
 		"id": 1968,
@@ -10149,7 +10180,8 @@
 		"isFullCube": true,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"woodslab_1": {
 		"id": 2001,
@@ -10173,7 +10205,8 @@
 		"isFullCube": true,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"woodslab_2": {
 		"id": 2002,
@@ -10197,7 +10230,8 @@
 		"isFullCube": true,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"woodslab_3": {
 		"id": 2003,
@@ -10221,7 +10255,8 @@
 		"isFullCube": true,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"woodslab_4": {
 		"id": 2004,
@@ -10245,7 +10280,8 @@
 		"isFullCube": true,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"woodslab_5": {
 		"id": 2005,
@@ -10269,7 +10305,8 @@
 		"isFullCube": true,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"woodslab_6": {
 		"id": 2009,
@@ -10293,7 +10330,8 @@
 		"isFullCube": true,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"woodslab_7": {
 		"id": 2010,
@@ -10317,7 +10355,8 @@
 		"isFullCube": true,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"woodslab_8": {
 		"id": 2011,
@@ -10341,7 +10380,8 @@
 		"isFullCube": true,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"woodslab_9": {
 		"id": 2012,
@@ -10365,7 +10405,8 @@
 		"isFullCube": true,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"woodslab_10": {
 		"id": 2013,
@@ -10389,7 +10430,8 @@
 		"isFullCube": true,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"woodslab_oak": {
 		"id": 2016,
@@ -10413,7 +10455,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"woodslab_spruce": {
 		"id": 2017,
@@ -10437,7 +10480,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"woodslab_birch": {
 		"id": 2018,
@@ -10461,7 +10505,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"woodslab_jungle": {
 		"id": 2019,
@@ -10485,7 +10530,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"woodslab_acacia": {
 		"id": 2020,
@@ -10509,7 +10555,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"woodslab_big_oak": {
 		"id": 2021,
@@ -10533,7 +10580,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"woodslab_oak_1": {
 		"id": 2024,
@@ -10557,7 +10605,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"woodslab_oak_2": {
 		"id": 2025,
@@ -10581,7 +10630,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"woodslab_oak_3": {
 		"id": 2026,
@@ -10605,7 +10655,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"woodslab_oak_4": {
 		"id": 2027,
@@ -10629,7 +10680,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"woodslab_oak_5": {
 		"id": 2028,
@@ -10653,7 +10705,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"woodslab_oak_6": {
 		"id": 2029,
@@ -10677,7 +10730,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"woodslab_oak_7": {
 		"id": 2030,
@@ -10701,7 +10755,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"woodslab_oak_8": {
 		"id": 2031,
@@ -10725,7 +10780,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"cocoa": {
 		"id": 2032,
@@ -10749,7 +10805,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"cocoa_1": {
 		"id": 2033,
@@ -10773,7 +10830,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"cocoa_2": {
 		"id": 2035,
@@ -10797,7 +10855,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"cocoa_3": {
 		"id": 2036,
@@ -10821,7 +10880,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"cocoa_4": {
 		"id": 2037,
@@ -10845,7 +10905,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"cocoa_5": {
 		"id": 2038,
@@ -10869,7 +10930,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"cocoa_6": {
 		"id": 2039,
@@ -10893,7 +10955,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"cocoa_7": {
 		"id": 2040,
@@ -10917,7 +10980,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"cocoa_8": {
 		"id": 2041,
@@ -10941,7 +11005,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"cocoa_9": {
 		"id": 2042,
@@ -10965,7 +11030,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"cocoa_10": {
 		"id": 2043,
@@ -10989,7 +11055,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"stairssandstone": {
 		"id": 2048,
@@ -11429,7 +11496,8 @@
 		"isFullCube": true,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"enderchest": {
 		"id": 2080,
@@ -11453,12 +11521,12 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 7
+		"lightEmission": 7,
+		"resistance": 1000
 	},
 	"tripwiresource": {
 		"id": 2096,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 131,
 		"dropDamage": 0,
 		"dropAmountMin": 1,
@@ -11473,8 +11541,7 @@
 	},
 	"tripwire": {
 		"id": 2112,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 287,
 		"dropDamage": 0,
 		"dropAmountMin": 1,
@@ -11509,7 +11576,8 @@
 		"isFullCube": true,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 10
 	},
 	"stairswoodspruce": {
 		"id": 2144,
@@ -12781,7 +12849,8 @@
 		"isFullCube": true,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 6000000
 	},
 	"beacon": {
 		"id": 2208,
@@ -12881,8 +12950,7 @@
 	},
 	"carrots": {
 		"id": 2256,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 391,
 		"dropDamage": 0,
 		"dropAmountMin": 1,
@@ -12897,8 +12965,7 @@
 	},
 	"potatoes": {
 		"id": 2272,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 392,
 		"dropDamage": 0,
 		"dropAmountMin": 1,
@@ -12913,8 +12980,7 @@
 	},
 	"button_15": {
 		"id": 2288,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 143,
 		"dropDamage": 0,
 		"dropAmountMin": 1,
@@ -13141,7 +13207,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 2000
 	},
 	"anvil_slightlydamaged": {
 		"id": 2321,
@@ -13165,7 +13232,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 2000
 	},
 	"anvil_intact_1": {
 		"id": 2323,
@@ -13189,7 +13257,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 2000
 	},
 	"anvil_intact_2": {
 		"id": 2324,
@@ -13213,7 +13282,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 2000
 	},
 	"anvil_intact_3": {
 		"id": 2325,
@@ -13237,7 +13307,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 2000
 	},
 	"anvil_intact_4": {
 		"id": 2326,
@@ -13261,7 +13332,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 2000
 	},
 	"anvil_intact_5": {
 		"id": 2327,
@@ -13285,7 +13357,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 2000
 	},
 	"anvil_intact_6": {
 		"id": 2328,
@@ -13309,7 +13382,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 2000
 	},
 	"anvil_intact_7": {
 		"id": 2329,
@@ -13333,7 +13407,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 2000
 	},
 	"anvil_intact_8": {
 		"id": 2330,
@@ -13357,7 +13432,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 2000
 	},
 	"anvil_intact_9": {
 		"id": 2331,
@@ -13381,7 +13457,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 2000
 	},
 	"chesttrap": {
 		"id": 2336,
@@ -13409,8 +13486,7 @@
 	},
 	"weightedplate_light": {
 		"id": 2352,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 147,
 		"dropDamage": 0,
 		"dropAmountMin": 1,
@@ -13425,8 +13501,7 @@
 	},
 	"weightedplate_heavy": {
 		"id": 2368,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 148,
 		"dropDamage": 0,
 		"dropAmountMin": 1,
@@ -13533,7 +13608,8 @@
 		"isFullCube": true,
 		"canProvidePower": true,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 10
 	},
 	"netherquartz": {
 		"id": 2448,
@@ -13557,7 +13633,8 @@
 		"isFullCube": true,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"hopper": {
 		"id": 2464,
@@ -13613,7 +13690,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 8
 	},
 	"quartzblock": {
 		"id": 2480,
@@ -14153,8 +14231,7 @@
 	},
 	"activatorrail": {
 		"id": 2512,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 157,
 		"dropDamage": 0,
 		"dropAmountMin": 1,
@@ -14213,7 +14290,8 @@
 		"isFullCube": true,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 7
 	},
 	"clayhardenedstained_orange": {
 		"id": 2545,
@@ -14237,7 +14315,8 @@
 		"isFullCube": true,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 7
 	},
 	"clayhardenedstained_magenta": {
 		"id": 2546,
@@ -14261,7 +14340,8 @@
 		"isFullCube": true,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 7
 	},
 	"clayhardenedstained_lightblue": {
 		"id": 2547,
@@ -14285,7 +14365,8 @@
 		"isFullCube": true,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 7
 	},
 	"clayhardenedstained_yellow": {
 		"id": 2548,
@@ -14309,7 +14390,8 @@
 		"isFullCube": true,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 7
 	},
 	"clayhardenedstained_lime": {
 		"id": 2549,
@@ -14333,7 +14415,8 @@
 		"isFullCube": true,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 7
 	},
 	"clayhardenedstained_pink": {
 		"id": 2550,
@@ -14357,7 +14440,8 @@
 		"isFullCube": true,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 7
 	},
 	"clayhardenedstained_gray": {
 		"id": 2551,
@@ -14381,7 +14465,8 @@
 		"isFullCube": true,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 7
 	},
 	"clayhardenedstained_silver": {
 		"id": 2552,
@@ -14405,7 +14490,8 @@
 		"isFullCube": true,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 7
 	},
 	"clayhardenedstained_cyan": {
 		"id": 2553,
@@ -14429,7 +14515,8 @@
 		"isFullCube": true,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 7
 	},
 	"clayhardenedstained_purple": {
 		"id": 2554,
@@ -14453,7 +14540,8 @@
 		"isFullCube": true,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 7
 	},
 	"clayhardenedstained_blue": {
 		"id": 2555,
@@ -14477,7 +14565,8 @@
 		"isFullCube": true,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 7
 	},
 	"clayhardenedstained_brown": {
 		"id": 2556,
@@ -14501,7 +14590,8 @@
 		"isFullCube": true,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 7
 	},
 	"clayhardenedstained_green": {
 		"id": 2557,
@@ -14525,7 +14615,8 @@
 		"isFullCube": true,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 7
 	},
 	"clayhardenedstained_red": {
 		"id": 2558,
@@ -14549,7 +14640,8 @@
 		"isFullCube": true,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 7
 	},
 	"clayhardenedstained_black": {
 		"id": 2559,
@@ -14573,7 +14665,8 @@
 		"isFullCube": true,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 7
 	},
 	"thinstainedglass_white": {
 		"id": 2560,
@@ -16925,7 +17018,8 @@
 		"isFullCube": true,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 10
 	},
 	"prismarine_bricks": {
 		"id": 2689,
@@ -16949,7 +17043,8 @@
 		"isFullCube": true,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 10
 	},
 	"prismarine_dark": {
 		"id": 2690,
@@ -16973,7 +17068,8 @@
 		"isFullCube": true,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 10
 	},
 	"sealantern": {
 		"id": 2704,
@@ -17429,7 +17525,8 @@
 		"isFullCube": true,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 7
 	},
 	"blockcoal": {
 		"id": 2768,
@@ -17453,7 +17550,8 @@
 		"isFullCube": true,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 10
 	},
 	"icepacked": {
 		"id": 2784,
@@ -17481,8 +17579,7 @@
 	},
 	"doubleplant_sunflower": {
 		"id": 2800,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 175,
 		"dropDamage": 0,
 		"dropAmountMin": 1,
@@ -17497,8 +17594,7 @@
 	},
 	"doubleplant_syringa": {
 		"id": 2801,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 175,
 		"dropDamage": 1,
 		"dropAmountMin": 1,
@@ -17513,8 +17609,7 @@
 	},
 	"doubleplant_grass": {
 		"id": 2802,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": -1,
 		"dropDamage": 0,
 		"dropAmountMin": 1,
@@ -17529,8 +17624,7 @@
 	},
 	"doubleplant_fern": {
 		"id": 2803,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 0,
 		"dropDamage": 3,
 		"dropAmountMin": 1,
@@ -17545,8 +17639,7 @@
 	},
 	"doubleplant_rose": {
 		"id": 2804,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 175,
 		"dropDamage": 4,
 		"dropAmountMin": 1,
@@ -17561,8 +17654,7 @@
 	},
 	"doubleplant_paeonia": {
 		"id": 2805,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 175,
 		"dropDamage": 5,
 		"dropAmountMin": 1,
@@ -17577,8 +17669,7 @@
 	},
 	"doubleplant_sunflower_1": {
 		"id": 2808,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 0,
 		"dropDamage": 0,
 		"dropAmountMin": 1,
@@ -17593,8 +17684,7 @@
 	},
 	"doubleplant_sunflower_2": {
 		"id": 2809,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 0,
 		"dropDamage": 0,
 		"dropAmountMin": 1,
@@ -17609,8 +17699,7 @@
 	},
 	"doubleplant_sunflower_3": {
 		"id": 2810,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 0,
 		"dropDamage": 0,
 		"dropAmountMin": 1,
@@ -17625,8 +17714,7 @@
 	},
 	"doubleplant_sunflower_4": {
 		"id": 2811,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 0,
 		"dropDamage": 0,
 		"dropAmountMin": 1,
@@ -17641,8 +17729,7 @@
 	},
 	"doubleplant_sunflower_5": {
 		"id": 2812,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 0,
 		"dropDamage": 0,
 		"dropAmountMin": 1,
@@ -17657,8 +17744,7 @@
 	},
 	"doubleplant_sunflower_6": {
 		"id": 2813,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 0,
 		"dropDamage": 0,
 		"dropAmountMin": 1,
@@ -17673,8 +17759,7 @@
 	},
 	"doubleplant_sunflower_7": {
 		"id": 2814,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 0,
 		"dropDamage": 0,
 		"dropAmountMin": 1,
@@ -17689,8 +17774,7 @@
 	},
 	"doubleplant_sunflower_8": {
 		"id": 2815,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 0,
 		"dropDamage": 0,
 		"dropAmountMin": 1,
@@ -17705,8 +17789,7 @@
 	},
 	"banner": {
 		"id": 2816,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 425,
 		"dropDamage": 0,
 		"dropAmountMin": 1,
@@ -17721,8 +17804,7 @@
 	},
 	"banner_16": {
 		"id": 2832,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 425,
 		"dropDamage": 0,
 		"dropAmountMin": 1,
@@ -18269,7 +18351,8 @@
 		"isFullCube": true,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 10
 	},
 	"stoneslab2_red_sandstone": {
 		"id": 2912,
@@ -18293,7 +18376,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 10
 	},
 	"stoneslab2_red_sandstone_1": {
 		"id": 2920,
@@ -18317,7 +18401,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 10
 	},
 	"stoneslab2_red_sandstone_2": {
 		"id": 2921,
@@ -18341,7 +18426,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 10
 	},
 	"stoneslab2_red_sandstone_3": {
 		"id": 2922,
@@ -18365,7 +18451,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 10
 	},
 	"stoneslab2_red_sandstone_4": {
 		"id": 2923,
@@ -18389,7 +18476,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 10
 	},
 	"stoneslab2_red_sandstone_5": {
 		"id": 2924,
@@ -18413,7 +18501,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 10
 	},
 	"stoneslab2_red_sandstone_6": {
 		"id": 2925,
@@ -18437,7 +18526,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 10
 	},
 	"stoneslab2_red_sandstone_7": {
 		"id": 2926,
@@ -18461,7 +18551,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 10
 	},
 	"stoneslab2_red_sandstone_8": {
 		"id": 2927,
@@ -18485,7 +18576,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 10
 	},
 	"sprucefencegate": {
 		"id": 2928,
@@ -18509,7 +18601,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"sprucefencegate_1": {
 		"id": 2929,
@@ -18533,7 +18626,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"sprucefencegate_2": {
 		"id": 2931,
@@ -18557,12 +18651,12 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"sprucefencegate_3": {
 		"id": 2932,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 183,
 		"dropDamage": 0,
 		"dropAmountMin": 1,
@@ -18573,12 +18667,12 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"sprucefencegate_4": {
 		"id": 2933,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 183,
 		"dropDamage": 0,
 		"dropAmountMin": 1,
@@ -18589,12 +18683,12 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"sprucefencegate_5": {
 		"id": 2934,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 183,
 		"dropDamage": 0,
 		"dropAmountMin": 1,
@@ -18605,12 +18699,12 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"sprucefencegate_6": {
 		"id": 2935,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 183,
 		"dropDamage": 0,
 		"dropAmountMin": 1,
@@ -18621,7 +18715,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"sprucefencegate_8": {
 		"id": 2937,
@@ -18645,7 +18740,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"sprucefencegate_10": {
 		"id": 2939,
@@ -18669,12 +18765,12 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"sprucefencegate_11": {
 		"id": 2940,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 183,
 		"dropDamage": 0,
 		"dropAmountMin": 1,
@@ -18685,12 +18781,12 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"sprucefencegate_12": {
 		"id": 2941,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 183,
 		"dropDamage": 0,
 		"dropAmountMin": 1,
@@ -18701,12 +18797,12 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"sprucefencegate_13": {
 		"id": 2942,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 183,
 		"dropDamage": 0,
 		"dropAmountMin": 1,
@@ -18717,12 +18813,12 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"sprucefencegate_14": {
 		"id": 2943,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 183,
 		"dropDamage": 0,
 		"dropAmountMin": 1,
@@ -18733,7 +18829,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"birchfencegate": {
 		"id": 2944,
@@ -18757,7 +18854,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"birchfencegate_1": {
 		"id": 2945,
@@ -18781,7 +18879,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"birchfencegate_2": {
 		"id": 2947,
@@ -18805,12 +18904,12 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"birchfencegate_3": {
 		"id": 2948,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 184,
 		"dropDamage": 0,
 		"dropAmountMin": 1,
@@ -18821,12 +18920,12 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"birchfencegate_4": {
 		"id": 2949,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 184,
 		"dropDamage": 0,
 		"dropAmountMin": 1,
@@ -18837,12 +18936,12 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"birchfencegate_5": {
 		"id": 2950,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 184,
 		"dropDamage": 0,
 		"dropAmountMin": 1,
@@ -18853,12 +18952,12 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"birchfencegate_6": {
 		"id": 2951,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 184,
 		"dropDamage": 0,
 		"dropAmountMin": 1,
@@ -18869,7 +18968,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"birchfencegate_8": {
 		"id": 2953,
@@ -18893,7 +18993,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"birchfencegate_10": {
 		"id": 2955,
@@ -18917,12 +19018,12 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"birchfencegate_11": {
 		"id": 2956,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 184,
 		"dropDamage": 0,
 		"dropAmountMin": 1,
@@ -18933,12 +19034,12 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"birchfencegate_12": {
 		"id": 2957,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 184,
 		"dropDamage": 0,
 		"dropAmountMin": 1,
@@ -18949,12 +19050,12 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"birchfencegate_13": {
 		"id": 2958,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 184,
 		"dropDamage": 0,
 		"dropAmountMin": 1,
@@ -18965,12 +19066,12 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"birchfencegate_14": {
 		"id": 2959,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 184,
 		"dropDamage": 0,
 		"dropAmountMin": 1,
@@ -18981,7 +19082,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"junglefencegate": {
 		"id": 2960,
@@ -19005,7 +19107,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"junglefencegate_1": {
 		"id": 2961,
@@ -19029,7 +19132,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"junglefencegate_2": {
 		"id": 2963,
@@ -19053,12 +19157,12 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"junglefencegate_3": {
 		"id": 2964,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 185,
 		"dropDamage": 0,
 		"dropAmountMin": 1,
@@ -19069,12 +19173,12 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"junglefencegate_4": {
 		"id": 2965,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 185,
 		"dropDamage": 0,
 		"dropAmountMin": 1,
@@ -19085,12 +19189,12 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"junglefencegate_5": {
 		"id": 2966,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 185,
 		"dropDamage": 0,
 		"dropAmountMin": 1,
@@ -19101,12 +19205,12 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"junglefencegate_6": {
 		"id": 2967,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 185,
 		"dropDamage": 0,
 		"dropAmountMin": 1,
@@ -19117,7 +19221,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"junglefencegate_8": {
 		"id": 2969,
@@ -19141,7 +19246,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"junglefencegate_10": {
 		"id": 2971,
@@ -19165,12 +19271,12 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"junglefencegate_11": {
 		"id": 2972,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 185,
 		"dropDamage": 0,
 		"dropAmountMin": 1,
@@ -19181,12 +19287,12 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"junglefencegate_12": {
 		"id": 2973,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 185,
 		"dropDamage": 0,
 		"dropAmountMin": 1,
@@ -19197,12 +19303,12 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"junglefencegate_13": {
 		"id": 2974,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 185,
 		"dropDamage": 0,
 		"dropAmountMin": 1,
@@ -19213,12 +19319,12 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"junglefencegate_14": {
 		"id": 2975,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 185,
 		"dropDamage": 0,
 		"dropAmountMin": 1,
@@ -19229,7 +19335,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"darkoakfencegate": {
 		"id": 2976,
@@ -19253,7 +19360,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"darkoakfencegate_1": {
 		"id": 2977,
@@ -19277,7 +19385,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"darkoakfencegate_2": {
 		"id": 2979,
@@ -19301,12 +19410,12 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"darkoakfencegate_3": {
 		"id": 2980,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 186,
 		"dropDamage": 0,
 		"dropAmountMin": 1,
@@ -19317,12 +19426,12 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"darkoakfencegate_4": {
 		"id": 2981,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 186,
 		"dropDamage": 0,
 		"dropAmountMin": 1,
@@ -19333,12 +19442,12 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"darkoakfencegate_5": {
 		"id": 2982,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 186,
 		"dropDamage": 0,
 		"dropAmountMin": 1,
@@ -19349,12 +19458,12 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"darkoakfencegate_6": {
 		"id": 2983,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 186,
 		"dropDamage": 0,
 		"dropAmountMin": 1,
@@ -19365,7 +19474,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"darkoakfencegate_8": {
 		"id": 2985,
@@ -19389,7 +19499,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"darkoakfencegate_10": {
 		"id": 2987,
@@ -19413,12 +19524,12 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"darkoakfencegate_11": {
 		"id": 2988,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 186,
 		"dropDamage": 0,
 		"dropAmountMin": 1,
@@ -19429,12 +19540,12 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"darkoakfencegate_12": {
 		"id": 2989,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 186,
 		"dropDamage": 0,
 		"dropAmountMin": 1,
@@ -19445,12 +19556,12 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"darkoakfencegate_13": {
 		"id": 2990,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 186,
 		"dropDamage": 0,
 		"dropAmountMin": 1,
@@ -19461,12 +19572,12 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"darkoakfencegate_14": {
 		"id": 2991,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 186,
 		"dropDamage": 0,
 		"dropAmountMin": 1,
@@ -19477,7 +19588,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"acaciafencegate": {
 		"id": 2992,
@@ -19501,7 +19613,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"acaciafencegate_1": {
 		"id": 2993,
@@ -19525,7 +19638,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"acaciafencegate_2": {
 		"id": 2995,
@@ -19549,12 +19663,12 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"acaciafencegate_3": {
 		"id": 2996,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 187,
 		"dropDamage": 0,
 		"dropAmountMin": 1,
@@ -19565,12 +19679,12 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"acaciafencegate_4": {
 		"id": 2997,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 187,
 		"dropDamage": 0,
 		"dropAmountMin": 1,
@@ -19581,12 +19695,12 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"acaciafencegate_5": {
 		"id": 2998,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 187,
 		"dropDamage": 0,
 		"dropAmountMin": 1,
@@ -19597,12 +19711,12 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"acaciafencegate_6": {
 		"id": 2999,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 187,
 		"dropDamage": 0,
 		"dropAmountMin": 1,
@@ -19613,7 +19727,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"acaciafencegate_8": {
 		"id": 3001,
@@ -19637,7 +19752,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"acaciafencegate_10": {
 		"id": 3003,
@@ -19661,12 +19777,12 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"acaciafencegate_11": {
 		"id": 3004,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 187,
 		"dropDamage": 0,
 		"dropAmountMin": 1,
@@ -19677,12 +19793,12 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"acaciafencegate_12": {
 		"id": 3005,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 187,
 		"dropDamage": 0,
 		"dropAmountMin": 1,
@@ -19693,12 +19809,12 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"acaciafencegate_13": {
 		"id": 3006,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 187,
 		"dropDamage": 0,
 		"dropAmountMin": 1,
@@ -19709,12 +19825,12 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"acaciafencegate_14": {
 		"id": 3007,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 187,
 		"dropDamage": 0,
 		"dropAmountMin": 1,
@@ -19725,7 +19841,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"sprucefence": {
 		"id": 3008,
@@ -19781,7 +19898,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"birchfence": {
 		"id": 3024,
@@ -19837,7 +19955,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"junglefence": {
 		"id": 3040,
@@ -19893,7 +20012,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"darkoakfence": {
 		"id": 3056,
@@ -19949,7 +20069,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"acaciafence": {
 		"id": 3072,
@@ -20005,7 +20126,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 5
 	},
 	"doorspruce": {
 		"id": 3088,
@@ -20233,30 +20355,6 @@
 				"maxY": 1.0,
 				"minZ": 0.0,
 				"maxZ": 0.1875
-			}
-		},
-		"dropItem": 428,
-		"dropDamage": 0,
-		"dropAmountMin": 1,
-		"dropAmountMax": 1,
-		"hardness": 3.0,
-		"material": "wood",
-		"slipperiness": 0.6,
-		"isFullCube": false,
-		"canProvidePower": false,
-		"lightOpacity": 0,
-		"lightEmission": 0
-	},
-	"doorbirch_2": {
-		"id": 3106,
-		"collision": {
-			"0": {
-				"minX": 0.8125,
-				"maxX": 1.0,
-				"minY": 0.0,
-				"maxY": 1.0,
-				"minZ": 0.0,
-				"maxZ": 1.0
 			}
 		},
 		"dropItem": 428,
@@ -21349,7 +21447,8 @@
 		"isFullCube": true,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 10
 	},
 	"purpurpillar": {
 		"id": 3232,
@@ -21373,7 +21472,8 @@
 		"isFullCube": true,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 10
 	},
 	"stairspurpur": {
 		"id": 3248,
@@ -21813,7 +21913,8 @@
 		"isFullCube": true,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 10
 	},
 	"purpurslab_1": {
 		"id": 3280,
@@ -21837,7 +21938,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 10
 	},
 	"purpurslab_2": {
 		"id": 3288,
@@ -21861,7 +21963,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 10
 	},
 	"purpurslab_3": {
 		"id": 3289,
@@ -21885,7 +21988,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 10
 	},
 	"purpurslab_4": {
 		"id": 3290,
@@ -21909,7 +22013,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 10
 	},
 	"purpurslab_5": {
 		"id": 3291,
@@ -21933,7 +22038,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 10
 	},
 	"purpurslab_6": {
 		"id": 3292,
@@ -21957,7 +22063,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 10
 	},
 	"purpurslab_7": {
 		"id": 3293,
@@ -21981,7 +22088,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 10
 	},
 	"purpurslab_8": {
 		"id": 3294,
@@ -22005,7 +22113,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 10
 	},
 	"purpurslab_9": {
 		"id": 3295,
@@ -22029,7 +22138,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 10
 	},
 	"endbricks": {
 		"id": 3296,
@@ -22057,8 +22167,7 @@
 	},
 	"beetroots": {
 		"id": 3312,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 435,
 		"dropDamage": 0,
 		"dropAmountMin": 1,
@@ -22073,8 +22182,7 @@
 	},
 	"beetroots_3": {
 		"id": 3315,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 434,
 		"dropDamage": 0,
 		"dropAmountMin": 1,
@@ -22113,8 +22221,7 @@
 	},
 	"null_12": {
 		"id": 3344,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 0,
 		"dropDamage": 0,
 		"dropAmountMin": 0,
@@ -22125,7 +22232,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 15
+		"lightEmission": 15,
+		"resistance": 6000000
 	},
 	"repeatingcommandblock": {
 		"id": 3360,
@@ -22149,7 +22257,8 @@
 		"isFullCube": true,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 6000000
 	},
 	"chaincommandblock": {
 		"id": 3376,
@@ -22173,7 +22282,8 @@
 		"isFullCube": true,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 6000000
 	},
 	"frostedice": {
 		"id": 3392,
@@ -22269,7 +22379,8 @@
 		"isFullCube": true,
 		"canProvidePower": false,
 		"lightOpacity": 255,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 10
 	},
 	"boneblock": {
 		"id": 3456,
@@ -22297,8 +22408,7 @@
 	},
 	"structurevoid": {
 		"id": 3472,
-		"collision": {
-		},
+		"collision": {},
 		"dropItem": 217,
 		"dropDamage": 0,
 		"dropAmountMin": 1,
@@ -22309,7 +22419,8 @@
 		"isFullCube": false,
 		"canProvidePower": false,
 		"lightOpacity": 0,
-		"lightEmission": 0
+		"lightEmission": 0,
+		"resistance": 6000000
 	},
 	"observer": {
 		"id": 3488,

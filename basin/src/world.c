@@ -41,6 +41,7 @@
 #include "plugin.h"
 #include "perlin.h"
 #include "biome.h"
+#include "prqueue.h"
 
 int boundingbox_intersects(struct boundingbox* bb1, struct boundingbox* bb2) {
 	return (((bb1->minX >= bb2->minX && bb1->minX <= bb2->maxX) || (bb1->maxX >= bb2->minX && bb1->maxX <= bb2->maxX) || (bb2->minX >= bb1->minX && bb2->minX <= bb1->maxX) || (bb2->maxX >= bb1->minX && bb2->maxX <= bb1->maxX)) && ((bb1->minY >= bb2->minY && bb1->minY <= bb2->maxY) || (bb1->maxY >= bb2->minY && bb1->maxY <= bb2->maxY) || (bb2->minY >= bb1->minY && bb2->minY <= bb1->maxY) || (bb2->maxY >= bb1->minY && bb2->maxY <= bb1->maxY)) && ((bb1->minZ >= bb2->minZ && bb1->minZ <= bb2->maxZ) || (bb1->maxZ >= bb2->minZ && bb1->maxZ <= bb2->maxZ) || (bb2->minZ >= bb1->minZ && bb2->minZ <= bb1->maxZ) || (bb2->maxZ >= bb1->minZ && bb2->maxZ <= bb1->maxZ)));
@@ -878,6 +879,47 @@ int world_rayTrace(struct world* world, double x, double y, double z, double ex,
 	return returnLast ? cface : -1;
 }
 
+void explode(struct world* world, struct chunk* ch, double x, double y, double z, float strength) { // TODO: more plugin stuff?
+	ch = getChunk_guess(world, ch, (int32_t) floor(x) >> 4, (int32_t) floor(z) >> 4);
+	for (int32_t j = 0; j < 16; j++) {
+		for (int32_t k = 0; k < 16; k++) {
+			for (int32_t l = 0; l < 16; l++) {
+				if (!(j == 0 || j == 15 || k == 0 || k == 15 || l == 0 || l == 15)) continue;
+				double dx = (double) j / 15.0 * 2.0 - 1.0;
+				double dy = (double) k / 15.0 * 2.0 - 1.0;
+				double dz = (double) l / 15.0 * 2.0 - 1.0;
+				double d = sqrt(dx * dx + dy * dy + dz * dz);
+				dx /= d;
+				dy /= d;
+				dz /= d;
+				float mstr = strength * (.7 + randFloat() * .6);
+				double x2 = x;
+				double y2 = y;
+				double z2 = z;
+				for (; mstr > 0.; mstr -= .225) {
+					int32_t ix = (int32_t) floor(x2);
+					int32_t iy = (int32_t) floor(y2);
+					int32_t iz = (int32_t) floor(z2);
+					block b = getBlockWorld_guess(world, ch, ix, iy, iz);
+					if (b >> 4 != 0) {
+						struct block_info* bi = getBlockInfo(b);
+						mstr -= ((bi->resistance / 5.) + .3) * .3;
+						if (mstr > 0.) { //TODO: check if entity will allow destruction
+							block b = getBlockWorld_guess(world, ch, ix, iy, iz);
+							setBlockWorld_guess(world, ch, 0, ix, iy, iz);
+							dropBlockDrops(world, b, NULL, ix, iy, iz); //TODO: randomizE?
+						}
+					}
+					x2 += dx * .3;
+					y2 += dy * .3;
+					z2 += dz * .3;
+				}
+			}
+		}
+	}
+	//TODO: knockback & damage
+}
+
 void setTileEntityChunk(struct chunk* chunk, struct tile_entity* te, int32_t x, uint8_t y, int32_t z) {
 	for (size_t i = 0; i < chunk->tileEntities->size; i++) {
 		struct tile_entity* te2 = (struct tile_entity*) chunk->tileEntities->data[i];
@@ -966,14 +1008,32 @@ void freeChunk(struct chunk* chunk) {
 	xfree(chunk);
 }
 
-void scheduleBlockTick(struct world* world, int32_t x, int32_t y, int32_t z, int32_t ticksFromNow) {
+void scheduleBlockTick(struct world* world, int32_t x, int32_t y, int32_t z, int32_t ticksFromNow, float priority) {
 	if (y < 0 || y > 255) return;
 	struct scheduled_tick* st = xmalloc(sizeof(struct scheduled_tick));
 	st->x = x;
 	st->y = y;
 	st->z = z;
 	st->ticksLeft = ticksFromNow;
-	put_hashmap(world->scheduledTicks, (uint64_t) st, st);
+	st->priority = priority;
+	st->src = getBlockWorld(world, x, y, z);
+	struct encpos ep;
+	ep.x = x;
+	ep.y = y;
+	ep.z = z;
+	put_hashmap(world->scheduledTicks, *((uint64_t*) &ep), st);
+}
+
+int32_t isBlockTickScheduled(struct world* world, int32_t x, int32_t y, int32_t z) {
+	struct encpos ep;
+	ep.x = x;
+	ep.y = y;
+	ep.z = z;
+	struct scheduled_tick* st = get_hashmap(world->scheduledTicks, *((uint64_t*) &ep));
+	if (st == NULL) {
+		return 0;
+	}
+	return st->ticksLeft;
 }
 
 struct region* newRegion(char* path, int16_t x, int16_t z, size_t chr_count) {
@@ -1704,21 +1764,58 @@ void tick_world(struct world* world) {
 		endProfilerSection("tick_chunk_randomticks");
 		END_HASHMAP_ITERATION(world->chunks)
 		beginProfilerSection("tick_chunk_scheduledticks");
+		struct prqueue* pq = prqueue_new(0, 0);
 		BEGIN_HASHMAP_ITERATION(world->scheduledTicks)
 		struct scheduled_tick* st = value;
-		if (--st->ticksLeft <= 0) {
+		if (--st->ticksLeft <= 0) { //
+			prqueue_add(pq, st, st->priority);
+			/*block b = getBlockWorld(world, st->x, st->y, st->z);
+			 struct block_info* bi = getBlockInfo(b);
+			 int k = 0;
+			 if (bi->scheduledTick != NULL) k = (*bi->scheduledTick)(world, b, st->x, st->y, st->z);
+			 if (k > 0) {
+			 st->ticksLeft = k;
+			 } else {
+			 struct encpos ep;
+			 ep.x = st->x;
+			 ep.y = st->y;
+			 ep.z = st->z;
+			 put_hashmap(world->scheduledTicks, *((uint64_t*) &ep), NULL);
+			 xfree(st);
+			 }*/
+		}
+		END_HASHMAP_ITERATION(world->scheduledTicks)
+		struct scheduled_tick* st = NULL;
+		while ((st = prqueue_pop(pq)) != NULL) {
+			//printf("%i: %i, %i, %i, #%f\n", tick_counter, st->x, st->y, st->z, st->priority);
 			block b = getBlockWorld(world, st->x, st->y, st->z);
+			if (st->src != b) {
+				struct encpos ep;
+				ep.x = st->x;
+				ep.y = st->y;
+				ep.z = st->z;
+				put_hashmap(world->scheduledTicks, *((uint64_t*) &ep), NULL);
+				xfree(st);
+				continue;
+			}
 			struct block_info* bi = getBlockInfo(b);
 			int k = 0;
 			if (bi->scheduledTick != NULL) k = (*bi->scheduledTick)(world, b, st->x, st->y, st->z);
 			if (k > 0) {
 				st->ticksLeft = k;
+				st->src = getBlockWorld(world, st->x, st->y, st->z);
+			} else if (k < 0) {
+				xfree(st);
 			} else {
-				put_hashmap(world->scheduledTicks, (uint64_t) st, NULL);
+				struct encpos ep;
+				ep.x = st->x;
+				ep.y = st->y;
+				ep.z = st->z;
+				put_hashmap(world->scheduledTicks, *((uint64_t*) &ep), NULL);
 				xfree(st);
 			}
 		}
-		END_HASHMAP_ITERATION(world->scheduledTicks)
+		prqueue_del(pq);
 		endProfilerSection("tick_chunk_scheduledticks");
 		endProfilerSection("tick_chunks");
 		BEGIN_HASHMAP_ITERATION (plugins)

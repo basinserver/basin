@@ -122,7 +122,8 @@ block onBlockPlacedPlayer_lever(struct player* player, struct world* world, bloc
 	else if (face == WEST) return blk | 0x02;
 	else if (face == YN) return blk | (f == EAST || f == WEST ? 0x00 : 0x07);
 	else if (face == YP) return blk | (f == NORTH || f == SOUTH ? 0x05 : 0x06);
-	return blk;
+	offsetCoordByFace(&x, &y, &z, face);
+	return isNormalCube(getBlockInfo(getBlockWorld(world, x, y, z))) ? blk : 0;
 }
 
 //TODO: burnout on redstone torches
@@ -165,7 +166,44 @@ void onBlockUpdate_redstonedust(struct world* world, block blk, int32_t x, int32
 
 void onBlockUpdate_repeater(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
 	onBlockUpdate_checkPlace(world, blk, x, y, z);
-	scheduleBlockTick(world, x, y, z, 2 * (((blk & 0x0f) >> 2) + 1));
+	if (isBlockTickScheduled(world, x, y, z)) {
+		return;
+	}
+	uint8_t ori = blk & 0x03;
+	uint8_t excl = 0;
+	if (ori == 0) {
+		excl = SOUTH;
+	} else if (ori == 1) {
+		excl = WEST;
+	} else if (ori == 2) {
+		excl = NORTH;
+	} else if (ori == 3) {
+		excl = EAST;
+	}
+	uint8_t sPower = getSpecificPower_block(world, getChunk(world, x >> 4, z >> 4), x, y, z, excl);
+	uint8_t update = 0;
+	if (blk >> 4 == BLK_DIODE_1 >> 4 && sPower <= 0) {
+		update = 1;
+	} else if (sPower > 0 && blk >> 4 == BLK_DIODE >> 4) {
+		update = 1;
+	}
+	if (update) {
+		float priority = -1.;
+		{
+			int32_t sx = x;
+			int32_t sy = y;
+			int32_t sz = z;
+			offsetCoordByFace(&sx, &sy, &sz, excl);
+			block b = getBlockWorld(world, sx, sy, sz);
+			if (b >> 4 == BLK_DIODE_1 >> 4 || b >> 4 == BLK_DIODE >> 4) {
+				priority = -3.;
+			}
+		}
+		if (priority == -1. && blk >> 4 == BLK_DIODE_1 >> 4) {
+			priority = -2.;
+		}
+		scheduleBlockTick(world, x, y, z, 2 * (((blk & 0x0f) >> 2) + 1), priority);
+	}
 }
 
 void onBlockUpdate_lamp(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
@@ -178,20 +216,23 @@ void onBlockUpdate_lamp(struct world* world, block blk, int32_t x, int32_t y, in
 	}
 }
 
+void onBlockUpdate_tnt(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
+	uint8_t maxPower = getPropogatedPower_block(world, getChunk(world, x >> 4, z >> 4), x, y, z, -1);
+	if (maxPower > 0) {
+		setBlockWorld(world, 0, x, y, z);
+		struct entity* e = newEntity(nextEntityID++, (double) x + .5, (double) y, (double) z + .5, ENT_PRIMEDTNT, 0., 0.);
+		e->data.tnt.fuse = 80;
+		e->objectData = blk >> 4;
+		float ra = randFloat() * M_PI * 2.;
+		e->motX = -sinf(ra) * .02;
+		e->motY = .2;
+		e->motZ = -cosf(ra) * .02;
+		spawnEntity(world, e);
+	}
+}
+
 int scheduledTick_repeater(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
 	uint8_t ori = blk & 0x03;
-	/*int32_t sx = x;
-	 int32_t sy = y;
-	 int32_t sz = z;
-	 if (ori == 0) {
-	 offsetCoordByFace(&sx, &sy, &sz, SOUTH);
-	 } else if (ori == 1) {
-	 offsetCoordByFace(&sx, &sy, &sz, WEST);
-	 } else if (ori == 2) {
-	 offsetCoordByFace(&sx, &sy, &sz, NORTH);
-	 } else if (ori == 3) {
-	 offsetCoordByFace(&sx, &sy, &sz, EAST);
-	 }*/
 	uint8_t excl = 0;
 	uint8_t lock1 = NORTH;
 	uint8_t mLock1 = 2;
@@ -235,11 +276,21 @@ int scheduledTick_repeater(struct world* world, block blk, int32_t x, int32_t y,
 		}
 	}
 	uint8_t sPower = getSpecificPower_block(world, getChunk(world, x >> 4, z >> 4), x, y, z, excl);
-	if (sPower > 0 && blk >> 4 == BLK_DIODE >> 4) {
-		setBlockWorld(world, BLK_DIODE_1 | (blk & 0x0f), x, y, z);
-	} else if (sPower <= 0 && blk >> 4 == BLK_DIODE_1 >> 4) {
+	//if (sPower > 0 && blk >> 4 == BLK_DIODE >> 4) {
+	//printf("attempt, power = %i\n", sPower);
+	if (blk >> 4 == BLK_DIODE_1 >> 4 && sPower <= 0) {
+		//} else if (sPower <= 0 && blk >> 4 == BLK_DIODE_1 >> 4) {
+		//printf("close\n");
 		setBlockWorld(world, BLK_DIODE | (blk & 0x0f), x, y, z);
+	} else if (blk >> 4 == BLK_DIODE >> 4) {
+		//printf("open\n");
+		setBlockWorld(world, BLK_DIODE_1 | (blk & 0x0f), x, y, z);
+		if (sPower <= 0) {
+			scheduleBlockTick(world, x, y, z, 2 * (((blk & 0x0f) >> 2) + 1), -2.);
+			return -1;
+		}
 	}
+	//}
 	return 0;
 }
 
@@ -253,6 +304,27 @@ void onBlockInteract_lever(struct world* world, block blk, int32_t x, int32_t y,
 	} else if (blk >> 4 == BLK_LEVER >> 4 && !(blk & 0x08)) {
 		setBlockWorld(world, BLK_LEVER | (blk & 0x07) | 0x08, x, y, z);
 	}
+}
+
+void onBlockInteract_button(struct world* world, block blk, int32_t x, int32_t y, int32_t z, struct player* player, uint8_t face, float curPosX, float curPosY, float curPosZ) {
+	setBlockWorld(world, (blk ^ (blk & 0x0f)) | (blk & 0x07) | 0x08, x, y, z);
+	scheduleBlockTick(world, x, y, z, blk >> 4 == BLK_BUTTON >> 4 ? 20 : 30, 0.);
+}
+
+int scheduledTick_button(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
+	setBlockWorld(world, (blk ^ (blk & 0x0f)) | (blk & 0x07), x, y, z);
+	return 0;
+}
+
+block onBlockPlacedPlayer_button(struct player* player, struct world* world, block blk, int32_t x, int32_t y, int32_t z, uint8_t face) {
+	if (face == NORTH) return blk | 0x04;
+	else if (face == SOUTH) return blk | 0x03;
+	else if (face == EAST) return blk | 0x01;
+	else if (face == WEST) return blk | 0x02;
+	else if (face == YN) return blk | 0x00;
+	else if (face == YP) return blk | 0x05;
+	offsetCoordByFace(&x, &y, &z, face);
+	return isNormalCube(getBlockInfo(getBlockWorld(world, x, y, z))) ? blk : 0;
 }
 
 int canBePlaced_redstone(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
@@ -307,8 +379,18 @@ void onBlockUpdate_door(struct world* world, block blk, int32_t x, int32_t y, in
 	int upper = blk & 0b1000;
 	if (!upper && !isNormalCube(bi)) goto delete;
 	b = getBlockWorld(world, x, y + (upper ? -1 : 1), z);
+	int upperD = upper ? (blk & 0x0f) : (b & 0x0f);
 	if (b >> 4 == blk >> 4) {
-		//TODO: power open
+		uint8_t upperPower = getPropogatedPower_block(world, getChunk(world, x >> 4, z >> 4), x, y + (upper ? 0 : -1), z, -1);
+		uint8_t lowerPower = getPropogatedPower_block(world, getChunk(world, x >> 4, z >> 4), x, y + (upper ? -1 : 0), z, -1);
+		uint8_t maxPower = upperPower > lowerPower ? upperPower : lowerPower;
+		if ((upperD & 0x02) && maxPower <= 0) {
+			setBlockWorld(world, (upper ? blk : b) ^ 0x02, x, y + (upper ? 0 : 1), z);
+			setBlockWorld(world, (upper ? b : blk) ^ 0x04, x, y + (upper ? -1 : 0), z);
+		} else if (!(upperD & 0x02) && maxPower > 0) {
+			setBlockWorld(world, (upper ? blk : b) | 0x02, x, y + (upper ? 0 : 1), z);
+			setBlockWorld(world, (upper ? b : blk) | 0x04, x, y + (upper ? -1 : 0), z);
+		}
 		return;
 	}
 	delete:;
@@ -604,7 +686,7 @@ int falling_canFallThrough(block b) {
 
 void onBlockUpdate_falling(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
 	if (y > 0 && falling_canFallThrough(getBlockWorld(world, x, y - 1, z))) {
-		scheduleBlockTick(world, x, y, z, 4);
+		scheduleBlockTick(world, x, y, z, 4, 0.);
 	}
 }
 
@@ -1367,13 +1449,13 @@ void fluid_doFlowInto(int water, struct world* world, struct chunk* ch, int32_t 
 		dropBlockDrops(world, b, NULL, x, y, z);
 	}
 	setBlockWorld_guess(world, ch, (water ? BLK_WATER : BLK_LAVA) | level, x, y, z);
-	scheduleBlockTick(world, x, y, z, water ? 5 : (world->dimension == -1 ? 10 : 30));
+	scheduleBlockTick(world, x, y, z, water ? 5 : (world->dimension == -1 ? 10 : 30), 0.);
 }
 
 void onBlockUpdate_staticfluid(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
 	int water = (blk >> 4) == (BLK_WATER >> 4) || (blk >> 4) == (BLK_WATER_1 >> 4);
 	if (water || !lava_checkForMixing(world, NULL, blk, x, y, z)) {
-		scheduleBlockTick(world, x, y, z, water ? 5 : (world->dimension == -1 ? 10 : 30));
+		scheduleBlockTick(world, x, y, z, water ? 5 : (world->dimension == -1 ? 10 : 30), 0.);
 		if (water) setBlockWorld_noupdate(world, BLK_WATER | (blk & 0x0f), x, y, z);
 		else if (!water) setBlockWorld_noupdate(world, BLK_LAVA | (blk & 0x0f), x, y, z);
 	}
@@ -1733,6 +1815,12 @@ void init_blocks() {
 		tmp = getJSONValue(ur, "lightEmission");
 		if (tmp == NULL || tmp->type != JSON_NUMBER) goto cerr;
 		bi->lightEmission = (uint8_t) tmp->data.number;
+		tmp = getJSONValue(ur, "resistance");
+		if (tmp == NULL || tmp->type != JSON_NUMBER) {
+			bi->resistance = bi->hardness * 5;
+		} else {
+			bi->resistance = (float) tmp->data.number * 3;
+		}
 		add_block_info(id, bi);
 		continue;
 		cerr: ;
@@ -1928,5 +2016,12 @@ void init_blocks() {
 	getBlockInfo(BLK_REDSTONELIGHT_1)->onBlockUpdate = &onBlockUpdate_lamp;
 	getBlockInfo(BLK_LEVER)->onBlockInteract = &onBlockInteract_lever;
 	getBlockInfo(BLK_LEVER)->onBlockPlacedPlayer = &onBlockPlacedPlayer_lever;
+	getBlockInfo(BLK_BUTTON)->onBlockPlacedPlayer = &onBlockPlacedPlayer_button;
+	getBlockInfo(BLK_BUTTON)->onBlockInteract = &onBlockInteract_button;
+	getBlockInfo(BLK_BUTTON)->scheduledTick = &scheduledTick_button;
+	getBlockInfo(BLK_BUTTON_1)->onBlockPlacedPlayer = &onBlockPlacedPlayer_button;
+	getBlockInfo(BLK_BUTTON_1)->onBlockInteract = &onBlockInteract_button;
+	getBlockInfo(BLK_BUTTON_1)->scheduledTick = &scheduledTick_button;
+	getBlockInfo(BLK_TNT)->onBlockUpdate = &onBlockUpdate_tnt;
 //TODO: redstone torch burnout
 }

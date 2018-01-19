@@ -292,7 +292,7 @@ union entity_data {
 
 		} minecart;
 		struct entity_tnt {
-
+				uint16_t fuse;
 		} tnt;
 		struct entity_endercrystal {
 
