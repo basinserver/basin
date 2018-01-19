@@ -543,6 +543,9 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 							}
 							setSlot(player, player->inventory, 36 + player->currentItem, ci, 1, 1);
 						}
+					} else {
+						setBlockWorld(player->world, b2, x, y, z);
+						setSlot(player, player->inventory, 36 + player->currentItem, ci, 1, 1);
 					}
 				} else {
 					setBlockWorld(player->world, b2, x, y, z);

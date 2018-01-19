@@ -303,6 +303,40 @@ void onBlockInteract_repeater(struct world* world, block blk, int32_t x, int32_t
 	setBlockWorld(world, (blk >> 4 << 4) | (((((blk & 0x0f) >> 2) + 1) & 0x03) << 2) | (blk & 0x03), x, y, z);
 }
 
+void onBlockInteract_trapdoor(struct world* world, block blk, int32_t x, int32_t y, int32_t z, struct player* player, uint8_t face, float curPosX, float curPosY, float curPosZ) {
+	setBlockWorld(world, (blk >> 4 << 4) | (blk & 0b1011) | (blk & 0b0100 ? 0 : 0b0100), x, y, z);
+}
+
+void onBlockUpdate_trapdoor(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
+	uint8_t maxPower = getPropogatedPower_block(world, getChunk(world, x >> 4, z >> 4), x, y, z, -1);
+	if (maxPower > 0 && !(blk & 0b0100)) {
+		setBlockWorld(world, (blk >> 4 << 4) | (blk & 0b1011) | 0b0100, x, y, z);
+	}		//TODO: closing?
+	onBlockUpdate_checkPlace(world, blk, x, y, z);
+}
+
+block onBlockPlacedPlayer_trapdoor(struct player* player, struct world* world, block blk, int32_t x, int32_t y, int32_t z, uint8_t face) {
+	if (face == YP || face == YN) {
+		if (isNormalCube(getBlockInfo(getBlockWorld(world, x + 1, y, z)))) face = XP;
+		else if (isNormalCube(getBlockInfo(getBlockWorld(world, x - 1, y, z)))) face = XN;
+		else if (isNormalCube(getBlockInfo(getBlockWorld(world, x, y, z + 1)))) face = ZP;
+		else if (isNormalCube(getBlockInfo(getBlockWorld(world, x, y, z - 1)))) face = ZN;
+	}
+	if (face == XN) blk |= 2;
+	else if (face == XP) blk |= 3;
+	else if (face == ZP) blk |= 1;
+	return blk;
+}
+
+int canBePlaced_trapdoor(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
+	uint8_t ori = blk & 0b0011;
+	if (ori == 2 && isNormalCube(getBlockInfo(getBlockWorld(world, x + 1, y, z)))) return 1;
+	else if (ori == 3 && isNormalCube(getBlockInfo(getBlockWorld(world, x - 1, y, z)))) return 1;
+	else if (ori == 0 && isNormalCube(getBlockInfo(getBlockWorld(world, x, y, z + 1)))) return 1;
+	else if (ori == 1 && isNormalCube(getBlockInfo(getBlockWorld(world, x, y, z - 1)))) return 1;
+	return 0;
+}
+
 void onBlockInteract_lever(struct world* world, block blk, int32_t x, int32_t y, int32_t z, struct player* player, uint8_t face, float curPosX, float curPosY, float curPosZ) {
 	if (blk >> 4 == BLK_LEVER >> 4 && (blk & 0x08)) {
 		setBlockWorld(world, BLK_LEVER | (blk & 0x07), x, y, z);
@@ -2028,5 +2062,12 @@ void init_blocks() {
 	getBlockInfo(BLK_BUTTON_1)->onBlockInteract = &onBlockInteract_button;
 	getBlockInfo(BLK_BUTTON_1)->scheduledTick = &scheduledTick_button;
 	getBlockInfo(BLK_TNT)->onBlockUpdate = &onBlockUpdate_tnt;
+	getBlockInfo(BLK_TRAPDOOR)->onBlockInteract = &onBlockInteract_trapdoor;
+	getBlockInfo(BLK_TRAPDOOR)->onBlockUpdate = &onBlockUpdate_trapdoor;
+	getBlockInfo(BLK_IRONTRAPDOOR)->onBlockUpdate = &onBlockUpdate_trapdoor;
+	getBlockInfo(BLK_TRAPDOOR)->canBePlaced = &canBePlaced_trapdoor;
+	getBlockInfo(BLK_IRONTRAPDOOR)->canBePlaced = &canBePlaced_trapdoor;
+	getBlockInfo(BLK_TRAPDOOR)->onBlockPlacedPlayer = &onBlockPlacedPlayer_trapdoor;
+	getBlockInfo(BLK_IRONTRAPDOOR)->onBlockPlacedPlayer = &onBlockPlacedPlayer_trapdoor;
 //TODO: redstone torch burnout
 }
