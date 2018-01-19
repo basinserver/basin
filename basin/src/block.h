@@ -510,6 +510,8 @@ struct block_info* getBlockInfo(block b);
 
 struct block_info* getBlockInfoLoose(block b);
 
+uint8_t getFaceFromPlayer(struct player* player);
+
 item getItemFromName(const char* name);
 
 struct block_info {

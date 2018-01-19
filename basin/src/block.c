@@ -28,6 +28,16 @@
 struct collection* block_infos;
 struct collection* block_materials;
 
+uint8_t getFaceFromPlayer(struct player* player) {
+	uint32_t h = (uint32_t) floor(player->entity->yaw / 90. + .5) & 3;
+	uint8_t f = 0;
+	if (h == 0) f = SOUTH;
+	else if (h == 1) f = WEST;
+	else if (h == 2) f = NORTH;
+	else if (h == 3) f = EAST;
+	return f;
+}
+
 void onBlockUpdate_checkPlace(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
 	struct block_info* bi = getBlockInfo(blk);
 	if (bi != NULL && bi->canBePlaced != NULL && !(*bi->canBePlaced)(world, blk, x, y, z)) {
@@ -110,12 +120,7 @@ int canBePlaced_torch(struct world* world, block blk, int32_t x, int32_t y, int3
 }
 
 block onBlockPlacedPlayer_lever(struct player* player, struct world* world, block blk, int32_t x, int32_t y, int32_t z, uint8_t face) {
-	uint32_t h = (uint32_t) floor(player->entity->yaw / 90. + .5) & 3;
-	uint8_t f = 0;
-	if (h == 0) f = SOUTH;
-	else if (h == 1) f = WEST;
-	else if (h == 2) f = NORTH;
-	else if (h == 3) f = EAST;
+	uint8_t f = getFaceFromPlayer(player);
 	if (face == NORTH) return blk | 0x04;
 	else if (face == SOUTH) return blk | 0x03;
 	else if (face == EAST) return blk | 0x01;

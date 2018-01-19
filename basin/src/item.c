@@ -198,7 +198,7 @@ int onItemInteract_minecart(struct world* world, struct player* player, uint8_t 
 
 }
 
-int onItemInteract_door(struct world* world, struct player* player, uint8_t slot_index, struct slot* slot, int32_t x, int32_t y, int32_t z, uint8_t face) {
+int onItemInteract_door(struct world* world, struct player* player, uint8_t slot_index, struct slot* slot, int32_t x, int32_t y, int32_t z, uint8_t face, float cx, float cy, float cz) {
 	if (face != YP) return 0;
 	if (!getBlockInfo(getBlockWorld(world, x, y, z))->material->replacable) offsetCoordByFace(&x, &y, &z, face);
 	block pre = getBlockWorld(world, x, y, z);
@@ -206,15 +206,19 @@ int onItemInteract_door(struct world* world, struct player* player, uint8_t slot
 	block b = BLK_DOOROAK;
 	if (slot->item == ITM_DOORSPRUCE) b = BLK_DOORSPRUCE;
 	else if (slot->item == ITM_DOORBIRCH) b = BLK_DOORBIRCH;
-	else if (slot->item == ITM_DOORJUNGLE) b = ITM_DOORJUNGLE;
-	else if (slot->item == ITM_DOORACACIA) b = ITM_DOORACACIA;
-	else if (slot->item == ITM_DOORDARKOAK) b = ITM_DOORDARKOAK;
-	else if (slot->item == ITM_DOORIRON) b = ITM_DOORIRON;
+	else if (slot->item == ITM_DOORJUNGLE) b = BLK_DOORJUNGLE;
+	else if (slot->item == ITM_DOORACACIA) b = BLK_DOORACACIA;
+	else if (slot->item == ITM_DOORDARKOAK) b = BLK_DOORDARKOAK;
+	else if (slot->item == ITM_DOORIRON) b = BLK_DOORIRON;
 	block b2 = b;
 	uint32_t h = (uint32_t) floor(player->entity->yaw / 90. + .5) & 3;
 	if (h == 0) b |= 1;
 	else if (h == 1) b |= 2;
-	else if (h == 2) b |= 3;
+	else if (h == 2) b |= 3; // should fold into "f" below
+	uint8_t f = getFaceFromPlayer(player);
+	if ((f == XN && cz < .5) || (f == XP && cz > .5) || (f == ZN && cx > .5) || (f == ZP && cx < .5)) {
+		b2 |= 0x01;
+	}
 	b2 |= 0b1000;
 	if (canPlayerPlaceBlock(player, b, x, y, z, face) && !setBlockWorld_noupdate(player->world, b, x, y, z)) {
 		if (!canPlayerPlaceBlock(player, b2, x, y + 1, z, face) || setBlockWorld(player->world, b2, x, y + 1, z)) {

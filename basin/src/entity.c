@@ -858,11 +858,34 @@ int getSwingTime(struct entity* ent) {
 	return 6;
 }
 
-block entity_adjustCollision(struct world* world, struct chunk* ch, block b, int32_t x, int32_t y, int32_t z) {
+block entity_adjustCollision(struct world* world, struct entity* ent, struct chunk* ch, block b, int32_t x, int32_t y, int32_t z) {
 	if (b >> 4 == BLK_DOORIRON >> 4 || b >> 4 == BLK_DOOROAK >> 4 || b >> 4 == BLK_DOORSPRUCE >> 4 || b >> 4 == BLK_DOORBIRCH >> 4 || b >> 4 == BLK_DOORJUNGLE >> 4 || b >> 4 == BLK_DOORACACIA >> 4 || b >> 4 == BLK_DOORDARKOAK >> 4) {
 		if (b & 0b1000) return getBlockWorld_guess(world, ch, x, y - 1, z);
 	}
 	return b;
+}
+
+void entity_adjustBoundingBox(struct world* world, struct entity* ent, struct chunk* ch, block b, int32_t x, int32_t y, int32_t z, struct boundingbox* in, struct boundingbox* out) {
+	memcpy(in, out, sizeof(struct boundingbox));
+	if (b >> 4 == BLK_DOORIRON >> 4 || b >> 4 == BLK_DOOROAK >> 4 || b >> 4 == BLK_DOORSPRUCE >> 4 || b >> 4 == BLK_DOORBIRCH >> 4 || b >> 4 == BLK_DOORJUNGLE >> 4 || b >> 4 == BLK_DOORACACIA >> 4 || b >> 4 == BLK_DOORDARKOAK >> 4) {
+		block lb = b;
+		block ub = b;
+		if (b & 0b1000) {
+			lb = getBlockWorld_guess(world, ch, x, y - 1, z);
+		} else {
+			ub = getBlockWorld_guess(world, ch, x, y + 1, z);
+		}
+		if ((lb & 0b0010) && (ub & 0b0001)) {
+			uint8_t face = lb & 0b0011;
+			if (face == 3 || face == 1) {
+				out->maxZ = 1. - in->maxZ;
+				out->minZ = 1. - in->minZ;
+			} else {
+				out->maxX = 1. - in->maxX;
+				out->minX = 1. - in->minX;
+			}
+		}
+	}
 }
 
 int moveEntity(struct entity* entity, double* mx, double* my, double* mz, float shrink) {
@@ -911,11 +934,14 @@ int moveEntity(struct entity* entity, double* mx, double* my, double* mz, float 
 			for (int32_t y = floor(obb.minY); y < floor(obb.maxY + 1.); y++) {
 				block b = getBlockWorld_guess(entity->world, ch, x, y, z);
 				if (b == 0) continue;
-				b = entity_adjustCollision(entity->world, ch, b, x, y, z);
+				b = entity_adjustCollision(entity->world, entity, ch, b, x, y, z);
 				struct block_info* bi = getBlockInfo(b);
 				if (bi == NULL) continue;
 				for (size_t i = 0; i < bi->boundingBox_count; i++) {
-					struct boundingbox* bb = &bi->boundingBoxes[i];
+					struct boundingbox* bbx = &bi->boundingBoxes[i];
+					struct boundingbox bbd;
+					struct boundingbox* bb = &bbd;
+					entity_adjustBoundingBox(entity->world, entity, ch, b, x, y, z, bbx, &bbd);
 //					if (!bi->fullCube) {
 //						for (double *d = (double *) &bi->boundingBoxes[0], idx = 0; idx < 6; idx++, d++)
 //							printf("%f ", *d);
@@ -952,11 +978,14 @@ int moveEntity(struct entity* entity, double* mx, double* my, double* mz, float 
 			for (int32_t y = floor(obb.minY); y < floor(obb.maxY + 1.); y++) {
 				block b = getBlockWorld_guess(entity->world, ch, x, y, z);
 				if (b == 0) continue;
-				b = entity_adjustCollision(entity->world, ch, b, x, y, z);
+				b = entity_adjustCollision(entity->world, entity, ch, b, x, y, z);
 				struct block_info* bi = getBlockInfo(b);
 				if (bi == NULL) continue;
 				for (size_t i = 0; i < bi->boundingBox_count; i++) {
-					struct boundingbox* bb = &bi->boundingBoxes[i];
+					struct boundingbox* bbx = &bi->boundingBoxes[i];
+					struct boundingbox bbd;
+					struct boundingbox* bb = &bbd;
+					entity_adjustBoundingBox(entity->world, entity, ch, b, x, y, z, bbx, &bbd);
 					if (bb != NULL && bb->minX != bb->maxX && bb->minY != bb->maxY && bb->minZ != bb->maxZ) {
 						if (bb->maxX + x > obb.minX && bb->minX + x < obb.maxX ? (bb->maxY + y > obb.minY && bb->minY + y < obb.maxY ? bb->maxZ + z > obb.minZ && bb->minZ + z < obb.maxZ : 0) : 0) {
 							if (pbb.maxY > bb->minY + y && pbb.minY < bb->maxY + y && pbb.maxZ > bb->minZ + z && pbb.minZ < bb->maxZ + z) {
@@ -988,11 +1017,14 @@ int moveEntity(struct entity* entity, double* mx, double* my, double* mz, float 
 			for (int32_t y = floor(obb.minY); y < floor(obb.maxY + 1.); y++) {
 				block b = getBlockWorld_guess(entity->world, ch, x, y, z);
 				if (b == 0) continue;
-				b = entity_adjustCollision(entity->world, ch, b, x, y, z);
+				b = entity_adjustCollision(entity->world, entity, ch, b, x, y, z);
 				struct block_info* bi = getBlockInfo(b);
 				if (bi == NULL) continue;
 				for (size_t i = 0; i < bi->boundingBox_count; i++) {
-					struct boundingbox* bb = &bi->boundingBoxes[i];
+					struct boundingbox* bbx = &bi->boundingBoxes[i];
+					struct boundingbox bbd;
+					struct boundingbox* bb = &bbd;
+					entity_adjustBoundingBox(entity->world, entity, ch, b, x, y, z, bbx, &bbd);
 					if (bb != NULL && bb->minX != bb->maxX && bb->minY != bb->maxY && bb->minZ != bb->maxZ) {
 						if (bb->maxX + x > obb.minX && bb->minX + x < obb.maxX ? (bb->maxY + y > obb.minY && bb->minY + y < obb.maxY ? bb->maxZ + z > obb.minZ && bb->minZ + z < obb.maxZ : 0) : 0) {
 							if (pbb.maxX > bb->minX + x && pbb.minX < bb->maxX + x && pbb.maxY > bb->minY + y && pbb.minY < bb->maxY + y) {

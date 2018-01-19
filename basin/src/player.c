@@ -468,7 +468,7 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 			struct item_info* ii = getItemInfo(ci->item);
 			if (ii != NULL && ii->onItemInteract != NULL) {
 				pthread_mutex_unlock(&player->inventory->mut);
-				if ((*ii->onItemInteract)(player->world, player, player->currentItem + 36, ci, x, y, z, face)) goto pbp_cont;
+				if ((*ii->onItemInteract)(player->world, player, player->currentItem + 36, ci, x, y, z, face, inp->data.play_server.playerblockplacement.cursor_position_x, inp->data.play_server.playerblockplacement.cursor_position_y, inp->data.play_server.playerblockplacement.cursor_position_z)) goto pbp_cont;
 				pthread_mutex_lock(&player->inventory->mut);
 				ci = getSlot(player, player->inventory, 36 + player->currentItem);
 			}
