@@ -1,8 +1,0 @@
-[Bb]asin
-src/*.o
-src/*.d
-world
-world.old
-world_nether
-world_the_end
-plugins/*
