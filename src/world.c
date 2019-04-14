@@ -127,37 +127,37 @@ struct chunk* loadRegionChunk(struct region* region, int8_t lchx, int8_t lchz, s
 	inflateEnd(&strm);
 	size_t rts = strm.total_out;
 	struct nbt_tag* nbt = NULL;
-	if (readNBT(&nbt, rtbuf, rts) < 0) {
+	if (nbt_read(&nbt, rtbuf, rts) < 0) {
 		xfree(rtbuf);
 		return NULL;
 	}
 	xfree(rtbuf);
-	struct nbt_tag* level = getNBTChild(nbt, "Level");
+	struct nbt_tag* level = nbt_get(nbt, "Level");
 	if (level == NULL || level->id != NBT_TAG_COMPOUND) goto rerx;
-	struct nbt_tag* tmp = getNBTChild(level, "xPos");
+	struct nbt_tag* tmp = nbt_get(level, "xPos");
 	if (tmp == NULL || tmp->id != NBT_TAG_INT) goto rerx;
 	int32_t xPos = tmp->data.nbt_int;
-	tmp = getNBTChild(level, "zPos");
+	tmp = nbt_get(level, "zPos");
 	if (tmp == NULL || tmp->id != NBT_TAG_INT) goto rerx;
 	int32_t zPos = tmp->data.nbt_int;
 	struct chunk* rch = newChunk(xPos, zPos);
-	tmp = getNBTChild(level, "LightPopulated");
+	tmp = nbt_get(level, "LightPopulated");
 	if (tmp == NULL || tmp->id != NBT_TAG_BYTE) goto rerx;
 	rch->lightpopulated = tmp->data.nbt_byte;
-	tmp = getNBTChild(level, "TerrainPopulated");
+	tmp = nbt_get(level, "TerrainPopulated");
 	if (tmp == NULL || tmp->id != NBT_TAG_BYTE) goto rerx;
 	rch->terrainpopulated = tmp->data.nbt_byte;
-	tmp = getNBTChild(level, "InhabitedTime");
+	tmp = nbt_get(level, "InhabitedTime");
 	if (tmp == NULL || tmp->id != NBT_TAG_LONG) goto rerx;
 	rch->inhabitedticks = tmp->data.nbt_long;
-	tmp = getNBTChild(level, "Biomes");
+	tmp = nbt_get(level, "Biomes");
 	if (tmp == NULL || tmp->id != NBT_TAG_BYTEARRAY) goto rerx;
 	if (tmp->data.nbt_bytearray.len == 256) memcpy(rch->biomes, tmp->data.nbt_bytearray.data, 256);
-	tmp = getNBTChild(level, "HeightMap");
+	tmp = nbt_get(level, "HeightMap");
 	if (tmp == NULL || tmp->id != NBT_TAG_INTARRAY) goto rerx;
 	if (tmp->data.nbt_intarray.count == 256) for (int i = 0; i < 256; i++)
 		rch->heightMap[i >> 4][i & 0x0F] = (uint16_t) tmp->data.nbt_intarray.ints[i];
-	struct nbt_tag* tes = getNBTChild(level, "TileEntities");
+	struct nbt_tag* tes = nbt_get(level, "TileEntities");
 	if (tes == NULL || tes->id != NBT_TAG_LIST) goto rerx;
 	for (size_t i = 0; i < tes->children_count; i++) {
 		struct nbt_tag* ten = tes->children[i];
@@ -166,13 +166,13 @@ struct chunk* loadRegionChunk(struct region* region, int8_t lchx, int8_t lchz, s
 		add_collection(rch->tileEntities, te);
 	}
 	//TODO: tileticks
-	struct nbt_tag* sections = getNBTChild(level, "Sections");
+	struct nbt_tag* sections = nbt_get(level, "Sections");
 	for (size_t i = 0; i < sections->children_count; i++) {
 		struct nbt_tag* section = sections->children[i];
-		tmp = getNBTChild(section, "Y");
+		tmp = nbt_get(section, "Y");
 		if (tmp == NULL || tmp->id != NBT_TAG_BYTE) continue;
 		uint8_t y = tmp->data.nbt_byte;
-		tmp = getNBTChild(section, "Blocks");
+		tmp = nbt_get(section, "Blocks");
 		if (tmp == NULL || tmp->id != NBT_TAG_BYTEARRAY || tmp->data.nbt_bytearray.len != 4096) continue;
 		int hna = 0;
 		block* rbl = xmalloc(sizeof(block) * 4096);
@@ -181,7 +181,7 @@ struct chunk* loadRegionChunk(struct region* region, int8_t lchx, int8_t lchz, s
 			if (((block) tmp->data.nbt_bytearray.data[i]) != 0) hna = 1;
 		}
 		//if (hna) rch->empty[y] = 0;
-		tmp = getNBTChild(section, "Add");
+		tmp = nbt_get(section, "Add");
 		if (tmp != NULL) {
 			if (tmp->id != NBT_TAG_BYTEARRAY || tmp->data.nbt_bytearray.len != 2048) continue;
 			for (int i = 0; i < 4096; i++) {
@@ -196,7 +196,7 @@ struct chunk* loadRegionChunk(struct region* region, int8_t lchx, int8_t lchz, s
 			}
 		}
 		if (hna) {
-			tmp = getNBTChild(section, "Data");
+			tmp = nbt_get(section, "Data");
 			if (tmp == NULL || tmp->id != NBT_TAG_BYTEARRAY || tmp->data.nbt_bytearray.len != 2048) continue;
 			for (int i = 0; i < 4096; i++) {
 				block sx = tmp->data.nbt_bytearray.data[i / 2];
@@ -248,12 +248,12 @@ struct chunk* loadRegionChunk(struct region* region, int8_t lchx, int8_t lchz, s
 				*((int32_t*) &cs->blocks[bi / 8]) = cv;
 				bi += cs->bpb;
 			}
-			tmp = getNBTChild(section, "BlockLight");
+			tmp = nbt_get(section, "BlockLight");
 			if (tmp != NULL) {
 				if (tmp->id != NBT_TAG_BYTEARRAY || tmp->data.nbt_bytearray.len != 2048) continue;
 				memcpy(cs->blockLight, tmp->data.nbt_bytearray.data, 2048);
 			}
-			tmp = getNBTChild(section, "SkyLight");
+			tmp = nbt_get(section, "SkyLight");
 			if (tmp != NULL) {
 				if (tmp->id != NBT_TAG_BYTEARRAY || tmp->data.nbt_bytearray.len != 2048) continue;
 				cs->skyLight = xmalloc(2048);
@@ -1638,20 +1638,20 @@ int loadWorld(struct world* world, char* path) {
 		return -1;
 	}
 	unsigned char* nld = NULL;
-	ssize_t ds = decompressNBT(ld, ldi, (void**) &nld);
+	ssize_t ds = nbt_decompress(ld, ldi, (void**) &nld);
 	xfree(ld);
 	if (ds < 0) {
 		return -1;
 	}
-	if (readNBT(&world->level, nld, ds) < 0) return -1;
+	if (nbt_read(&world->level, nld, ds) < 0) return -1;
 	xfree(nld);
-	struct nbt_tag* data = getNBTChild(world->level, "Data");
-	world->levelType = getNBTChild(data, "generatorName")->data.nbt_string;
-	world->spawnpos.x = getNBTChild(data, "SpawnX")->data.nbt_int;
-	world->spawnpos.y = getNBTChild(data, "SpawnY")->data.nbt_int;
-	world->spawnpos.z = getNBTChild(data, "SpawnZ")->data.nbt_int;
-	world->time = getNBTChild(data, "DayTime")->data.nbt_long;
-	world->age = getNBTChild(data, "Time")->data.nbt_long;
+	struct nbt_tag* data = nbt_get(world->level, "Data");
+	world->levelType = nbt_get(data, "generatorName")->data.nbt_string;
+	world->spawnpos.x = nbt_get(data, "SpawnX")->data.nbt_int;
+	world->spawnpos.y = nbt_get(data, "SpawnY")->data.nbt_int;
+	world->spawnpos.z = nbt_get(data, "SpawnZ")->data.nbt_int;
+	world->time = nbt_get(data, "DayTime")->data.nbt_long;
+	world->age = nbt_get(data, "Time")->data.nbt_long;
 	world->lpa = xstrdup(path, 0);
 	printf("spawn: %i, %i, %i\n", world->spawnpos.x, world->spawnpos.y, world->spawnpos.z);
 	snprintf(lp, PATH_MAX, "%s/region/", path);

@@ -10,6 +10,7 @@
 #include <basin/nbt.h>
 #include <basin/network.h>
 #include <avuna/pmem.h>
+#include <avuna/string.h>
 #include <openssl/rsa.h>
 #include <openssl/x509.h>
 #include <openssl/ssl.h>
@@ -120,7 +121,7 @@ int readVarLong(int64_t* output, unsigned char* buffer, size_t buflen) {
 	return v2;
 }
 
-int writeString(char* input, unsigned char* buffer, size_t buflen) {
+ssize_t writeString(char* input, unsigned char* buffer, size_t buflen) {
 	if (buflen < 4) return 0;
 	ssize_t sl = strlen(input);
 	if (sl - 4 > (ssize_t) buflen) {
@@ -133,33 +134,33 @@ int writeString(char* input, unsigned char* buffer, size_t buflen) {
 	return sl + x;
 }
 
-int readString(char** output, unsigned char* buffer, size_t buflen) {
+int readString(struct mempool* pool, char** output, unsigned char* buffer, size_t buflen) {
 	if (buflen < 1) {
-		*output = malloc(1);
+		*output = pmalloc(pool, 1);
 		(*output)[0] = 0;
 		return 0;
 	}
 	int32_t sl;
 	int x = readVarInt(&sl, buffer, buflen);
 	if (x == -1) {
-		*output = malloc(1);
+		*output = pmalloc(pool, 1);
 		(*output)[0] = 0;
 		return 0;
 	}
 	if (sl > 32767) {
-		*output = malloc(1);
+		*output = pmalloc(pool, 1);
 		(*output)[0] = 0;
 		return 0;
 	}
 	buflen -= x;
 	buffer += x;
 	if (buflen < sl) {
-		*output = malloc(1);
+		*output = pmalloc(pool, 1);
 		(*output)[0] = 0;
 		return 0;
 	}
-	*output = malloc(sl + 1);
-	memcpy(*output, buffer, sl);
+	*output = pmalloc(pool, (size_t) (sl + 1));
+	memcpy(*output, buffer, (size_t) sl);
 	(*output)[sl] = 0;
 	return x + sl; // silently ignores characters past the outlen
 }
@@ -216,18 +217,17 @@ int readVarInt_stream(int32_t* output,
 	return v2;
 }
 
-int readSlot(struct slot* slot, unsigned char* buffer, size_t buflen) {
+int readSlot(struct mempool* pool, struct slot* slot, unsigned char* buffer, size_t buflen) {
 	if (buflen < 2) return -1;
 	memcpy(&slot->item, buffer, 2);
 	swapEndian(&slot->item, 2);
 	if (slot->item == -1) {
 		slot->damage = 0;
 		slot->itemCount = 0;
-		slot->nbt = malloc(sizeof(struct nbt_tag));
+		slot->nbt = pmalloc(pool, sizeof(struct nbt_tag));
 		slot->nbt->id = NBT_TAG_END;
 		slot->nbt->name = NULL;
 		slot->nbt->children = NULL;
-		slot->nbt->children_count = 0;
 		return 2;
 	}
 	buffer += 2;
@@ -240,10 +240,10 @@ int readSlot(struct slot* slot, unsigned char* buffer, size_t buflen) {
 	swapEndian(&slot->damage, 2);
 	buffer += 2;
 	buflen -= 2;
-	return 5 + readNBT(&slot->nbt, buffer, buflen);
+	return 5 + nbt_read(&slot->nbt, buffer, buflen);
 }
 
-void duplicateSlot(struct slot* slot, struct slot* dup) {
+void duplicateSlot(struct mempool* pool, struct slot* slot, struct slot* dup) {
 	if (slot == NULL) {
 		memset(dup, 0, sizeof(struct slot));
 		dup->item = -1;
@@ -252,39 +252,8 @@ void duplicateSlot(struct slot* slot, struct slot* dup) {
 	dup->item = slot->item;
 	dup->damage = slot->damage;
 	dup->itemCount = slot->itemCount;
-	dup->nbt = xmalloc(sizeof(struct nbt_tag));
+	dup->nbt = pmalloc(struct mempool* pool, sizeof(struct nbt_tag));
 	duplicateNBT(slot->nbt, dup->nbt);
-}
-
-void duplicateNBT(struct nbt_tag* nbt, struct nbt_tag* dup) {
-	if (nbt == NULL) {
-		memset(dup, 0, sizeof(struct nbt_tag));
-		return;
-	}
-	dup->name = nbt->name == NULL ? NULL : xstrdup(nbt->name, 0);
-	dup->id = nbt->id;
-	dup->children_count = nbt->children_count;
-	if (dup->id == NBT_TAG_BYTE || dup->id == NBT_TAG_SHORT || dup->id == NBT_TAG_INT || dup->id == NBT_TAG_LONG || dup->id == NBT_TAG_FLOAT || dup->id == NBT_TAG_DOUBLE) {
-		memcpy(&dup->data, &nbt->data, sizeof(union nbt_data));
-	} else if (dup->id == NBT_TAG_BYTEARRAY) {
-		dup->data.nbt_bytearray.len = nbt->data.nbt_bytearray.len;
-		dup->data.nbt_bytearray.data = xmalloc(dup->data.nbt_bytearray.len);
-		memcpy(dup->data.nbt_bytearray.data, nbt->data.nbt_bytearray.data, dup->data.nbt_bytearray.len);
-	} else if (dup->id == NBT_TAG_STRING) {
-		dup->data.nbt_string = xstrdup(nbt->data.nbt_string, 0);
-	} else if (dup->id == NBT_TAG_LIST) {
-		dup->data.nbt_list.type = nbt->data.nbt_list.type;
-		dup->data.nbt_list.count = nbt->data.nbt_list.count;
-	} else if (dup->id == NBT_TAG_INTARRAY) {
-		dup->data.nbt_intarray.count = nbt->data.nbt_intarray.count;
-		dup->data.nbt_intarray.ints = xmalloc(4 * dup->data.nbt_intarray.count);
-		memcpy(dup->data.nbt_intarray.ints, nbt->data.nbt_intarray.ints, dup->data.nbt_bytearray.len);
-	}
-	dup->children = dup->children_count == 0 ? NULL : xmalloc(sizeof(struct nbt_tag*) * dup->children_count);
-	for (size_t i = 0; i < dup->children_count; i++) {
-		dup->children[i] = xmalloc(sizeof(struct nbt_tag));
-		duplicateNBT(nbt->children[i], dup->children[i]);
-	}
 }
 
 int writeSlot(struct slot* slot, unsigned char* buffer, size_t buflen) {
@@ -302,5 +271,5 @@ int writeSlot(struct slot* slot, unsigned char* buffer, size_t buflen) {
 	swapEndian(buffer, 2);
 	buffer += 2;
 	buflen -= 2;
-	return 5 + writeNBT(slot->nbt, buffer, buflen);
+	return 5 + nbt_write(slot->nbt, buffer, buflen);
 }

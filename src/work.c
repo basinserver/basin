@@ -10,6 +10,7 @@
 #include "packet.h"
 #include <basin/network.h>
 #include <basin/globals.h>
+#include <basin/connection.h>
 #include <basin/entity.h>
 #include <basin/server.h>
 #include <basin/worldmanager.h>
@@ -36,6 +37,7 @@
 #include <stdio.h>
 #include <pthread.h>
 #include <sys/ioctl.h>
+#include <avuna/util.h>
 
 void closeConn(struct work_param* param, struct conn* conn) {
 	close(conn->fd);
@@ -216,87 +218,81 @@ int work_joinServer(struct conn* conn, char* username, char* uuids) {
 	return 0;
 }
 
-int handleRead(struct conn* conn, struct work_param* param, int fd) {
-	if (conn->disconnect) return 0;
-	void* abuf;
-	size_t asze;
-	if (conn->aes_ctx_dec != NULL) {
-		int csl = conn->readBuffer_size + 32; // 16 extra just in case
-		void* edata = xmalloc(csl);
-		if (EVP_DecryptUpdate(conn->aes_ctx_dec, edata, &csl, conn->readBuffer, conn->readBuffer_size) != 1) {
-			xfree(edata);
-			return -1;
-		}
-		if (csl == 0) return 0;
-		if (conn->readDecBuffer == NULL) {
-			conn->readDecBuffer = xmalloc(csl);
-			conn->readDecBuffer_size = 0;
-		} else {
-			conn->readDecBuffer = xrealloc(conn->readDecBuffer, csl + conn->readDecBuffer_size);
-		}
-		memcpy(conn->readDecBuffer + conn->readDecBuffer_size, edata, csl);
-		conn->readDecBuffer_size += csl;
-		abuf = conn->readDecBuffer;
-		asze = conn->readDecBuffer_size;
-		xfree(conn->readBuffer);
-		conn->readBuffer = NULL;
-		conn->readBuffer_size = 0;
-	} else {
-		abuf = conn->readBuffer;
-		asze = conn->readBuffer_size;
+
+int connection_read(struct netmgr_connection* netmgr_conn, uint8_t* read_buf, size_t read_buf_len) {
+	struct connection* conn = netmgr_conn->extra;
+	if (conn->disconnect) {
+		return 1;
 	}
-	while (abuf != NULL && asze > 0) {
+	if (conn->aes_ctx_dec != NULL) {
+		int decrypted_length = (int) (read_buf_len + 32); // 16 extra just in case
+		void* decrypted = pmalloc(netmgr_conn->read_buffer.pool, (size_t) decrypted_length);
+		if (EVP_DecryptUpdate(conn->aes_ctx_dec, decrypted, &decrypted_length, read_buf, (int) read_buf_len) != 1) {
+			pprefree(netmgr_conn->read_buffer.pool, decrypted);
+			return 1;
+		}
+		if (decrypted_length == 0) return 0;
+		buffer_push(&netmgr_conn->read_buffer, decrypted, (size_t) decrypted_length);
+		pprefree(netmgr_conn->read_buffer.pool, read_buf);
+	} else {
+		buffer_push(&netmgr_conn->read_buffer, read_buf, read_buf_len);
+	}
+	while (netmgr_conn->read_buffer.size > 4) {
+		uint8_t peek_buf[8];
+		buffer_peek(&netmgr_conn->read_buffer, 5, peek_buf);
 		int32_t length = 0;
-		if (!readVarInt(&length, abuf, asze)) {
+		if (!readVarInt(&length, peek_buf, 5)) {
 			return 0;
 		}
 		int ls = getVarIntSize(length);
-		if (asze - ls < length) {
+		if (netmgr_conn->read_buffer.size - ls < length) {
 			return 0;
 		}
-		struct packet* inp = xmalloc(sizeof(struct packet));
-		ssize_t rx = readPacket(conn, abuf + ls, length, inp);
-		if (rx == -1) goto rete;
-		//printf("State = %i, ID = %i, Data = ", conn->state, inp->id);
-		//for (size_t i = 0; i < length + ls; i++) {
-		//	uint8_t ch = ((uint8_t*) conn->readBuffer)[i];
-		//	printf("%02X", ch);
-		//}
-		//printf("\n");
+		buffer_skip(&netmgr_conn->read_buffer, (size_t) ls);
+		struct mempool* packet_pool = mempool_new();
+		pchild(conn->pool, packet_pool);
+		uint8_t* packet_buf = pmalloc(packet_pool, (size_t) length);
+		buffer_pop(&netmgr_conn->read_buffer, (size_t) length, packet_buf);
+
+		struct packet* packet = pmalloc(packet_pool, sizeof(struct packet));
+		packet->pool = packet_pool;
+		ssize_t read_packet_length = readPacket(conn, packet_buf, (size_t) length, packet);
+
+		if (read_packet_length == -1) goto rete;
 		int os = conn->state;
 		struct packet rep;
 		int df = 0;
-		if (conn->state == STATE_HANDSHAKE && inp->id == PKT_HANDSHAKE_SERVER_HANDSHAKE) {
-			conn->host_ip = xstrdup(inp->data.handshake_server.handshake.server_address, 0);
-			conn->host_port = inp->data.handshake_server.handshake.server_port;
-			conn->protocolVersion = inp->data.handshake_server.handshake.protocol_version;
-			if ((inp->data.handshake_server.handshake.protocol_version < MC_PROTOCOL_VERSION_MIN || inp->data.handshake_server.handshake.protocol_version > MC_PROTOCOL_VERSION_MAX) && inp->data.handshake_server.handshake.next_state != STATE_STATUS) return -2;
-			if (inp->data.handshake_server.handshake.next_state == STATE_STATUS) {
+		if (conn->state == STATE_HANDSHAKE && packet->id == PKT_HANDSHAKE_SERVER_HANDSHAKE) {
+			conn->host_ip = xstrdup(packet->data.handshake_server.handshake.server_address, 0);
+			conn->host_port = packet->data.handshake_server.handshake.server_port;
+			conn->protocolVersion = packet->data.handshake_server.handshake.protocol_version;
+			if ((packet->data.handshake_server.handshake.protocol_version < MC_PROTOCOL_VERSION_MIN || packet->data.handshake_server.handshake.protocol_version > MC_PROTOCOL_VERSION_MAX) && packet->data.handshake_server.handshake.next_state != STATE_STATUS) return -2;
+			if (packet->data.handshake_server.handshake.next_state == STATE_STATUS) {
 				conn->state = STATE_STATUS;
-			} else if (inp->data.handshake_server.handshake.next_state == STATE_LOGIN) {
+			} else if (packet->data.handshake_server.handshake.next_state == STATE_LOGIN) {
 				conn->state = STATE_LOGIN;
 			} else goto rete;
 		} else if (conn->state == STATE_STATUS) {
-			if (inp->id == PKT_STATUS_SERVER_REQUEST) {
+			if (packet->id == PKT_STATUS_SERVER_REQUEST) {
 				rep.id = PKT_STATUS_CLIENT_RESPONSE;
 				rep.data.status_client.response.json_response = xmalloc(1000);
 				rep.data.status_client.response.json_response[999] = 0;
 				snprintf(rep.data.status_client.response.json_response, 999, "{\"version\":{\"name\":\"1.11.2\",\"protocol\":%i},\"players\":{\"max\":%i,\"online\":%i},\"description\":{\"text\":\"%s\"}}", MC_PROTOCOL_VERSION_MIN, max_players, players->entry_count, motd);
 				if (writePacket(conn, &rep) < 0) goto rete;
 				xfree(rep.data.status_client.response.json_response);
-			} else if (inp->id == PKT_STATUS_SERVER_PING) {
+			} else if (packet->id == PKT_STATUS_SERVER_PING) {
 				rep.id = PKT_STATUS_CLIENT_PONG;
 				if (writePacket(conn, &rep) < 0) goto rete;
 				conn->state = -1;
 			} else goto rete;
 		} else if (conn->state == STATE_LOGIN) {
-			if (inp->id == PKT_LOGIN_SERVER_ENCRYPTIONRESPONSE) {
-				if (conn->verifyToken == 0 || inp->data.login_server.encryptionresponse.shared_secret_length > 162 || inp->data.login_server.encryptionresponse.verify_token_length > 162) goto rete;
+			if (packet->id == PKT_LOGIN_SERVER_ENCRYPTIONRESPONSE) {
+				if (conn->verifyToken == 0 || packet->data.login_server.encryptionresponse.shared_secret_length > 162 || packet->data.login_server.encryptionresponse.verify_token_length > 162) goto rete;
 				unsigned char decSecret[162];
-				int secLen = RSA_private_decrypt(inp->data.login_server.encryptionresponse.shared_secret_length, inp->data.login_server.encryptionresponse.shared_secret, decSecret, public_rsa, RSA_PKCS1_PADDING);
+				int secLen = RSA_private_decrypt(packet->data.login_server.encryptionresponse.shared_secret_length, packet->data.login_server.encryptionresponse.shared_secret, decSecret, public_rsa, RSA_PKCS1_PADDING);
 				if (secLen != 16) goto rete;
 				unsigned char decVerifyToken[162];
-				int vtLen = RSA_private_decrypt(inp->data.login_server.encryptionresponse.verify_token_length, inp->data.login_server.encryptionresponse.verify_token, decVerifyToken, public_rsa, RSA_PKCS1_PADDING);
+				int vtLen = RSA_private_decrypt(packet->data.login_server.encryptionresponse.verify_token_length, packet->data.login_server.encryptionresponse.verify_token, decVerifyToken, public_rsa, RSA_PKCS1_PADDING);
 				if (vtLen != 4) goto rete;
 				uint32_t vt = *((uint32_t*) decVerifyToken);
 				if (vt != conn->verifyToken) goto rete;
@@ -368,7 +364,7 @@ int handleRead(struct conn* conn, struct work_param* param, int fd) {
 				if (data == NULL) goto merr;
 				data += 4;
 				struct json_object json;
-                json_parse(&json, data);
+				json_parse(&json, data);
 				struct json_object* tmp = json_get(&json, "id");
 				if (tmp == NULL || tmp->type != JSON_STRING) {
 					freeJSON(&json);
@@ -422,10 +418,10 @@ int handleRead(struct conn* conn, struct work_param* param, int fd) {
 					conn->disconnect = 1;
 					goto ret;
 				}
-			} else if (inp->id == PKT_LOGIN_SERVER_LOGINSTART) {
+			} else if (packet->id == PKT_LOGIN_SERVER_LOGINSTART) {
 				if (online_mode) {
 					if (conn->verifyToken) goto rete;
-					conn->onll_username = xstrdup(inp->data.login_server.loginstart.name, 0);
+					conn->onll_username = xstrdup(packet->data.login_server.loginstart.name, 0);
 					rep.id = PKT_LOGIN_CLIENT_ENCRYPTIONREQUEST;
 					rep.data.login_client.encryptionrequest.server_id = "";
 					rep.data.login_client.encryptionrequest.public_key = public_rsa_publickey;
@@ -437,7 +433,7 @@ int handleRead(struct conn* conn, struct work_param* param, int fd) {
 					if (writePacket(conn, &rep) < 0) goto rete;
 				} else {
 					int bn = 0;
-					char* rna = trim(inp->data.login_server.loginstart.name);
+					char* rna = trim(packet->data.login_server.loginstart.name);
 					size_t rnal = strlen(rna);
 					if (rnal > 16 || rnal < 2) bn = 2;
 					if (!bn) {
@@ -461,7 +457,7 @@ int handleRead(struct conn* conn, struct work_param* param, int fd) {
 				}
 			}
 		} else if (conn->state == STATE_PLAY) {
-			add_queue(conn->player->incomingPacket, inp);
+			add_queue(conn->player->incomingPacket, packet);
 			df = 1;
 		}
 		beginProfilerSection("movebuf");
@@ -473,19 +469,24 @@ int handleRead(struct conn* conn, struct work_param* param, int fd) {
 		goto ret;
 		rete: ;
 		if (!df) {
-			freePacket(os, 0, inp);
-			xfree(inp);
+			freePacket(os, 0, packet);
+			xfree(packet);
 		}
 		return -1;
 		ret: ;
 		if (!df) {
-			freePacket(os, 0, inp);
-			xfree(inp);
+			freePacket(os, 0, packet);
+			xfree(packet);
 		}
 	}
 
 	return 0;
 }
+
+void connection_on_closed(struct netmgr_connection* conn) {
+
+}
+
 
 void run_work(struct work_param* param) {
 	if (pipe(param->pipes) != 0) {

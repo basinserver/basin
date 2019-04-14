@@ -23,21 +23,21 @@ struct tile_entity* parseTileEntity(struct nbt_tag* tag) {
 	struct tile_entity* te = xmalloc(sizeof(struct tile_entity));
 	te->id = NULL;
 	struct nbt_tag* tmp = NULL;
-	tmp = getNBTChild(tag, "id");
+	tmp = nbt_get(tag, "id");
 	if (tmp == NULL || tmp->id != NBT_TAG_STRING) goto cer;
 	te->id = xstrdup(tmp->data.nbt_string, 0);
-	tmp = getNBTChild(tag, "x");
+	tmp = nbt_get(tag, "x");
 	if (tmp == NULL || tmp->id != NBT_TAG_INT) goto cer;
 	te->x = tmp->data.nbt_int;
-	tmp = getNBTChild(tag, "y");
+	tmp = nbt_get(tag, "y");
 	if (tmp == NULL || tmp->id != NBT_TAG_INT) goto cer;
 	te->y = tmp->data.nbt_int;
-	tmp = getNBTChild(tag, "z");
+	tmp = nbt_get(tag, "z");
 	if (tmp == NULL || tmp->id != NBT_TAG_INT) goto cer;
 	te->z = tmp->data.nbt_int;
 	te->tick = NULL;
 	if (streq_nocase(te->id, "minecraft:chest")) {
-		tmp = getNBTChild(tag, "CustomName");
+		tmp = nbt_get(tag, "CustomName");
 		te->data.chest.inv = xmalloc(sizeof(struct inventory));
 		newInventory(te->data.chest.inv, INVTYPE_CHEST, 2, 27);
 		te->data.chest.inv->te = te;
@@ -47,29 +47,29 @@ struct tile_entity* parseTileEntity(struct nbt_tag* tag) {
 			te->data.chest.inv->title = xmalloc(tl);
 			snprintf(te->data.chest.inv->title, tl, "{\"text\": \"%s\"}", tmp->data.nbt_string);
 		}
-		tmp = getNBTChild(tag, "Lock");
+		tmp = nbt_get(tag, "Lock");
 		if (tmp == NULL) te->data.chest.lock = NULL;
 		else te->data.chest.lock = xstrdup(tmp->data.nbt_string, 0);
-		struct nbt_tag* items = getNBTChild(tag, "Items");
+		struct nbt_tag* items = nbt_get(tag, "Items");
 		if (items == NULL || items->id != NBT_TAG_LIST) {
 		} else for (int i = 0; i < items->children_count; i++) {
 			struct nbt_tag* nitem = items->children[i];
 			if (nitem == NULL || nitem->id != NBT_TAG_COMPOUND) continue;
-			tmp = getNBTChild(nitem, "Slot");
+			tmp = nbt_get(nitem, "Slot");
 			if (tmp == NULL || tmp->id != NBT_TAG_BYTE) continue;
 			uint8_t sli = tmp->data.nbt_byte;
 			if (sli > 26) continue;
 			struct slot* sl = xmalloc(sizeof(struct slot));
-			tmp = getNBTChild(nitem, "id");
+			tmp = nbt_get(nitem, "id");
 			if (tmp == NULL || tmp->id != NBT_TAG_STRING) continue;
 			sl->item = getItemFromName(tmp->data.nbt_string);
-			tmp = getNBTChild(nitem, "Count");
+			tmp = nbt_get(nitem, "Count");
 			if (tmp == NULL || tmp->id != NBT_TAG_BYTE) continue;
 			sl->itemCount = tmp->data.nbt_byte;
-			tmp = getNBTChild(nitem, "Damage");
+			tmp = nbt_get(nitem, "Damage");
 			if (tmp == NULL || tmp->id != NBT_TAG_SHORT) continue;
 			sl->damage = tmp->data.nbt_short;
-			tmp = getNBTChild(nitem, "tag");
+			tmp = nbt_get(nitem, "tag");
 			if (tmp == NULL || tmp->id != NBT_TAG_COMPOUND) {
 				sl->nbt = NULL;
 			} else {
@@ -80,7 +80,7 @@ struct tile_entity* parseTileEntity(struct nbt_tag* tag) {
 		}
 	} else if (streq_nocase(te->id, "minecraft:furnace")) {
 		te->tick = tetick_furnace;
-		tmp = getNBTChild(tag, "CustomName");
+		tmp = nbt_get(tag, "CustomName");
 		te->data.furnace.inv = xmalloc(sizeof(struct inventory));
 		newInventory(te->data.furnace.inv, INVTYPE_CHEST, 2, 27);
 		te->data.furnace.inv->te = te;
@@ -90,38 +90,38 @@ struct tile_entity* parseTileEntity(struct nbt_tag* tag) {
 			te->data.furnace.inv->title = xmalloc(tl);
 			snprintf(te->data.furnace.inv->title, tl, "{\"text\": \"%s\"}", tmp->data.nbt_string);
 		}
-		tmp = getNBTChild(tag, "Lock");
+		tmp = nbt_get(tag, "Lock");
 		if (tmp == NULL) te->data.chest.lock = NULL;
 		else te->data.furnace.lock = xstrdup(tmp->data.nbt_string, 0);
-		tmp = getNBTChild(tag, "BurnTime");
+		tmp = nbt_get(tag, "BurnTime");
 		if (tmp == NULL) te->data.furnace.burnTime = 0;
 		else te->data.furnace.burnTime = tmp->data.nbt_short;
-		tmp = getNBTChild(tag, "CookTime");
+		tmp = nbt_get(tag, "CookTime");
 		if (tmp == NULL) te->data.furnace.cookTime = 0;
 		else te->data.furnace.cookTime = tmp->data.nbt_short;
-		tmp = getNBTChild(tag, "CookTimeTotal");
+		tmp = nbt_get(tag, "CookTimeTotal");
 		if (tmp == NULL) te->data.furnace.cookTimeTotal = 0;
 		else te->data.furnace.cookTimeTotal = tmp->data.nbt_short;
-		struct nbt_tag* items = getNBTChild(tag, "Items");
+		struct nbt_tag* items = nbt_get(tag, "Items");
 		if (items == NULL || items->id != NBT_TAG_LIST) {
 		} else for (int i = 0; i < items->children_count; i++) {
 			struct nbt_tag* nitem = items->children[i];
 			if (nitem == NULL || nitem->id != NBT_TAG_COMPOUND) continue;
-			tmp = getNBTChild(nitem, "Slot");
+			tmp = nbt_get(nitem, "Slot");
 			if (tmp == NULL || tmp->id != NBT_TAG_BYTE) continue;
 			uint8_t sli = tmp->data.nbt_byte;
 			if (sli > 26) continue;
 			struct slot* sl = xmalloc(sizeof(struct slot));
-			tmp = getNBTChild(nitem, "id");
+			tmp = nbt_get(nitem, "id");
 			if (tmp == NULL || tmp->id != NBT_TAG_STRING) continue;
 			sl->item = getItemFromName(tmp->data.nbt_string);
-			tmp = getNBTChild(nitem, "Count");
+			tmp = nbt_get(nitem, "Count");
 			if (tmp == NULL || tmp->id != NBT_TAG_BYTE) continue;
 			sl->itemCount = tmp->data.nbt_byte;
-			tmp = getNBTChild(nitem, "Damage");
+			tmp = nbt_get(nitem, "Damage");
 			if (tmp == NULL || tmp->id != NBT_TAG_SHORT) continue;
 			sl->damage = tmp->data.nbt_short;
-			tmp = getNBTChild(nitem, "tag");
+			tmp = nbt_get(nitem, "tag");
 			if (tmp == NULL || tmp->id != NBT_TAG_COMPOUND) {
 				sl->nbt = NULL;
 			} else {

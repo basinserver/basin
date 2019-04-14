@@ -9,6 +9,7 @@
 #define NETWORK_H_
 
 #include <basin/inventory.h>
+#include <avuna/pmem.h>
 #include <openssl/rsa.h>
 
 struct packet;
@@ -49,21 +50,15 @@ int readVarInt(int32_t* output, unsigned char* buffer, size_t buflen);
 
 int readVarLong(int64_t* output, unsigned char* buffer, size_t buflen);
 
-int writeString(char* input, unsigned char* buffer, size_t buflen);
+ssize_t writeString(char* input, unsigned char* buffer, size_t buflen);
 
-int readString(char** output, unsigned char* buffer, size_t buflen);
+int readString(struct mempool* pool, char** output, unsigned char* buffer, size_t buflen);
 
-int readSlot(struct slot* slot, unsigned char* buffer, size_t buflen);
+int readSlot(struct mempool* pool, struct slot* slot, unsigned char* buffer, size_t buflen);
 
 int writeSlot(struct slot* slot, unsigned char* buffer, size_t buflen);
 
-void duplicateSlot(struct slot* slot, struct slot* dup);
-
-void duplicateNBT(struct nbt_tag* nbt, struct nbt_tag* dup);
-
-ssize_t readPacket(struct conn* conn, unsigned char* buf, size_t buflen, struct packet* packet);
-
-ssize_t writePacket(struct conn* conn, struct packet* packet);
+void duplicateSlot(struct mempool* pool, struct slot* slot, struct slot* dup);
 
 int writeVarInt_stream(int32_t input,
 #ifdef __MINGW32__

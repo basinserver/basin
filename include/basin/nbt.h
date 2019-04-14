@@ -8,6 +8,8 @@
 #ifndef NBT_H_
 #define NBT_H_
 
+#include <avuna/hash.h>
+#include <avuna/pmem.h>
 #include <stdlib.h>
 #include <stdint.h>
 
@@ -23,47 +25,50 @@
 #define NBT_TAG_LIST 9
 #define NBT_TAG_COMPOUND 10
 #define NBT_TAG_INTARRAY 11
+#define NBT_TAG_LONGARRAY 12
 
 union nbt_data {
-		signed char nbt_byte;
-		int16_t nbt_short;
-		int32_t nbt_int;
-		int64_t nbt_long;
-		float nbt_float;
-		double nbt_double;
-		struct {
-				int32_t len;
-				unsigned char* data;
-		} nbt_bytearray;
-		char* nbt_string;
-		struct {
-				unsigned char type;
-				int32_t count;
-		} nbt_list;
-		struct {
-				int32_t count;
-				int32_t* ints;
-		} nbt_intarray;
+	signed char nbt_byte;
+	int16_t nbt_short;
+	int32_t nbt_int;
+	int64_t nbt_long;
+	float nbt_float;
+	double nbt_double;
+	struct {
+		int32_t len;
+		unsigned char* data;
+	} nbt_bytearray;
+	char* nbt_string;
+	struct {
+		unsigned char type;
+		int32_t count;
+	} nbt_list;
+	struct {
+		int32_t count;
+		int32_t* ints;
+	} nbt_intarray;
+	struct {
+		int32_t count;
+		int64_t* longs;
+	} nbt_longarray;
 };
 
 struct nbt_tag {
 		unsigned char id;
 		char* name;
-		size_t children_count;
-		struct nbt_tag** children;
+		struct hashmap* children;
 		union nbt_data data;
+		struct mempool* pool;
 };
 
-ssize_t decompressNBT(void* data, size_t size, void** dest);
+ssize_t nbt_decompress(struct mempool* pool, void* data, size_t size, void** dest);
 
-void freeNBT(struct nbt_tag* nbt);
+struct nbt_tag* nbt_clone(struct mempool* pool, struct nbt_tag* nbt);
 
-struct nbt_tag* cloneNBT(struct nbt_tag* nbt);
+struct nbt_tag* nbt_get(struct nbt_tag* nbt, char* name);
 
-struct nbt_tag* getNBTChild(struct nbt_tag* nbt, char* name);
+ssize_t nbt_read(struct mempool* pool, struct nbt_tag** root, unsigned char* buffer, size_t buflen);
 
-int readNBT(struct nbt_tag** root, unsigned char* buffer, size_t buflen);
-
-int writeNBT(struct nbt_tag* root, unsigned char* buffer, size_t buflen);
+ssize_t nbt_write(struct nbt_tag* root, unsigned char* buffer, size_t buflen);
 
 #endif /* NBT_H_ */

@@ -10,10 +10,6 @@
 
 #include <basin/server.h>
 
-struct accept_param {
-		struct server* server;
-};
-
-void run_accept(struct accept_param* param);
+void run_accept(struct server* param);
 
 #endif /* ACCEPT_H_ */

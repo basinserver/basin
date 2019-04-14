@@ -5,8 +5,11 @@
 #ifndef BASIN_CONNECTION_H
 #define BASIN_CONNECTION_H
 
+#include <basin/player.h>
+#include <basin/server.h>
 #include <avuna/netmgr.h>
 #include <avuna/pmem.h>
+#include <netinet/in.h>
 
 struct connection {
     struct mempool* pool;
@@ -27,7 +30,8 @@ struct connection {
     EVP_CIPHER_CTX* aes_ctx_enc;
     EVP_CIPHER_CTX* aes_ctx_dec;
     uint32_t protocol_state;
-
+    ssize_t compression_state;
+    struct server* server;
 };
 
 #endif //BASIN_CONNECTION_H

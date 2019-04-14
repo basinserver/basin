@@ -1,95 +1,92 @@
-#include <basin/globals.h>
 
+
+
+#include "packet.h"
+#include <basin/globals.h>
 #include <basin/inventory.h>
+#include <basin/network.h>
+#include <basin/nbt.h>
+#include <basin/connection.h>
+#include <basin/world.h>
+#include <basin/player.h>
+#include <avuna/string.h>
 #include <stdint.h>
-#include "basin/network.h"
 #include <zlib.h>
 #include <errno.h>
-#include <avuna/string.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <basin/nbt.h>
 #include <zlib.h>
 #include <errno.h>
 #include <string.h>
 #include <pthread.h>
 #include <time.h>
-#include "accept.h"
-#include "util.h"
-#include <basin/world.h>
 #include <math.h>
-#include "packet.h"
-#include <basin/player.h>
 
 #define ADRX if(rx == 0) goto rer;pbuf += rx;ps -= rx;
 #define ADX(x) pbuf += x;ps -= x;
 #define CPS(x) if(ps < x) goto rer;
 #define CPS_OPT(x) if(ps >= x) {
-#define ENS(x) if(ps-pi < x) { ps += (x > 256 ? x + 1024 : 1024); pktbuf = prealloc(pktbuf - 10, ps + 10) + 10; }
+#define ENS(x) if(ps-pi < x) { ps += (x > 256 ? x + 1024 : 1024); pktbuf = prealloc(packet->pool, pktbuf - 10, ps + 10) + 10; }
 
-ssize_t readPacket(struct conn* conn, unsigned char* buf, size_t buflen, struct packet* packet) {
+ssize_t readPacket(struct connection* conn, unsigned char* buf, size_t buflen, struct packet* packet) {
 	void* pktbuf = buf;
-	int32_t pktlen = buflen;
-	int tf = 0;
-	if (conn->comp >= 0) {
-		int32_t dl = 0;
-		int rx = readVarInt(&dl, pktbuf, pktlen);
-		if (rx == 0) goto rer;
-		pktlen -= rx;
-		pktbuf += rx;
-		if (dl > 0 && pktlen > 0) {
-			pktlen = dl;
-			void* decmpbuf = xmalloc(dl);
+	int32_t pktlen = (int32_t) buflen;
+	if (conn->compression_state >= 0) {
+		int32_t decompressed_length = 0;
+		int read_length = readVarInt(&decompressed_length, pktbuf, buflen);
+		if (read_length == 0) goto rer;
+		pktlen -= read_length;
+		pktbuf += read_length;
+		if (decompressed_length > 0 && pktlen > 0) {
+			pktlen = decompressed_length;
+			void* decompressed = pmalloc(packet->pool, (size_t) decompressed_length);
 			z_stream strm;
 			strm.zalloc = Z_NULL;
 			strm.zfree = Z_NULL;
 			strm.opaque = Z_NULL;
 			int dr = 0;
 			if ((dr = inflateInit(&strm)) != Z_OK) {
-				xfree(decmpbuf);
-				printf("Compression initialization error!\n");
+				errlog(conn->server->logger, "Compression initialization error!\n");
 				goto rer;
 			}
-			strm.avail_in = pktlen;
+			strm.avail_in = (uInt) pktlen;
 			strm.next_in = pktbuf;
-			strm.avail_out = dl;
-			strm.next_out = decmpbuf;
+			strm.avail_out = (uInt) decompressed_length;
+			strm.next_out = decompressed;
 			do {
 				dr = inflate(&strm, Z_FINISH);
 				if (dr == Z_STREAM_ERROR) {
-					xfree(decmpbuf);
 					printf("Compression Read Error\n");
 					goto rer;
 				}
-				strm.avail_out = pktlen - strm.total_out;
-				strm.next_out = decmpbuf + strm.total_out;
+				strm.avail_out = (uInt) (pktlen - strm.total_out);
+				strm.next_out = decompressed + strm.total_out;
 			} while (strm.avail_in > 0 || strm.total_out < pktlen);
 			inflateEnd(&strm);
-			pktbuf = decmpbuf;
-			pktlen = dl;
-			tf = 1;
+			pktbuf = decompressed;
+			pktlen = decompressed_length;
 		}
 	}
 	if (pktbuf == NULL) return 0;
 	unsigned char* pbuf = (unsigned char*) pktbuf;
-	size_t ps = pktlen;
+	size_t ps = (size_t) pktlen;
 	int32_t id = 0;
-	size_t t = readVarInt(&id, pbuf, ps);
+	size_t t = (size_t) readVarInt(&id, pbuf, ps);
 	pbuf += t;
 	ps -= t;
 	packet->id = id;
 	int rx = 0;
-	if (conn->state == STATE_HANDSHAKE) {
+	if (conn->protocol_state == STATE_HANDSHAKE) {
 		if (id == PKT_HANDSHAKE_SERVER_HANDSHAKE) {
 			//protocol_version
 			rx = readVarInt(&packet->data.handshake_server.handshake.protocol_version, pbuf, ps);
 			ADRX
 			//server_address
-			rx = readString(&packet->data.handshake_server.handshake.server_address, pbuf, ps);
+			rx = readString(packet->pool, &packet->data.handshake_server.handshake.server_address, pbuf, ps);
 			ADRX
 			//server_port
 			CPS(2)
@@ -100,14 +97,14 @@ ssize_t readPacket(struct conn* conn, unsigned char* buf, size_t buflen, struct 
 			rx = readVarInt(&packet->data.handshake_server.handshake.next_state, pbuf, ps);
 			ADRX
 		}
-	} else if (conn->state == STATE_PLAY) {
+	} else if (conn->protocol_state == STATE_PLAY) {
 		if (id == PKT_PLAY_SERVER_TELEPORTCONFIRM) {
 			//teleport_id
 			rx = readVarInt(&packet->data.play_server.teleportconfirm.teleport_id, pbuf, ps);
 			ADRX
 		} else if (id == PKT_PLAY_SERVER_TABCOMPLETE) {
 			//text
-			rx = readString(&packet->data.play_server.tabcomplete.text, pbuf, ps);
+			rx = readString(packet->pool, &packet->data.play_server.tabcomplete.text, pbuf, ps);
 			ADRX
 			//assume_command
 			CPS(1)
@@ -125,7 +122,7 @@ ssize_t readPacket(struct conn* conn, unsigned char* buf, size_t buflen, struct 
 			}
 		} else if (id == PKT_PLAY_SERVER_CHATMESSAGE) {
 			//message
-			rx = readString(&packet->data.play_server.chatmessage.message, pbuf, ps);
+			rx = readString(packet->pool, &packet->data.play_server.chatmessage.message, pbuf, ps);
 			ADRX
 		} else if (id == PKT_PLAY_SERVER_CLIENTSTATUS) {
 			//action_id
@@ -133,7 +130,7 @@ ssize_t readPacket(struct conn* conn, unsigned char* buf, size_t buflen, struct 
 			ADRX
 		} else if (id == PKT_PLAY_SERVER_CLIENTSETTINGS) {
 			//locale
-			rx = readString(&packet->data.play_server.clientsettings.locale, pbuf, ps);
+			rx = readString(packet->pool, &packet->data.play_server.clientsettings.locale, pbuf, ps);
 			ADRX
 			//view_distance
 			CPS(1)
@@ -199,7 +196,7 @@ ssize_t readPacket(struct conn* conn, unsigned char* buf, size_t buflen, struct 
 			rx = readVarInt(&packet->data.play_server.clickwindow.mode, pbuf, ps);
 			ADRX
 			//clicked_item
-			rx = readSlot(&packet->data.play_server.clickwindow.clicked_item, pbuf, ps);
+			rx = readSlot(packet->pool, &packet->data.play_server.clickwindow.clicked_item, pbuf, ps);
 			ADRX
 		} else if (id == PKT_PLAY_SERVER_CLOSEWINDOW) {
 			//window_id
@@ -208,11 +205,11 @@ ssize_t readPacket(struct conn* conn, unsigned char* buf, size_t buflen, struct 
 			ADX(1)
 		} else if (id == PKT_PLAY_SERVER_PLUGINMESSAGE) {
 			//channel
-			rx = readString(&packet->data.play_server.pluginmessage.channel, pbuf, ps);
+			rx = readString(packet->pool, &packet->data.play_server.pluginmessage.channel, pbuf, ps);
 			ADRX
 			//data
 			CPS(ps)
-			packet->data.play_server.pluginmessage.data = xmalloc(ps);
+			packet->data.play_server.pluginmessage.data = pmalloc(packet->pool, ps);
 			memcpy(packet->data.play_server.pluginmessage.data, pbuf, ps);
 			ADX(ps)
 		} else if (id == PKT_PLAY_SERVER_USEENTITY) {
@@ -424,7 +421,7 @@ ssize_t readPacket(struct conn* conn, unsigned char* buf, size_t buflen, struct 
 			swapEndian(&packet->data.play_server.creativeinventoryaction.slot, 2);
 			ADX(2)
 			//clicked_item
-			rx = readSlot(&packet->data.play_server.creativeinventoryaction.clicked_item, pbuf, ps);
+			rx = readSlot(packet->pool, &packet->data.play_server.creativeinventoryaction.clicked_item, pbuf, ps);
 			ADRX
 		} else if (id == PKT_PLAY_SERVER_UPDATESIGN) {
 			//location
@@ -433,16 +430,16 @@ ssize_t readPacket(struct conn* conn, unsigned char* buf, size_t buflen, struct 
 			swapEndian(&packet->data.play_server.updatesign.location, 8);
 			ADX(8)
 			//line_1
-			rx = readString(&packet->data.play_server.updatesign.line_1, pbuf, ps);
+			rx = readString(packet->pool, &packet->data.play_server.updatesign.line_1, pbuf, ps);
 			ADRX
 			//line_2
-			rx = readString(&packet->data.play_server.updatesign.line_2, pbuf, ps);
+			rx = readString(packet->pool, &packet->data.play_server.updatesign.line_2, pbuf, ps);
 			ADRX
 			//line_3
-			rx = readString(&packet->data.play_server.updatesign.line_3, pbuf, ps);
+			rx = readString(packet->pool, &packet->data.play_server.updatesign.line_3, pbuf, ps);
 			ADRX
 			//line_4
-			rx = readString(&packet->data.play_server.updatesign.line_4, pbuf, ps);
+			rx = readString(packet->pool, &packet->data.play_server.updatesign.line_4, pbuf, ps);
 			ADRX
 		} else if (id == PKT_PLAY_SERVER_ANIMATION) {
 			//hand
@@ -507,7 +504,7 @@ ssize_t readPacket(struct conn* conn, unsigned char* buf, size_t buflen, struct 
 			rx = readVarInt(&packet->data.play_server.useitem.hand, pbuf, ps);
 			ADRX
 		}
-	} else if (conn->state == STATE_STATUS) {
+	} else if (conn->protocol_state == STATE_STATUS) {
 		if (id == PKT_STATUS_SERVER_REQUEST) {
 
 		} else if (id == PKT_STATUS_SERVER_PING) {
@@ -517,10 +514,10 @@ ssize_t readPacket(struct conn* conn, unsigned char* buf, size_t buflen, struct 
 			swapEndian(&packet->data.status_server.ping.payload, 8);
 			ADX(8)
 		}
-	} else if (conn->state == STATE_LOGIN) {
+	} else if (conn->protocol_state == STATE_LOGIN) {
 		if (id == PKT_LOGIN_SERVER_LOGINSTART) {
 			//name
-			rx = readString(&packet->data.login_server.loginstart.name, pbuf, ps);
+			rx = readString(packet->pool, &packet->data.login_server.loginstart.name, pbuf, ps);
 			ADRX
 		} else if (id == PKT_LOGIN_SERVER_ENCRYPTIONRESPONSE) {
 			//shared_secret_length
@@ -528,43 +525,45 @@ ssize_t readPacket(struct conn* conn, unsigned char* buf, size_t buflen, struct 
 			ADRX
 			//shared_secret
 			CPS(packet->data.login_server.encryptionresponse.shared_secret_length)
-			packet->data.login_server.encryptionresponse.shared_secret = xmalloc(packet->data.login_server.encryptionresponse.shared_secret_length);
-			memcpy(packet->data.login_server.encryptionresponse.shared_secret, pbuf, packet->data.login_server.encryptionresponse.shared_secret_length);
+			packet->data.login_server.encryptionresponse.shared_secret = pmalloc(packet->pool,
+																				 (size_t) packet->data.login_server.encryptionresponse.shared_secret_length);
+			memcpy(packet->data.login_server.encryptionresponse.shared_secret, pbuf,
+				   (size_t) packet->data.login_server.encryptionresponse.shared_secret_length);
 			ADX(packet->data.login_server.encryptionresponse.shared_secret_length)
 			//verify_token_length
-			rx = readVarInt(&packet->data.login_server.encryptionresponse.verify_token_length, pbuf, ps);
+			rx = readVarInt((int32_t*) &packet->data.login_server.encryptionresponse.verify_token_length, pbuf, ps);
 			ADRX
 			//verify_token
 			CPS(packet->data.login_server.encryptionresponse.verify_token_length)
-			packet->data.login_server.encryptionresponse.verify_token = xmalloc(packet->data.login_server.encryptionresponse.verify_token_length);
+			packet->data.login_server.encryptionresponse.verify_token = pmalloc(packet->pool, packet->data.login_server.encryptionresponse.verify_token_length);
 			memcpy(packet->data.login_server.encryptionresponse.verify_token, pbuf, packet->data.login_server.encryptionresponse.verify_token_length);
 			ADX(packet->data.login_server.encryptionresponse.verify_token_length)
 		}
 	}
 	goto rx;
 	rer: ;
-	if (tf) xfree(pktbuf);
+	pfree(packet->pool);
 	return -1;
 	rx: ;
-	if (tf) xfree(pktbuf);
+	pfree(packet->pool);
 	return buflen;
 }
 
-ssize_t writePacket(struct conn* conn, struct packet* packet) {
-	if (conn->state == STATE_PLAY && packet->id == PKT_PLAY_CLIENT_CHUNKDATA) {
+ssize_t writePacket(struct connection* conn, struct packet* packet) {
+	if (conn->protocol_state == STATE_PLAY && packet->id == PKT_PLAY_CLIENT_CHUNKDATA) {
 		if (!isChunkLoaded(conn->player->world, packet->data.play_client.chunkdata.cx, packet->data.play_client.chunkdata.cz)) return 0;
 	}
-	unsigned char* pktbuf = xmalloc(1034);
+	unsigned char* pktbuf = pmalloc(packet->pool, 522);
 	pktbuf += 10;
-	size_t ps = 1024;
+	size_t ps = 512;
 	size_t pi = 0;
 	size_t slb = 0;
 	int32_t id = packet->id;
 	ENS(4)
 	pi += writeVarInt(id, pktbuf + pi);
-	if (conn->state == STATE_HANDSHAKE) {
+	if (conn->protocol_state == STATE_HANDSHAKE) {
 
-	} else if (conn->state == STATE_PLAY) {
+	} else if (conn->protocol_state == STATE_PLAY) {
 		//printf("write %i\n", id);
 		if (id == PKT_PLAY_CLIENT_SPAWNOBJECT) {
 			//entity_id
@@ -826,7 +825,7 @@ ssize_t writePacket(struct conn* conn, struct packet* packet) {
 			pi += 1;
 			//nbt_data
 			ENS(512)
-			pi += writeNBT(packet->data.play_client.updateblockentity.nbt_data, pktbuf + pi, ps - pi);
+			pi += nbt_write(packet->data.play_client.updateblockentity.nbt_data, pktbuf + pi, ps - pi);
 		} else if (id == PKT_PLAY_CLIENT_BLOCKACTION) {
 			//location
 			ENS(8)
@@ -935,7 +934,7 @@ ssize_t writePacket(struct conn* conn, struct packet* packet) {
 			memcpy(pktbuf + pi, &packet->data.play_client.openwindow.number_of_slots, 1);
 			pi += 1;
 			//entity_id
-			if (streq(packet->data.play_client.openwindow.window_type, "EntityHorse")) {
+			if (str_eq(packet->data.play_client.openwindow.window_type, "EntityHorse")) {
 				ENS(4)
 				memcpy(pktbuf + pi, &packet->data.play_client.openwindow.entity_id, 4);
 				swapEndian(pktbuf + pi, 4);
@@ -1076,7 +1075,8 @@ ssize_t writePacket(struct conn* conn, struct packet* packet) {
 			pi += 4;
 			//records
 			ENS(packet->data.play_client.explosion.record_count * 3)
-			memcpy(pktbuf + pi, packet->data.play_client.explosion.records, packet->data.play_client.explosion.record_count * 3);
+			memcpy(pktbuf + pi, packet->data.play_client.explosion.records,
+				   (size_t) (packet->data.play_client.explosion.record_count * 3));
 			pi += packet->data.play_client.explosion.record_count * 3;
 			//player_motion_x
 			ENS(4)
@@ -1161,7 +1161,8 @@ ssize_t writePacket(struct conn* conn, struct packet* packet) {
 				memcpy(pktbuf + pi, &bpb, 1);
 				pi += 1;
 				ENS(4)
-				pi += writeVarInt(bpb < 9 ? packet->data.play_client.chunkdata.data->sections[ymj]->palette_count : 0, pktbuf + pi);
+				pi += writeVarInt(
+					(int32_t) (bpb < 9 ? packet->data.play_client.chunkdata.data->sections[ymj]->palette_count : 0), pktbuf + pi);
 				for (int i = 0; i < packet->data.play_client.chunkdata.data->sections[ymj]->palette_count; i++) {
 					ENS(4)
 					pi += writeVarInt(packet->data.play_client.chunkdata.data->sections[ymj]->palette[i], pktbuf + pi);
@@ -1198,7 +1199,7 @@ ssize_t writePacket(struct conn* conn, struct packet* packet) {
 			//block_entities
 			for (int32_t i = 0; i < packet->data.play_client.chunkdata.number_of_block_entities; i++) {
 				ENS(512)
-				pi += writeNBT(packet->data.play_client.chunkdata.block_entities[i], pktbuf + pi, ps - pi);
+				pi += nbt_write(packet->data.play_client.chunkdata.block_entities[i], pktbuf + pi, ps - pi);
 			}
 		} else if (id == PKT_PLAY_CLIENT_EFFECT) {
 			//effect_id
@@ -1893,7 +1894,7 @@ ssize_t writePacket(struct conn* conn, struct packet* packet) {
 			memcpy(pktbuf + pi, &packet->data.play_client.entityeffect.flags, 1);
 			pi += 1;
 		}
-	} else if (conn->state == STATE_STATUS) {
+	} else if (conn->protocol_state == STATE_STATUS) {
 		if (id == PKT_STATUS_CLIENT_RESPONSE) {
 			//json_response
 			slb = strlen(packet->data.status_client.response.json_response) + 4;
@@ -1906,7 +1907,7 @@ ssize_t writePacket(struct conn* conn, struct packet* packet) {
 			swapEndian(pktbuf + pi, 8);
 			pi += 8;
 		}
-	} else if (conn->state == STATE_LOGIN) {
+	} else if (conn->protocol_state == STATE_LOGIN) {
 		if (id == PKT_LOGIN_CLIENT_DISCONNECT) {
 			//reason
 			slb = strlen(packet->data.login_client.disconnect.reason) + 4;
@@ -1922,14 +1923,16 @@ ssize_t writePacket(struct conn* conn, struct packet* packet) {
 			pi += writeVarInt(packet->data.login_client.encryptionrequest.public_key_length, pktbuf + pi);
 			//public_key
 			ENS(packet->data.login_client.encryptionrequest.public_key_length)
-			memcpy(pktbuf + pi, packet->data.login_client.encryptionrequest.public_key, packet->data.login_client.encryptionrequest.public_key_length);
+			memcpy(pktbuf + pi, packet->data.login_client.encryptionrequest.public_key,
+				   (size_t) packet->data.login_client.encryptionrequest.public_key_length);
 			pi += packet->data.login_client.encryptionrequest.public_key_length;
 			//verify_token_length
 			ENS(4)
 			pi += writeVarInt(packet->data.login_client.encryptionrequest.verify_token_length, pktbuf + pi);
 			//verify_token
 			ENS(packet->data.login_client.encryptionrequest.verify_token_length)
-			memcpy(pktbuf + pi, packet->data.login_client.encryptionrequest.verify_token, packet->data.login_client.encryptionrequest.verify_token_length);
+			memcpy(pktbuf + pi, packet->data.login_client.encryptionrequest.verify_token,
+				   (size_t) packet->data.login_client.encryptionrequest.verify_token_length);
 			pi += packet->data.login_client.encryptionrequest.verify_token_length;
 		} else if (id == PKT_LOGIN_CLIENT_LOGINSUCCESS) {
 			//uuid
@@ -1949,366 +1952,70 @@ ssize_t writePacket(struct conn* conn, struct packet* packet) {
 	int fpll = getVarIntSize(pi);
 	void* wrt = NULL;
 	size_t wrt_s = 0;
-	int frp = 0;
 	unsigned char prep[10];
 	uint8_t preps = 0;
-	if (conn->comp >= 0 && (pi + fpll > conn->comp + 1) && (pi + fpll) <= 2097152) {
-		frp = 1;
+	if (conn->compression_state >= 0 && (pi + fpll > conn->compression_state + 1) && (pi + fpll) <= 2097152) {
 		z_stream strm;
 		strm.zalloc = Z_NULL;
 		strm.zfree = Z_NULL;
 		strm.opaque = Z_NULL;
 		int dr = 0;
 		if ((dr = deflateInit2(&strm, Z_DEFAULT_COMPRESSION, Z_DEFLATED, 31, 8, Z_DEFAULT_STRATEGY)) != Z_OK) { // TODO: configurable level?
-			return -1;
+			goto rret;
 		}
-		strm.avail_in = pi;
+		strm.avail_in = (uInt) pi;
 		strm.next_in = pktbuf;
 		size_t cc = pi + 32;
-		void* cdata = xmalloc(cc + 10);
+		void* cdata = pmalloc(packet->pool, cc + 10);
 		size_t ts = 0;
-		strm.avail_out = cc - ts;
+		strm.avail_out = (uInt) (cc - ts);
 		strm.next_out = cdata + ts;
 		do {
 			dr = deflate(&strm, Z_FINISH);
 			ts = strm.total_out;
 			if (ts >= cc) {
-				cc = ts + 1024;
-				cdata = xrealloc(cdata - 10, cc + 10) + 10;
+				cc *= 2;
+				cdata = prealloc(packet->pool, cdata - 10, cc + 10) + 10;
 			}
 			if (dr == Z_STREAM_ERROR) {
-				xfree(cdata);
-				return -1;
+				goto rret;
 			}
-			strm.avail_out = cc - ts;
+			strm.avail_out = (uInt) (cc - ts);
 			strm.next_out = cdata + ts;
 		} while (strm.avail_out == 0);
 		deflateEnd(&strm);
-		preps += writeVarInt(ts + getVarIntSize(pi), prep + preps);
-		preps += writeVarInt(pi, prep + preps);
+		preps += writeVarInt((int32_t) (ts + getVarIntSize((int32_t) pi)), prep + preps);
+		preps += writeVarInt((int32_t) pi, prep + preps);
 		wrt = cdata;
 		wrt_s = ts;
-	} else if (conn->comp >= 0) {
-		preps += writeVarInt(pi + getVarIntSize(0), prep + preps);
+	} else if (conn->compression_state >= 0) {
+		preps += writeVarInt((int32_t) (pi + getVarIntSize(0)), prep + preps);
 		preps += writeVarInt(0, prep + preps);
 		wrt = pktbuf;
 		wrt_s = pi;
 	} else {
-		preps += writeVarInt(pi, prep + preps);
+		preps += writeVarInt((int32_t) pi, prep + preps);
 		wrt = pktbuf;
 		wrt_s = pi;
 	}
 	if (preps >= 10) goto rret;
+	void* xfer_address = wrt - 10;
 	// ^ explode
 	wrt -= preps; // preallocated!
 	memcpy(wrt, prep, preps);
 	wrt_s += preps;
 	if (conn->aes_ctx_enc != NULL) {
-		int csl = wrt_s + 32; // 16 extra just in case
-		void* edata = xmalloc(csl);
-		if (EVP_EncryptUpdate(conn->aes_ctx_enc, edata, &csl, wrt, wrt_s) != 1) {
-			xfree(edata);
-			wrt_s = -1;
+		size_t encrypted_length = wrt_s + 32; // 16 extra just in case
+		void* encrypted = pmalloc(packet->pool, encrypted_length);
+		if (EVP_EncryptUpdate(conn->aes_ctx_enc, encrypted, &encrypted_length, wrt, (int) wrt_s) != 1) {
+			wrt_s = (size_t) -1;
 			goto rret;
 		}
-		xfree(wrt + preps - 10);
-		if (!frp) pktbuf = NULL;
-		wrt = edata;
-		wrt_s = csl;
-		//
-		/*if (EVP_DecryptInit_ex(conn->aes_ctx_dec, EVP_aes_128_cfb8(), NULL, conn->sharedSecret, conn->sharedSecret) != 1) return -1;
-		 csl = wrt_s + 32; // 16 extra just in case
-		 edata = xcalloc(csl);
-		 if (EVP_DecryptUpdate(conn->aes_ctx_dec, edata, &csl, wrt, wrt_s) != 1) {
-		 xfree(edata);
-		 wrt_s = -1;
-		 goto rret;
-		 }
-		 csl2 = 0;
-		 if (EVP_DecryptFinal_ex(conn->aes_ctx_dec, edata + csl, &csl2) != 1) {
-		 xfree(edata);
-		 wrt_s = -1;
-		 goto rret;
-		 }
-		 csl += csl2;
-		 if (csl != owrts) {
-		 printf("length mismatch! %i != %i\n", csl, owrts);
-		 } else {
-		 printf("original data: ");
-		 for (int i = 0; i < owrts; i++) {
-		 printf("%02X", ((uint8_t*) owrt)[i]);
-		 }
-		 printf("\nshared secret: ");
-		 for (int i = 0; i < 16; i++) {
-		 printf("%02X", ((uint8_t*) conn->sharedSecret)[i]);
-		 }
-		 printf("\nenc data:      ");
-		 for (int i = 0; i < wrt_s; i++) {
-		 printf("%02X", ((uint8_t*) wrt)[i]);
-		 }
-		 printf("\ndec/enc data:  ");
-		 for (int i = 0; i < csl; i++) {
-		 printf("%02X", ((uint8_t*) edata)[i]);
-		 }
-		 printf("\n%s\n", memeq(owrt, owrts, edata, csl) ? "equal!" : "not equal!");
-		 }
-		 xfree(owrt);
-		 xfree(edata);*/
+		xfer_address = wrt = encrypted;
+		wrt_s = encrypted_length;
 	}
-	if (conn->writeBuffer == NULL) {
-		conn->writeBuffer = xmalloc(wrt_s * 10);
-		memcpy(conn->writeBuffer, wrt, wrt_s);
-		conn->writeBuffer_size = wrt_s;
-		conn->writeBuffer_capacity = wrt_s * 10;
-	} else {
-		if ((conn->writeBuffer_capacity - conn->writeBuffer_size) <= wrt_s) {
-			conn->writeBuffer_capacity += wrt_s * 10;
-			conn->writeBuffer = xrealloc(conn->writeBuffer, conn->writeBuffer_capacity);
-		}
-		memcpy(conn->writeBuffer + conn->writeBuffer_size, wrt, wrt_s);
-		conn->writeBuffer_size += wrt_s;
-	}
+	pxfer(packet->pool, conn->managed_conn->write_buffer.pool, xfer_address);
+	buffer_push_partial(&conn->managed_conn->write_buffer, xfer_address, wrt, wrt_s);
 	rret: ;
-	if (frp) xfree(wrt + preps - 10);
-	if (pktbuf != NULL) xfree(pktbuf - 10);
 	return wrt_s;
-}
-
-void freePacket(int state, int dir, struct packet* packet) {
-	if (state == STATE_HANDSHAKE) {
-		if (dir == 1) {
-
-		}
-		if (dir == 0) {
-			if (packet->id == PKT_HANDSHAKE_SERVER_HANDSHAKE) {
-				if (packet->data.handshake_server.handshake.server_address != NULL) xfree(packet->data.handshake_server.handshake.server_address);
-			}
-		}
-	} else if (state == STATE_PLAY) {
-		if (dir == 1) {
-			if (packet->id == PKT_PLAY_CLIENT_SPAWNOBJECT) {
-			} else if (packet->id == PKT_PLAY_CLIENT_SPAWNEXPERIENCEORB) {
-			} else if (packet->id == PKT_PLAY_CLIENT_SPAWNGLOBALENTITY) {
-			} else if (packet->id == PKT_PLAY_CLIENT_SPAWNMOB) {
-				if (packet->data.play_client.spawnmob.metadata.metadata != NULL) xfree(packet->data.play_client.spawnmob.metadata.metadata);
-			} else if (packet->id == PKT_PLAY_CLIENT_SPAWNPAINTING) {
-				if (packet->data.play_client.spawnpainting.title != NULL) xfree(packet->data.play_client.spawnpainting.title);
-			} else if (packet->id == PKT_PLAY_CLIENT_SPAWNPLAYER) {
-				if (packet->data.play_client.spawnplayer.metadata.metadata != NULL) xfree(packet->data.play_client.spawnplayer.metadata.metadata);
-			} else if (packet->id == PKT_PLAY_CLIENT_ANIMATION) {
-			} else if (packet->id == PKT_PLAY_CLIENT_STATISTICS) {
-				//TODO: Manual Implementation
-			} else if (packet->id == PKT_PLAY_CLIENT_BLOCKBREAKANIMATION) {
-			} else if (packet->id == PKT_PLAY_CLIENT_UPDATEBLOCKENTITY) {
-				if (packet->data.play_client.updateblockentity.nbt_data != NULL) freeNBT(packet->data.play_client.updateblockentity.nbt_data);
-			} else if (packet->id == PKT_PLAY_CLIENT_BLOCKACTION) {
-			} else if (packet->id == PKT_PLAY_CLIENT_BLOCKCHANGE) {
-			} else if (packet->id == PKT_PLAY_CLIENT_BOSSBAR) {
-				//TODO: Manual Implementation
-			} else if (packet->id == PKT_PLAY_CLIENT_SERVERDIFFICULTY) {
-			} else if (packet->id == PKT_PLAY_CLIENT_TABCOMPLETE) {
-				if (packet->data.play_client.tabcomplete.matches != NULL) xfree(packet->data.play_client.tabcomplete.matches);
-			} else if (packet->id == PKT_PLAY_CLIENT_CHATMESSAGE) {
-				if (packet->data.play_client.chatmessage.json_data != NULL) xfree(packet->data.play_client.chatmessage.json_data);
-			} else if (packet->id == PKT_PLAY_CLIENT_MULTIBLOCKCHANGE) {
-				//TODO: Manual Implementation
-			} else if (packet->id == PKT_PLAY_CLIENT_CONFIRMTRANSACTION) {
-			} else if (packet->id == PKT_PLAY_CLIENT_CLOSEWINDOW) {
-			} else if (packet->id == PKT_PLAY_CLIENT_OPENWINDOW) {
-				if (packet->data.play_client.openwindow.window_type != NULL) xfree(packet->data.play_client.openwindow.window_type);
-				if (packet->data.play_client.openwindow.window_title != NULL) xfree(packet->data.play_client.openwindow.window_title);
-			} else if (packet->id == PKT_PLAY_CLIENT_WINDOWITEMS) {
-				if (packet->data.play_client.windowitems.slot_data != NULL) {
-					for (size_t i = 0; i < packet->data.play_client.windowitems.count; i++) {
-						if (packet->data.play_client.windowitems.slot_data[i].nbt != NULL) freeNBT(packet->data.play_client.windowitems.slot_data[i].nbt);
-					}
-					xfree(packet->data.play_client.windowitems.slot_data);
-				}
-			} else if (packet->id == PKT_PLAY_CLIENT_WINDOWPROPERTY) {
-			} else if (packet->id == PKT_PLAY_CLIENT_SETSLOT) {
-				if (packet->data.play_client.setslot.slot_data.nbt != NULL) freeNBT(packet->data.play_client.setslot.slot_data.nbt);
-			} else if (packet->id == PKT_PLAY_CLIENT_SETCOOLDOWN) {
-			} else if (packet->id == PKT_PLAY_CLIENT_PLUGINMESSAGE) {
-				if (packet->data.play_client.pluginmessage.channel != NULL) xfree(packet->data.play_client.pluginmessage.channel);
-			} else if (packet->id == PKT_PLAY_CLIENT_NAMEDSOUNDEFFECT) {
-				if (packet->data.play_client.namedsoundeffect.sound_name != NULL) xfree(packet->data.play_client.namedsoundeffect.sound_name);
-			} else if (packet->id == PKT_PLAY_CLIENT_DISCONNECT) {
-				if (packet->data.play_client.disconnect.reason != NULL) xfree(packet->data.play_client.disconnect.reason);
-			} else if (packet->id == PKT_PLAY_CLIENT_ENTITYSTATUS) {
-			} else if (packet->id == PKT_PLAY_CLIENT_EXPLOSION) {
-			} else if (packet->id == PKT_PLAY_CLIENT_UNLOADCHUNK) {
-			} else if (packet->id == PKT_PLAY_CLIENT_CHANGEGAMESTATE) {
-			} else if (packet->id == PKT_PLAY_CLIENT_KEEPALIVE) {
-			} else if (packet->id == PKT_PLAY_CLIENT_CHUNKDATA) {
-				//TODO: Manual implementation.
-				if (packet->data.play_client.chunkdata.block_entities != NULL) {
-					for (size_t i = 0; i < packet->data.play_client.chunkdata.number_of_block_entities; i++) {
-						if (packet->data.play_client.chunkdata.block_entities[i] != NULL) freeNBT(packet->data.play_client.chunkdata.block_entities[i]);
-					}
-					xfree(packet->data.play_client.chunkdata.block_entities);
-				}
-			} else if (packet->id == PKT_PLAY_CLIENT_EFFECT) {
-			} else if (packet->id == PKT_PLAY_CLIENT_PARTICLE) {
-			} else if (packet->id == PKT_PLAY_CLIENT_JOINGAME) {
-				if (packet->data.play_client.joingame.level_type != NULL) xfree(packet->data.play_client.joingame.level_type);
-			} else if (packet->id == PKT_PLAY_CLIENT_MAP) {
-				//TODO: Manual Implementation
-			} else if (packet->id == PKT_PLAY_CLIENT_ENTITYRELATIVEMOVE) {
-			} else if (packet->id == PKT_PLAY_CLIENT_ENTITYLOOKANDRELATIVEMOVE) {
-			} else if (packet->id == PKT_PLAY_CLIENT_ENTITYLOOK) {
-			} else if (packet->id == PKT_PLAY_CLIENT_ENTITY) {
-			} else if (packet->id == PKT_PLAY_CLIENT_VEHICLEMOVE) {
-			} else if (packet->id == PKT_PLAY_CLIENT_OPENSIGNEDITOR) {
-			} else if (packet->id == PKT_PLAY_CLIENT_PLAYERABILITIES) {
-			} else if (packet->id == PKT_PLAY_CLIENT_COMBATEVENT) {
-				//TODO: Manual Implementation
-			} else if (packet->id == PKT_PLAY_CLIENT_PLAYERLISTITEM) {
-				if (packet->data.play_client.playerlistitem.players != NULL) {
-					for (int32_t i = 0; i < packet->data.play_client.playerlistitem.number_of_players; i++) {
-						if (packet->data.play_client.playerlistitem.action_id == 0) {
-							xfree(packet->data.play_client.playerlistitem.players[i].action.addplayer.name);
-							xfree(packet->data.play_client.playerlistitem.players[i].action.addplayer.display_name);
-							if (packet->data.play_client.playerlistitem.players[i].action.addplayer.properties != NULL) {
-								for (int32_t x = 0; x < packet->data.play_client.playerlistitem.players[i].action.addplayer.number_of_properties; x++) {
-									xfree(packet->data.play_client.playerlistitem.players[i].action.addplayer.properties[x].name);
-									xfree(packet->data.play_client.playerlistitem.players[i].action.addplayer.properties[x].value);
-									xfree(packet->data.play_client.playerlistitem.players[i].action.addplayer.properties[x].signature);
-								}
-								xfree(packet->data.play_client.playerlistitem.players[i].action.addplayer.properties);
-							}
-						} else if (packet->data.play_client.playerlistitem.action_id == 3) {
-							xfree(packet->data.play_client.playerlistitem.players[i].action.addplayer.display_name);
-						}
-					}
-					xfree(packet->data.play_client.playerlistitem.players);
-				}
-			} else if (packet->id == PKT_PLAY_CLIENT_PLAYERPOSITIONANDLOOK) {
-			} else if (packet->id == PKT_PLAY_CLIENT_USEBED) {
-			} else if (packet->id == PKT_PLAY_CLIENT_DESTROYENTITIES) {
-				if (packet->data.play_client.destroyentities.entity_ids != NULL) xfree(packet->data.play_client.destroyentities.entity_ids);
-			} else if (packet->id == PKT_PLAY_CLIENT_REMOVEENTITYEFFECT) {
-			} else if (packet->id == PKT_PLAY_CLIENT_RESOURCEPACKSEND) {
-				if (packet->data.play_client.resourcepacksend.url != NULL) xfree(packet->data.play_client.resourcepacksend.url);
-				if (packet->data.play_client.resourcepacksend.hash != NULL) xfree(packet->data.play_client.resourcepacksend.hash);
-			} else if (packet->id == PKT_PLAY_CLIENT_RESPAWN) {
-				if (packet->data.play_client.respawn.level_type != NULL) xfree(packet->data.play_client.respawn.level_type);
-			} else if (packet->id == PKT_PLAY_CLIENT_ENTITYHEADLOOK) {
-			} else if (packet->id == PKT_PLAY_CLIENT_WORLDBORDER) {
-				//TODO: Manual Implementation
-			} else if (packet->id == PKT_PLAY_CLIENT_CAMERA) {
-			} else if (packet->id == PKT_PLAY_CLIENT_HELDITEMCHANGE) {
-			} else if (packet->id == PKT_PLAY_CLIENT_DISPLAYSCOREBOARD) {
-				if (packet->data.play_client.displayscoreboard.score_name != NULL) xfree(packet->data.play_client.displayscoreboard.score_name);
-			} else if (packet->id == PKT_PLAY_CLIENT_ENTITYMETADATA) {
-				if (packet->data.play_client.entitymetadata.metadata.metadata != NULL) xfree(packet->data.play_client.entitymetadata.metadata.metadata);
-			} else if (packet->id == PKT_PLAY_CLIENT_ATTACHENTITY) {
-			} else if (packet->id == PKT_PLAY_CLIENT_ENTITYVELOCITY) {
-			} else if (packet->id == PKT_PLAY_CLIENT_ENTITYEQUIPMENT) {
-				if (packet->data.play_client.entityequipment.item.nbt != NULL) freeNBT(packet->data.play_client.entityequipment.item.nbt);
-			} else if (packet->id == PKT_PLAY_CLIENT_SETEXPERIENCE) {
-			} else if (packet->id == PKT_PLAY_CLIENT_UPDATEHEALTH) {
-			} else if (packet->id == PKT_PLAY_CLIENT_SCOREBOARDOBJECTIVE) {
-				if (packet->data.play_client.scoreboardobjective.objective_name != NULL) xfree(packet->data.play_client.scoreboardobjective.objective_name);
-				if (packet->data.play_client.scoreboardobjective.objective_value != NULL) xfree(packet->data.play_client.scoreboardobjective.objective_value);
-				if (packet->data.play_client.scoreboardobjective.type != NULL) xfree(packet->data.play_client.scoreboardobjective.type);
-			} else if (packet->id == PKT_PLAY_CLIENT_SETPASSENGERS) {
-			} else if (packet->id == PKT_PLAY_CLIENT_TEAMS) {
-				//TODO: Manual Implementation
-			} else if (packet->id == PKT_PLAY_CLIENT_UPDATESCORE) {
-				if (packet->data.play_client.updatescore.score_name != NULL) xfree(packet->data.play_client.updatescore.score_name);
-				if (packet->data.play_client.updatescore.objective_name != NULL) xfree(packet->data.play_client.updatescore.objective_name);
-			} else if (packet->id == PKT_PLAY_CLIENT_SPAWNPOSITION) {
-			} else if (packet->id == PKT_PLAY_CLIENT_TIMEUPDATE) {
-			} else if (packet->id == PKT_PLAY_CLIENT_TITLE) {
-				//TODO: Manual Implementation
-			} else if (packet->id == PKT_PLAY_CLIENT_SOUNDEFFECT) {
-			} else if (packet->id == PKT_PLAY_CLIENT_PLAYERLISTHEADERANDFOOTER) {
-				if (packet->data.play_client.playerlistheaderandfooter.header != NULL) xfree(packet->data.play_client.playerlistheaderandfooter.header);
-				if (packet->data.play_client.playerlistheaderandfooter.footer != NULL) xfree(packet->data.play_client.playerlistheaderandfooter.footer);
-			} else if (packet->id == PKT_PLAY_CLIENT_COLLECTITEM) {
-			} else if (packet->id == PKT_PLAY_CLIENT_ENTITYTELEPORT) {
-			} else if (packet->id == PKT_PLAY_CLIENT_ENTITYPROPERTIES) {
-				for (int32_t i = 0; i < packet->data.play_client.entityproperties.number_of_properties; i++) {
-					xfree(packet->data.play_client.entityproperties.properties[i].key);
-					xfree(packet->data.play_client.entityproperties.properties[i].modifiers);
-				}
-				xfree(packet->data.play_client.entityproperties.properties);
-			} else if (packet->id == PKT_PLAY_CLIENT_ENTITYEFFECT) {
-			}
-		}
-		if (dir == 0) {
-			if (packet->id == PKT_PLAY_SERVER_TELEPORTCONFIRM) {
-			} else if (packet->id == PKT_PLAY_SERVER_TABCOMPLETE) {
-				if (packet->data.play_server.tabcomplete.text != NULL) xfree(packet->data.play_server.tabcomplete.text);
-			} else if (packet->id == PKT_PLAY_SERVER_CHATMESSAGE) {
-				if (packet->data.play_server.chatmessage.message != NULL) xfree(packet->data.play_server.chatmessage.message);
-			} else if (packet->id == PKT_PLAY_SERVER_CLIENTSTATUS) {
-			} else if (packet->id == PKT_PLAY_SERVER_CLIENTSETTINGS) {
-				if (packet->data.play_server.clientsettings.locale != NULL) xfree(packet->data.play_server.clientsettings.locale);
-			} else if (packet->id == PKT_PLAY_SERVER_CONFIRMTRANSACTION) {
-			} else if (packet->id == PKT_PLAY_SERVER_ENCHANTITEM) {
-			} else if (packet->id == PKT_PLAY_SERVER_CLICKWINDOW) {
-				if (packet->data.play_server.clickwindow.clicked_item.nbt != NULL) freeNBT(packet->data.play_server.clickwindow.clicked_item.nbt);
-			} else if (packet->id == PKT_PLAY_SERVER_CLOSEWINDOW) {
-			} else if (packet->id == PKT_PLAY_SERVER_PLUGINMESSAGE) {
-				if (packet->data.play_server.pluginmessage.channel != NULL) xfree(packet->data.play_server.pluginmessage.channel);
-			} else if (packet->id == PKT_PLAY_SERVER_USEENTITY) {
-			} else if (packet->id == PKT_PLAY_SERVER_KEEPALIVE) {
-			} else if (packet->id == PKT_PLAY_SERVER_PLAYERPOSITION) {
-			} else if (packet->id == PKT_PLAY_SERVER_PLAYERPOSITIONANDLOOK) {
-			} else if (packet->id == PKT_PLAY_SERVER_PLAYERLOOK) {
-			} else if (packet->id == PKT_PLAY_SERVER_PLAYER) {
-			} else if (packet->id == PKT_PLAY_SERVER_VEHICLEMOVE) {
-			} else if (packet->id == PKT_PLAY_SERVER_STEERBOAT) {
-			} else if (packet->id == PKT_PLAY_SERVER_PLAYERABILITIES) {
-			} else if (packet->id == PKT_PLAY_SERVER_PLAYERDIGGING) {
-			} else if (packet->id == PKT_PLAY_SERVER_ENTITYACTION) {
-			} else if (packet->id == PKT_PLAY_SERVER_STEERVEHICLE) {
-			} else if (packet->id == PKT_PLAY_SERVER_RESOURCEPACKSTATUS) {
-			} else if (packet->id == PKT_PLAY_SERVER_HELDITEMCHANGE) {
-			} else if (packet->id == PKT_PLAY_SERVER_CREATIVEINVENTORYACTION) {
-				if (packet->data.play_server.creativeinventoryaction.clicked_item.nbt != NULL) freeNBT(packet->data.play_server.creativeinventoryaction.clicked_item.nbt);
-			} else if (packet->id == PKT_PLAY_SERVER_UPDATESIGN) {
-				if (packet->data.play_server.updatesign.line_1 != NULL) xfree(packet->data.play_server.updatesign.line_1);
-				if (packet->data.play_server.updatesign.line_2 != NULL) xfree(packet->data.play_server.updatesign.line_2);
-				if (packet->data.play_server.updatesign.line_3 != NULL) xfree(packet->data.play_server.updatesign.line_3);
-				if (packet->data.play_server.updatesign.line_4 != NULL) xfree(packet->data.play_server.updatesign.line_4);
-			} else if (packet->id == PKT_PLAY_SERVER_ANIMATION) {
-			} else if (packet->id == PKT_PLAY_SERVER_SPECTATE) {
-			} else if (packet->id == PKT_PLAY_SERVER_PLAYERBLOCKPLACEMENT) {
-			} else if (packet->id == PKT_PLAY_SERVER_USEITEM) {
-			}
-		}
-	} else if (state == STATE_STATUS) {
-		if (dir == 1) {
-			if (packet->id == PKT_STATUS_CLIENT_RESPONSE) {
-				if (packet->data.status_client.response.json_response != NULL) xfree(packet->data.status_client.response.json_response);
-			} else if (packet->id == PKT_STATUS_CLIENT_PONG) {
-			}
-		}
-		if (dir == 0) {
-			if (packet->id == PKT_STATUS_SERVER_REQUEST) {
-				//TODO: Manual Implementation
-			} else if (packet->id == PKT_STATUS_SERVER_PING) {
-			}
-		}
-	} else if (state == STATE_LOGIN) {
-		if (dir == 1) {
-			if (packet->id == PKT_LOGIN_CLIENT_DISCONNECT) {
-				if (packet->data.login_client.disconnect.reason != NULL) xfree(packet->data.login_client.disconnect.reason);
-			} else if (packet->id == PKT_LOGIN_CLIENT_ENCRYPTIONREQUEST) {
-				if (packet->data.login_client.encryptionrequest.server_id != NULL) xfree(packet->data.login_client.encryptionrequest.server_id);
-			} else if (packet->id == PKT_LOGIN_CLIENT_LOGINSUCCESS) {
-				if (packet->data.login_client.loginsuccess.uuid != NULL) xfree(packet->data.login_client.loginsuccess.uuid);
-				if (packet->data.login_client.loginsuccess.username != NULL) xfree(packet->data.login_client.loginsuccess.username);
-			} else if (packet->id == PKT_LOGIN_CLIENT_SETCOMPRESSION) {
-			}
-		}
-		if (dir == 0) {
-			if (packet->id == PKT_LOGIN_SERVER_LOGINSTART) {
-				if (packet->data.login_server.loginstart.name != NULL) xfree(packet->data.login_server.loginstart.name);
-			} else if (packet->id == PKT_LOGIN_SERVER_ENCRYPTIONRESPONSE) {
-			}
-		}
-	}
 }

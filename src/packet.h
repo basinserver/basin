@@ -1,7 +1,8 @@
 #ifndef PACKET_H_
 #define PACKET_H_
 
-#include "basin/network.h"
+#include <basin/connection.h>
+#include <basin/network.h>
 
 #define STATE_HANDSHAKE 0
 #define STATE_PLAY 3
@@ -1111,7 +1112,7 @@ struct pkt_login_server_loginstart {
 struct pkt_login_server_encryptionresponse {
 		int32_t shared_secret_length;
 		uint8_t* shared_secret;
-		int32_t verify_token_length;
+		size_t verify_token_length;
 		uint8_t* verify_token;
 };
 
@@ -1268,13 +1269,14 @@ union pkts {
 };
 
 struct packet {
+		struct mempool* pool;
 		int32_t id;
 		union pkts data;
 };
 
-ssize_t readPacket(struct conn* conn, unsigned char* buf, size_t buflen, struct packet* packet);
+ssize_t readPacket(struct connection* conn, unsigned char* buf, size_t buflen, struct packet* packet);
 
-ssize_t writePacket(struct conn* conn, struct packet* packet);
+ssize_t writePacket(struct connection* conn, struct packet* packet);
 
 void freePacket(int state, int dir, struct packet* packet);
 

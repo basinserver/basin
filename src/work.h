@@ -8,18 +8,11 @@
 #ifndef WORK_H_
 #define WORK_H_
 
-#include <basin/collection.h>
-#include "accept.h"
-#include <basin/log.h>
+#include <avuna/log.h>
+#include <avuna/netmgr.h>
 
-struct work_param {
-		struct collection* conns;
-		int pipes[2];
-		struct logsess* logsess;
-		int i;
-		int sport;
-};
+int connection_read(struct netmgr_connection* conn, uint8_t* read_buf, size_t read_buf_len);
 
-void run_work(struct work_param* param);
+void connection_on_closed(struct netmgr_connection* conn);
 
 #endif /* WORK_H_ */

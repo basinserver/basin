@@ -352,9 +352,9 @@ int onItemInteract_spawnegg(struct world* world, struct player* player, uint8_t 
 	//if (getBlockWorld(world, x, y, z) != 0) return 0;
 	struct item_info* ii = getItemInfo(slot->item);
 	if (ii == NULL) return 0;
-	struct nbt_tag* et = getNBTChild(slot->nbt, "EntityTag");
+	struct nbt_tag* et = nbt_get(slot->nbt, "EntityTag");
 	if (et == NULL) return 0;
-	struct nbt_tag* tmp = getNBTChild(et, "id");
+	struct nbt_tag* tmp = nbt_get(et, "id");
 	if (tmp == NULL || tmp->id != NBT_TAG_STRING) return 0;
 	uint32_t etx = getIDFromEntityDataName(tmp->data.nbt_string);
 	struct entity* ent = newEntity(nextEntityID++, (float) x + .5, (float) y, (float) z + .5, etx, 0., 0.);

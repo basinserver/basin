@@ -22,16 +22,15 @@
 #include <netinet/tcp.h>
 #include <netinet/in.h>
 
-void run_accept(struct accept_param* param) {
+void run_accept(struct server* server) {
 	static int one = 1;
-	static unsigned char onec = 1;
 	struct timeval timeout;
 	timeout.tv_sec = 60;
 	timeout.tv_usec = 0;
 	struct pollfd spfd;
 	spfd.events = POLLIN;
 	spfd.revents = 0;
-	spfd.fd = param->server_fd;
+	spfd.fd = server->fd;
 	while (1) {
 		struct mempool* pool = mempool_new();
 		struct connection* conn = pcalloc(pool, sizeof(struct connection));
@@ -40,6 +39,8 @@ void run_accept(struct accept_param* param) {
 		conn->managed_conn = pcalloc(conn->pool, sizeof(struct netmgr_connection));
 		conn->managed_conn->pool = conn->pool;
 		conn->managed_conn->extra = conn;
+		conn->compression_state = -1;
+		conn->server = server;
 		buffer_init(&conn->managed_conn->read_buffer, conn->pool);
 		buffer_init(&conn->managed_conn->write_buffer, conn->pool);
 		if (poll(&spfd, 1, -1) < 0) {
@@ -53,7 +54,7 @@ void run_accept(struct accept_param* param) {
 			break;
 		}
 		spfd.revents = 0;
-		int fd = accept(param->server_fd, (struct sockaddr*) &conn->addr, &conn->addrlen);
+		int fd = accept(server->fd, (struct sockaddr*) &conn->addr, &conn->addrlen);
 		if (fd < 0) {
 			if (errno == EAGAIN) continue;
 			printf("Error while accepting client: %s\n", strerror(errno));
@@ -69,7 +70,7 @@ void run_accept(struct accept_param* param) {
 			close(fd);
 			continue;
 		}
-		queue_push(param->server->prepared_connections, conn);
+		queue_push(server->prepared_connections, conn);
 	}
 	pthread_cancel (pthread_self());
 }
