@@ -14,12 +14,6 @@
 #define OVERWORLD 0
 #define ENDWORLD 1
 
-struct world* nether;
-struct world* overworld;
-struct world* endworld;
-
-struct collection* worlds;
-
 struct world* getWorldByID(int32_t id);
 
 #endif /* WORLDMANAGER_H_ */

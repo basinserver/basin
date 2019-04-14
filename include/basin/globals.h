@@ -14,17 +14,19 @@
 
 #include <avuna/log.h>
 #include <avuna/hash.h>
+#include <avuna/pmem.h>
+#include <avuna/queue.h>
 #include <stdlib.h>
 #include <pthread.h>
 
 size_t tick_counter;
 struct config* cfg;
+struct mempool* global_pool;
 struct logsess* delog;
 struct hashmap* players;
-struct collection* defunctPlayers;
-struct collection* defunctChunks;
-struct collection* playersToLoad;
+struct queue* playersToLoad;
 pthread_mutex_t glob_tick_mut;
 pthread_cond_t glob_tick_cond;
+struct hashmap* server_map;
 
 #endif /* GLOBALS_H_ */

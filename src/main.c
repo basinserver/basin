@@ -16,7 +16,6 @@
 #include <basin/tools.h>
 #include <basin/smelting.h>
 #include <basin/command.h>
-#include <basin/queue.h>
 #include <basin/profile.h>
 #include <basin/plugin.h>
 #include <basin/version.h>
@@ -24,6 +23,8 @@
 #include <avuna/config.h>
 #include <avuna/string.h>
 #include <avuna/streams.h>
+#include <avuna/queue.h>
+#include <avuna/pmem_hooks.h>
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <signal.h>
@@ -59,7 +60,6 @@ void main_tick() {
 	flush_outgoing (value);
 	END_HASHMAP_ITERATION (players)
 	if (tick_counter % 20 == 0) {
-		//printf("defr %i\n", defunctChunks->count);
 		pthread_rwlock_wrlock(&defunctPlayers->data_mutex);
 		for (size_t i = 0; i < defunctPlayers->size; i++) {
 			struct player* def = defunctPlayers->data[i];
@@ -114,8 +114,175 @@ void main_tick_thread(void* ptr) {
 #pragma clang diagnostic pop
 }
 
+struct server* server_load(struct config_node* server) {
+	if (server->name == NULL) {
+		errlog(delog, "Server block missing name, skipping.");
+	}
+	const char* bind_ip = NULL;
+	uint16_t port = 25565;
+	int namespace = -1;
+	int bind_all = 0;
+	int ip6 = 0;
+	bind_ip = config_get(server, "bind-ip");
+	if (str_eq(bind_ip, "0.0.0.0")) {
+		bind_all = 1;
+	}
+	ip6 = bind_all || str_contains(bind_ip, ":");
+	const char* bind_port = config_get(server, "bind-port");
+	if (bind_port == NULL) {
+		bind_port = "25565";
+	}
+	if (!str_isunum(bind_port)) {
+		errlog(delog, "Invalid bind-port for server: %s", server->name);
+		return NULL;
+	}
+	port = (uint16_t) strtoul(bind_port, NULL, 10);
+	namespace = ip6 ? PF_INET6 : PF_INET;;
+	const char* net_thread_count_str = config_get(server, "network-threads");
+	if (!str_isunum(net_thread_count_str)) {
+		errlog(delog, "Invalid threads for server: %s", server->name);
+		return NULL;
+	}
+	size_t net_thread_count = strtoul(net_thread_count_str, NULL, 10);
+	if (net_thread_count < 1) {
+		errlog(delog, "Invalid threads for server: %s, must be greater than 1.", server->name);
+		return NULL;
+	}
+	const char* max_player_str = config_get(server, "max-players");
+	if (max_player_str == NULL) {
+		max_player_str = "20";
+	}
+	if (!str_isunum(max_player_str)) {
+		errlog(delog, "Invalid max-players for server: %s", server->name);
+		return NULL;
+	}
+	size_t max_players = strtoul(max_player_str, NULL, 10);
+	const char* difficulty_str = config_get(server, "difficulty");
+	if (difficulty_str == NULL) {
+		difficulty_str = "2";
+	}
+	if (!str_isunum(difficulty_str)) {
+		errlog(delog, "Invalid difficulty for server: %s", server->name);
+		return NULL;
+	}
+	uint8_t difficulty = (uint8_t) strtoul(difficulty_str, NULL, 10);
+	const char* motd = config_get(server, "motd");
+	if (motd == NULL) {
+		motd = "A Minecraft Server";
+	}
+	const char* online_mode_str = config_get(server, "online-mode");
+	if (online_mode_str == NULL) {
+		online_mode_str = "true";
+	}
+	int is_online_mode = str_eq(online_mode_str, "true");
+	sock: ;
+	int server_fd = socket(namespace, SOCK_STREAM, 0);
+	if (server_fd < 0) {
+		errlog(delog, "Error creating socket for server: %s, %s", server->name, strerror(errno));
+		return NULL;
+	}
+	int one = 1;
+	int zero = 0;
+	if (setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR, (void*) &one, sizeof(one)) == -1) {
+		errlog(delog, "Error setting SO_REUSEADDR for server: %s, %s", server->name, strerror(errno));
+		close(server_fd);
+		return NULL;
+	}
+	if (ip6) {
+		if (setsockopt(server_fd, IPPROTO_IPV6, IPV6_V6ONLY, (void*) &zero, sizeof(zero)) == -1) {
+			errlog(delog, "Error unsetting IPV6_V6ONLY for server: %s, %s", server->name, strerror(errno));
+			close(server_fd);
+			return NULL;
+		}
+		struct sockaddr_in6 bind_addr;
+		bind_addr.sin6_flowinfo = 0;
+		bind_addr.sin6_scope_id = 0;
+		bind_addr.sin6_family = AF_INET6;
+		if (bind_all) bind_addr.sin6_addr = in6addr_any;
+		else if (!inet_pton(AF_INET6, bind_ip, &(bind_addr.sin6_addr))) {
+			close(server_fd);
+			errlog(delog, "Error binding socket for server: %s, invalid bind-ip", server->name);
+			return NULL;
+		}
+		bind_addr.sin6_port = htons(port);
+		if (bind(server_fd, (struct sockaddr*) &bind_addr, sizeof(bind_addr))) {
+			close (server_fd);
+			if (bind_all) {
+				namespace = PF_INET;
+				ip6 = 0;
+				goto sock;
+			}
+			errlog(delog, "Error binding socket for server: %s, %s", server->name, strerror(errno));
+			return NULL;
+		}
+	} else {
+		struct sockaddr_in bip;
+		bip.sin_family = AF_INET;
+		if (!inet_aton(bind_ip, &(bip.sin_addr))) {
+			close(server_fd);
+			errlog(delog, "Error binding socket for server: %s, invalid bind-ip", server->name);
+			return NULL;
+		}
+		bip.sin_port = htons(port);
+		if (bind(server_fd, (struct sockaddr*) &bip, sizeof(bip))) {
+			errlog(delog, "Error binding socket for server: %s, %s", server->name, strerror(errno));
+			close(server_fd);
+			return NULL;
+		}
+	}
+	if (listen(server_fd, 50)) {
+		errlog(delog, "Error listening on socket for server: %s, %s", server->name, strerror(errno));
+		close(server_fd);
+		return NULL;
+	}
+	if (fcntl(server_fd, F_SETFL, fcntl(server_fd, F_GETFL) | O_NONBLOCK) < 0) {
+		errlog(delog, "Error setting non-blocking for server: %s, %s", server->name, strerror(errno));
+		close(server_fd);
+		return NULL;
+	}
+	struct mempool* pool = mempool_new();
+	struct server* serv = pcalloc(pool, sizeof(struct server));
+	serv->pool = pool;
+	serv->fd = server_fd;
+	phook(serv->pool, close_hook, (void*) serv->fd);
+	serv->name = server->name;
+	serv->difficulty = difficulty;
+	serv->max_players = max_players;
+	serv->motd = (char*) motd;
+	serv->online_mode = is_online_mode;
+	serv->prepared_connections = queue_new(0, 1, serv->pool);
+	struct logsess* server_log = serv->logger = pcalloc(serv->pool, sizeof(struct logsess));
+	server_log->pi = 0;
+	const char* access_log = config_get(server, "access-log");
+	server_log->access_fd = access_log == NULL ? NULL : fopen(access_log, "a");
+	const char* error_log = config_get(server, "error-log");
+	server_log->error_fd = error_log == NULL ? NULL : fopen(error_log, "a");
+	acclog(server_log, "Server %s listening for connections!", server->name);
+	const char* ovr = config_get(server, "world");
+	if (ovr == NULL) {
+		errlog(delog, "No world defined for server: %s", server->name);
+		pfree(serv->pool);
+		return NULL;
+	}
+	serv->overworld = newWorld(8);
+	loadWorld(serv->overworld, (char*) ovr);
+	printf("Overworld Loaded\n");
+	//nether = newWorld();
+	//loadWorld(nether, neth);
+	//endworld = newWorld();
+	//loadWorld(endworld, ed);
+	serv->worlds = list_new(8, serv->pool);
+	list_append(serv->worlds, serv->overworld);
+	//add_collection(worlds, nether);
+	//add_collection(worlds, endworld);
+	hashmap_put(server_map, serv->name, serv);
+	struct accept_param* param = pmalloc(serv->pool, sizeof(struct accept_param));
+	param->server = serv;
+}
+
 int main(int argc, char* argv[]) {
 	signal(SIGPIPE, SIG_IGN);
+	global_pool = mempool_new();
 	struct timespec ts;
 	clock_gettime(CLOCK_MONOTONIC, &ts);
 	size_t us = ts.tv_sec * 1000000 + ts.tv_nsec / 1000;
@@ -131,13 +298,13 @@ int main(int argc, char* argv[]) {
 	ecwd++;
 	ecwd[0] = 0;
 	chdir(ncwd);
-	cfg = loadConfig("main.cfg");
+	cfg = config_load("main.cfg");
 	if (cfg == NULL) {
 		printf("Error loading Config<%s>: %s\n", "main.cfg", errno == EINVAL ? "File doesn't exist!" : strerror(errno));
 		return 1;
 	}
-	struct cnode* dm = getUniqueByCat(cfg, CAT_DAEMON);
-	if (dm == NULL) {
+	struct config_node* daemon = config_get_unique_cat(cfg, "daemon");
+	if (daemon == NULL) {
 		printf("[daemon] block does not exist in <%s>!\n", "main.cfg");
 		return 1;
 	}
@@ -174,257 +341,50 @@ int main(int argc, char* argv[]) {
 #else
 	printf("Daemonized! PID = %i\n", getpid());
 #endif
-	delog = xmalloc(sizeof(struct logsess));
+	delog = pmalloc(global_pool, sizeof(struct logsess));
 	delog->pi = 0;
 	delog->access_fd = NULL;
-	const char* el = getConfigValue(dm, "error-log");
-	delog->error_fd = el == NULL ? NULL : fopen(el, "a"); // fopen will return NULL on error, which works.
+	const char* error_log = config_get(daemon, "error-log");
+	delog->error_fd = error_log == NULL ? NULL : fopen(error_log, "a"); // fopen will return NULL on error, which works.
 //TODO: chown group to de-escalated
-	int servsl;
-	struct cnode** servs = getCatsByCat(cfg, CAT_SERVER, &servsl);
-	int sr = 0;
-	struct accept_param* aps[servsl];
-	if (servsl != 1) {
+	struct list* servers = hashmap_get(cfg->nodeListsByCat, "server");
+	struct accept_param* accept_params[servers->count];
+	if (servers->count != 1) {
 		errlog(delog, "Only one server block is supported at this time.");
 		return -1;
 	}
-	globalChunkQueue = new_queue(0, 1);
-	players = new_hashmap(1, 1);
-	defunctPlayers = new_collection(16, 1);
-	defunctChunks = new_collection(16, 1);
-	playersToLoad = new_collection(16, 1);
+	globalChunkQueue = queue_new(0, 1, global_pool);
+	players = hashmap_thread_new(32, global_pool);
+	playersToLoad = queue_new(0, 1, global_pool);
 	init_materials();
-	printf("Materials Initialized\n");
+	acclog(delog, "Materials Initialized");
 	init_blocks();
-	printf("Blocks Initialized\n");
+	acclog(delog, "Blocks Initialized");
 	init_entities();
-	printf("Entities Initialized\n");
+	acclog(delog, "Entities Initialized");
 	init_crafting();
-	printf("Crafting Initialized\n");
+	acclog(delog, "Crafting Initialized");
     tools_init();
-	printf("Tools Initialized\n");
+	acclog(delog, "Tools Initialized");
 	init_items();
-	printf("Items Initialized\n");
+	acclog(delog, "Items Initialized");
 	init_smelting();
-	printf("Smelting Initialized\n");
+	acclog(delog, "Smelting Initialized");
 	init_base_commands();
-	printf("Commands Initialized\n");
+	acclog(delog, "Commands Initialized");
 	init_plugins();
-	printf("Plugins Initialized\n");
+	acclog(delog, "Plugins Initialized");
 	init_encryption();
-	printf("Encryption Initialized\n");
-	for (int i = 0; i < servsl; i++) {
-		struct cnode* serv = servs[i];
-		const char* bind_mode = getConfigValue(serv, "bind-mode");
-		const char* bind_ip = NULL;
-		int port = -1;
-		const char* bind_file = NULL;
-		int namespace = -1;
-		int ba = 0;
-		int ip6 = 0;
-		if (streq(bind_mode, "tcp")) {
-			bind_ip = getConfigValue(serv, "bind-ip");
-			if (streq(bind_ip, "0.0.0.0")) {
-				ba = 1;
-			}
-			ip6 = ba || contains(bind_ip, ":");
-			const char* bind_port = getConfigValue(serv, "bind-port");
-			if (!strisunum(bind_port)) {
-				if (serv->id != NULL) errlog(delog, "Invalid bind-port for server: %s", serv->id);
-				else errlog(delog, "Invalid bind-port for server.");
-				continue;
-			}
-			port = atoi(bind_port);
-			namespace = ip6 ? PF_INET6 : PF_INET;;
-		} else if (streq(bind_mode, "unix")) {
-			bind_file = getConfigValue(serv, "bind-file");
-			namespace = PF_LOCAL;
-		} else {
-			if (serv->id != NULL) errlog(delog, "Invalid bind-mode for server: %s", serv->id);
-			else errlog(delog, "Invalid bind-mode for server.");
-			continue;
-		}
-		const char* tcc = getConfigValue(serv, "threads");
-		if (!strisunum(tcc)) {
-			if (serv->id != NULL) errlog(delog, "Invalid threads for server: %s", serv->id);
-			else errlog(delog, "Invalid threads for server.");
-			continue;
-		}
-		int tc = atoi(tcc);
-		if (tc < 1) {
-			if (serv->id != NULL) errlog(delog, "Invalid threads for server: %s, must be greater than 1.", serv->id);
-			else errlog(delog, "Invalid threads for server, must be greater than 1.");
-			continue;
-		}
-		const char* mcc = getConfigValue(serv, "max-players");
-		if (!strisunum(mcc)) {
-			if (serv->id != NULL) errlog(delog, "Invalid max-players for server: %s", serv->id);
-			else errlog(delog, "Invalid max-players for server.");
-			continue;
-		}
-		int mc = atoi(mcc);
-		const char* mcc2 = getConfigValue(serv, "difficulty");
-		if (!strisunum(mcc2)) {
-			if (serv->id != NULL) errlog(delog, "Invalid difficulty for server: %s", serv->id);
-			else errlog(delog, "Invalid difficulty for server.");
-			continue;
-		}
-		int mc2 = atoi(mcc2);
-		const char* dmotd = getConfigValue(serv, "motd");
-		if (dmotd == NULL) {
-			if (serv->id != NULL) errlog(delog, "Invalid motd for server: %s, assuming default.", serv->id);
-			else errlog(delog, "Invalid motd for server, assuming default.");
-			dmotd = "A Minecraft Server";
-		}
-		const char* onl = getConfigValue(serv, "online-mode");
-		if (onl == NULL) {
-			if (serv->id != NULL) errlog(delog, "Invalid online-mode for server: %s, assuming true.", serv->id);
-			else errlog(delog, "Invalid online-mode for server, assuming true.");
-			onl = "true";
-		}
-		int ionl = streq_nocase(onl, "true");
-		sock: ;
-		int sfd = socket(namespace, SOCK_STREAM, 0);
-		if (sfd < 0) {
-			if (serv->id != NULL) errlog(delog, "Error creating socket for server: %s, %s", serv->id, strerror(errno));
-			else errlog(delog, "Error creating socket for server, %s", strerror(errno));
-			continue;
-		}
-		int one = 1;
-		int zero = 0;
-		if (setsockopt(sfd, SOL_SOCKET, SO_REUSEADDR, (void*) &one, sizeof(one)) == -1) {
-			if (serv->id != NULL) errlog(delog, "Error setting SO_REUSEADDR for server: %s, %s", serv->id, strerror(errno));
-			else errlog(delog, "Error setting SO_REUSEADDR for server, %s", strerror(errno));
-			close (sfd);
-			continue;
-		}
-		if (namespace == PF_INET || namespace == PF_INET6) {
-			if (ip6) {
-				if (setsockopt(sfd, IPPROTO_IPV6, IPV6_V6ONLY, (void*) &zero, sizeof(zero)) == -1) {
-					if (serv->id != NULL) errlog(delog, "Error unsetting IPV6_V6ONLY for server: %s, %s", serv->id, strerror(errno));
-					else errlog(delog, "Error unsetting IPV6_V6ONLY for server, %s", strerror(errno));
-					close (sfd);
-					continue;
-				}
-				struct sockaddr_in6 bip;
-				bip.sin6_flowinfo = 0;
-				bip.sin6_scope_id = 0;
-				bip.sin6_family = AF_INET6;
-				if (ba) bip.sin6_addr = in6addr_any;
-				else if (!inet_pton(AF_INET6, bind_ip, &(bip.sin6_addr))) {
-					close (sfd);
-					if (serv->id != NULL) errlog(delog, "Error binding socket for server: %s, invalid bind-ip", serv->id);
-					else errlog(delog, "Error binding socket for server, invalid bind-ip");
-					continue;
-				}
-				bip.sin6_port = htons(port);
-				if (bind(sfd, (struct sockaddr*) &bip, sizeof(bip))) {
-					close (sfd);
-					if (ba) {
-						namespace = PF_INET;
-						ip6 = 0;
-						goto sock;
-					}
-					if (serv->id != NULL) errlog(delog, "Error binding socket for server: %s, %s", serv->id, strerror(errno));
-					else errlog(delog, "Error binding socket for server, %s\n", strerror(errno));
-					continue;
-				}
-			} else {
-				struct sockaddr_in bip;
-				bip.sin_family = AF_INET;
-				if (!inet_aton(bind_ip, &(bip.sin_addr))) {
-					close (sfd);
-					if (serv->id != NULL) errlog(delog, "Error binding socket for server: %s, invalid bind-ip", serv->id);
-					else errlog(delog, "Error binding socket for server, invalid bind-ip");
-					continue;
-				}
-				bip.sin_port = htons(port);
-				if (bind(sfd, (struct sockaddr*) &bip, sizeof(bip))) {
-					if (serv->id != NULL) errlog(delog, "Error binding socket for server: %s, %s", serv->id, strerror(errno));
-					else errlog(delog, "Error binding socket for server, %s\n", strerror(errno));
-					close (sfd);
-					continue;
-				}
-			}
-		} else if (namespace == PF_LOCAL) {
-			struct sockaddr_un uip;
-			strncpy(uip.sun_path, bind_file, 108);
-			if (bind(sfd, (struct sockaddr*) &uip, sizeof(uip))) {
-				if (serv->id != NULL) errlog(delog, "Error binding socket for server: %s, %s", serv->id, strerror(errno));
-				else errlog(delog, "Error binding socket for server, %s\n", strerror(errno));
-				close (sfd);
-				continue;
-			}
-		} else {
-			if (serv->id != NULL) errlog(delog, "Invalid family for server: %s", serv->id);
-			else errlog(delog, "Invalid family for server\n");
-			close (sfd);
-			continue;
-		}
-		if (listen(sfd, 50)) {
-			if (serv->id != NULL) errlog(delog, "Error listening on socket for server: %s, %s", serv->id, strerror(errno));
-			else errlog(delog, "Error listening on socket for server, %s", strerror(errno));
-			close (sfd);
-			continue;
-		}
-		if (fcntl(sfd, F_SETFL, fcntl(sfd, F_GETFL) | O_NONBLOCK) < 0) {
-			if (serv->id != NULL) errlog(delog, "Error setting non-blocking for server: %s, %s", serv->id, strerror(errno));
-			else errlog(delog, "Error setting non-blocking for server, %s", strerror(errno));
-			close (sfd);
-			continue;
-		}
-		struct logsess* slog = xmalloc(sizeof(struct logsess));
-		slog->pi = 0;
-		const char* lal = getConfigValue(serv, "access-log");
-		slog->access_fd = lal == NULL ? NULL : fopen(lal, "a");
-		const char* lel = getConfigValue(serv, "error-log");
-		slog->error_fd = lel == NULL ? NULL : fopen(lel, "a");
-		if (serv->id != NULL) acclog(slog, "Server %s listening for connections!", serv->id);
-		else acclog(slog, "Server listening for connections!");
-		max_players = mc;
-		motd = xstrdup(dmotd, 0);
-		online_mode = ionl;
-		difficulty = mc2;
-		const char* ovr = getConfigValue(serv, "world");
-		if (ovr == NULL) {
-			if (serv->id != NULL) errlog(delog, "No world defined for server: %s", serv->id);
-			else errlog(delog, "No world defined for server");
-			close (sfd);
-			continue;
-		}
-		overworld = newWorld(8);
-		loadWorld(overworld, ovr);
-		printf("Overworld Loaded\n");
-		//nether = newWorld();
-		//loadWorld(nether, neth);
-		//endworld = newWorld();
-		//loadWorld(endworld, ed);
-		worlds = new_collection(0, 1);
-		add_collection(worlds, overworld);
-		//add_collection(worlds, nether);
-		//add_collection(worlds, endworld);
-		struct accept_param* ap = xmalloc(sizeof(struct accept_param));
-		ap->port = port;
-		ap->server_fd = sfd;
-		ap->config = serv;
-		ap->works_count = tc;
-		ap->works = xmalloc(sizeof(struct work_param*) * tc);
-		ap->logsess = slog;
-		for (int x = 0; x < tc; x++) {
-			struct work_param* wp = xmalloc(sizeof(struct work_param));
-			wp->conns = new_collection(mc < 1 ? 0 : mc / tc, 1);
-			wp->logsess = slog;
-			wp->i = x;
-			wp->sport = port;
-			ap->works[x] = wp;
-		}
-		aps[i] = ap;
-		sr++;
+	acclog(delog, "Encryption Initialized");
+	server_map = hashmap_thread_new(16, global_pool);
+	ITER_LIST(servers) {
+		struct config_node* server = item;
+		server_load(server);
 	}
-	const char* uids = getConfigValue(dm, "uid");
-	const char* gids = getConfigValue(dm, "gid");
-	uid_t uid = uids == NULL ? 0 : atol(uids);
-	uid_t gid = gids == NULL ? 0 : atol(gids);
+	const char* uids = config_get(daemon, "uid");
+	const char* gids = config_get(daemon, "gid");
+	uid_t uid = (uid_t) (uids == NULL ? 0 : strtoul(uids, NULL, 10));
+	uid_t gid = (uid_t) (gids == NULL ? 0 : strtoul(gids, NULL, 10));
 	if (gid > 0) {
 		if (setgid(gid) != 0) {
 			errlog(delog, "Failed to setgid! %s", strerror(errno));
@@ -438,18 +398,16 @@ int main(int argc, char* argv[]) {
 	acclog(delog, "Running as UID = %u, GID = %u, starting workers.", getuid(), getgid());
 	for (int i = 0; i < servsl; i++) {
 		pthread_t pt;
-		for (int x = 0; x < aps[i]->works_count; x++) {
-			int c = pthread_create(&pt, NULL, (void *) run_work, aps[i]->works[x]);
+		for (int x = 0; x < accept_params[i]->works_count; x++) {
+			int c = pthread_create(&pt, NULL, (void *) run_work, accept_params[i]->works[x]);
 			if (c != 0) {
 				if (servs[i]->id != NULL) errlog(delog, "Error creating thread: pthread errno = %i, this will cause occasional connection hanging @ %s server.", c, servs[i]->id);
-				else errlog(delog, "Error creating thread: pthread errno = %i, this will cause occasional connection hanging.", c);
 			}
 		}
-		int c = pthread_create(&pt, NULL, (void *) run_accept, aps[i]);
+		int c = pthread_create(&pt, NULL, (void *) run_accept, accept_params[i]);
 		if (c != 0) {
 			if (servs[i]->id != NULL) errlog(delog, "Error creating thread: pthread errno = %i, server %s is shutting down.", c, servs[i]->id);
-			else errlog(delog, "Error creating thread: pthread errno = %i, server is shutting down.", c);
-			close(aps[i]->server_fd);
+			close(accept_params[i]->server_fd);
 		}
 	}
 	pthread_t tt;
