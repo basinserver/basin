@@ -6,7 +6,7 @@
  */
 
 #include "accept.h"
-#include "packet.h"
+#include "basin/packet.h"
 #include <basin/nbt.h>
 #include <basin/network.h>
 #include <avuna/pmem.h>

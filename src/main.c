@@ -275,9 +275,10 @@ struct server* server_load(struct config_node* server) {
 	list_append(serv->worlds, serv->overworld);
 	//add_collection(worlds, nether);
 	//add_collection(worlds, endworld);
+	serv-> players = hashmap_thread_new(32, global_pool);
+	// playersToLoad = queue_new(0, 1, global_pool);
+
 	hashmap_put(server_map, serv->name, serv);
-	struct accept_param* param = pmalloc(serv->pool, sizeof(struct accept_param));
-	param->server = serv;
 }
 
 int main(int argc, char* argv[]) {
@@ -354,8 +355,6 @@ int main(int argc, char* argv[]) {
 		return -1;
 	}
 	globalChunkQueue = queue_new(0, 1, global_pool);
-	players = hashmap_thread_new(32, global_pool);
-	playersToLoad = queue_new(0, 1, global_pool);
 	init_materials();
 	acclog(delog, "Materials Initialized");
 	init_blocks();

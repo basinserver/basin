@@ -6,7 +6,7 @@
  */
 
 #include "accept.h"
-#include "packet.h"
+#include "basin/packet.h"
 #include <basin/network.h>
 #include <basin/inventory.h>
 #include <basin/queue.h>

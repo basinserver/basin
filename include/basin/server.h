@@ -26,6 +26,9 @@ struct server {
     struct world* endworld;
     struct list* worlds;
     struct queue* prepared_connections;
+    struct hashmap* players;
+    //  struct queue* playersToLoad;
+
 };
 
 //TODO: make this an option

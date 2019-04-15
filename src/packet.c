@@ -1,7 +1,7 @@
 
 
 
-#include "packet.h"
+#include "basin/packet.h"
 #include <basin/globals.h>
 #include <basin/inventory.h>
 #include <basin/network.h>
@@ -26,13 +26,20 @@
 #include <time.h>
 #include <math.h>
 
+struct packet* packet_new(struct mempool* pool, int32_t id) {
+	struct packet* packet = pcalloc(pool, sizeof(struct packet));
+	packet->pool = pool;
+	packet->id = id;
+	return packet;
+}
+
 #define ADRX if(rx == 0) goto rer;pbuf += rx;ps -= rx;
 #define ADX(x) pbuf += x;ps -= x;
 #define CPS(x) if(ps < x) goto rer;
 #define CPS_OPT(x) if(ps >= x) {
 #define ENS(x) if(ps-pi < x) { ps += (x > 256 ? x + 1024 : 1024); pktbuf = prealloc(packet->pool, pktbuf - 10, ps + 10) + 10; }
 
-ssize_t readPacket(struct connection* conn, unsigned char* buf, size_t buflen, struct packet* packet) {
+ssize_t packet_read(struct connection* conn, unsigned char* buf, size_t buflen, struct packet* packet) {
 	void* pktbuf = buf;
 	int32_t pktlen = (int32_t) buflen;
 	if (conn->compression_state >= 0) {
@@ -549,7 +556,7 @@ ssize_t readPacket(struct connection* conn, unsigned char* buf, size_t buflen, s
 	return buflen;
 }
 
-ssize_t writePacket(struct connection* conn, struct packet* packet) {
+ssize_t packet_write(struct connection* conn, struct packet* packet) {
 	if (conn->protocol_state == STATE_PLAY && packet->id == PKT_PLAY_CLIENT_CHUNKDATA) {
 		if (!isChunkLoaded(conn->player->world, packet->data.play_client.chunkdata.cx, packet->data.play_client.chunkdata.cz)) return 0;
 	}

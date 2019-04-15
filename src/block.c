@@ -5,7 +5,7 @@
  *      Author: root
  */
 
-#include "packet.h"
+#include "basin/packet.h"
 #include <basin/inventory.h>
 #include <basin/globals.h>
 #include "basin/network.h"

@@ -6,7 +6,7 @@
  */
 
 #include "basin/network.h"
-#include "packet.h"
+#include "basin/packet.h"
 #include <basin/game.h>
 #include <basin/block.h>
 #include <basin/queue.h>

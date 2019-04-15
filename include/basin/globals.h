@@ -23,8 +23,6 @@ size_t tick_counter;
 struct config* cfg;
 struct mempool* global_pool;
 struct logsess* delog;
-struct hashmap* players;
-struct queue* playersToLoad;
 pthread_mutex_t glob_tick_mut;
 pthread_cond_t glob_tick_cond;
 struct hashmap* server_map;

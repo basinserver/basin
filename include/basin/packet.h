@@ -1274,9 +1274,11 @@ struct packet {
 		union pkts data;
 };
 
-ssize_t readPacket(struct connection* conn, unsigned char* buf, size_t buflen, struct packet* packet);
+struct packet* packet_new(struct mempool* pool, int32_t id);
 
-ssize_t writePacket(struct connection* conn, struct packet* packet);
+ssize_t packet_read(struct connection* conn, unsigned char* buf, size_t buflen, struct packet* packet);
+
+ssize_t packet_write(struct connection* conn, struct packet* packet);
 
 void freePacket(int state, int dir, struct packet* packet);
 
