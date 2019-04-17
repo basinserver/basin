@@ -423,6 +423,7 @@ int main(int argc, char* argv[]) {
 	for (int i = 0; i < overworld->chl_count; i++) {
 		pthread_create(&tt, NULL, &chunkloadthr, (size_t) i);
 	}
+	//TODO: start wake thread
 	char line[4096];
 	while (sr > 0) {
 		if (readLine(STDIN_FILENO, line, 4096) < 0) {

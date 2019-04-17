@@ -53,6 +53,8 @@ void init_encryption() {
 	mojang_ctx = SSL_CTX_new(method);
 }
 
+// TODO: when we recreate the packet code generator, use 64 bit unambiguous types and uint*/size_t always
+
 void swapEndian(void* dou, size_t ss) {
 	uint8_t* pxs = (uint8_t*) dou;
 	for (int i = 0; i < ss / 2; i++) {
@@ -252,8 +254,7 @@ void duplicateSlot(struct mempool* pool, struct slot* slot, struct slot* dup) {
 	dup->item = slot->item;
 	dup->damage = slot->damage;
 	dup->itemCount = slot->itemCount;
-	dup->nbt = pmalloc(struct mempool* pool, sizeof(struct nbt_tag));
-	duplicateNBT(slot->nbt, dup->nbt);
+	dup->nbt = nbt_clone(pool, slot->nbt);
 }
 
 int writeSlot(struct slot* slot, unsigned char* buffer, size_t buflen) {

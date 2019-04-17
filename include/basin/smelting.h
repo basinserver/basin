@@ -16,7 +16,7 @@
 struct smelting_fuel {
 		int16_t id;
 		int16_t damage;
-		int16_t burnTime;
+		int16_t burn_time;
 };
 
 struct smelting_recipe {
@@ -24,9 +24,9 @@ struct smelting_recipe {
 		struct slot output;
 };
 
-int16_t getSmeltingFuelBurnTime(struct slot* slot);
+int16_t smelting_burnTime(struct slot* slot);
 
-struct slot* getSmeltingOutput(struct slot* input);
+struct slot* smelting_output(struct slot* input);
 
 void init_smelting();
 

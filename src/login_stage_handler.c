@@ -278,17 +278,16 @@ int handle_encryption_response(struct connection* conn, struct packet* packet) {
     } else goto ssl_error;
     sin.sin_port = htons(443);
     sin.sin_family = AF_INET;
-    int mfd = socket(AF_INET, SOCK_STREAM, 0);
+    int session_tls_fd = socket(AF_INET, SOCK_STREAM, 0);
     SSL* ssl = NULL;
-    int session_server_successful = 0;
-    if (mfd < 0) goto ssl_error;
-    phook(ssl_pool, close_hook, mfd);
-    if (connect(mfd, (struct sockaddr*) &sin, sizeof(struct sockaddr_in))) goto ssl_error;
+    if (session_tls_fd < 0) goto ssl_error;
+    phook(ssl_pool, close_hook, (void*) session_tls_fd);
+    if (connect(session_tls_fd, (struct sockaddr*) &sin, sizeof(struct sockaddr_in))) goto ssl_error;
     ssl = SSL_new(mojang_ctx);
     phook(ssl_pool, (void (*)(void*)) SSL_shutdown, ssl);
     phook(ssl_pool, (void (*)(void*)) SSL_free, ssl);
     SSL_set_connect_state(ssl);
-    SSL_set_fd(ssl, mfd);
+    SSL_set_fd(ssl, session_tls_fd);
     if (SSL_connect(ssl) != 1) goto ssl_error;
     char write_buf[4096];
     int write_length = snprintf(write_buf, 1024, "GET /session/minecraft/hasJoined?username=%s&serverId=%s HTTP/1.1\r\nHost: sessionserver.mojang.com\r\nUser-Agent: Basin " VERSION "\r\nConnection: close\r\n\r\n", conn->online_username, hex_hash_signed);
@@ -334,22 +333,25 @@ int handle_encryption_response(struct connection* conn, struct packet* packet) {
     }
     post_map_iteration:;
     pthread_rwlock_unlock(&conn->server->players_by_entity_id->rwlock);
-    session_server_successful = 1;
     conn->aes_ctx_enc = EVP_CIPHER_CTX_new();
     if (conn->aes_ctx_enc == NULL) goto rete;
-    if (EVP_EncryptInit_ex(conn->aes_ctx_enc, EVP_aes_128_cfb8(), NULL, conn->shared_secret, conn->shared_secret) != 1) goto rete;
+    if (EVP_EncryptInit_ex(conn->aes_ctx_enc, EVP_aes_128_cfb8(), NULL, conn->shared_secret, conn->shared_secret) != 1) {
+        goto ssl_error;
+    }
     if (conn->aes_ctx_enc != NULL) {
         phook(conn->pool, (void (*)(void*)) encrypt_free, conn->aes_ctx_enc);
     }
 
     conn->aes_ctx_dec = EVP_CIPHER_CTX_new();
     if (conn->aes_ctx_dec == NULL) goto rete;
-    if (EVP_DecryptInit_ex(conn->aes_ctx_dec, EVP_aes_128_cfb8(), NULL, conn->shared_secret, conn->shared_secret) != 1) goto rete;
+    if (EVP_DecryptInit_ex(conn->aes_ctx_dec, EVP_aes_128_cfb8(), NULL, conn->shared_secret, conn->shared_secret) != 1) {
+        goto ssl_error;
+    }
     if (conn->aes_ctx_dec != NULL) {
         phook(conn->pool, (void (*)(void*)) decrypt_free, conn->aes_ctx_dec);
     }
 
-    if (work_joinServer(conn, name, id)) {
+    if (work_joinServer(conn, packet->pool, name, id)) {
         pfree(ssl_pool);
         return 1;
     }

@@ -147,7 +147,7 @@ int validItemForSlot(int invtype, int si, struct slot* slot) {
 		if (si == 0) return 0;
 	} else if (invtype == INVTYPE_FURNACE) {
 		if (si == 2) return 0;
-		else if (si == 1) return getSmeltingFuelBurnTime(slot) > 0;
+		else if (si == 1) return smelting_burnTime(slot) > 0;
 	}
 	return 1;
 }

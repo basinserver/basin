@@ -7,121 +7,151 @@
 
 #include <basin/smelting.h>
 #include <basin/item.h>
+#include <basin/globals.h>
+#include <avuna/hash.h>
+#include <avuna/list.h>
 #include <avuna/json.h>
 #include <avuna/string.h>
+#include <avuna/pmem.h>
+#include <avuna/util.h>
+#include <avuna/log.h>
 #include <fcntl.h>
 #include <errno.h>
 #include <unistd.h>
 
-struct collection* smelting_fuels;
+struct hashmap* smelting_fuels; // key = id << 16 | data
 
-struct collection* smelting_recipes;
+struct list* smelting_recipes;
 
-int16_t getSmeltingFuelBurnTime(struct slot* slot) {
+struct mempool* smelting_pool;
+
+int16_t smelting_burnTime(struct slot* slot) {
 	if (slot == NULL || slot->item < 0) return 0;
-	for (size_t i = 0; i < smelting_fuels->size; i++) {
-		if (smelting_fuels->data[i] == NULL) continue;
-		struct smelting_fuel* sf = (struct smelting_fuel*) smelting_fuels->data[i];
-		if (sf->id == slot->item && (sf->damage == -1 || sf->damage == slot->damage)) return sf->burnTime;
+	uint32_t key = (uint32_t) slot->item << 16u | (uint32_t) slot->damage;
+	struct smelting_fuel* fuel = hashmap_getint(smelting_fuels, key);
+	if (fuel == NULL) {
+		key &= 0xFFFFlu << 16;
+		key |= 0xFFFF;
+		fuel = hashmap_getint(smelting_fuels, key);
 	}
-	return 0;
+	if (fuel == NULL) {
+		return 0;
+	}
+	return fuel->burn_time;
 }
 
-struct slot* getSmeltingOutput(struct slot* input) {
+struct slot* smelting_output(struct slot* input) {
+	// TODO: use a hashmap
 	if (input == NULL || input->item < 0) return 0;
-	for (size_t i = 0; i < smelting_recipes->size; i++) {
+	pthread_rwlock_init(&smelting_fuels->rwlock);
+	for (size_t i = 0; i < smelting_recipes->count; i++) {
 		if (smelting_recipes->data[i] == NULL) continue;
 		struct smelting_recipe* sf = (struct smelting_recipe*) smelting_recipes->data[i];
-		if (itemsStackable2(input, &sf->input)) return &sf->output;
+		if (itemsStackable2(input, &sf->input)) {
+            pthread_rwlock_unlock(&smelting_fuels->rwlock);
+		    return &sf->output;
+		}
 	}
+    pthread_rwlock_unlock(&smelting_fuels->rwlock);
 	return 0;
 }
 
 void add_smelting_fuel(struct smelting_fuel* fuel) {
-	add_collection(smelting_fuels, fuel);
+	uint32_t key = (uint32_t) fuel->id << 16u | (uint32_t) fuel->damage;
+	hashmap_putint(smelting_fuels, key, fuel);
 }
 
 void add_smelting_recipe(struct smelting_recipe* recipe) {
-	add_collection(smelting_recipes, recipe);
+	list_append(smelting_recipes, recipe);
 }
 
 void init_smelting() {
-	smelting_fuels = new_collection(128, 0);
-	smelting_recipes = new_collection(128, 0);
-	char* jsf = xmalloc(4097);
-	size_t jsfs = 4096;
-	size_t jsr = 0;
-	int fd = open("smelting.json", O_RDONLY);
-	ssize_t r = 0;
-	while ((r = read(fd, jsf + jsr, jsfs - jsr)) > 0) {
-		jsr += r;
-		if (jsfs - jsr < 512) {
-			jsfs += 4096;
-			jsf = xrealloc(jsf, jsfs + 1);
-		}
+    smelting_pool = mempool_new();
+	smelting_fuels = hashmap_thread_new(64, smelting_pool);
+	smelting_recipes = list_thread_new(128, smelting_pool);
+    char* json_file = (char*) read_file_fully(smelting_pool, "smelting.json", NULL);
+    if (json_file == NULL) {
+        errlog(delog, "Error reading smelting data: %s\n", strerror(errno));
+        return;
+    }
+    struct json_object* json = NULL;
+    json_parse(smelting_pool, &json, json_file);
+    pprefree(smelting_pool, json_file);
+	struct json_object* fuels = json_get(json, "fuels");
+	if (fuels == NULL || fuels->type != JSON_OBJECT) goto format_error_json;
+	struct json_object* recipes = json_get(json, "recipes");
+	if (recipes == NULL || recipes->type != JSON_OBJECT) goto format_error_json;
+	ITER_LLIST(fuels->children_list, value) {
+	    struct json_object* child_json = value;
+	    struct json_object* id_json = json_get(child_json, "id");
+	    if (id_json == NULL || id_json->type != JSON_NUMBER) {
+	        goto fuel_format_error;
+	    }
+        struct smelting_fuel* fuel = pcalloc(smelting_pool, sizeof(struct smelting_fuel));
+        fuel->id = (int16_t) id_json->data.number;
+        if (fuel->id <= 0) {
+            goto fuel_format_error;
+        }
+        struct json_object* damage_json = json_get(child_json, "damage");
+        if (damage_json == NULL || damage_json->type != JSON_NUMBER) {
+            goto fuel_format_error;
+        }
+        fuel->damage = (int16_t) damage_json->data.number;
+        struct json_object* burn_time_json = json_get(child_json, "burnTime");
+        if (burn_time_json == NULL || burn_time_json->type != JSON_NUMBER) {
+            goto fuel_format_error;
+        }
+        fuel->burn_time = (int16_t) burn_time_json->data.number;
+        add_smelting_fuel(fuel);
+        continue;
+	    fuel_format_error:;
+        printf("[WARNING] Error Loading Smelting Fuel \"%s\"! Skipped.\n", child_json->name);
+        ITER_LLIST_END();
 	}
-	jsf[jsr] = 0;
-	if (r < 0) {
-		printf("Error reading smelting information: %s\n", strerror(errno));
+	ITER_LLIST(recipes->children_list, value) {
+	    struct json_object* child_json = value;
+        struct smelting_recipe* recipe = pcalloc(smelting_pool, sizeof(struct smelting_recipe));
+        struct json_object* input_json = json_get(child_json, "input_item");
+        if (input_json == NULL || input_json->type != JSON_NUMBER) {
+            goto format_error_recipe;
+        }
+        recipe->input.item = (int16_t) input_json->data.number;
+        if (recipe->input.item <= 0) goto format_error_recipe;
+        struct json_object* input_damage_json = json_get(child_json, "input_damage");
+        if (input_damage_json == NULL || input_damage_json->type != JSON_NUMBER) {
+            goto format_error_recipe;
+        }
+        recipe->input.damage = (int16_t) input_damage_json->data.number;
+        recipe->input.itemCount = 1;
+        recipe->input.nbt = NULL;
+        struct json_object* output_json = json_get(child_json, "output_item");
+        if (output_json == NULL || output_json->type != JSON_NUMBER) {
+            goto format_error_recipe;
+        }
+        recipe->output.item = (int16_t) output_json->data.number;
+        if (recipe->output.item <= 0) {
+            goto format_error_recipe;
+        }
+        struct json_object* output_damage_json = json_get(child_json, "output_damage");
+        if (output_damage_json == NULL || output_damage_json->type != JSON_NUMBER) {
+            goto format_error_recipe;
+        }
+        recipe->output.damage = (int16_t) output_damage_json->data.number;
+        struct json_object* output_count_json = json_get(child_json, "output_count");
+        if (output_count_json == NULL || output_count_json->type != JSON_NUMBER) {
+            goto format_error_recipe;
+        }
+        recipe->output.itemCount = (uint8_t) output_count_json->data.number;
+        recipe->output.nbt = NULL;
+        add_smelting_recipe(recipe);
+        continue;
+        format_error_recipe:;
+        printf("[WARNING] Error Loading Smelting Recipe \"%s\"! Skipped.\n", child_json->name);
+        ITER_LLIST_END();
 	}
-	close(fd);
-	struct json_object json;
-    json_parse(&json, jsf);
-	struct json_object* fuels = json_get(&json, "fuels");
-	if (fuels == NULL || fuels->type != JSON_OBJECT) goto cerr2;
-	struct json_object* recipes = json_get(&json, "recipes");
-	if (recipes == NULL || recipes->type != JSON_OBJECT) goto cerr2;
-	for (size_t i = 0; i < fuels->child_count; i++) {
-		struct json_object* ur = fuels->children[i];
-		struct smelting_fuel* ii = xcalloc(sizeof(struct smelting_fuel));
-		struct json_object* tmp = json_get(ur, "id");
-		if (tmp == NULL || tmp->type != JSON_NUMBER) goto cerr;
-		ii->id = (int16_t) tmp->data.number;
-		if (ii->id <= 0) goto cerr;
-		tmp = json_get(ur, "damage");
-		if (tmp == NULL || tmp->type != JSON_NUMBER) goto cerr;
-		ii->damage = (int16_t) tmp->data.number;
-		tmp = json_get(ur, "burnTime");
-		if (tmp == NULL || tmp->type != JSON_NUMBER) goto cerr;
-		ii->burnTime = (int16_t) tmp->data.number;
-		add_smelting_fuel(ii);
-		continue;
-		cerr: ;
-		printf("[WARNING] Error Loading Smelting Fuel \"%s\"! Skipped.\n", ur->name);
-	}
-	for (size_t i = 0; i < recipes->child_count; i++) {
-		struct json_object* ur = recipes->children[i];
-		struct smelting_recipe* ii = xcalloc(sizeof(struct smelting_recipe));
-		struct json_object* tmp = json_get(ur, "input_item");
-		if (tmp == NULL || tmp->type != JSON_NUMBER) goto cerr3;
-		ii->input.item = (int16_t) tmp->data.number;
-		if (ii->input.item <= 0) goto cerr3;
-		tmp = json_get(ur, "input_damage");
-		if (tmp == NULL || tmp->type != JSON_NUMBER) goto cerr3;
-		ii->input.damage = (int16_t) tmp->data.number;
-		ii->input.itemCount = 1;
-		ii->input.nbt = NULL;
-		tmp = json_get(ur, "output_item");
-		if (tmp == NULL || tmp->type != JSON_NUMBER) goto cerr3;
-		ii->output.item = (int16_t) tmp->data.number;
-		if (ii->output.item <= 0) goto cerr3;
-		tmp = json_get(ur, "output_damage");
-		if (tmp == NULL || tmp->type != JSON_NUMBER) goto cerr3;
-		ii->output.damage = (int16_t) tmp->data.number;
-		tmp = json_get(ur, "output_count");
-		if (tmp == NULL || tmp->type != JSON_NUMBER) goto cerr3;
-		ii->output.itemCount = (uint8_t) tmp->data.number;
-		ii->output.nbt = NULL;
-		add_smelting_recipe(ii);
-		continue;
-		cerr3: ;
-		printf("[WARNING] Error Loading Smelting Recipe \"%s\"! Skipped.\n", ur->name);
-	}
-	freeJSON(&json);
-	xfree(jsf);
+    pfree(json->pool);
 	return;
-	cerr2: ;
-	freeJSON(&json);
-	xfree(jsf);
+	format_error_json: ;
+    pfree(json->pool);
 	printf("[ERROR] Critical Failure Loading 'smelting.json', No Fuels/Recipes Object!\n");
 }

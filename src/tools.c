@@ -18,7 +18,6 @@
 #include <avuna/log.h>
 #include <fcntl.h>
 #include <errno.h>
-#include "util.h"
 #include <unistd.h>
 
 struct mempool* tool_pool;

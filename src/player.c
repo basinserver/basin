@@ -740,8 +740,8 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 						}
 					} else if (inv->type == INVTYPE_FURNACE) {
 						if (slot > 2) {
-							if (getSmeltingOutput(invs) != NULL) swapSlots(player, inv, 0, slot, 0);
-							else if (getSmeltingFuelBurnTime(invs) > 0) swapSlots(player, inv, 1, slot, 0);
+							if (smelting_output(invs) != NULL) swapSlots(player, inv, 0, slot, 0);
+							else if (smelting_burnTime(invs) > 0) swapSlots(player, inv, 1, slot, 0);
 							else if (slot > 29) {
 								int r = addInventoryItem(player, inv, invs, 3, 30, 0);
 								if (r <= 0) setSlot(player, inv, slot, NULL, 0, 1);

@@ -550,8 +550,8 @@ void update_furnace(struct world* world, struct tile_entity* te) {
 	struct slot* si = getSlot(NULL, te->data.furnace.inv, 0);
 	struct slot* fu = getSlot(NULL, te->data.furnace.inv, 1);
 	struct slot* aso = getSlot(NULL, te->data.furnace.inv, 2);
-	struct slot* so = getSmeltingOutput(si);
-	int16_t st = getSmeltingFuelBurnTime(fu);
+	struct slot* so = smelting_output(si);
+	int16_t st = smelting_burnTime(fu);
 	int burning = 0;
 	if (so != NULL && ((itemsStackable(so, aso) && (aso->itemCount + so->itemCount) <= maxStackSize(so)) || aso == NULL) && (te->data.furnace.burnTime > 0 || st > 0)) {
 		burning = 1;
@@ -560,7 +560,7 @@ void update_furnace(struct world* world, struct tile_entity* te) {
 			enableTileEntityTickable(world, te);
 			setBlockWorld(world, BLK_FURNACE_1 | (getBlockWorld(world, te->x, te->y, te->z) & 0x0f), te->x, te->y, te->z);
 		}
-		//printf("bt = %i\n", te->data.furnace.burnTime);
+		//printf("bt = %i\n", te->data.furnace.burn_time);
 		if (te->data.furnace.burnTime <= 0 && st > 0 && fu != NULL) {
 			te->data.furnace.burnTime += st + 1;
 			if (--fu->itemCount == 0) fu = NULL;
