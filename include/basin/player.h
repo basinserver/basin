@@ -57,7 +57,7 @@ struct player {
 		uint8_t spawnedIn;
 		size_t llTick;
 		uint8_t triggerRechunk;
-		uint32_t protocolVersion;
+		uint32_t protocol_version;
 		uint16_t chunksSent;
 		float reachDistance;
 		acstate_t acstate;

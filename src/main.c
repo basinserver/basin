@@ -148,12 +148,12 @@ struct server* server_load(struct config_node* server) {
 		errlog(delog, "Invalid threads for server: %s, must be greater than 1.", server->name);
 		return NULL;
 	}
-	const char* max_player_str = config_get(server, "max-players");
+	const char* max_player_str = config_get(server, "max-players_by_entity_id");
 	if (max_player_str == NULL) {
 		max_player_str = "20";
 	}
 	if (!str_isunum(max_player_str)) {
-		errlog(delog, "Invalid max-players for server: %s", server->name);
+		errlog(delog, "Invalid max-players_by_entity_id for server: %s", server->name);
 		return NULL;
 	}
 	size_t max_players = strtoul(max_player_str, NULL, 10);
@@ -275,7 +275,7 @@ struct server* server_load(struct config_node* server) {
 	list_append(serv->worlds, serv->overworld);
 	//add_collection(worlds, nether);
 	//add_collection(worlds, endworld);
-	serv-> players = hashmap_thread_new(32, global_pool);
+	serv-> players_by_entity_id = hashmap_thread_new(32, global_pool);
 	// playersToLoad = queue_new(0, 1, global_pool);
 
 	hashmap_put(server_map, serv->name, serv);

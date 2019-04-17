@@ -8,14 +8,181 @@
 #include <basin/packet.h>
 #include <basin/globals.h>
 #include <basin/version.h>
+#include <basin/game.h>
 #include <avuna/string.h>
+#include <avuna/json.h>
+#include <avuna/util.h>
+#include <avuna/pmem_hooks.h>
 #include <openssl/ssl.h>
+#include <openssl/md5.h>
 #include <netdb.h>
+#include <arpa/inet.h>
+
+
+int work_joinServer(struct connection* conn, struct mempool* pool, char* username, char* uuid_string) {
+    struct uuid uuid;
+    unsigned char* uuidx = (unsigned char*) &uuid;
+    if (uuid_string == NULL) {
+        if (conn->server->online_mode) return 1;
+        MD5_CTX context;
+        MD5_Init(&context);
+        MD5_Update(&context, username, strlen(username));
+        MD5_Final(uuidx, &context);
+    } else {
+        if (strlen(uuid_string) != 32) return 1;
+        char ups[9];
+        memcpy(ups, uuid_string, 8);
+        ups[8] = 0;
+        uuid.uuid1 = ((uint64_t) strtoll(ups, NULL, 16)) << 32;
+        memcpy(ups, uuid_string + 8, 8);
+        uuid.uuid1 |= ((uint64_t) strtoll(ups, NULL, 16)) & 0xFFFFFFFF;
+        memcpy(ups, uuid_string + 16, 8);
+        uuid.uuid2 = ((uint64_t) strtoll(ups, NULL, 16)) << 32;
+        memcpy(ups, uuid_string + 24, 8);
+        uuid.uuid2 |= ((uint64_t) strtoll(ups, NULL, 16)) & 0xFFFFFFFF;
+    }
+    struct packet* resp = packet_new(pool, PKT_LOGIN_CLIENT_LOGINSUCCESS);
+    resp->data.login_client.loginsuccess.username = username;
+    resp->data.login_client.loginsuccess.uuid = pmalloc(pool, 38);
+    snprintf(resp->data.login_client.loginsuccess.uuid, 10, "%08X-", ((uint32_t*) uuidx)[0]);
+    snprintf(resp->data.login_client.loginsuccess.uuid + 9, 6, "%04X-", ((uint16_t*) uuidx)[2]);
+    snprintf(resp->data.login_client.loginsuccess.uuid + 14, 6, "%04X-", ((uint16_t*) uuidx)[3]);
+    snprintf(resp->data.login_client.loginsuccess.uuid + 19, 6, "%04X-", ((uint16_t*) uuidx)[4]);
+    snprintf(resp->data.login_client.loginsuccess.uuid + 24, 9, "%08X", ((uint32_t*) (uuidx + 4))[2]);
+    snprintf(resp->data.login_client.loginsuccess.uuid + 32, 5, "%04X", ((uint16_t*) uuidx)[7]);
+    if (packet_write(conn, resp) < 0) {
+        return 1;
+    }
+    conn->protocol_state = STATE_PLAY;
+    struct entity* ep = newEntity(nextEntityID++, (double) conn->server->overworld->spawnpos.x + .5, (double) conn->server->overworld->spawnpos.y, (double) conn->server->overworld->spawnpos.z + .5, ENT_PLAYER, 0., 0.);
+    struct player* player = newPlayer(ep, str_dup(resp->data.login_client.loginsuccess.username, 1, pool), uuid, conn, 0); // TODO default gamemode
+    player->protocol_version = conn->protocol_version;
+    conn->player = player;
+    hashmap_putint(conn->server->players_by_entity_id, (uint64_t) player->entity->id, player);
+    resp->id = PKT_PLAY_CLIENT_JOINGAME;
+    resp->data.play_client.joingame.entity_id = ep->id;
+    resp->data.play_client.joingame.gamemode = player->gamemode;
+    resp->data.play_client.joingame.dimension = conn->server->overworld->dimension;
+    resp->data.play_client.joingame.difficulty = (uint8_t) conn->server->difficulty;
+    resp->data.play_client.joingame.max_players = (uint8_t) conn->server->max_players;
+    resp->data.play_client.joingame.level_type = conn->server->overworld->levelType;
+    resp->data.play_client.joingame.reduced_debug_info = 0; // TODO
+    if (packet_write(conn, resp) < 0) {
+        return 1;
+    }
+    resp->id = PKT_PLAY_CLIENT_PLUGINMESSAGE;
+    resp->data.play_client.pluginmessage.channel = "MC|Brand";
+    resp->data.play_client.pluginmessage.data = pmalloc(pool, 16);
+    size_t str_length_length = (size_t) writeVarInt(5, (unsigned char*) resp->data.play_client.pluginmessage.data);
+    memcpy(resp->data.play_client.pluginmessage.data + str_length_length, "Basin", 5);
+    resp->data.play_client.pluginmessage.data_size = str_length_length + 5;
+    if (packet_write(conn, resp) < 0) {
+        return 1;
+    }
+    resp->id = PKT_PLAY_CLIENT_SERVERDIFFICULTY;
+    resp->data.play_client.serverdifficulty.difficulty = (uint8_t) conn->server->difficulty;
+    if (packet_write(conn, resp) < 0) {
+        return 1;
+    }
+    resp->id = PKT_PLAY_CLIENT_SPAWNPOSITION;
+    memcpy(&resp->data.play_client.spawnposition.location, &conn->server->overworld->spawnpos, sizeof(struct encpos));
+    if (packet_write(conn, resp) < 0) {
+        return 1;
+    }
+    resp->id = PKT_PLAY_CLIENT_PLAYERABILITIES;
+    resp->data.play_client.playerabilities.flags = 0; // TODO: allows flying, remove
+    resp->data.play_client.playerabilities.flying_speed = 0.05;
+    resp->data.play_client.playerabilities.field_of_view_modifier = .1;
+    if (packet_write(conn, resp) < 0) {
+        return 1;
+    }
+    resp->id = PKT_PLAY_CLIENT_PLAYERPOSITIONANDLOOK;
+    resp->data.play_client.playerpositionandlook.x = ep->x;
+    resp->data.play_client.playerpositionandlook.y = ep->y;
+    resp->data.play_client.playerpositionandlook.z = ep->z;
+    resp->data.play_client.playerpositionandlook.yaw = ep->yaw;
+    resp->data.play_client.playerpositionandlook.pitch = ep->pitch;
+    resp->data.play_client.playerpositionandlook.flags = 0x0;
+    resp->data.play_client.playerpositionandlook.teleport_id = 0;
+    if (packet_write(conn, resp) < 0) {
+        return 1;
+    }
+    resp->id = PKT_PLAY_CLIENT_PLAYERLISTITEM;
+    pthread_rwlock_rdlock(&conn->server->players_by_entity_id->rwlock);
+    resp->data.play_client.playerlistitem.action_id = 0;
+    resp->data.play_client.playerlistitem.number_of_players = (int32_t) (conn->server->players_by_entity_id->entry_count + 1);
+    resp->data.play_client.playerlistitem.players = pmalloc(pool, resp->data.play_client.playerlistitem.number_of_players * sizeof(struct listitem_player));
+    size_t players_written = 0;
+    ITER_MAP(conn->server->players_by_entity_id) {
+        struct player* iter_player = (struct player*) value;
+        if (players_written < resp->data.play_client.playerlistitem.number_of_players) {
+            memcpy(&resp->data.play_client.playerlistitem.players[players_written].uuid, &iter_player->uuid, sizeof(struct uuid));
+            resp->data.play_client.playerlistitem.players[players_written].action.addplayer.name = iter_player->name;
+            resp->data.play_client.playerlistitem.players[players_written].action.addplayer.number_of_properties = 0;
+            resp->data.play_client.playerlistitem.players[players_written].action.addplayer.properties = NULL;
+            resp->data.play_client.playerlistitem.players[players_written].action.addplayer.gamemode = iter_player->gamemode;
+            resp->data.play_client.playerlistitem.players[players_written].action.addplayer.ping = 0; // TODO
+            resp->data.play_client.playerlistitem.players[players_written].action.addplayer.has_display_name = 0;
+            resp->data.play_client.playerlistitem.players[players_written].action.addplayer.display_name = NULL;
+            players_written++;
+        }
+        if (player == iter_player) continue;
+        struct packet* pkt = packet_new(mempool_new(), PKT_PLAY_CLIENT_PLAYERLISTITEM);
+        pkt->data.play_client.playerlistitem.action_id = 0;
+        pkt->data.play_client.playerlistitem.number_of_players = 1;
+        pkt->data.play_client.playerlistitem.players = pmalloc(pkt->pool, sizeof(struct listitem_player));
+        memcpy(&pkt->data.play_client.playerlistitem.players->uuid, &player->uuid, sizeof(struct uuid));
+        pkt->data.play_client.playerlistitem.players->action.addplayer.name = str_dup(player->name, 0, pkt->pool);
+        pkt->data.play_client.playerlistitem.players->action.addplayer.number_of_properties = 0;
+        pkt->data.play_client.playerlistitem.players->action.addplayer.properties = NULL;
+        pkt->data.play_client.playerlistitem.players->action.addplayer.gamemode = player->gamemode;
+        pkt->data.play_client.playerlistitem.players->action.addplayer.ping = 0; // TODO
+        pkt->data.play_client.playerlistitem.players->action.addplayer.has_display_name = 0;
+        pkt->data.play_client.playerlistitem.players->action.addplayer.display_name = NULL;
+        queue_push(iter_player->outgoingPacket, pkt);
+        flush_outgoing(iter_player);
+        ITER_MAP_END();
+    }
+    pthread_rwlock_unlock(&conn->server->players_by_entity_id->rwlock);
+    memcpy(&resp->data.play_client.playerlistitem.players[players_written].uuid, &player->uuid, sizeof(struct uuid));
+    resp->data.play_client.playerlistitem.players[players_written].action.addplayer.name = player->name;
+    resp->data.play_client.playerlistitem.players[players_written].action.addplayer.number_of_properties = 0;
+    resp->data.play_client.playerlistitem.players[players_written].action.addplayer.properties = NULL;
+    resp->data.play_client.playerlistitem.players[players_written].action.addplayer.gamemode = player->gamemode;
+    resp->data.play_client.playerlistitem.players[players_written].action.addplayer.ping = 0; // TODO
+    resp->data.play_client.playerlistitem.players[players_written].action.addplayer.has_display_name = 0;
+    resp->data.play_client.playerlistitem.players[players_written].action.addplayer.display_name = NULL;
+    players_written++;
+    if (packet_write(conn, resp) < 0) {
+        return 1;
+    }
+    resp->id = PKT_PLAY_CLIENT_TIMEUPDATE;
+    resp->data.play_client.timeupdate.time_of_day = conn->server->overworld->time;
+    resp->data.play_client.timeupdate.world_age = conn->server->overworld->age;
+    if (packet_write(conn, resp) < 0) {
+        return 1;
+    }
+    add_collection(playersToLoad, player);
+    broadcastf("yellow", "%s has joined the server!", player->name);
+    const char* ip_string = NULL;
+    char tip[48];
+    if (conn->addr.in6.sin6_family == AF_INET) {
+        ip_string = inet_ntop(AF_INET, &conn->addr.in.sin_addr, tip, 48);
+    } else if (conn->addr.in6.sin6_family == AF_INET6) {
+        if (memseq((unsigned char*) &conn->addr.in6.sin6_addr, 10, 0) && memseq((unsigned char*) &conn->addr.in6.sin6_addr + 10, 2, 0xff)) {
+            ip_string = inet_ntop(AF_INET, ((unsigned char*) &conn->addr.in6.sin6_addr) + 12, tip, 48);
+        } else ip_string = inet_ntop(AF_INET6, &conn->addr.in6.sin6_addr, tip, 48);
+    } else {
+        ip_string = "UNKNOWN";
+    }
+    printf("Player '%s' has joined with IP '%s'\n", player->name, ip_string);
+    return 0;
+}
 
 int handle_packet_handshake(struct connection* conn, struct packet* packet) {
     conn->host_ip = str_dup(packet->data.handshake_server.handshake.server_address, 0, conn->pool);
     conn->host_port = packet->data.handshake_server.handshake.server_port;
-    conn->protocolVersion = (uint32_t) packet->data.handshake_server.handshake.protocol_version;
+    conn->protocol_version = (uint32_t) packet->data.handshake_server.handshake.protocol_version;
     if ((packet->data.handshake_server.handshake.protocol_version < MC_PROTOCOL_VERSION_MIN || packet->data.handshake_server.handshake.protocol_version > MC_PROTOCOL_VERSION_MAX) && packet->data.handshake_server.handshake.next_state != STATE_STATUS) return -2;
     if (packet->data.handshake_server.handshake.next_state == STATE_STATUS) {
         conn->protocol_state = STATE_STATUS;
@@ -30,7 +197,7 @@ int handle_packet_status(struct connection* conn, struct packet* packet) {
         struct packet* resp = packet_new(packet->pool, PKT_STATUS_CLIENT_RESPONSE);
         resp->data.status_client.response.json_response = pmalloc(packet->pool, 1000);
         resp->data.status_client.response.json_response[999] = 0;
-        snprintf(resp->data.status_client.response.json_response, 999, "{\"version\":{\"name\":\"1.11.2\",\"protocol\":%i},\"players\":{\"max\":%lu,\"online\":%lu},\"description\":{\"text\":\"%s\"}}", MC_PROTOCOL_VERSION_MIN, conn->server->max_players, conn->server->players->entry_count, conn->server->motd);
+        snprintf(resp->data.status_client.response.json_response, 999, "{\"version\":{\"name\":\"1.11.2\",\"protocol\":%i},\"players_by_entity_id\":{\"max\":%lu,\"online\":%lu},\"description\":{\"text\":\"%s\"}}", MC_PROTOCOL_VERSION_MIN, conn->server->max_players, conn->server->players_by_entity_id->entry_count, conn->server->motd);
         if (packet_write(conn, resp) < 0) return 1;
     } else if (packet->id == PKT_STATUS_SERVER_PING) {
         struct packet* resp = packet_new(packet->pool, PKT_STATUS_CLIENT_PONG);
@@ -55,145 +222,146 @@ void decrypt_free(EVP_CIPHER_CTX* ctx) {
 }
 
 int handle_encryption_response(struct connection* conn, struct packet* packet) {
-    if (conn->verifyToken == 0 || packet->data.login_server.encryptionresponse.shared_secret_length > 162 || packet->data.login_server.encryptionresponse.verify_token_length > 162) goto rete;
-    unsigned char decSecret[162];
-    int secLen = RSA_private_decrypt(packet->data.login_server.encryptionresponse.shared_secret_length, packet->data.login_server.encryptionresponse.shared_secret, decSecret, public_rsa, RSA_PKCS1_PADDING);
-    if (secLen != 16) goto rete;
-    unsigned char decVerifyToken[162];
-    int vtLen = RSA_private_decrypt(packet->data.login_server.encryptionresponse.verify_token_length, packet->data.login_server.encryptionresponse.verify_token, decVerifyToken, public_rsa, RSA_PKCS1_PADDING);
-    if (vtLen != 4) goto rete;
-    uint32_t vt = *((uint32_t*) decVerifyToken);
-    if (vt != conn->verifyToken) goto rete;
-    memcpy(conn->shared_secret, decSecret, 16);
-    uint8_t pubkey[162];
-    memcpy(pubkey, public_rsa_publickey, 162);
+    if (conn->verifyToken == 0 || packet->data.login_server.encryptionresponse.shared_secret_length > 162 || packet->data.login_server.encryptionresponse.verify_token_length > 162) {
+        return 1;
+    }
+    unsigned char shared_secret[162];
+    int secret_length = RSA_private_decrypt(packet->data.login_server.encryptionresponse.shared_secret_length, packet->data.login_server.encryptionresponse.shared_secret, shared_secret, public_rsa, RSA_PKCS1_PADDING);
+    if (secret_length != 16) {
+        return 1;
+    }
+    unsigned char verify_token[162];
+    int verify_token_length = RSA_private_decrypt(packet->data.login_server.encryptionresponse.verify_token_length, packet->data.login_server.encryptionresponse.verify_token, verify_token, public_rsa, RSA_PKCS1_PADDING);
+    if (verify_token_length != 4) {
+        return 1;
+    }
+    uint32_t verify_token_int = *((uint32_t*) verify_token);
+    if (verify_token_int != conn->verifyToken) goto rete;
+    memcpy(conn->shared_secret, shared_secret, 16);
+    uint8_t public_key[162];
+    memcpy(public_key, public_rsa_publickey, 162);
     uint8_t hash[20];
     SHA_CTX context;
     SHA1_Init(&context);
-    SHA1_Update(&context, decSecret, 16);
-    SHA1_Update(&context, pubkey, 162);
+    SHA1_Update(&context, shared_secret, 16);
+    SHA1_Update(&context, public_key, 162);
     SHA1_Final(hash, &context);
-    int m = 0;
+    int is_signed = 0;
     if (hash[0] & 0x80) {
-        m = 1;
+        is_signed = 1;
         for (int i = 0; i < 20; i++) {
             hash[i] = ~hash[i];
         }
         (hash[19])++;
     }
-    char fhash[32];
-    char* fhash2 = fhash + 1;
+    char hex_hash[32];
+    char* hex_hash_signed = hex_hash + 1;
     for (int i = 0; i < 20; i++) {
-        snprintf(fhash + 1 + (i * 2), 3, "%02X", hash[i]);
+        snprintf(hex_hash + 1 + (i * 2), 3, "%02X", hash[i]);
     }
     for (int i = 1; i < 41; i++) {
-        if (fhash[i] == '0') fhash2++;
+        if (hex_hash[i] == '0') hex_hash_signed++;
         else break;
     }
-    fhash2--;
-    if (m) fhash2[0] = '-';
-    else fhash2++;
+    hex_hash_signed--;
+    struct mempool* ssl_pool = mempool_new();
+    if (is_signed) hex_hash_signed[0] = '-';
+    else hex_hash_signed++;
     struct sockaddr_in sin;
+    //TODO: use getaddrinfo
     struct hostent *host = gethostbyname("sessionserver.mojang.com");
     if (host != NULL) {
         struct in_addr **adl = (struct in_addr **) host->h_addr_list;
         if (adl[0] != NULL) {
             sin.sin_addr.s_addr = adl[0]->s_addr;
-        } else goto merr;
-    } else goto merr;
+        } else goto ssl_error;
+    } else goto ssl_error;
     sin.sin_port = htons(443);
     sin.sin_family = AF_INET;
     int mfd = socket(AF_INET, SOCK_STREAM, 0);
-    SSL* sct = NULL;
-    int initssl = 0;
-    int val = 0;
-    if (mfd < 0) goto merr;
-    if (connect(mfd, (struct sockaddr*) &sin, sizeof(struct sockaddr_in))) goto merr;
-    sct = SSL_new(mojang_ctx);
-    SSL_set_connect_state(sct);
-    SSL_set_fd(sct, mfd);
-    if (SSL_connect(sct) != 1) goto merr;
-    else initssl = 1;
-    char cbuf[4096];
-    int tl = snprintf(cbuf, 1024, "GET /session/minecraft/hasJoined?username=%s&serverId=%s HTTP/1.1\r\nHost: sessionserver.mojang.com\r\nUser-Agent: Basin " VERSION "\r\nConnection: close\r\n\r\n", conn->online_username, fhash2);
-    int tw = 0;
-    while (tw < tl) {
-        int r = SSL_write(sct, cbuf, tl);
-        if (r <= 0) goto merr;
-        else tw += r;
+    SSL* ssl = NULL;
+    int session_server_successful = 0;
+    if (mfd < 0) goto ssl_error;
+    phook(ssl_pool, close_hook, mfd);
+    if (connect(mfd, (struct sockaddr*) &sin, sizeof(struct sockaddr_in))) goto ssl_error;
+    ssl = SSL_new(mojang_ctx);
+    phook(ssl_pool, (void (*)(void*)) SSL_shutdown, ssl);
+    phook(ssl_pool, (void (*)(void*)) SSL_free, ssl);
+    SSL_set_connect_state(ssl);
+    SSL_set_fd(ssl, mfd);
+    if (SSL_connect(ssl) != 1) goto ssl_error;
+    char write_buf[4096];
+    int write_length = snprintf(write_buf, 1024, "GET /session/minecraft/hasJoined?username=%s&serverId=%s HTTP/1.1\r\nHost: sessionserver.mojang.com\r\nUser-Agent: Basin " VERSION "\r\nConnection: close\r\n\r\n", conn->online_username, hex_hash_signed);
+    int written = 0;
+    while (written < write_length) {
+        int r = SSL_write(ssl, write_buf, write_length);
+        if (r <= 0) goto ssl_error;
+        else written += r;
     }
-    tw = 0;
+    int read = 0;
     int r = 0;
-    while ((r = SSL_read(sct, cbuf + tw, 4095 - tw)) > 0) {
-        tw += r;
+    while ((r = SSL_read(ssl, write_buf + read, 4095 - read)) > 0) { // we reuse write_buf as read_buf here
+        read += r;
     }
-    cbuf[tw] = 0;
-    char* data = strstr(cbuf, "\r\n\r\n");
-    if (data == NULL) goto merr;
+    write_buf[read] = 0;
+    char* data = strstr(write_buf, "\r\n\r\n");
+    if (data == NULL) goto ssl_error;
     data += 4;
-    struct json_object json;
-    json_parse(&json, data);
+    struct json_object* json = json_make_object(ssl_pool, NULL, 0);
+    json_parse(ssl_pool, &json, data);
     struct json_object* tmp = json_get(&json, "id");
     if (tmp == NULL || tmp->type != JSON_STRING) {
-        freeJSON(&json);
-        goto merr;
+        goto ssl_error;
     }
-    char* id = trim(tmp->data.string);
-    tmp = json_get(&json, "name");
+    char* id = str_trim(tmp->data.string);
+    tmp = json_get(json, "name");
     if (tmp == NULL || tmp->type != JSON_STRING) {
-        freeJSON(&json);
-        goto merr;
+        goto ssl_error;
     }
-    char* name = trim(tmp->data.string);
+    char* name = str_trim(tmp->data.string);
     size_t sl = strlen(name);
     if (sl < 2 || sl > 16) {
-        freeJSON(&json);
-        goto merr;
+        goto ssl_error;
     }
-    BEGIN_HASHMAP_ITERATION (players)
-    struct player* player = (struct player*) value;
-    if (streq_nocase(name, player->name)) {
-        kickPlayer(player, "You have logged in from another location!");
-        goto pbn2;
+    pthread_rwlock_rdlock(&conn->server->players_by_entity_id->rwlock);
+    ITER_MAP(conn->server->players_by_entity_id) {
+        struct player* player = (struct player*) value;
+        if (str_eq(name, player->name)) {
+            kickPlayer(player, "You have logged in from another location!");
+            goto post_map_iteration;
+        }
+        ITER_MAP_END();
     }
-    END_HASHMAP_ITERATION (players)
-    pbn2: ;
-    val = 1;
+    post_map_iteration:;
+    pthread_rwlock_unlock(&conn->server->players_by_entity_id->rwlock);
+    session_server_successful = 1;
     conn->aes_ctx_enc = EVP_CIPHER_CTX_new();
     if (conn->aes_ctx_enc == NULL) goto rete;
-    //EVP_CIPHER_CTX_set_padding(conn->aes_ctx_enc, 0);
-    if (EVP_EncryptInit_ex(conn->aes_ctx_enc, EVP_aes_128_cfb8(), NULL, conn->sharedSecret, conn->sharedSecret) != 1) goto rete;
+    if (EVP_EncryptInit_ex(conn->aes_ctx_enc, EVP_aes_128_cfb8(), NULL, conn->shared_secret, conn->shared_secret) != 1) goto rete;
     if (conn->aes_ctx_enc != NULL) {
-        phook(conn->pool, encrypt_free, conn->aes_ctx_enc);
+        phook(conn->pool, (void (*)(void*)) encrypt_free, conn->aes_ctx_enc);
     }
 
     conn->aes_ctx_dec = EVP_CIPHER_CTX_new();
     if (conn->aes_ctx_dec == NULL) goto rete;
-    //EVP_CIPHER_CTX_set_padding(conn->aes_ctx_dec, 0);
-    if (EVP_DecryptInit_ex(conn->aes_ctx_dec, EVP_aes_128_cfb8(), NULL, conn->sharedSecret, conn->sharedSecret) != 1) goto rete;
+    if (EVP_DecryptInit_ex(conn->aes_ctx_dec, EVP_aes_128_cfb8(), NULL, conn->shared_secret, conn->shared_secret) != 1) goto rete;
     if (conn->aes_ctx_dec != NULL) {
-        phook(conn->pool, decrypt_free, conn->aes_ctx_dec);
+        phook(conn->pool, (void (*)(void*)) decrypt_free, conn->aes_ctx_dec);
     }
 
     if (work_joinServer(conn, name, id)) {
-        freeJSON(&json);
-        if (initssl) SSL_shutdown(sct);
-        if (mfd >= 0) close(mfd);
-        if (sct != NULL) SSL_free(sct);
-        goto rete;
+        pfree(ssl_pool);
+        return 1;
     }
-    freeJSON(&json);
-    merr: ;
-    if (initssl) SSL_shutdown(sct);
-    if (mfd >= 0) close(mfd);
-    if (sct != NULL) SSL_free(sct);
-    if (!val) {
-        rep.id = PKT_LOGIN_CLIENT_DISCONNECT;
-        rep.data.login_client.disconnect.reason = xstrdup("{\"text\": \"There was an unresolvable issue with the Mojang sessionserver! Please try again.\"}", 0);
-        if (packet_write(conn, &rep) < 0) goto rete;
-        conn->disconnect = 1;
-        goto ret;
-    }
+    pfree(ssl_pool);
+    return 0;
+    ssl_error: ;
+    pfree(ssl_pool);
+    struct packet* resp = packet_new(packet->pool, PKT_LOGIN_CLIENT_DISCONNECT);
+    resp->data.login_client.disconnect.reason = "{\"text\": \"There was an unresolvable issue with the Mojang sessionserver! Please try again.\"}";
+    conn->disconnect = 1;
+    packet_write(conn, resp); // failure is ignored, we disconnect regardless
+    return 1;
 }
 
 int handle_login_start(struct connection* conn, struct packet* packet) {

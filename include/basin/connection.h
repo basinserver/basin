@@ -23,7 +23,7 @@ struct connection {
     uint16_t host_port;
     struct player* player;
     int disconnect;
-    uint32_t protocolVersion;
+    uint32_t protocol_version;
     uint32_t verifyToken;
     char* online_username;
     uint8_t shared_secret[16];

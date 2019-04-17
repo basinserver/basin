@@ -43,8 +43,8 @@ struct plugin {
 		float (*onEntityAttacked)(struct world* world, struct entity* attacker, uint8_t slot_index, struct slot* slot, struct entity* attacked, float damage); // called when a player attacks an entity return = damage, 0 for cancel.
 		float (*onEntityDamaged)(struct world* world, struct entity* entity, float damage); // called when any entity is damaged for any reason.
 		int (*onInventoryUpdate)(struct world* world, struct player* player, struct inventory* inventory, int16_t slot, struct slot* item);
-		int (*onPacketReceive)(int state, struct conn* conn, struct packet* packet); // UNSAFE! breaks protocol intercompatibilty - check conn->protocolVersion setting return = drop packet
-		int (*onPacketSend)(int state, struct conn* conn, struct packet* packet); // UNSAFE! breaks protocol intercompatibilty - check conn->protocolVersion setting return = drop packet
+		int (*onPacketReceive)(int state, struct conn* conn, struct packet* packet); // UNSAFE! breaks protocol intercompatibilty - check conn->protocol_version setting return = drop packet
+		int (*onPacketSend)(int state, struct conn* conn, struct packet* packet); // UNSAFE! breaks protocol intercompatibilty - check conn->protocol_version setting return = drop packet
 		void (*onEntitySpawn)(struct world* world, struct entity* entity); // called after an entity spawns
 		void (*onPlayerSpawn)(struct world* world, struct player* player); // called after a player spawns
 		void (*onPlayerFullySpawned)(struct world* world, struct player* player); // called after a player spawns and has moved

@@ -471,7 +471,7 @@ ssize_t packet_read(struct connection* conn, unsigned char* buf, size_t buflen, 
 			rx = readVarInt(&packet->data.play_server.playerblockplacement.hand, pbuf, ps);
 			ADRX
 			//cursor_position_x
-			if (conn->protocolVersion > 210) {
+			if (conn->protocol_version > 210) {
 				CPS(4)
 				memcpy(&packet->data.play_server.playerblockplacement.cursor_position_x, pbuf, 4);
 				swapEndian(&packet->data.play_server.playerblockplacement.cursor_position_x, 4);
@@ -483,7 +483,7 @@ ssize_t packet_read(struct connection* conn, unsigned char* buf, size_t buflen, 
 				ADX(1)
 			}
 			//cursor_position_y
-			if (conn->protocolVersion > 210) {
+			if (conn->protocol_version > 210) {
 				CPS(4)
 				memcpy(&packet->data.play_server.playerblockplacement.cursor_position_y, pbuf, 4);
 				swapEndian(&packet->data.play_server.playerblockplacement.cursor_position_y, 4);
@@ -495,7 +495,7 @@ ssize_t packet_read(struct connection* conn, unsigned char* buf, size_t buflen, 
 				ADX(1)
 			}
 			//cursor_position_z
-			if (conn->protocolVersion > 210) {
+			if (conn->protocol_version > 210) {
 				CPS(4)
 				memcpy(&packet->data.play_server.playerblockplacement.cursor_position_z, pbuf, 4);
 				swapEndian(&packet->data.play_server.playerblockplacement.cursor_position_z, 4);
@@ -685,7 +685,7 @@ ssize_t packet_write(struct connection* conn, struct packet* packet) {
 			swapEndian(pktbuf + pi, 16);
 			pi += 16;
 			//type
-			if (conn->protocolVersion > 210) {
+			if (conn->protocol_version > 210) {
 				ENS(4)
 				pi += writeVarInt(packet->data.play_client.spawnmob.type, pktbuf + pi);
 			} else {
@@ -1812,7 +1812,7 @@ ssize_t packet_write(struct connection* conn, struct packet* packet) {
 			ENS(4)
 			pi += writeVarInt(packet->data.play_client.collectitem.collector_entity_id, pktbuf + pi);
 			//pickup_item_count
-			if (conn->protocolVersion > 210) {
+			if (conn->protocol_version > 210) {
 				ENS(4)
 				pi += writeVarInt(packet->data.play_client.collectitem.pickup_item_count, pktbuf + pi);
 			}
