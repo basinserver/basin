@@ -42,7 +42,7 @@ struct region* region_new(struct mempool* parent, char* path, int16_t x, int16_t
 
 struct chunk* region_load_chunk(struct region* region, int8_t local_chunk_x, int8_t local_chunk_z) {
     if (region->fd < 0) {
-        region->fd = open(region->file, O_RDWR);
+        region->fd = open(region->file, O_RDWR | O_CREAT, 0664);
         if (region->fd < 0) {
             errlog(delog, "Error opening region: %s", region->file);
             return NULL;

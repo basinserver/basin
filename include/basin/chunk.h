@@ -64,6 +64,9 @@ void chunk_set_tile(struct chunk* chunk, struct tile_entity* te, int32_t x, uint
 
 uint8_t chunk_get_light(struct chunk* chunk, uint8_t x, uint8_t y, uint8_t z, uint8_t subtract);
 
+uint8_t chunk_get_raw_light(struct chunk* chunk, uint8_t x, uint8_t y, uint8_t z, uint8_t blocklight);
+
+void chunk_set_light(struct chunk* chunk, uint8_t light, uint8_t x, uint8_t y, uint8_t z, uint8_t blocklight, uint8_t skylight);
 
 
 #endif //BASIN_CHUNK_H

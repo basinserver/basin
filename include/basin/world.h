@@ -59,7 +59,7 @@ struct world {
 	uint64_t time;
 	uint64_t age;
 	struct nbt_tag* level;
-	char* lpa;
+	char* world_folder;
 	size_t chl_count;
 	uint8_t skylightSubtracted;
 	struct hashmap* scheduledTicks;
@@ -85,8 +85,6 @@ int world_set_block_guess_noupdate(struct world* world, struct chunk* chunk, blo
 
 void world_tick(struct world* world);
 
-int world_is_chunk_loaded(struct world* world, int32_t x, int32_t z);
-
 void world_explode(struct world* world, struct chunk* ch, double x, double y, double z, float strength);
 
 int32_t world_is_block_tick_scheduled(struct world* world, int32_t x, int32_t y, int32_t z);
@@ -108,7 +106,7 @@ int world_get_biome(struct world* world, int32_t x, int32_t z);
 
 block world_get_block(struct world* world, int32_t x, int32_t y, int32_t z);
 
-block world_get_block_guess(struct world* world, struct chunk* ch, int32_t x, int32_t y, int32_t z);
+block world_get_block_guess(struct world* world, struct chunk* chunk, int32_t x, int32_t y, int32_t z);
 
 int world_set_block(struct world* world, block blk, int32_t x, int32_t y, int32_t z);
 
