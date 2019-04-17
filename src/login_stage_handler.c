@@ -55,7 +55,8 @@ int work_joinServer(struct connection* conn, struct mempool* pool, char* usernam
     }
     conn->protocol_state = STATE_PLAY;
     struct entity* ep = newEntity(nextEntityID++, (double) conn->server->overworld->spawnpos.x + .5, (double) conn->server->overworld->spawnpos.y, (double) conn->server->overworld->spawnpos.z + .5, ENT_PLAYER, 0., 0.);
-    struct player* player = newPlayer(ep, str_dup(resp->data.login_client.loginsuccess.username, 1, pool), uuid, conn, 0); // TODO default gamemode
+    struct player* player = player_new(ep, str_dup(resp->data.login_client.loginsuccess.username, 1, pool), uuid, conn,
+                                       0); // TODO default gamemode
     player->protocol_version = conn->protocol_version;
     conn->player = player;
     hashmap_putint(conn->server->players_by_entity_id, (uint64_t) player->entity->id, player);
@@ -326,7 +327,7 @@ int handle_encryption_response(struct connection* conn, struct packet* packet) {
     ITER_MAP(conn->server->players_by_entity_id) {
         struct player* player = (struct player*) value;
         if (str_eq(name, player->name)) {
-            kickPlayer(player, "You have logged in from another location!");
+            player_kick(player, "You have logged in from another location!");
             goto post_map_iteration;
         }
         ITER_MAP_END();

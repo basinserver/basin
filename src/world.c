@@ -1723,7 +1723,7 @@ void tick_world(struct world* world) {
 		beginProfilerSection("tick_player");
 		BEGIN_HASHMAP_ITERATION(world->players)
 		struct player* player = (struct player*) value;
-		tick_player(world, player);
+		player_tick(world, player);
 		tick_entity(world, player->entity); // might need to be moved into separate loop later
 		END_HASHMAP_ITERATION(world->players)
 		endProfilerSection("tick_player");
@@ -1838,7 +1838,7 @@ void freeWorld(struct world* world) { // assumes all chunks are unloaded
 	del_hashmap(world->entities);
 	del_hashmap(world->chunks);
 	BEGIN_HASHMAP_ITERATION(world->players)
-	freePlayer(value);
+	player_free(value);
 	END_HASHMAP_ITERATION(world->players)
 	del_hashmap(world->players);
 	BEGIN_HASHMAP_ITERATION(world->scheduledTicks)

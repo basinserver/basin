@@ -22,15 +22,15 @@ void command_gamemode(struct player* player, char** args, size_t args_count) {
 		return;
 	}
 	struct player* target = player;
-	if (args_count == 2) target = getPlayerByName(args[1]);
+	if (args_count == 2) target = player_get_by_name(args[1]);
 	if (target == NULL) {
 		sendMessageToPlayer(player, "[ERROR] No such player found.", "red");
 		return;
 	}
 	if (streq_nocase(args[0], "0") || streq_nocase(args[0], "survival")) {
-		setPlayerGamemode(target, 0);
+		player_set_gamemode(target, 0);
 	} else if (streq_nocase(args[0], "1") || streq_nocase(args[0], "creative")) {
-		setPlayerGamemode(target, 1);
+		player_set_gamemode(target, 1);
 	} else {
 		sendMessageToPlayer(target, "[ERROR] No such gamemode found.", "red");
 		return;
@@ -45,16 +45,16 @@ void command_tp(struct player* player, char** args, size_t args_count) {
 		return;
 	}
 	if (args_count >= 3) {
-		struct player* from = args_count == 3 ? player : getPlayerByName(args[0]);
+		struct player* from = args_count == 3 ? player : player_get_by_name(args[0]);
 		if (from == NULL) {
 			sendMessageToPlayer(player, "[ERROR] No such player found.", "red");
 			return;
 		}
 		int32_t ai = args_count == 4 ? 1 : 0;
-		teleportPlayer(from, strtol(args[ai++], NULL, 10), strtol(args[ai++], NULL, 10), strtol(args[ai++], NULL, 10));
+		player_teleport(from, strtol(args[ai++], NULL, 10), strtol(args[ai++], NULL, 10), strtol(args[ai++], NULL, 10));
 	} else {
-		struct player* from = args_count == 1 ? player : getPlayerByName(args[0]);
-		struct player* to = args_count == 1 ? getPlayerByName(args[0]) : getPlayerByName(args[1]);
+		struct player* from = args_count == 1 ? player : player_get_by_name(args[0]);
+		struct player* to = args_count == 1 ? player_get_by_name(args[0]) : player_get_by_name(args[1]);
 		if (from == NULL || to == NULL) {
 			sendMessageToPlayer(player, "[ERROR] No such player found.", "red");
 			return;
@@ -63,7 +63,7 @@ void command_tp(struct player* player, char** args, size_t args_count) {
 			sendMessageToPlayer(player, "[ERROR] Players in different worlds!", "red");
 			return;
 		}
-		teleportPlayer(from, to->entity->x, to->entity->y, to->entity->z);
+		player_teleport(from, to->entity->x, to->entity->y, to->entity->z);
 	}
 }
 
@@ -73,13 +73,13 @@ void command_kick(struct player* player, char** args, size_t args_count) {
 		sendMessageToPlayer(player, "Usage: /kick <player> OR /kick <player> \"<reason>\"", "red");
 		return;
 	}
-	struct player* target = getPlayerByName(args[0]);
+	struct player* target = player_get_by_name(args[0]);
 	if (target == NULL) {
 		sendMessageToPlayer(player, "[ERROR] No such player found.", "red");
 		return;
 	}
 	char* reason = args_count == 1 ? "You have been kicked" : args[1];
-	kickPlayer(target, reason);
+    player_kick(target, reason);
 }
 
 void command_say(struct player* player, char** args, size_t args_count) {
@@ -132,7 +132,8 @@ void command_spawn(struct player* player, char** args, size_t args_count) {
 		sendMessageToPlayer(player, "red", "Usage: /spawn");
 		return;
 	}
-	teleportPlayer(player, (double) player->world->spawnpos.x + .5, (double) player->world->spawnpos.y, (double) player->world->spawnpos.z + .5);
+	player_teleport(player, (double) player->world->spawnpos.x + .5, (double) player->world->spawnpos.y,
+					(double) player->world->spawnpos.z + .5);
 }
 
 void command_printprofile(struct player* player, char** args, size_t args_count) {
@@ -151,7 +152,7 @@ void command_kill(struct player* player, char** args, size_t args_count) {
 			sendMsgToPlayerf(player, "red", "Usage: /kill <player>");
 			return;
 		}
-		player = getPlayerByName(args[0]);
+		player = player_get_by_name(args[0]);
 		if (player == NULL) {
 			sendMessageToPlayer(player, "[ERROR] No such player found.", "red");
 			return;

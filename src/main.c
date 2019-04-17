@@ -66,7 +66,7 @@ void main_tick() {
 			if (def == NULL) continue;
 			if (def->defunct++ >= 21) {
 				freeEntity(def->entity);
-				freePlayer(def);
+				player_free(def);
 				defunctPlayers->data[i] = NULL;
 				defunctPlayers->count--;
 				if (i == defunctPlayers->size - 1) defunctPlayers->size--;

@@ -22,7 +22,7 @@
 #include <avuna/string.h>
 #include <math.h>
 
-struct player* newPlayer(struct entity* entity, char* name, struct uuid uuid, struct conn* conn, uint8_t gamemode) {
+struct player* player_new(struct entity* entity, char* name, struct uuid uuid, struct conn* conn, uint8_t gamemode) {
 	struct player* player = xmalloc(sizeof(struct player));
 	entity->data.player.player = player;
 	player->entity = entity;
@@ -79,7 +79,7 @@ struct player* newPlayer(struct entity* entity, char* name, struct uuid uuid, st
 	return player;
 }
 
-void sendEntityMove(struct player* player, struct entity* ent) {
+void player_send_entity_move(struct player* player, struct entity* ent) {
 	double md = entity_distsq_block(ent, ent->lx, ent->ly, ent->lz);
 	double mp = (ent->yaw - ent->lyaw) * (ent->yaw - ent->lyaw) + (ent->pitch - ent->lpitch) * (ent->pitch - ent->lpitch);
 
@@ -181,7 +181,7 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 		player->entity->lpitch = player->entity->pitch;
 		player->entity->onGround = pkt.on_ground;
 		BEGIN_BROADCAST(player->entity->loadingPlayers)
-		sendEntityMove(bc_player, player->entity);
+			player_send_entity_move(bc_player, player->entity);
 		END_BROADCAST(player->entity->loadingPlayers)
 	} else if (inp->id == PKT_PLAY_SERVER_PLAYERPOSITION) {
 		if (player->lastTeleportID != 0) goto cont;
@@ -198,7 +198,7 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 		double my = pkt.feet_y - ly;
 		double mz = pkt.z - lz;
 		if (moveEntity(player->entity, &mx, &my, &mz, .05)) {
-			teleportPlayer(player, lx, ly, lz);
+			player_teleport(player, lx, ly, lz);
 		} else {
 			player->entity->lx = lx;
 			player->entity->ly = ly;
@@ -211,11 +211,11 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 		float d3 = dx * dx + dy * dy + dz * dz;
 		if (!player->spawnedIn && d3 > 0.00000001) player->spawnedIn = 1;
 		if (d3 > 5. * 5. * 5.) {
-			teleportPlayer(player, player->entity->lx, player->entity->ly, player->entity->lz);
-			kickPlayer(player, "You attempted to move too fast!");
+			player_teleport(player, player->entity->lx, player->entity->ly, player->entity->lz);
+			player_kick(player, "You attempted to move too fast!");
 		} else {
 			BEGIN_BROADCAST(player->entity->loadingPlayers)
-			sendEntityMove(bc_player, player->entity);
+				player_send_entity_move(bc_player, player->entity);
 			END_BROADCAST(player->entity->loadingPlayers)
 		}
 	} else if (inp->id == PKT_PLAY_SERVER_PLAYERLOOK) {
@@ -233,7 +233,7 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 		player->entity->yaw = pkt.yaw;
 		player->entity->pitch = pkt.pitch;
 		BEGIN_BROADCAST(player->entity->loadingPlayers)
-		sendEntityMove(bc_player, player->entity);
+			player_send_entity_move(bc_player, player->entity);
 		END_BROADCAST(player->entity->loadingPlayers)
 	} else if (inp->id == PKT_PLAY_SERVER_PLAYERPOSITIONANDLOOK) {
 		if (player->lastTeleportID != 0) goto cont;
@@ -250,7 +250,7 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 		double my = pkt.feet_y - ly;
 		double mz = pkt.z - lz;
 		if (moveEntity(player->entity, &mx, &my, &mz, .05)) {
-			teleportPlayer(player, lx, ly, lz);
+			player_teleport(player, lx, ly, lz);
 		} else {
 			player->entity->lx = lx;
 			player->entity->ly = ly;
@@ -265,11 +265,11 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 		float d3 = dx * dx + dy * dy + dz * dz;
 		if (!player->spawnedIn && d3 > 0.00000001) player->spawnedIn = 1;
 		if (d3 > 5. * 5. * 5.) {
-			teleportPlayer(player, player->entity->lx, player->entity->ly, player->entity->lz);
+			player_teleport(player, player->entity->lx, player->entity->ly, player->entity->lz);
 			printf("Player '%s' attempted to move too fast!\n", player->name);
 		} else {
 			BEGIN_BROADCAST(player->entity->loadingPlayers)
-			sendEntityMove(bc_player, player->entity);
+				player_send_entity_move(bc_player, player->entity);
 			END_BROADCAST(player->entity->loadingPlayers)
 		}
 	} else if (inp->id == PKT_PLAY_SERVER_ANIMATION) {
@@ -531,7 +531,7 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 				//}
 				//}
 				if (!bad) {
-					if ((tbb = canPlayerPlaceBlock(player, tbb, x, y, z, face))) {
+					if ((tbb = player_can_place_block(player, tbb, x, y, z, face))) {
 						if (setBlockWorld(player->world, tbb, x, y, z)) {
 							setBlockWorld(player->world, b2, x, y, z);
 							setSlot(player, player->inventory, 36 + player->currentItem, ci, 1, 1);
@@ -1051,8 +1051,9 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 			pkt->data.play_client.respawn.gamemode = player->gamemode;
 			pkt->data.play_client.respawn.level_type = xstrdup(player->world->levelType, 0);
 			add_queue(player->outgoingPacket, pkt);
-			teleportPlayer(player, (double) player->world->spawnpos.x + .5, (double) player->world->spawnpos.y, (double) player->world->spawnpos.z + .5); // TODO: make overworld
-			setPlayerGamemode(player, -1);
+			player_teleport(player, (double) player->world->spawnpos.x + .5, (double) player->world->spawnpos.y,
+							(double) player->world->spawnpos.z + .5); // TODO: make overworld
+			player_set_gamemode(player, -1);
 			BEGIN_HASHMAP_ITERATION (plugins)
 			struct plugin* plugin = value;
 			if (plugin->onPlayerSpawn != NULL) (*plugin->onPlayerSpawn)(player->world, player);
@@ -1092,7 +1093,7 @@ void player_hungerUpdate(struct player* player) {
 	add_queue(player->outgoingPacket, pkt);
 }
 
-void tick_player(struct world* world, struct player* player) {
+void player_tick(struct world* world, struct player* player) {
 	if (player->defunct) {
 		put_hashmap(players, player->entity->id, NULL);
 		BEGIN_BROADCAST (players)
@@ -1403,7 +1404,7 @@ int player_onGround(struct player* player) {
 	return fabs(-.08 - ny) > .001;
 }
 
-void kickPlayer(struct player* player, char* message) {
+void player_kick(struct player* player, char* message) {
 	struct packet* pkt = xmalloc(sizeof(struct packet));
 	pkt->id = PKT_PLAY_CLIENT_DISCONNECT;
 	size_t sl = strlen(message);
@@ -1429,7 +1430,7 @@ float player_getAttackStrength(struct player* player, float adjust) {
 	return str;
 }
 
-void teleportPlayer(struct player* player, double x, double y, double z) {
+void player_teleport(struct player* player, double x, double y, double z) {
 	player->entity->x = x;
 	player->entity->y = y;
 	player->entity->z = z;
@@ -1484,7 +1485,7 @@ void teleportPlayer(struct player* player, double x, double y, double z) {
 //	if (player->tps > 0) player->tps--;
 }
 
-struct player* getPlayerByName(char* name) {
+struct player* player_get_by_name(char* name) {
 	BEGIN_HASHMAP_ITERATION (players)
 	struct player* player = (struct player*) value;
 	if (player != NULL && streq_nocase(name, player->name)) {
@@ -1548,7 +1549,7 @@ void player_closeWindow(struct player* player, uint16_t windowID) {
 
 }
 
-void setPlayerGamemode(struct player* player, int gamemode) {
+void player_set_gamemode(struct player* player, int gamemode) {
 	if (gamemode != -1) {
 		player->gamemode = gamemode;
 		struct packet* pkt = xmalloc(sizeof(struct packet));
@@ -1565,7 +1566,7 @@ void setPlayerGamemode(struct player* player, int gamemode) {
 	add_queue(player->outgoingPacket, pkt);
 }
 
-void freePlayer(struct player* player) {
+void player_free(struct player* player) {
 	struct packet* pkt = NULL;
 	while ((pkt = pop_nowait_queue(player->incomingPacket)) != NULL) {
 		freePacket(STATE_PLAY, 0, pkt);
@@ -1594,7 +1595,7 @@ void freePlayer(struct player* player) {
 	xfree(player);
 }
 
-block canPlayerPlaceBlock(struct player* player, block blk, int32_t x, int32_t y, int32_t z, uint8_t face) {
+block player_can_place_block(struct player* player, block blk, int32_t x, int32_t y, int32_t z, uint8_t face) {
 	struct block_info* bi = getBlockInfo(blk);
 	block tbb = blk;
 	if (bi != NULL && bi->onBlockPlacedPlayer != NULL) tbb = (*bi->onBlockPlacedPlayer)(player, player->world, tbb, x, y, z, face);

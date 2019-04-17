@@ -1471,7 +1471,7 @@ void tick_entity(struct world* world, struct entity* entity) {
 		double mp = (entity->yaw - entity->lyaw) * (entity->yaw - entity->lyaw) + (entity->pitch - entity->lpitch) * (entity->pitch - entity->lpitch);
 		if (md > .001 || mp > .01) {
 			BEGIN_HASHMAP_ITERATION(entity->loadingPlayers);
-			sendEntityMove(value, entity);
+            player_send_entity_move(value, entity);
 			END_HASHMAP_ITERATION(entity->loadingPlayers);
 		}
 	}
