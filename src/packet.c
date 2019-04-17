@@ -558,7 +558,7 @@ ssize_t packet_read(struct connection* conn, unsigned char* buf, size_t buflen, 
 
 ssize_t packet_write(struct connection* conn, struct packet* packet) {
 	if (conn->protocol_state == STATE_PLAY && packet->id == PKT_PLAY_CLIENT_CHUNKDATA) {
-		if (!isChunkLoaded(conn->player->world, packet->data.play_client.chunkdata.cx, packet->data.play_client.chunkdata.cz)) return 0;
+		if (!world_is_chunk_loaded(conn->player->world, packet->data.play_client.chunkdata.cx, packet->data.play_client.chunkdata.cz)) return 0;
 	}
 	unsigned char* pktbuf = pmalloc(packet->pool, 522);
 	pktbuf += 10;

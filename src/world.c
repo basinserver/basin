@@ -9,7 +9,6 @@
 #include "basin/packet.h"
 #include <basin/game.h>
 #include <basin/block.h>
-#include <basin/queue.h>
 #include <basin/tileentity.h>
 #include <basin/entity.h>
 #include <basin/world.h>
@@ -27,6 +26,8 @@
 #include <avuna/prqueue.h>
 #include <avuna/string.h>
 #include <avuna/pmem.h>
+#include <avuna/queue.h>
+#include <avuna/hash.h>
 #include <stdlib.h>
 #include <stdint.h>
 #include <string.h>
@@ -41,22 +42,16 @@
 #include <math.h>
 #include <errno.h>
 
-int boundingbox_intersects(struct boundingbox* bb1, struct boundingbox* bb2) {
-	return (((bb1->minX >= bb2->minX && bb1->minX <= bb2->maxX) || (bb1->maxX >= bb2->minX && bb1->maxX <= bb2->maxX) || (bb2->minX >= bb1->minX && bb2->minX <= bb1->maxX) || (bb2->maxX >= bb1->minX && bb2->maxX <= bb1->maxX)) && ((bb1->minY >= bb2->minY && bb1->minY <= bb2->maxY) || (bb1->maxY >= bb2->minY && bb1->maxY <= bb2->maxY) || (bb2->minY >= bb1->minY && bb2->minY <= bb1->maxY) || (bb2->maxY >= bb1->minY && bb2->maxY <= bb1->maxY)) && ((bb1->minZ >= bb2->minZ && bb1->minZ <= bb2->maxZ) || (bb1->maxZ >= bb2->minZ && bb1->maxZ <= bb2->maxZ) || (bb2->minZ >= bb1->minZ && bb2->minZ <= bb1->maxZ) || (bb2->maxZ >= bb1->minZ && bb2->maxZ <= bb1->maxZ)));
+
+struct chunk* world_get_chunk(struct world* world, int32_t x, int32_t z) {
+	struct chunk* ch = hashmap_getint(world->chunks, chunk_get_key_direct(x, z));
+	return ch;
 }
 
-uint64_t getChunkKey(struct chunk* ch) {
-	return (uint64_t)(((int64_t) ch->x) << 32) | (((int64_t) ch->z) & 0xFFFFFFFF);
-}
-
-uint64_t getChunkKey2(int32_t cx, int32_t cz) {
-	return (uint64_t)(((int64_t) cx) << 32) | (((int64_t) cz) & 0xFFFFFFFF);
-}
-
-struct chunk* getChunk_guess(struct world* world, struct chunk* ch, int32_t x, int32_t z) {
-	if (ch == NULL) return getChunk(world, x, z);
+struct chunk* world_get_chunk_guess(struct world* world, struct chunk* ch, int32_t x, int32_t z) {
+	if (ch == NULL) return world_get_chunk(world, x, z);
 	if (ch->x == x && ch->z == z) return ch;
-	if (abs(x - ch->x) > 3 || abs(z - ch->z) > 3) return getChunk(world, x, z);
+	if (abs(x - ch->x) > 3 || abs(z - ch->z) > 3) return world_get_chunk(world, x, z);
 	struct chunk* cch = ch;
 	while (cch != NULL) {
 		if (cch->x > x) cch = cch->xn;
@@ -67,221 +62,7 @@ struct chunk* getChunk_guess(struct world* world, struct chunk* ch, int32_t x, i
 		}
 		if (cch != NULL && cch->x == x && cch->z == z) return cch;
 	}
-	return getChunk(world, x, z);
-}
-
-struct chunk* loadRegionChunk(struct region* region, int8_t lchx, int8_t lchz, size_t chri) {
-	if (region->fd[chri] < 0) {
-		region->fd[chri] = open(region->file, O_RDWR);
-		if (region->fd[chri] < 0) {
-			printf("Error opening region: %s\n", strerror(errno));
-			return NULL;
-		}
-		region->mapping[chri] = mmap(NULL, 67108864, PROT_READ | PROT_WRITE, MAP_SHARED, region->fd[chri], 0); // 64 MB is the theoretical limit of an uncompressed region file
-		if (region->mapping[chri] == NULL || region->mapping[chri] == (void*) -1) {
-			printf("Error mapping region: %s\n", strerror(errno));
-		}
-	}
-	uint32_t* hf = region->mapping[chri] + 4 * ((lchx & 31) + (lchz & 31) * 32);
-	uint32_t rhf = *hf;
-	swapEndian(&rhf, 4);
-	uint32_t off = ((rhf & 0xFFFFFF00) >> 8) * 4096;
-	uint32_t size = ((rhf & 0x000000FF)) * 4096;
-	if (off == 0 || size == 0) return NULL;
-	void* chk = region->mapping[chri] + (off);
-	uint32_t rsize = ((uint32_t*) chk)[0];
-	swapEndian(&rsize, 4);
-	uint8_t comptype = ((uint8_t*) chk)[4];
-	chk += 5;
-	void* rtbuf = xmalloc(65536);
-	size_t rtc = 65536;
-	z_stream strm;
-	strm.zalloc = Z_NULL;
-	strm.zfree = Z_NULL;
-	strm.opaque = Z_NULL;
-	int dr = 0;
-	if ((dr = inflateInit2(&strm, (32 + MAX_WBITS))) != Z_OK) { //
-		printf("Compression initialization error!\n");
-		xfree(rtbuf);
-		return NULL;
-	}
-	strm.avail_in = rsize;
-	strm.next_in = chk;
-	strm.avail_out = rtc;
-	strm.next_out = rtbuf;
-	do {
-		if (rtc - strm.total_out < 32768) {
-			rtc += 65536;
-			rtbuf = xrealloc(rtbuf, rtc);
-		}
-		strm.avail_out = rtc - strm.total_out;
-		strm.next_out = rtbuf + strm.total_out;
-		dr = inflate(&strm, Z_FINISH);
-		if (dr == Z_STREAM_ERROR) {
-			printf("Compression Read Error!\n");
-			inflateEnd(&strm);
-			xfree(rtbuf);
-			return NULL;
-		}
-	} while (strm.avail_out == 0);
-	inflateEnd(&strm);
-	size_t rts = strm.total_out;
-	struct nbt_tag* nbt = NULL;
-	if (nbt_read(&nbt, rtbuf, rts) < 0) {
-		xfree(rtbuf);
-		return NULL;
-	}
-	xfree(rtbuf);
-	struct nbt_tag* level = nbt_get(nbt, "Level");
-	if (level == NULL || level->id != NBT_TAG_COMPOUND) goto rerx;
-	struct nbt_tag* tmp = nbt_get(level, "xPos");
-	if (tmp == NULL || tmp->id != NBT_TAG_INT) goto rerx;
-	int32_t xPos = tmp->data.nbt_int;
-	tmp = nbt_get(level, "zPos");
-	if (tmp == NULL || tmp->id != NBT_TAG_INT) goto rerx;
-	int32_t zPos = tmp->data.nbt_int;
-	struct chunk* rch = newChunk(xPos, zPos);
-	tmp = nbt_get(level, "LightPopulated");
-	if (tmp == NULL || tmp->id != NBT_TAG_BYTE) goto rerx;
-	rch->lightpopulated = tmp->data.nbt_byte;
-	tmp = nbt_get(level, "TerrainPopulated");
-	if (tmp == NULL || tmp->id != NBT_TAG_BYTE) goto rerx;
-	rch->terrainpopulated = tmp->data.nbt_byte;
-	tmp = nbt_get(level, "InhabitedTime");
-	if (tmp == NULL || tmp->id != NBT_TAG_LONG) goto rerx;
-	rch->inhabitedticks = tmp->data.nbt_long;
-	tmp = nbt_get(level, "Biomes");
-	if (tmp == NULL || tmp->id != NBT_TAG_BYTEARRAY) goto rerx;
-	if (tmp->data.nbt_bytearray.len == 256) memcpy(rch->biomes, tmp->data.nbt_bytearray.data, 256);
-	tmp = nbt_get(level, "HeightMap");
-	if (tmp == NULL || tmp->id != NBT_TAG_INTARRAY) goto rerx;
-	if (tmp->data.nbt_intarray.count == 256) for (int i = 0; i < 256; i++)
-		rch->heightMap[i >> 4][i & 0x0F] = (uint16_t) tmp->data.nbt_intarray.ints[i];
-	struct nbt_tag* tes = nbt_get(level, "TileEntities");
-	if (tes == NULL || tes->id != NBT_TAG_LIST) goto rerx;
-	for (size_t i = 0; i < tes->children_count; i++) {
-		struct nbt_tag* ten = tes->children[i];
-		if (ten == NULL || ten->id != NBT_TAG_COMPOUND) continue;
-		struct tile_entity* te = parseTileEntity(ten);
-		add_collection(rch->tileEntities, te);
-	}
-	//TODO: tileticks
-	struct nbt_tag* sections = nbt_get(level, "Sections");
-	for (size_t i = 0; i < sections->children_count; i++) {
-		struct nbt_tag* section = sections->children[i];
-		tmp = nbt_get(section, "Y");
-		if (tmp == NULL || tmp->id != NBT_TAG_BYTE) continue;
-		uint8_t y = tmp->data.nbt_byte;
-		tmp = nbt_get(section, "Blocks");
-		if (tmp == NULL || tmp->id != NBT_TAG_BYTEARRAY || tmp->data.nbt_bytearray.len != 4096) continue;
-		int hna = 0;
-		block* rbl = xmalloc(sizeof(block) * 4096);
-		for (int i = 0; i < 4096; i++) {
-			rbl[i] = ((block) tmp->data.nbt_bytearray.data[i]) << 4; // [i >> 8][(i & 0xf0) >> 4][i & 0x0f]
-			if (((block) tmp->data.nbt_bytearray.data[i]) != 0) hna = 1;
-		}
-		//if (hna) rch->empty[y] = 0;
-		tmp = nbt_get(section, "Add");
-		if (tmp != NULL) {
-			if (tmp->id != NBT_TAG_BYTEARRAY || tmp->data.nbt_bytearray.len != 2048) continue;
-			for (int i = 0; i < 4096; i++) {
-				block sx = tmp->data.nbt_bytearray.data[i / 2];
-				if (i % 2 == 0) {
-					sx &= 0xf0;
-					sx >>= 4;
-				} else sx &= 0x0f;
-				sx <<= 8;
-				rbl[i] |= sx;
-				if (rbl[i] != 0) hna = 1;
-			}
-		}
-		if (hna) {
-			tmp = nbt_get(section, "Data");
-			if (tmp == NULL || tmp->id != NBT_TAG_BYTEARRAY || tmp->data.nbt_bytearray.len != 2048) continue;
-			for (int i = 0; i < 4096; i++) {
-				block sx = tmp->data.nbt_bytearray.data[i / 2];
-				if (i % 2 == 1) {
-					sx &= 0xf0;
-					sx >>= 4;
-				} else sx &= 0x0f;
-				rbl[i] |= sx;
-			}
-			struct chunk_section* cs = xmalloc(sizeof(struct chunk_section));
-			cs->palette = xmalloc(256 * sizeof(block));
-			cs->palette_count = 0;
-			block ipalette[getBlockSize()];
-			block l = 0;
-			for (int i = 0; i < 4096; i++) {
-				if (rbl[i] != l) {
-					for (int x = cs->palette_count - 1; x >= 0; x--) {
-						if (cs->palette[x] == rbl[i]) goto cx;
-					}
-					ipalette[rbl[i]] = cs->palette_count;
-					cs->palette[cs->palette_count++] = rbl[i]; // TODO: if only a few blocks of a certain type and on a palette boundary, use a MBC to reduce size?
-					if (cs->palette_count >= 256) {
-						xfree(cs->palette);
-						cs->palette = NULL;
-						cs->bpb = 13;
-						cs->palette_count = 0;
-						break;
-					}
-					l = rbl[i];
-				}
-				cx: ;
-			}
-			if (cs->palette != NULL) {
-				cs->bpb = (uint8_t) ceil(log2(cs->palette_count));
-				if (cs->bpb < 4) cs->bpb = 4;
-				cs->palette = xrealloc(cs->palette, cs->palette_count * sizeof(block));
-			}
-			int32_t bi = 0;
-			cs->blocks = xmalloc(512 * cs->bpb + 4);
-			cs->block_size = 512 * cs->bpb;
-			cs->mvs = 0;
-			for (int i = 0; i < cs->bpb; i++)
-				cs->mvs |= 1 << i;
-			for (int i = 0; i < 4096; i++) { // [i >> 8][(i & 0xf0) >> 4][i & 0x0f]
-				int32_t b = (int32_t)((cs->bpb == 13 ? rbl[i] : ipalette[rbl[i]]) & cs->mvs);
-				int32_t cv = *((int32_t*) (&cs->blocks[bi / 8]));
-				int32_t sbi = bi % 8;
-				cv = (cv & ~(cs->mvs << sbi)) | (b << sbi);
-				*((int32_t*) &cs->blocks[bi / 8]) = cv;
-				bi += cs->bpb;
-			}
-			tmp = nbt_get(section, "BlockLight");
-			if (tmp != NULL) {
-				if (tmp->id != NBT_TAG_BYTEARRAY || tmp->data.nbt_bytearray.len != 2048) continue;
-				memcpy(cs->blockLight, tmp->data.nbt_bytearray.data, 2048);
-			}
-			tmp = nbt_get(section, "SkyLight");
-			if (tmp != NULL) {
-				if (tmp->id != NBT_TAG_BYTEARRAY || tmp->data.nbt_bytearray.len != 2048) continue;
-				cs->skyLight = xmalloc(2048);
-				memcpy(cs->skyLight, tmp->data.nbt_bytearray.data, 2048);
-			}
-			rch->sections[y] = cs;
-		}
-		xfree(rbl);
-	}
-	for (int z = 0; z < 16; z++) {
-		for (int x = 0; x < 16; x++) {
-			if (rch->heightMap[z][x] <= 0) {
-				for (int y = 255; y >= 0; y--) {
-					block b = getBlockChunk(rch, x, y, z);
-					struct block_info* bi = getBlockInfo(b);
-					if (bi == NULL || bi->lightOpacity <= 0) continue;
-					rch->heightMap[z][x] = y + 1;
-					break;
-				}
-			}
-		}
-	}
-//TODO: entities and tileticks.
-	freeNBT(nbt);
-	return rch;
-	rerx: ;
-	freeNBT(nbt);
-	return NULL;
+	return world_get_chunk(world, x, z);
 }
 
 const uint16_t generableBiomes[] = { BIOME_OCEAN, BIOME_PLAINS, BIOME_DESERT, BIOME_EXTREME_HILLS, BIOME_FOREST, BIOME_TAIGA, BIOME_SWAMPLAND };
@@ -329,11 +110,11 @@ struct chunk* generateRegularChunk(struct world* world, struct chunk* chunk) {
 			if (terrainHeight < 0) terrainHeight = 0;
 			if (terrainHeight > 255) terrainHeight = 255;
 			for (int32_t y = 0; y < terrainHeight; y++) {
-				setBlockChunk(chunk, y < 5 ? BLK_BEDROCK : (y == (terrainHeight - 1) ? topSoil : (y >= (terrainHeight - 4) ? subSoil : oreContainer)), cx, y, cz, world->dimension == OVERWORLD);
+				chunk_set_block(chunk, y < 5 ? BLK_BEDROCK : (y == (terrainHeight - 1) ? topSoil : (y >= (terrainHeight - 4) ? subSoil : oreContainer)), cx, y, cz, world->dimension == OVERWORLD);
 			}
 			if (biome == BIOME_OCEAN || biome == BIOME_EXTREME_HILLS) {
 				for (int32_t y = terrainHeight; y < 64; y++) {
-					setBlockChunk(chunk, BLK_WATER_1, cx, y, cz, world->dimension == OVERWORLD);
+					chunk_set_block(chunk, BLK_WATER_1, cx, y, cz, world->dimension == OVERWORLD);
 				}
 			}
 		}
@@ -362,7 +143,7 @@ struct chunk* generateChunk(struct world* world, struct chunk* chunk) {
 }
 
 struct chunk* getChunkWithLoad(struct world* world, int32_t x, int32_t z, size_t chri) {
-	struct chunk* ch = get_hashmap(world->chunks, getChunkKey2(x, z));
+	struct chunk* ch = get_hashmap(world->chunks, chunk_get_key_direct(x, z));
 	if (ch != NULL) return ch;
 	int16_t rx = x >> 5;
 	int16_t rz = z >> 5;
@@ -371,32 +152,32 @@ struct chunk* getChunkWithLoad(struct world* world, int32_t x, int32_t z, size_t
 	if (ar == NULL) {
 		char lp[PATH_MAX];
 		snprintf(lp, PATH_MAX, "%s/region/r.%i.%i.mca", world->lpa, rx, rz);
-		ar = newRegion(lp, rx, rz, world->chl_count);
+		ar = region_new(lp, rx, rz, world->chl_count);
 		put_hashmap(world->regions, ri, ar);
 		//TODO: populate region
 	}
 	struct chunk* chk = NULL;
 	chk = loadRegionChunk(ar, x & 0x1F, z & 0x1F, chri);
 	if (chk != NULL) {
-		chk->xp = getChunk(world, x + 1, z);
+		chk->xp = world_get_chunk(world, x + 1, z);
 		if (chk->xp != NULL) chk->xp->xn = chk;
-		chk->xn = getChunk(world, x - 1, z);
+		chk->xn = world_get_chunk(world, x - 1, z);
 		if (chk->xn != NULL) chk->xn->xp = chk;
-		chk->zp = getChunk(world, x, z + 1);
+		chk->zp = world_get_chunk(world, x, z + 1);
 		if (chk->zp != NULL) chk->zp->zn = chk;
-		chk->zn = getChunk(world, x, z - 1);
+		chk->zn = world_get_chunk(world, x, z - 1);
 		if (chk->zn != NULL) chk->zn->zp = chk;
-		put_hashmap(world->chunks, getChunkKey(chk), chk);
+		put_hashmap(world->chunks, chunk_get_key(chk), chk);
 	} else goto gen;
 	return chk;
 	gen: ;
-	struct chunk* gc = newChunk(x, z);
+	struct chunk* gc = chunk_new(x, z);
 	generateChunk(world, gc);
-	if (gc != NULL) put_hashmap(world->chunks, getChunkKey(gc), gc);
+	if (gc != NULL) put_hashmap(world->chunks, chunk_get_key(gc), gc);
 	if (!ar) {
 		char lp[PATH_MAX];
 		snprintf(lp, PATH_MAX, "%s/region/r.%i.%i.mca", world->lpa, rx, rz);
-		ar = newRegion(lp, rx, rz, world->chl_count);
+		ar = region_new(lp, rx, rz, world->chl_count);
 		put_hashmap(world->regions, ri, ar);
 	}
 	return gc;
@@ -411,7 +192,7 @@ void chunkloadthr(size_t b) {
 		pthread_mutex_unlock(&chunk_wake_mut);
 		if (players->entry_count == 0 && globalChunkQueue->size == 0) goto nm;
 		if (globalChunkQueue->size > 0) {
-			struct chunk_req* cr = NULL;
+			struct chunk_request* cr = NULL;
 			while ((cr = pop_nowait_queue(globalChunkQueue)) != NULL) {
 				if (cr->load) {
 					beginProfilerSection("chunkLoading_getChunk");
@@ -419,10 +200,10 @@ void chunkloadthr(size_t b) {
 					if (ch != NULL) ch->playersLoaded++;
 					endProfilerSection("chunkLoading_getChunk");
 				} else {
-					struct chunk* ch = getChunk(cr->world, cr->cx, cr->cz);
+					struct chunk* ch = world_get_chunk(cr->world, cr->cx, cr->cz);
 					if (ch != NULL && !ch->defunct) {
 						if (--ch->playersLoaded <= 0) {
-							unloadChunk(cr->world, ch);
+							world_unload_chunk(cr->world, ch);
 						}
 					}
 				}
@@ -431,7 +212,7 @@ void chunkloadthr(size_t b) {
 		BEGIN_HASHMAP_ITERATION (players)
 		struct player* player = value;
 		if (player->defunct || player->chunksSent >= 5 || player->chunkRequests->size == 0 || (player->conn != NULL && player->conn->writeBuffer_size > 1024 * 1024 * 128)) continue;
-		struct chunk_req* chr = pop_nowait_queue(player->chunkRequests);
+		struct chunk_request* chr = pop_nowait_queue(player->chunkRequests);
 		if (chr == NULL) continue;
 		if (chr->load) {
 			if (chr->world != player->world) {
@@ -439,7 +220,7 @@ void chunkloadthr(size_t b) {
 				continue;
 			}
 			player->chunksSent++;
-			if (contains_hashmap(player->loadedChunks, getChunkKey2(chr->cx, chr->cz))) {
+			if (contains_hashmap(player->loadedChunks, chunk_get_key_direct(chr->cx, chr->cz))) {
 				xfree(chr);
 				continue;
 			}
@@ -454,7 +235,7 @@ void chunkloadthr(size_t b) {
 			if (ch != NULL) {
 				ch->playersLoaded++;
 				//beginProfilerSection("chunkLoading_sendChunk_add");
-				put_hashmap(player->loadedChunks, getChunkKey(ch), ch);
+				put_hashmap(player->loadedChunks, chunk_get_key(ch), ch);
 				//endProfilerSection("chunkLoading_sendChunk_add");
 				//beginProfilerSection("chunkLoading_sendChunk_malloc");
 				struct packet* pkt = xmalloc(sizeof(struct packet));
@@ -481,8 +262,8 @@ void chunkloadthr(size_t b) {
 			}
 		} else {
 			//beginProfilerSection("unchunkLoading");
-			struct chunk* ch = getChunk(player->world, chr->cx, chr->cz);
-			uint64_t ck = getChunkKey2(chr->cx, chr->cz);
+			struct chunk* ch = world_get_chunk(player->world, chr->cx, chr->cz);
+			uint64_t ck = chunk_get_key_direct(chr->cx, chr->cz);
 			if (get_hashmap(player->loadedChunks, ck) == NULL) {
 				xfree(chr);
 				continue;
@@ -490,7 +271,7 @@ void chunkloadthr(size_t b) {
 			put_hashmap(player->loadedChunks, ck, NULL);
 			if (ch != NULL && !ch->defunct) {
 				if (--ch->playersLoaded <= 0) {
-					unloadChunk(player->world, ch);
+					world_unload_chunk(player->world, ch);
 				}
 			}
 			if (chr->world == player->world) {
@@ -509,16 +290,11 @@ void chunkloadthr(size_t b) {
 	}
 }
 
-struct chunk* getChunk(struct world* world, int32_t x, int32_t z) {
-	struct chunk* ch = get_hashmap(world->chunks, getChunkKey2(x, z));
-	return ch;
+int world_is_chunk_loaded(struct world* world, int32_t x, int32_t z) {
+	return contains_hashmap(world->chunks, chunk_get_key_direct(x, z));
 }
 
-int isChunkLoaded(struct world* world, int32_t x, int32_t z) {
-	return contains_hashmap(world->chunks, getChunkKey2(x, z));
-}
-
-void unloadChunk(struct world* world, struct chunk* chunk) {
+void world_unload_chunk(struct world* world, struct chunk* chunk) {
 //TODO: save chunk
 	pthread_rwlock_wrlock(&world->chunks->data_mutex);
 	if (chunk->xp != NULL) chunk->xp->xn = NULL;
@@ -526,17 +302,17 @@ void unloadChunk(struct world* world, struct chunk* chunk) {
 	if (chunk->zp != NULL) chunk->zp->zn = NULL;
 	if (chunk->zn != NULL) chunk->zn->zp = NULL;
 	pthread_rwlock_unlock(&world->chunks->data_mutex);
-	put_hashmap(world->chunks, getChunkKey(chunk), NULL);
+	put_hashmap(world->chunks, chunk_get_key(chunk), NULL);
 	add_collection(defunctChunks, chunk);
 }
 
-int getBiome(struct world* world, int32_t x, int32_t z) {
-	struct chunk* chunk = getChunk(world, x >> 4, z >> 4);
+int world_get_biome(struct world* world, int32_t x, int32_t z) {
+	struct chunk* chunk = world_get_chunk(world, x >> 4, z >> 4);
 	if (chunk == NULL) return 0;
 	return chunk->biomes[z & 0x0f][x & 0x0f];
 }
 
-block getBlockChunk(struct chunk* chunk, uint8_t x, uint8_t y, uint8_t z) {
+block chunk_get_block(struct chunk* chunk, uint8_t x, uint8_t y, uint8_t z) {
 	if (x > 15 || z > 15 || y > 255 || x < 0 || z < 0 || y < 0) return 0;
 	struct chunk_section* cs = chunk->sections[y >> 4];
 	if (cs == NULL) return 0;
@@ -544,12 +320,12 @@ block getBlockChunk(struct chunk* chunk, uint8_t x, uint8_t y, uint8_t z) {
 	uint32_t bi = cs->bpb * i;
 	int32_t rcv = *((int32_t*) (&cs->blocks[bi / 8]));
 	int32_t rsbi = bi % 8;
-	block b = (rcv >> rsbi) & cs->mvs;
+	block b = (rcv >> rsbi) & cs->block_mask;
 	if (cs->palette != NULL && b < cs->palette_count) b = cs->palette[b];
 	return b;
 }
 
-uint8_t getLightChunk(struct chunk* chunk, uint8_t x, uint8_t y, uint8_t z, uint8_t subt) {
+uint8_t chunk_get_light(struct chunk* chunk, uint8_t x, uint8_t y, uint8_t z, uint8_t subtract) {
 	if (x > 15 || z > 15 || y > 255 || x < 0 || z < 0 || y < 0) return 0;
 	struct chunk_section* cs = chunk->sections[y >> 4];
 	if (cs == NULL) return 0;
@@ -564,7 +340,7 @@ uint8_t getLightChunk(struct chunk* chunk, uint8_t x, uint8_t y, uint8_t z, uint
 		} else tskl &= 0x0f;
 		skl = tskl;
 	}
-	skl -= subt;
+	skl -= subtract;
 	uint8_t bl = cs->blockLight[bi / 8];
 	if (i % 2 == 1) {
 		bl &= 0xf0;
@@ -594,7 +370,7 @@ void setLightChunk(struct chunk* chunk, uint8_t light, uint8_t x, uint8_t y, uin
 	if (x > 15 || z > 15 || y > 255 || x < 0 || z < 0 || y < 0) return;
 	struct chunk_section* cs = chunk->sections[y >> 4];
 	if (cs == NULL) {
-		cs = newChunkSection(chunk, y >> 4, skylight);
+		cs = chunk_new_section(chunk, y >> 4, skylight);
 	}
 	uint32_t i = ((y & 0x0f) << 8) | (z << 4) | x;
 	uint32_t bi = 4 * i;
@@ -610,51 +386,51 @@ void setLightChunk(struct chunk* chunk, uint8_t light, uint8_t x, uint8_t y, uin
 	target[bi / 8] = bl;
 }
 
-uint8_t getLightWorld_guess(struct world* world, struct chunk* ch, int32_t x, int32_t y, int32_t z) {
+uint8_t world_get_light_guess(struct world* world, struct chunk* ch, int32_t x, int32_t y, int32_t z) {
 	if (y < 0 || y > 255) return 0;
-	ch = getChunk_guess(world, ch, x >> 4, z >> 4);
-	if (ch != NULL) return getLightChunk(ch, x & 0x0f, y, z & 0x0f, world->skylightSubtracted);
-	else return getLightWorld(world, x, y, z, 0);
+	ch = world_get_chunk_guess(world, ch, x >> 4, z >> 4);
+	if (ch != NULL) return chunk_get_light(ch, x & 0x0f, y, z & 0x0f, world->skylightSubtracted);
+	else return world_get_light(world, x, y, z, 0);
 }
 
-uint8_t getRawLightWorld_guess(struct world* world, struct chunk* ch, int32_t x, int32_t y, int32_t z, uint8_t blocklight) {
+uint8_t world_get_raw_light_guess(struct world* world, struct chunk* ch, int32_t x, int32_t y, int32_t z, uint8_t blocklight) {
 	if (y < 0 || y > 255) return 0;
-	ch = getChunk_guess(world, ch, x >> 4, z >> 4);
+	ch = world_get_chunk_guess(world, ch, x >> 4, z >> 4);
 	if (ch != NULL) return getRawLightChunk(ch, x & 0x0f, y, z & 0x0f, blocklight);
-	else return getRawLightWorld(world, x, y, z, blocklight);
+	else return world_get_raw_light(world, x, y, z, blocklight);
 }
 
-uint16_t getHeightMapWorld_guess(struct world* world, struct chunk* ch, int32_t x, int32_t z) {
+uint16_t world_height_guess(struct world* world, struct chunk* ch, int32_t x, int32_t z) {
 	if (world->dimension != OVERWORLD) return 0;
-	ch = getChunk_guess(world, ch, x >> 4, z >> 4);
+	ch = world_get_chunk_guess(world, ch, x >> 4, z >> 4);
 	if (ch == NULL) return 0;
 	return ch->heightMap[z & 0x0f][x & 0x0f];
 }
 
-void setLightWorld_guess(struct world* world, struct chunk* ch, uint8_t light, int32_t x, int32_t y, int32_t z, uint8_t blocklight) {
+void world_set_light(struct world* world, struct chunk* ch, uint8_t light, int32_t x, int32_t y, int32_t z, uint8_t blocklight) {
 	if (y < 0 || y > 255) return;
-	ch = getChunk_guess(world, ch, x >> 4, z >> 4);
+	ch = world_get_chunk_guess(world, ch, x >> 4, z >> 4);
 	if (ch != NULL) return setLightChunk(ch, light & 0x0f, x & 0x0f, y, z & 0x0f, blocklight, world->dimension == 0);
-	else return setLightWorld(world, light & 0x0f, x, y, z, blocklight);
+	else return world_set_light_guess(world, light & 0x0f, x, y, z, blocklight);
 }
 
-void setLightWorld(struct world* world, uint8_t light, int32_t x, int32_t y, int32_t z, uint8_t blocklight) {
+void world_set_light_guess(struct world* world, uint8_t light, int32_t x, int32_t y, int32_t z, uint8_t blocklight) {
 	if (y < 0 || y > 255) return;
-	struct chunk* chunk = getChunk(world, x >> 4, z >> 4);
+	struct chunk* chunk = world_get_chunk(world, x >> 4, z >> 4);
 	if (chunk == NULL) return;
 	setLightChunk(chunk, light & 0x0f, x & 0x0f, y > 255 ? 255 : y, z & 0x0f, blocklight, world->dimension == 0);
 }
 
-uint8_t getLightWorld(struct world* world, int32_t x, int32_t y, int32_t z, uint8_t checkNeighbors) {
+uint8_t world_get_light(struct world* world, int32_t x, int32_t y, int32_t z, uint8_t checkNeighbors) {
 	if (y < 0 || y > 255) return 0;
-	struct chunk* chunk = getChunk(world, x >> 4, z >> 4);
+	struct chunk* chunk = world_get_chunk(world, x >> 4, z >> 4);
 	if (chunk == NULL) return 15;
 	if (checkNeighbors) {
-		uint8_t yp = getLightChunk(chunk, x & 0x0f, y, z & 0x0f, world->skylightSubtracted);
-		uint8_t xp = getLightWorld_guess(world, chunk, x + 1, y, z);
-		uint8_t xn = getLightWorld_guess(world, chunk, x - 1, y, z);
-		uint8_t zp = getLightWorld_guess(world, chunk, x, y, z + 1);
-		uint8_t zn = getLightWorld_guess(world, chunk, x, y, z - 1);
+		uint8_t yp = chunk_get_light(chunk, x & 0x0f, y, z & 0x0f, world->skylightSubtracted);
+		uint8_t xp = world_get_light_guess(world, chunk, x + 1, y, z);
+		uint8_t xn = world_get_light_guess(world, chunk, x - 1, y, z);
+		uint8_t zp = world_get_light_guess(world, chunk, x, y, z + 1);
+		uint8_t zn = world_get_light_guess(world, chunk, x, y, z - 1);
 		if (xp > yp) yp = xp;
 		if (xn > yp) yp = xn;
 		if (zp > yp) yp = zp;
@@ -662,32 +438,32 @@ uint8_t getLightWorld(struct world* world, int32_t x, int32_t y, int32_t z, uint
 		return yp;
 	} else if (y < 0) return 0;
 	else {
-		return getLightChunk(chunk, x, y > 255 ? 255 : y, z, world->skylightSubtracted);
+		return chunk_get_light(chunk, x, y > 255 ? 255 : y, z, world->skylightSubtracted);
 	}
 }
 
-uint8_t getRawLightWorld(struct world* world, int32_t x, int32_t y, int32_t z, uint8_t blocklight) {
+uint8_t world_get_raw_light(struct world* world, int32_t x, int32_t y, int32_t z, uint8_t blocklight) {
 	if (y < 0 || y > 255) return 0;
-	struct chunk* chunk = getChunk(world, x >> 4, z >> 4);
+	struct chunk* chunk = world_get_chunk(world, x >> 4, z >> 4);
 	if (chunk == NULL) return 15;
 	return getRawLightChunk(chunk, x & 0x0f, y > 255 ? 255 : y, z & 0x0f, blocklight);
 }
 
-block getBlockWorld(struct world* world, int32_t x, int32_t y, int32_t z) {
+block world_get_block(struct world* world, int32_t x, int32_t y, int32_t z) {
 	if (y < 0 || y > 255) return 0;
-	struct chunk* chunk = getChunk(world, x >> 4, z >> 4);
+	struct chunk* chunk = world_get_chunk(world, x >> 4, z >> 4);
 	if (chunk == NULL) return 0;
-	return getBlockChunk(chunk, x & 0x0f, y, z & 0x0f);
+	return chunk_get_block(chunk, x & 0x0f, y, z & 0x0f);
 }
 
-block getBlockWorld_guess(struct world* world, struct chunk* ch, int32_t x, int32_t y, int32_t z) {
+block world_get_block_guess(struct world* world, struct chunk* ch, int32_t x, int32_t y, int32_t z) {
 	if (y < 0 || y > 255) return 0;
-	ch = getChunk_guess(world, ch, x >> 4, z >> 4);
-	if (ch != NULL) return getBlockChunk(ch, x & 0x0f, y, z & 0x0f);
-	else return getBlockWorld(world, x, y, z);
+	ch = world_get_chunk_guess(world, ch, x >> 4, z >> 4);
+	if (ch != NULL) return chunk_get_block(ch, x & 0x0f, y, z & 0x0f);
+	else return world_get_block(world, x, y, z);
 }
 
-struct tile_entity* getTileEntityChunk(struct chunk* chunk, int32_t x, int32_t y, int32_t z) { // TODO: optimize
+struct tile_entity* chunk_get_tile(struct chunk* chunk, int32_t x, int32_t y, int32_t z) { // TODO: optimize
 	if (y > 255 || y < 0) return NULL;
 	for (size_t i = 0; i < chunk->tileEntities->size; i++) {
 		struct tile_entity* te = (struct tile_entity*) chunk->tileEntities->data[i];
@@ -798,7 +574,7 @@ int world_rayTrace(struct world* world, double x, double y, double z, double ex,
 	int32_t iex = (uint32_t) floor(ex);
 	int32_t iey = (uint32_t) floor(ey);
 	int32_t iez = (uint32_t) floor(ez);
-	block b = getBlockWorld(world, ix, iy, iz);
+	block b = world_get_block(world, ix, iy, iz);
 	struct block_info* bbi = getBlockInfo(b);
 	if (bbi != NULL && (!ignoreNonCollidable || bbi->boundingBox_count > 0)) {
 		double bx = 0.;
@@ -862,7 +638,7 @@ int world_rayTrace(struct world* world, double x, double y, double z, double ex,
 		ix = floor(x) - (cface == XP ? 1 : 0);
 		iy = floor(y) - (cface == YP ? 1 : 0);
 		iz = floor(z) - (cface == ZP ? 1 : 0);
-		block nb = getBlockWorld(world, ix, iy, iz);
+		block nb = world_get_block(world, ix, iy, iz);
 		struct block_info* bi = getBlockInfo(nb);
 		if (bi != NULL && (!ignoreNonCollidable || streq_nocase(bi->material->name, "portal") || bi->boundingBox_count > 0)) {
 			//todo: cancollidecheck?
@@ -877,8 +653,8 @@ int world_rayTrace(struct world* world, double x, double y, double z, double ex,
 	return returnLast ? cface : -1;
 }
 
-void explode(struct world* world, struct chunk* ch, double x, double y, double z, float strength) { // TODO: more plugin stuff?
-	ch = getChunk_guess(world, ch, (int32_t) floor(x) >> 4, (int32_t) floor(z) >> 4);
+void world_explode(struct world* world, struct chunk* ch, double x, double y, double z, float strength) { // TODO: more plugin stuff?
+	ch = world_get_chunk_guess(world, ch, (int32_t) floor(x) >> 4, (int32_t) floor(z) >> 4);
 	for (int32_t j = 0; j < 16; j++) {
 		for (int32_t k = 0; k < 16; k++) {
 			for (int32_t l = 0; l < 16; l++) {
@@ -898,13 +674,13 @@ void explode(struct world* world, struct chunk* ch, double x, double y, double z
 					int32_t ix = (int32_t) floor(x2);
 					int32_t iy = (int32_t) floor(y2);
 					int32_t iz = (int32_t) floor(z2);
-					block b = getBlockWorld_guess(world, ch, ix, iy, iz);
+					block b = world_get_block_guess(world, ch, ix, iy, iz);
 					if (b >> 4 != 0) {
 						struct block_info* bi = getBlockInfo(b);
 						mstr -= ((bi->resistance / 5.) + .3) * .3;
 						if (mstr > 0.) { //TODO: check if entity will allow destruction
-							block b = getBlockWorld_guess(world, ch, ix, iy, iz);
-							setBlockWorld_guess(world, ch, 0, ix, iy, iz);
+							block b = world_get_block_guess(world, ch, ix, iy, iz);
+							world_set_block_guess(world, ch, 0, ix, iy, iz);
 							dropBlockDrops(world, b, NULL, ix, iy, iz); //TODO: randomizE?
 						}
 					}
@@ -918,7 +694,7 @@ void explode(struct world* world, struct chunk* ch, double x, double y, double z
 	//TODO: knockback & damage
 }
 
-void setTileEntityChunk(struct chunk* chunk, struct tile_entity* te, int32_t x, uint8_t y, int32_t z) {
+void chunk_set_tile(struct chunk* chunk, struct tile_entity* te, int32_t x, uint8_t y, int32_t z) {
 	for (size_t i = 0; i < chunk->tileEntities->size; i++) {
 		struct tile_entity* te2 = (struct tile_entity*) chunk->tileEntities->data[i];
 		if (te2 == NULL) continue;
@@ -937,38 +713,39 @@ void setTileEntityChunk(struct chunk* chunk, struct tile_entity* te, int32_t x, 
 	if (te->tick) add_collection(chunk->tileEntitiesTickable, te);
 }
 
-void enableTileEntityTickable(struct world* world, struct tile_entity* te) {
+void world_tile_set_tickable(struct world* world, struct tile_entity* te) {
 	if (te == NULL || te->y > 255 || te->y < 0) return;
-	struct chunk* chunk = getChunk(world, te->x >> 4, te->z >> 4);
+	struct chunk* chunk = world_get_chunk(world, te->x >> 4, te->z >> 4);
 	if (chunk == NULL) return;
 	add_collection(chunk->tileEntitiesTickable, te);
 }
 
-void disableTileEntityTickable(struct world* world, struct tile_entity* te) {
+void world_tile_unset_tickable(struct world* world, struct tile_entity* te) {
 	if (te == NULL || te->y > 255 || te->y < 0) return;
-	struct chunk* chunk = getChunk(world, te->x >> 4, te->z >> 4);
+	struct chunk* chunk = world_get_chunk(world, te->x >> 4, te->z >> 4);
 	if (chunk == NULL) return;
 	rem_collection(chunk->tileEntitiesTickable, te);
 }
 
-struct tile_entity* getTileEntityWorld(struct world* world, int32_t x, int32_t y, int32_t z) {
+struct tile_entity* world_get_tile(struct world* world, int32_t x, int32_t y, int32_t z) {
 	if (y < 0 || y > 255) return NULL;
-	struct chunk* chunk = getChunk(world, x >> 4, z >> 4);
+	struct chunk* chunk = world_get_chunk(world, x >> 4, z >> 4);
 	if (chunk == NULL) return NULL;
-	return getTileEntityChunk(chunk, x, y, z);
+	return chunk_get_tile(chunk, x, y, z);
 }
 
-void setTileEntityWorld(struct world* world, int32_t x, int32_t y, int32_t z, struct tile_entity* te) {
+void world_set_tile(struct world* world, int32_t x, int32_t y, int32_t z, struct tile_entity* te) {
 	if (y < 0 || y > 255) return;
-	struct chunk* chunk = getChunk(world, x >> 4, z >> 4);
+	struct chunk* chunk = world_get_chunk(world, x >> 4, z >> 4);
 	if (chunk == NULL) return;
-	setTileEntityChunk(chunk, te, x, y, z);
+	chunk_set_tile(chunk, te, x, y, z);
 }
 
-struct chunk* newChunk(int16_t x, int16_t z) {
-	struct chunk* chunk = xmalloc(sizeof(struct chunk));
+struct chunk* chunk_new(struct mempool* pool, int16_t x, int16_t z) {
+	struct chunk* chunk = xcalloc(sizeof(struct chunk));
 	memset(chunk, 0, sizeof(struct chunk));
-	chunk->x = x;
+    chunk->pool = pool;
+    chunk->x = x;
 	chunk->z = z;
 	memset(chunk->sections, 0, sizeof(struct chunk_section*) * 16);
 	chunk->playersLoaded = 0;
@@ -983,7 +760,7 @@ struct chunk* newChunk(int16_t x, int16_t z) {
 	return chunk;
 }
 
-void freeChunk(struct chunk* chunk) {
+void chunk_free(struct chunk* chunk) {
 	for (int i = 0; i < 16; i++) {
 		struct chunk_section* cs = chunk->sections[i];
 		if (cs == NULL) continue;
@@ -1006,7 +783,8 @@ void freeChunk(struct chunk* chunk) {
 	xfree(chunk);
 }
 
-void scheduleBlockTick(struct world* world, int32_t x, int32_t y, int32_t z, int32_t ticksFromNow, float priority) {
+void world_schedule_block_tick(struct world* world, int32_t x, int32_t y, int32_t z, int32_t ticksFromNow,
+							   float priority) {
 	if (y < 0 || y > 255) return;
 	struct scheduled_tick* st = xmalloc(sizeof(struct scheduled_tick));
 	st->x = x;
@@ -1014,7 +792,7 @@ void scheduleBlockTick(struct world* world, int32_t x, int32_t y, int32_t z, int
 	st->z = z;
 	st->ticksLeft = ticksFromNow;
 	st->priority = priority;
-	st->src = getBlockWorld(world, x, y, z);
+	st->src = world_get_block(world, x, y, z);
 	struct encpos ep;
 	ep.x = x;
 	ep.y = y;
@@ -1022,7 +800,7 @@ void scheduleBlockTick(struct world* world, int32_t x, int32_t y, int32_t z, int
 	put_hashmap(world->scheduledTicks, *((uint64_t*) &ep), st);
 }
 
-int32_t isBlockTickScheduled(struct world* world, int32_t x, int32_t y, int32_t z) {
+int32_t world_is_block_tick_scheduled(struct world* world, int32_t x, int32_t y, int32_t z) {
 	struct encpos ep;
 	ep.x = x;
 	ep.y = y;
@@ -1034,26 +812,7 @@ int32_t isBlockTickScheduled(struct world* world, int32_t x, int32_t y, int32_t 
 	return st->ticksLeft;
 }
 
-struct region* newRegion(char* path, int16_t x, int16_t z, size_t chr_count) {
-	struct region* reg = xcalloc(sizeof(struct region));
-	reg->x = x;
-	reg->z = z;
-	reg->file = xstrdup(path, 0);
-	reg->fd = xmalloc(chr_count * sizeof(int));
-	for (int i = 0; i < chr_count; i++)
-		reg->fd[i] = -1;
-	reg->mapping = xcalloc(chr_count * sizeof(void*));
-	return reg;
-}
-
-void freeRegion(struct region* region) {
-	xfree(region->fd);
-	xfree(region->mapping);
-	xfree(region->file);
-	xfree(region);
-}
-
-struct chunk_section* newChunkSection(struct chunk* chunk, int ymj, int skylight) {
+struct chunk_section* chunk_new_section(struct chunk* chunk, int ymj, int skylight) {
 	chunk->sections[ymj] = xcalloc(sizeof(struct chunk_section));
 	struct chunk_section* cs = chunk->sections[ymj];
 	cs->bpb = 4;
@@ -1062,7 +821,7 @@ struct chunk_section* newChunkSection(struct chunk* chunk, int ymj, int skylight
 	cs->palette_count = 1;
 	cs->palette = xmalloc(sizeof(block));
 	cs->palette[0] = BLK_AIR;
-	cs->mvs = 0xf;
+	cs->block_mask = 0xf;
 	memset(cs->blockLight, 0, 2048);
 	if (skylight) {
 		cs->skyLight = xmalloc(2048);
@@ -1071,11 +830,11 @@ struct chunk_section* newChunkSection(struct chunk* chunk, int ymj, int skylight
 	return cs;
 }
 
-void setBlockChunk(struct chunk* chunk, block blk, uint8_t x, uint8_t y, uint8_t z, int skylight) {
+void chunk_set_block(struct chunk* chunk, block blk, uint8_t x, uint8_t y, uint8_t z, int skylight) {
 	if (x > 15 || z > 15 || y > 255 || x < 0 || z < 0 || y < 0) return;
 	struct chunk_section* cs = chunk->sections[y >> 4];
 	if (cs == NULL && blk != 0) {
-		cs = newChunkSection(chunk, y >> 4, skylight);
+		cs = chunk_new_section(chunk, y >> 4, skylight);
 	} else if (cs == NULL) return;
 	if (skylight) {
 		struct block_info* bii = getBlockInfo(blk);
@@ -1084,7 +843,7 @@ void setBlockChunk(struct chunk* chunk, block blk, uint8_t x, uint8_t y, uint8_t
 				if (chunk->heightMap[z][x] <= y) chunk->heightMap[z][x] = y + 1;
 				else {
 					for (int ny = chunk->heightMap[z][x] - 1; ny >= 0; ny--) {
-						struct block_info* nbi = getBlockInfo(getBlockChunk(chunk, x, y, z));
+						struct block_info* nbi = getBlockInfo(chunk_get_block(chunk, x, y, z));
 						if (nbi != NULL && nbi->lightOpacity >= 1) {
 							chunk->heightMap[z][x] = ny + 1;
 							break;
@@ -1093,7 +852,7 @@ void setBlockChunk(struct chunk* chunk, block blk, uint8_t x, uint8_t y, uint8_t
 				}
 			} else if (chunk->heightMap[z][x] > y) {
 				for (int ny = chunk->heightMap[z][x] - 1; ny >= 0; ny--) {
-					struct block_info* nbi = getBlockInfo(getBlockChunk(chunk, x, y, z));
+					struct block_info* nbi = getBlockInfo(chunk_get_block(chunk, x, y, z));
 					if (nbi != NULL && nbi->lightOpacity >= 1) {
 						chunk->heightMap[z][x] = ny + 1;
 						break;
@@ -1117,12 +876,12 @@ void setBlockChunk(struct chunk* chunk, block blk, uint8_t x, uint8_t y, uint8_t
 			uint8_t* ndata = xcalloc(nbpb * 512 + 4);
 			uint32_t bir = 0;
 			uint32_t biw = 0;
-			int32_t nmvs = cs->mvs | (1 << (nbpb - 1));
+			int32_t nmvs = cs->block_mask | (1 << (nbpb - 1));
 			if (nbpb == 13) nmvs = 0x1FFF;
 			for (int i = 0; i < 4096; i++) {
 				int32_t rcv = *((int32_t*) (&cs->blocks[bir / 8]));
 				int32_t rsbi = bir % 8;
-				int32_t b = (rcv >> rsbi) & cs->mvs;
+				int32_t b = (rcv >> rsbi) & cs->block_mask;
 				if (nbpb == 13) b = cs->palette[b];
 				int32_t wcv = *((int32_t*) (&ndata[biw / 8]));
 				int32_t wsbi = biw % 8;
@@ -1135,7 +894,7 @@ void setBlockChunk(struct chunk* chunk, block blk, uint8_t x, uint8_t y, uint8_t
 			cs->blocks = ndata;
 			cs->block_size = nbpb * 512;
 			xfree(odata);
-			cs->mvs = nmvs;
+			cs->block_mask = nmvs;
 			cs->bpb = nbpb;
 		}
 		ts = cs->palette_count;
@@ -1145,30 +904,30 @@ void setBlockChunk(struct chunk* chunk, block blk, uint8_t x, uint8_t y, uint8_t
 	}
 	uint32_t i = ((y & 0x0f) << 8) | (z << 4) | x;
 	uint32_t bi = cs->bpb * i;
-	int32_t b = ((int32_t) ts) & cs->mvs;
+	int32_t b = ((int32_t) ts) & cs->block_mask;
 	int32_t cv = *((int32_t*) (&cs->blocks[bi / 8]));
 	int32_t sbi = bi % 8;
-	cv = (cv & ~(cs->mvs << sbi)) | (b << sbi);
+	cv = (cv & ~(cs->block_mask << sbi)) | (b << sbi);
 	*((int32_t*) &cs->blocks[bi / 8]) = cv;
 }
 
-int setBlockWorld(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
+int world_set_block(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
 	if (y < 0 || y > 255) return 1;
-	struct chunk* ch = getChunk(world, x >> 4, z >> 4);
+	struct chunk* ch = world_get_chunk(world, x >> 4, z >> 4);
 	if (ch == NULL) return 1;
-	return setBlockWorld_guess(world, ch, blk, x, y, z);
+	return world_set_block_guess(world, ch, blk, x, y, z);
 }
 
-int setBlockWorld_noupdate(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
+int world_set_block_noupdate(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
 	if (y < 0 || y > 255) return 1;
-	struct chunk* ch = getChunk(world, x >> 4, z >> 4);
+	struct chunk* ch = world_get_chunk(world, x >> 4, z >> 4);
 	if (ch == NULL) return 1;
-	return setBlockWorld_guess_noupdate(world, ch, blk, x, y, z);
+	return world_set_block_guess_noupdate(world, ch, blk, x, y, z);
 }
 
 void world_doLightProc(struct world* world, struct chunk* chunk, int32_t x, int32_t y, int32_t z, uint8_t light) {
-	uint8_t cl = getRawLightWorld_guess(world, chunk, x, y, z, 1);
-	if (cl < light) setLightWorld_guess(world, chunk, light & 0x0f, x, y, z, 1);
+	uint8_t cl = world_get_raw_light_guess(world, chunk, x, y, z, 1);
+	if (cl < light) world_set_light(world, chunk, light & 0x0f, x, y, z, 1);
 }
 
 struct world_lightpos {
@@ -1179,8 +938,8 @@ struct world_lightpos {
 
 int light_floodfill(struct world* world, struct chunk* chunk, struct world_lightpos* lp, int skylight, int subtract, struct hashmap* subt_upd) {
 	if (lp->y < 0 || lp->y > 255) return 0;
-	if (skylight && lp->y <= getHeightMapWorld_guess(world, chunk, lp->x, lp->z)) {
-		struct block_info* bi = getBlockInfo(getBlockWorld_guess(world, chunk, lp->x, lp->y + 1, lp->z));
+	if (skylight && lp->y <= world_height_guess(world, chunk, lp->x, lp->z)) {
+		struct block_info* bi = getBlockInfo(world_get_block_guess(world, chunk, lp->x, lp->y + 1, lp->z));
 		if (bi != NULL && bi->lightOpacity <= 16) {
 			struct world_lightpos lp2;
 			lp2.x = lp->x;
@@ -1189,19 +948,19 @@ int light_floodfill(struct world* world, struct chunk* chunk, struct world_light
 			light_floodfill(world, chunk, &lp2, skylight, subtract, subt_upd);
 		}
 	}
-	struct block_info* bi = getBlockInfo(getBlockWorld_guess(world, chunk, lp->x, lp->y, lp->z));
+	struct block_info* bi = getBlockInfo(world_get_block_guess(world, chunk, lp->x, lp->y, lp->z));
 	int lo = bi == NULL ? 1 : bi->lightOpacity;
 	if (lo < 1) lo = 1;
 	int le = bi == NULL ? 0 : bi->lightEmission;
 	int16_t maxl = 0;
-	uint8_t xpl = getRawLightWorld_guess(world, chunk, lp->x + 1, lp->y, lp->z, !skylight);
-	uint8_t xnl = getRawLightWorld_guess(world, chunk, lp->x - 1, lp->y, lp->z, !skylight);
-	uint8_t ypl = getRawLightWorld_guess(world, chunk, lp->x, lp->y + 1, lp->z, !skylight);
-	uint8_t ynl = getRawLightWorld_guess(world, chunk, lp->x, lp->y - 1, lp->z, !skylight);
-	uint8_t zpl = getRawLightWorld_guess(world, chunk, lp->x, lp->y, lp->z + 1, !skylight);
-	uint8_t znl = getRawLightWorld_guess(world, chunk, lp->x, lp->y, lp->z - 1, !skylight);
+	uint8_t xpl = world_get_raw_light_guess(world, chunk, lp->x + 1, lp->y, lp->z, !skylight);
+	uint8_t xnl = world_get_raw_light_guess(world, chunk, lp->x - 1, lp->y, lp->z, !skylight);
+	uint8_t ypl = world_get_raw_light_guess(world, chunk, lp->x, lp->y + 1, lp->z, !skylight);
+	uint8_t ynl = world_get_raw_light_guess(world, chunk, lp->x, lp->y - 1, lp->z, !skylight);
+	uint8_t zpl = world_get_raw_light_guess(world, chunk, lp->x, lp->y, lp->z + 1, !skylight);
+	uint8_t znl = world_get_raw_light_guess(world, chunk, lp->x, lp->y, lp->z - 1, !skylight);
 	if (subtract) {
-		maxl = getRawLightWorld_guess(world, chunk, lp->x, lp->y, lp->z, !skylight) - subtract;
+		maxl = world_get_raw_light_guess(world, chunk, lp->x, lp->y, lp->z, !skylight) - subtract;
 	} else {
 		maxl = xpl;
 		if (xnl > maxl) maxl = xnl;
@@ -1223,7 +982,7 @@ int light_floodfill(struct world* world, struct chunk* chunk, struct world_light
 //}
 	int sslf = 0;
 	if (skylight) {
-		int hm = getHeightMapWorld_guess(world, chunk, lp->x, lp->z);
+		int hm = world_height_guess(world, chunk, lp->x, lp->z);
 		if (lp->y >= hm) {
 			maxl = 15;
 			if (subtract) sslf = 1;
@@ -1233,9 +992,9 @@ int light_floodfill(struct world* world, struct chunk* chunk, struct world_light
 	if (maxl < le && !skylight) maxl = le;
 	if (maxl < 0) maxl = 0;
 	if (maxl > 15) maxl = 15;
-	uint8_t pl = getRawLightWorld_guess(world, chunk, lp->x, lp->y, lp->z, !skylight);
+	uint8_t pl = world_get_raw_light_guess(world, chunk, lp->x, lp->y, lp->z, !skylight);
 	if (pl == maxl) return sslf;
-	setLightWorld_guess(world, chunk, maxl, lp->x, lp->y, lp->z, !skylight);
+	world_set_light(world, chunk, maxl, lp->x, lp->y, lp->z, !skylight);
 	if (ks) return 1;
 	if (subtract ? (maxl < 15) : (maxl > 0)) {
 
@@ -1295,12 +1054,12 @@ int light_floodfill(struct world* world, struct chunk* chunk, struct world_light
 	return sslf;
 }
 
-int setBlockWorld_guess(struct world* world, struct chunk* chunk, block blk, int32_t x, int32_t y, int32_t z) {
+int world_set_block_guess(struct world* world, struct chunk* chunk, block blk, int32_t x, int32_t y, int32_t z) {
 	if (y < 0 || y > 255) return 1;
-	chunk = getChunk_guess(world, chunk, x >> 4, z >> 4);
-	if (chunk == NULL) chunk = getChunk(world, x >> 4, z >> 4);
+	chunk = world_get_chunk_guess(world, chunk, x >> 4, z >> 4);
+	if (chunk == NULL) chunk = world_get_chunk(world, x >> 4, z >> 4);
 	if (chunk == NULL) return 1;
-	block ob = getBlockChunk(chunk, x & 0x0f, y, z & 0x0f);
+	block ob = chunk_get_block(chunk, x & 0x0f, y, z & 0x0f);
 	struct block_info* obi = getBlockInfo(ob);
 	uint16_t ohm = world->dimension == OVERWORLD ? chunk->heightMap[z & 0x0f][x & 0x0f] : 0;
 	struct world_lightpos lp;
@@ -1354,7 +1113,7 @@ int setBlockWorld_guess(struct world* world, struct chunk* chunk, block blk, int
 		}
 		if (ict) return 1;
 	}
-	setBlockChunk(chunk, blk, x & 0x0f, y, z & 0x0f, world->dimension == 0);
+	chunk_set_block(chunk, blk, x & 0x0f, y, z & 0x0f, world->dimension == 0);
 	uint16_t nhm = world->dimension == OVERWORLD ? chunk->heightMap[z & 0x0f][x & 0x0f] : 0;
 	BEGIN_BROADCAST_DISTXYZ((double) x + .5, (double) y + .5, (double) z + .5, world->players, CHUNK_VIEW_DISTANCE * 16.)
 	struct packet* pkt = xmalloc(sizeof(struct packet));
@@ -1366,13 +1125,13 @@ int setBlockWorld_guess(struct world* world, struct chunk* chunk, block blk, int
 	add_queue(bc_player->outgoingPacket, pkt);
 	END_BROADCAST(world->players)
 	beginProfilerSection("block_update");
-	updateBlockWorld_guess(world, chunk, x, y, z);
-	updateBlockWorld_guess(world, chunk, x + 1, y, z);
-	updateBlockWorld_guess(world, chunk, x - 1, y, z);
-	updateBlockWorld_guess(world, chunk, x, y, z + 1);
-	updateBlockWorld_guess(world, chunk, x, y, z - 1);
-	updateBlockWorld_guess(world, chunk, x, y + 1, z);
-	updateBlockWorld_guess(world, chunk, x, y - 1, z);
+	world_update_block_guess(world, chunk, x, y, z);
+	world_update_block_guess(world, chunk, x + 1, y, z);
+	world_update_block_guess(world, chunk, x - 1, y, z);
+	world_update_block_guess(world, chunk, x, y, z + 1);
+	world_update_block_guess(world, chunk, x, y, z - 1);
+	world_update_block_guess(world, chunk, x, y + 1, z);
+	world_update_block_guess(world, chunk, x, y - 1, z);
 	endProfilerSection("block_update");
 	beginProfilerSection("skylight_update");
 	if (nbi == NULL || obi == NULL) return 0;
@@ -1392,7 +1151,7 @@ int setBlockWorld_guess(struct world* world, struct chunk* chunk, block blk, int
 			 }
 			 } else {
 			 for (int y = nhm; y < ohm; y++) {
-			 setLightWorld_guess(world, chunk, 15, x, y, z, 0);
+			 world_set_light(world, chunk, 15, x, y, z, 0);
 			 }
 			 for (int y = nhm; y < ohm; y++) {
 			 lp.x = x;
@@ -1410,22 +1169,22 @@ int setBlockWorld_guess(struct world* world, struct chunk* chunk, block blk, int
 			/*for (int32_t lx = x - 16; lx <= x + 16; lx++) {
 			 for (int32_t ly = ohm - 16; ly <= ohm + 16; ly++) {
 			 for (int32_t lz = z - 16; lz <= z + 16; lz++) {
-			 setLightWorld_guess(world, chunk, 0, lx, ly, lz, 0);
+			 world_set_light(world, chunk, 0, lx, ly, lz, 0);
 			 }
 			 }
 			 }*/
 			/*for (int32_t lx = x - 16; lx <= x + 16; lx++) {
 			 for (int32_t lz = z - 16; lz <= z + 16; lz++) {
-			 int16_t hm = getHeightMapWorld_guess(world, chunk, lx, lz);
+			 int16_t hm = world_height_guess(world, chunk, lx, lz);
 			 int16_t lb = ohm - 16;
 			 int16_t ub = ohm + 16;
 			 if (hm < ub && hm > lb) ub = hm;
 			 for (int32_t ly = lb; ly <= ub; ly++) {
-			 if (getRawLightWorld_guess(world, chunk, lx, ly, lz, 0) != 0) setLightWorld_guess(world, chunk, 0, lx, ly, lz, 0);
+			 if (world_get_raw_light_guess(world, chunk, lx, ly, lz, 0) != 0) world_set_light(world, chunk, 0, lx, ly, lz, 0);
 			 }
 			 }
 			 }*/
-			//setLightWorld_guess(world, chunk, 0, x, ohm, z, 0);
+			//world_set_light(world, chunk, 0, x, ohm, z, 0);
 			if (pchm) { // todo: remove the light before block change
 				BEGIN_HASHMAP_ITERATION (nup)
 				struct world_lightpos* nlp = value;
@@ -1434,7 +1193,7 @@ int setBlockWorld_guess(struct world* world, struct chunk* chunk, block blk, int
 				END_HASHMAP_ITERATION (nup)
 				del_hashmap(nup);
 				//light_floodfill(world, chunk, &lp, 1, 0, 0);
-				setLightWorld_guess(world, chunk, 15, x, nhm, z, 0);
+				world_set_light(world, chunk, 15, x, nhm, z, 0);
 				lp.x = x;
 				lp.y = nhm;
 				lp.z = z;
@@ -1449,16 +1208,16 @@ int setBlockWorld_guess(struct world* world, struct chunk* chunk, block blk, int
 			/*beginProfilerSection("skylight_set");
 			 for (int32_t lz = z - 16; lz <= z + 16; lz++) {
 			 for (int32_t lx = x - 16; lx <= x + 16; lx++) {
-			 uint16_t hm = getHeightMapWorld_guess(world, chunk, lx, lz);
+			 uint16_t hm = world_height_guess(world, chunk, lx, lz);
 			 if (hm > 255) continue;
-			 setLightWorld_guess(world, chunk, 15, lx, hm, lz, 0);
+			 world_set_light(world, chunk, 15, lx, hm, lz, 0);
 			 }
 			 }
 			 endProfilerSection("skylight_set");*/
 			/*beginProfilerSection("skylight_fill");
 			 for (int32_t lz = z - 16; lz <= z + 16; lz++) {
 			 for (int32_t lx = x - 16; lx <= x + 16; lx++) {
-			 uint16_t hm = getHeightMapWorld_guess(world, chunk, lx, lz);
+			 uint16_t hm = world_height_guess(world, chunk, lx, lz);
 			 if (hm > 255) continue;
 			 lp.x = lx;
 			 lp.y = hm;
@@ -1497,7 +1256,7 @@ int setBlockWorld_guess(struct world* world, struct chunk* chunk, block blk, int
 			/*for (int32_t lx = x - 16; lx <= x + 16; lx++) {
 			 for (int32_t ly = y - 16; ly <= y + 16; ly++) {
 			 for (int32_t lz = z - 16; lz <= z + 16; lz++) {
-			 setLightWorld_guess(world, chunk, 0, lx, ly, lz, 1);
+			 world_set_light(world, chunk, 0, lx, ly, lz, 1);
 			 }
 			 }
 			 }
@@ -1541,11 +1300,11 @@ int setBlockWorld_guess(struct world* world, struct chunk* chunk, block blk, int
 	return 0;
 }
 
-int setBlockWorld_guess_noupdate(struct world* world, struct chunk* chunk, block blk, int32_t x, int32_t y, int32_t z) {
+int world_set_block_guess_noupdate(struct world* world, struct chunk* chunk, block blk, int32_t x, int32_t y, int32_t z) {
 	if (y < 0 || y > 255) return 1;
-	chunk = getChunk_guess(world, chunk, x >> 4, z >> 4);
+	chunk = world_get_chunk_guess(world, chunk, x >> 4, z >> 4);
 	if (chunk == NULL) return 1;
-	block ob = getBlockChunk(chunk, x & 0x0f, y, z & 0x0f);
+	block ob = chunk_get_block(chunk, x & 0x0f, y, z & 0x0f);
 	struct block_info* obi = getBlockInfo(ob);
 	if (obi != NULL) {
 		int ict = 0;
@@ -1587,7 +1346,7 @@ int setBlockWorld_guess_noupdate(struct world* world, struct chunk* chunk, block
 		}
 		if (ict) return 1;
 	}
-	setBlockChunk(chunk, blk, x & 0x0f, y, z & 0x0f, world->dimension == 0);
+	chunk_set_block(chunk, blk, x & 0x0f, y, z & 0x0f, world->dimension == 0);
 	BEGIN_BROADCAST_DISTXYZ((double) x + .5, (double) y + .5, (double) z + .5, world->players, CHUNK_VIEW_DISTANCE * 16.)
 	struct packet* pkt = xmalloc(sizeof(struct packet));
 	pkt->id = PKT_PLAY_CLIENT_BLOCKCHANGE;
@@ -1600,7 +1359,7 @@ int setBlockWorld_guess_noupdate(struct world* world, struct chunk* chunk, block
 	return 0;
 }
 
-struct world* newWorld(size_t chl_count) {
+struct world* world_new(size_t chl_count) {
 	struct world* world = xmalloc(sizeof(struct world));
 	memset(world, 0, sizeof(struct world));
 	world->regions = new_hashmap(1, 1);
@@ -1617,7 +1376,7 @@ struct world* newWorld(size_t chl_count) {
 	return world;
 }
 
-int loadWorld(struct world* world, char* path) {
+int world_load(struct world* world, char* path) {
 	char lp[PATH_MAX];
 	snprintf(lp, PATH_MAX, "%s/level.dat", path); // could have a double slash, but its okay
 	int fd = open(lp, O_RDONLY);
@@ -1664,7 +1423,7 @@ int loadWorld(struct world* world, char* path) {
 			char* xs = strstr(lp, "/r.") + 3;
 			char* zs = strchr(xs, '.') + 1;
 			if (zs == NULL) continue;
-			struct region* reg = newRegion(lp, strtol(xs, NULL, 10), strtol(zs, NULL, 10), world->chl_count);
+			struct region* reg = region_new(lp, strtol(xs, NULL, 10), strtol(zs, NULL, 10), world->chl_count);
 			uint64_t ri = (((uint64_t)(reg->x) & 0xFFFF) << 16) | (((uint64_t) reg->z) & 0xFFFF);
 			put_hashmap(world->regions, ri, reg);
 		}
@@ -1692,13 +1451,13 @@ void world_pretick(struct world* world) {
 	world->skylightSubtracted = (uint8_t)(psubs * 11.);
 }
 
-void tick_world(struct world* world) {
+void world_tick(struct world* world) {
 	int32_t lcg = rand();
 	while (1) {
 		pthread_mutex_lock (&glob_tick_mut);
 		pthread_cond_wait(&glob_tick_cond, &glob_tick_mut);
 		pthread_mutex_unlock(&glob_tick_mut);
-		beginProfilerSection("tick_world");
+		beginProfilerSection("world_tick");
 		if (tick_counter % 20 == 0) {
 			world->tps = world->ticksInSecond;
 			world->ticksInSecond = 0;
@@ -1753,7 +1512,7 @@ void tick_world(struct world* world) {
 					uint8_t x = ctotal & 0x0f;
 					uint8_t z = (ctotal >> 8) & 0x0f;
 					uint8_t y = (ctotal >> 16) & 0x0f;
-					block b = getBlockChunk(chunk, x, y + (t << 4), z);
+					block b = chunk_get_block(chunk, x, y + (t << 4), z);
 					struct block_info* bi = getBlockInfo(b);
 					if (bi != NULL && bi->randomTick != NULL) (*bi->randomTick)(world, chunk, b, x + (chunk->x << 4), y + (t << 4), z + (chunk->z << 4));
 				}
@@ -1767,7 +1526,7 @@ void tick_world(struct world* world) {
 		struct scheduled_tick* st = value;
 		if (--st->ticksLeft <= 0) { //
 			prqueue_add(pq, st, st->priority);
-			/*block b = getBlockWorld(world, st->x, st->y, st->z);
+			/*block b = world_get_block(world, st->x, st->y, st->z);
 			 struct block_info* bi = getBlockInfo(b);
 			 int k = 0;
 			 if (bi->scheduledTick != NULL) k = (*bi->scheduledTick)(world, b, st->x, st->y, st->z);
@@ -1786,7 +1545,7 @@ void tick_world(struct world* world) {
 		struct scheduled_tick* st = NULL;
 		while ((st = prqueue_pop(pq)) != NULL) {
 			//printf("%i: %i, %i, %i, #%f\n", tick_counter, st->x, st->y, st->z, st->priority);
-			block b = getBlockWorld(world, st->x, st->y, st->z);
+			block b = world_get_block(world, st->x, st->y, st->z);
 			if (st->src != b) {
 				struct encpos ep;
 				ep.x = st->x;
@@ -1801,7 +1560,7 @@ void tick_world(struct world* world) {
 			if (bi->scheduledTick != NULL) k = (*bi->scheduledTick)(world, b, st->x, st->y, st->z);
 			if (k > 0) {
 				st->ticksLeft = k;
-				st->src = getBlockWorld(world, st->x, st->y, st->z);
+				st->src = world_get_block(world, st->x, st->y, st->z);
 			} else if (k < 0) {
 				xfree(st);
 			} else {
@@ -1820,18 +1579,18 @@ void tick_world(struct world* world) {
 		struct plugin* plugin = value;
 		if (plugin->tick_world != NULL) (*plugin->tick_world)(world);
 		END_HASHMAP_ITERATION (plugins)
-		endProfilerSection("tick_world");
+		endProfilerSection("world_tick");
 	}
 }
 
-int saveWorld(struct world* world, char* path) {
+int world_save(struct world* world, char* path) {
 
 	return 0;
 }
 
-void freeWorld(struct world* world) { // assumes all chunks are unloaded
+void world_free(struct world* world) { // assumes all chunks are unloaded
 	BEGIN_HASHMAP_ITERATION(world->regions)
-	freeRegion (value);
+	region_free(value);
 	END_HASHMAP_ITERATION(world->regions)
 //pthread_rwlock_destroy(&world->chl);
 	del_hashmap(world->regions);
@@ -1853,11 +1612,11 @@ void freeWorld(struct world* world) { // assumes all chunks are unloaded
 	xfree(world);
 }
 
-struct chunk* getEntityChunk(struct entity* entity) {
-	return getChunk(entity->world, ((int32_t) entity->x) >> 4, ((int32_t) entity->z) >> 4);
+struct chunk* chunk_get_entity_chunk(struct entity* entity) {
+	return world_get_chunk(entity->world, ((int32_t) entity->x) >> 4, ((int32_t) entity->z) >> 4);
 }
 
-void spawnEntity(struct world* world, struct entity* entity) {
+void world_spawn_entity(struct world* world, struct entity* entity) {
 	entity->world = world;
 	if (entity->loadingPlayers == NULL) {
 		entity->loadingPlayers = new_hashmap(1, 1);
@@ -1873,28 +1632,28 @@ void spawnEntity(struct world* world, struct entity* entity) {
 		}
 		if (ei->onSpawned != NULL) (*ei->onSpawned)(world, entity);
 	}
-//struct chunk* ch = getEntityChunk(entity);
+//struct chunk* ch = chunk_get_entity_chunk(entity);
 //if (ch != NULL) {
 //	put_hashmap(ch->entities, entity->id, entity);
 //}
 }
 
-void spawnPlayer(struct world* world, struct player* player) {
+void world_spawn_player(struct world* world, struct player* player) {
 	player->world = world;
 	if (player->loadedEntities == NULL) player->loadedEntities = new_hashmap(1, 0);
 	if (player->loadedChunks == NULL) player->loadedChunks = new_hashmap(1, 1);
 	put_hashmap(world->players, player->entity->id, player);
 	se: ;
-	spawnEntity(world, player->entity);
+	world_spawn_entity(world, player->entity);
 	BEGIN_HASHMAP_ITERATION (plugins)
 	struct plugin* plugin = value;
 	if (plugin->onPlayerSpawn != NULL) (*plugin->onPlayerSpawn)(world, player);
 	END_HASHMAP_ITERATION (plugins)
 }
 
-void despawnPlayer(struct world* world, struct player* player) {
+void world_despawn_player(struct world* world, struct player* player) {
 	if (player->openInv != NULL) player_closeWindow(player, player->openInv->windowID);
-	despawnEntity(world, player->entity);
+	world_despawn_entity(world, player->entity);
 	BEGIN_HASHMAP_ITERATION(player->loadedEntities)
 	if (value == NULL || value == player->entity) continue;
 	struct entity* ent = (struct entity*) value;
@@ -1905,7 +1664,7 @@ void despawnPlayer(struct world* world, struct player* player) {
 	BEGIN_HASHMAP_ITERATION(player->loadedChunks)
 	struct chunk* pl = (struct chunk*) value;
 	if (--pl->playersLoaded <= 0) {
-		unloadChunk(world, pl);
+		world_unload_chunk(world, pl);
 	}
 	END_HASHMAP_ITERATION(player->loadedChunks)
 	del_hashmap(player->loadedChunks);
@@ -1913,8 +1672,8 @@ void despawnPlayer(struct world* world, struct player* player) {
 	put_hashmap(world->players, player->entity->id, NULL);
 }
 
-void despawnEntity(struct world* world, struct entity* entity) {
-//struct chunk* ch = getEntityChunk(entity);
+void world_despawn_entity(struct world* world, struct entity* entity) {
+//struct chunk* ch = chunk_get_entity_chunk(entity);
 	put_hashmap(world->entities, entity->id, NULL);
 //put_hashmap(ch->entities, entity->id, NULL);
 	BEGIN_BROADCAST(entity->loadingPlayers)
@@ -1937,20 +1696,20 @@ void despawnEntity(struct world* world, struct entity* entity) {
 	entity->attacking = NULL;
 }
 
-struct entity* getEntity(struct world* world, int32_t id) {
+struct entity* world_get_entity(struct world* world, int32_t id) {
 	return get_hashmap(world->entities, id);
 }
 
-void updateBlockWorld_guess(struct world* world, struct chunk* ch, int32_t x, int32_t y, int32_t z) {
+void world_update_block_guess(struct world* world, struct chunk* chunk, int32_t x, int32_t y, int32_t z) {
 	if (y < 0 || y > 255) return;
-	block b = getBlockWorld_guess(world, ch, x, y, z);
+	block b = world_get_block_guess(world, chunk, x, y, z);
 	struct block_info* bi = getBlockInfo(b);
 	if (bi != NULL && bi->onBlockUpdate != NULL) bi->onBlockUpdate(world, b, x, y, z);
 }
 
-void updateBlockWorld(struct world* world, int32_t x, int32_t y, int32_t z) {
+void world_update_block(struct world* world, int32_t x, int32_t y, int32_t z) {
 	if (y < 0 || y > 255) return;
-	block b = getBlockWorld(world, x, y, z);
+	block b = world_get_block(world, x, y, z);
 	struct block_info* bi = getBlockInfo(b);
 	if (bi != NULL && bi->onBlockUpdate != NULL) bi->onBlockUpdate(world, b, x, y, z);
 }

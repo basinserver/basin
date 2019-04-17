@@ -54,11 +54,12 @@ union nbt_data {
 };
 
 struct nbt_tag {
-		unsigned char id;
-		char* name;
-		struct hashmap* children;
-		union nbt_data data;
-		struct mempool* pool;
+	unsigned char id;
+	char* name;
+	struct hashmap* children;
+	struct llist* children_list;
+	union nbt_data data;
+	struct mempool* pool;
 };
 
 ssize_t nbt_decompress(struct mempool* pool, void* data, size_t size, void** dest);

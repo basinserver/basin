@@ -290,7 +290,7 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 				pthread_mutex_unlock(&player->inventory->mut);
 				goto cont;
 			}
-			struct block_info* bi = getBlockInfo(getBlockWorld(player->world, inp->data.play_server.playerdigging.location.x, inp->data.play_server.playerdigging.location.y, inp->data.play_server.playerdigging.location.z));
+			struct block_info* bi = getBlockInfo(world_get_block(player->world, inp->data.play_server.playerdigging.location.x, inp->data.play_server.playerdigging.location.y, inp->data.play_server.playerdigging.location.z));
 			if (bi == NULL) {
 				pthread_mutex_unlock(&player->inventory->mut);
 				goto cont;
@@ -315,17 +315,17 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 						goto cont;
 					}
 				}
-				block blk = getBlockWorld(player->world, inp->data.play_server.playerdigging.location.x, inp->data.play_server.playerdigging.location.y, inp->data.play_server.playerdigging.location.z);
+				block blk = world_get_block(player->world, inp->data.play_server.playerdigging.location.x, inp->data.play_server.playerdigging.location.y, inp->data.play_server.playerdigging.location.z);
 				int nb = 0;
 				if (ii != NULL && ii->onItemBreakBlock != NULL) {
 					if ((*ii->onItemBreakBlock)(player->world, player, player->currentItem + 36, ci, player->digging_position.x, player->digging_position.y, player->digging_position.z)) {
-						setBlockWorld(player->world, blk, player->digging_position.x, player->digging_position.y, player->digging_position.z);
+						world_set_block(player->world, blk, player->digging_position.x, player->digging_position.y, player->digging_position.z);
 						nb = 1;
 					}
 				}
 				if (!nb) {
-					if (setBlockWorld(player->world, 0, inp->data.play_server.playerdigging.location.x, inp->data.play_server.playerdigging.location.y, inp->data.play_server.playerdigging.location.z)) {
-						setBlockWorld(player->world, blk, inp->data.play_server.playerdigging.location.x, inp->data.play_server.playerdigging.location.y, inp->data.play_server.playerdigging.location.z);
+					if (world_set_block(player->world, 0, inp->data.play_server.playerdigging.location.x, inp->data.play_server.playerdigging.location.y, inp->data.play_server.playerdigging.location.z)) {
+						world_set_block(player->world, blk, inp->data.play_server.playerdigging.location.x, inp->data.play_server.playerdigging.location.y, inp->data.play_server.playerdigging.location.z);
 					} else {
 						player->foodExhaustion += 0.005;
 						if (player->gamemode != 1) dropBlockDrops(player->world, blk, player, inp->data.play_server.playerdigging.location.x, inp->data.play_server.playerdigging.location.y, inp->data.play_server.playerdigging.location.z);
@@ -337,31 +337,31 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 			pthread_mutex_unlock(&player->inventory->mut);
 		} else if (inp->data.play_server.playerdigging.status == 1 || inp->data.play_server.playerdigging.status == 2) {
 			if (entity_dist_block(player->entity, inp->data.play_server.playerdigging.location.x, inp->data.play_server.playerdigging.location.y, inp->data.play_server.playerdigging.location.z) > player->reachDistance || player->digging <= 0.) {
-				block blk = getBlockWorld(player->world, player->digging_position.x, player->digging_position.y, player->digging_position.z);
-				setBlockWorld(player->world, blk, player->digging_position.x, player->digging_position.y, player->digging_position.z);
+				block blk = world_get_block(player->world, player->digging_position.x, player->digging_position.y, player->digging_position.z);
+				world_set_block(player->world, blk, player->digging_position.x, player->digging_position.y, player->digging_position.z);
 				pthread_mutex_unlock(&player->inventory->mut);
 				goto cont;
 			}
 			if (inp->data.play_server.playerdigging.status == 2) {
-				block blk = getBlockWorld(player->world, player->digging_position.x, player->digging_position.y, player->digging_position.z);
+				block blk = world_get_block(player->world, player->digging_position.x, player->digging_position.y, player->digging_position.z);
 				if ((player->digging + player->digspeed) >= 1.) {
 					int nb = 0;
 					if (ii != NULL && ii->onItemBreakBlock != NULL) {
 						if ((*ii->onItemBreakBlock)(player->world, player, player->currentItem + 36, ci, player->digging_position.x, player->digging_position.y, player->digging_position.z)) {
-							setBlockWorld(player->world, blk, player->digging_position.x, player->digging_position.y, player->digging_position.z);
+							world_set_block(player->world, blk, player->digging_position.x, player->digging_position.y, player->digging_position.z);
 							nb = 1;
 						}
 					}
 					if (!nb) {
-						if (setBlockWorld(player->world, 0, player->digging_position.x, player->digging_position.y, player->digging_position.z)) {
-							setBlockWorld(player->world, blk, player->digging_position.x, player->digging_position.y, player->digging_position.z);
+						if (world_set_block(player->world, 0, player->digging_position.x, player->digging_position.y, player->digging_position.z)) {
+							world_set_block(player->world, blk, player->digging_position.x, player->digging_position.y, player->digging_position.z);
 						} else {
 							player->foodExhaustion += 0.005;
 							if (player->gamemode != 1) dropBlockDrops(player->world, blk, player, player->digging_position.x, player->digging_position.y, player->digging_position.z);
 						}
 					}
 				} else {
-					setBlockWorld(player->world, blk, player->digging_position.x, player->digging_position.y, player->digging_position.z);
+					world_set_block(player->world, blk, player->digging_position.x, player->digging_position.y, player->digging_position.z);
 				}
 			}
 			player->digging = -1.;
@@ -461,7 +461,7 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 		int32_t y = inp->data.play_server.playerblockplacement.location.y;
 		int32_t z = inp->data.play_server.playerblockplacement.location.z;
 		uint8_t face = inp->data.play_server.playerblockplacement.face;
-		block b = getBlockWorld(player->world, x, y, z);
+		block b = world_get_block(player->world, x, y, z);
 		if (ci != NULL) {
 			struct item_info* ii = getItemInfo(ci->item);
 			if (ii != NULL && ii->onItemInteract != NULL) {
@@ -486,7 +486,7 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 				else if (face == 4) x--;
 				else if (face == 5) x++;
 			}
-			block b2 = getBlockWorld(player->world, x, y, z);
+			block b2 = world_get_block(player->world, x, y, z);
 			struct block_info* bi2 = getBlockInfo(b2);
 			if (b2 == 0 || bi2 == NULL || bi2->material->replacable) {
 				block tbb = (ci->item << 4) | (ci->damage & 0x0f);
@@ -498,7 +498,7 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 				//int32_t cz = z >> 4;
 				//for (int32_t icx = cx - 1; icx <= cx + 1; icx++)
 				//for (int32_t icz = cz - 1; icz <= cz + 1; icz++) {
-				//struct chunk* ch = getChunk(player->world, icx, icz);
+				//struct chunk* ch = world_get_chunk(player->world, icx, icz);
 				//if (ch != NULL) {
 				BEGIN_HASHMAP_ITERATION(player->world->entities)
 				struct entity* ent = (struct entity*) value;
@@ -532,8 +532,8 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 				//}
 				if (!bad) {
 					if ((tbb = player_can_place_block(player, tbb, x, y, z, face))) {
-						if (setBlockWorld(player->world, tbb, x, y, z)) {
-							setBlockWorld(player->world, b2, x, y, z);
+						if (world_set_block(player->world, tbb, x, y, z)) {
+							world_set_block(player->world, b2, x, y, z);
 							setSlot(player, player->inventory, 36 + player->currentItem, ci, 1, 1);
 						} else if (player->gamemode != 1) {
 							if (--ci->itemCount <= 0) {
@@ -542,15 +542,15 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 							setSlot(player, player->inventory, 36 + player->currentItem, ci, 1, 1);
 						}
 					} else {
-						setBlockWorld(player->world, b2, x, y, z);
+						world_set_block(player->world, b2, x, y, z);
 						setSlot(player, player->inventory, 36 + player->currentItem, ci, 1, 1);
 					}
 				} else {
-					setBlockWorld(player->world, b2, x, y, z);
+					world_set_block(player->world, b2, x, y, z);
 					setSlot(player, player->inventory, 36 + player->currentItem, ci, 1, 1);
 				}
 			} else {
-				setBlockWorld(player->world, b2, x, y, z);
+				world_set_block(player->world, b2, x, y, z);
 				setSlot(player, player->inventory, 36 + player->currentItem, ci, 1, 1);
 			}
 		}
@@ -1012,7 +1012,7 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 		player_closeWindow(player, inp->data.play_server.closewindow.window_id);
 	} else if (inp->id == PKT_PLAY_SERVER_USEENTITY) {
 		if (inp->data.play_server.useentity.type == 0) {
-			struct entity* ent = getEntity(player->world, inp->data.play_server.useentity.target);
+			struct entity* ent = world_get_entity(player->world, inp->data.play_server.useentity.target);
 			if (ent != NULL && ent != player->entity && ent->health > 0. && ent->world == player->world && entity_dist(ent, player->entity) < 4.) {
 				struct entity_info* ei = getEntityInfo(ent->type);
 				if (ei != NULL && ei->onInteract != NULL) {
@@ -1022,7 +1022,7 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 				}
 			}
 		} else if (inp->data.play_server.useentity.type == 1) {
-			struct entity* ent = getEntity(player->world, inp->data.play_server.useentity.target);
+			struct entity* ent = world_get_entity(player->world, inp->data.play_server.useentity.target);
 			if (ent != NULL && ent != player->entity && ent->health > 0. && ent->world == player->world && entity_dist(ent, player->entity) < 4. && (tick_counter - player->lastSwing) >= 3) {
 				pthread_mutex_lock(&player->inventory->mut);
 				damageEntityWithItem(ent, player->entity, 36 + player->currentItem, getSlot(player, player->inventory, 36 + player->currentItem));
@@ -1032,8 +1032,8 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 		}
 	} else if (inp->id == PKT_PLAY_SERVER_CLIENTSTATUS) {
 		if (inp->data.play_server.clientstatus.action_id == 0 && player->entity->health <= 0.) {
-			despawnEntity(player->world, player->entity);
-			spawnEntity(player->world, player->entity);
+			world_despawn_entity(player->world, player->entity);
+			world_spawn_entity(player->world, player->entity);
 			player->entity->health = 20.;
 			player->food = 20;
 			player->entity->fallDistance = 0.;
@@ -1105,7 +1105,7 @@ void player_tick(struct world* world, struct player* player) {
 		memcpy(&pkt->data.play_client.playerlistitem.players->uuid, &player->uuid, sizeof(struct uuid));
 		add_queue(bc_player->outgoingPacket, pkt);
 		END_BROADCAST (players)
-		despawnPlayer(player->world, player);
+		world_despawn_player(player->world, player);
 		add_collection(defunctPlayers, player);
 		return;
 	}
@@ -1181,7 +1181,7 @@ void player_tick(struct world* world, struct player* player) {
 			BEGIN_HASHMAP_ITERATION(player->loadedChunks)
 			struct chunk* ch = (struct chunk*) value;
 			if (ch->x < pcx - CHUNK_VIEW_DISTANCE || ch->x > pcx + CHUNK_VIEW_DISTANCE || ch->z < pcz - CHUNK_VIEW_DISTANCE || ch->z > pcz + CHUNK_VIEW_DISTANCE) {
-				struct chunk_req* cr = xmalloc(sizeof(struct chunk_req));
+				struct chunk_request* cr = xmalloc(sizeof(struct chunk_request));
 				cr->cx = ch->x;
 				cr->cz = ch->z;
 				cr->world = world;
@@ -1194,8 +1194,8 @@ void player_tick(struct world* world, struct player* player) {
 			int32_t x = pcx - r;
 			int32_t z = pcz - r;
 			for (int i = 0; i < ((r == 0) ? 1 : (r * 8)); i++) {
-				if (we0 || !contains_hashmap(player->loadedChunks, getChunkKey2(x, z))) {
-					struct chunk_req* cr = xmalloc(sizeof(struct chunk_req));
+				if (we0 || !contains_hashmap(player->loadedChunks, chunk_get_key_direct(x, z))) {
+					struct chunk_request* cr = xmalloc(sizeof(struct chunk_request));
 					cr->cx = x;
 					cr->cz = z;
 					cr->world = world;
@@ -1218,14 +1218,14 @@ void player_tick(struct world* world, struct player* player) {
 		for (int32_t fx = lpcx; lpcx < pcx ? (fx < pcx) : (fx > pcx); lpcx < pcx ? fx++ : fx--) {
 			for (int32_t fz = lpcz - CHUNK_VIEW_DISTANCE; fz <= lpcz + CHUNK_VIEW_DISTANCE; fz++) {
 				beginProfilerSection("chunkUnloading_live");
-				struct chunk_req* cr = xmalloc(sizeof(struct chunk_req));
+				struct chunk_request* cr = xmalloc(sizeof(struct chunk_request));
 				cr->cx = lpcx < pcx ? (fx - CHUNK_VIEW_DISTANCE) : (fx + CHUNK_VIEW_DISTANCE);
 				cr->cz = fz;
 				cr->load = 0;
 				add_queue(player->chunkRequests, cr);
 				endProfilerSection("chunkUnloading_live");
 				beginProfilerSection("chunkLoading_live");
-				cr = xmalloc(sizeof(struct chunk_req));
+				cr = xmalloc(sizeof(struct chunk_request));
 				cr->cx = lpcx < pcx ? (fx + CHUNK_VIEW_DISTANCE) : (fx - CHUNK_VIEW_DISTANCE);
 				cr->cz = fz;
 				cr->world = world;
@@ -1237,14 +1237,14 @@ void player_tick(struct world* world, struct player* player) {
 		for (int32_t fz = lpcz; lpcz < pcz ? (fz < pcz) : (fz > pcz); lpcz < pcz ? fz++ : fz--) {
 			for (int32_t fx = lpcx - CHUNK_VIEW_DISTANCE; fx <= lpcx + CHUNK_VIEW_DISTANCE; fx++) {
 				beginProfilerSection("chunkUnloading_live");
-				struct chunk_req* cr = xmalloc(sizeof(struct chunk_req));
+				struct chunk_request* cr = xmalloc(sizeof(struct chunk_request));
 				cr->cx = fx;
 				cr->cz = lpcz < pcz ? (fz - CHUNK_VIEW_DISTANCE) : (fz + CHUNK_VIEW_DISTANCE);
 				cr->load = 0;
 				add_queue(player->chunkRequests, cr);
 				endProfilerSection("chunkUnloading_live");
 				beginProfilerSection("chunkLoading_live");
-				cr = xmalloc(sizeof(struct chunk_req));
+				cr = xmalloc(sizeof(struct chunk_request));
 				cr->cx = fx;
 				cr->cz = lpcz < pcz ? (fz + CHUNK_VIEW_DISTANCE) : (fz - CHUNK_VIEW_DISTANCE);
 				cr->load = 1;
@@ -1279,7 +1279,7 @@ void player_tick(struct world* world, struct player* player) {
 	//if (((int32_t) player->entity->lx >> 4) != pcx || ((int32_t) player->entity->lz >> 4) != pcz || player->loadedChunks->count < CHUNK_VIEW_DISTANCE * CHUNK_VIEW_DISTANCE * 4 || player->triggerRechunk) {
 	//}
 	if (player->digging >= 0.) {
-		block bw = getBlockWorld(world, player->digging_position.x, player->digging_position.y, player->digging_position.z);
+		block bw = world_get_block(world, player->digging_position.x, player->digging_position.y, player->digging_position.z);
 		struct block_info* bi = getBlockInfo(bw);
 		float digspeed = 0.;
 		if (bi->hardness > 0.) {
@@ -1341,7 +1341,7 @@ void player_tick(struct world* world, struct player* player) {
 	//int32_t cz = ((int32_t) player->entity->z) >> 4;
 	//for (int32_t icx = cx - CHUNK_VIEW_DISTANCE; icx <= cx + CHUNK_VIEW_DISTANCE; icx++)
 	//for (int32_t icz = cz - CHUNK_VIEW_DISTANCE; icz <= cz + CHUNK_VIEW_DISTANCE; icz++) {
-	//struct chunk* ch = getChunk(player->world, icx, icz);
+	//struct chunk* ch = world_get_chunk(player->world, icx, icz);
 	//if (ch != NULL) {
 	BEGIN_HASHMAP_ITERATION(player->world->entities)
 	struct entity* ent = (struct entity*) value;
@@ -1373,7 +1373,7 @@ int player_onGround(struct player* player) {
 	for (int32_t x = floor(obb.minX); x < floor(obb.maxX + 1.); x++) {
 		for (int32_t z = floor(obb.minZ); z < floor(obb.maxZ + 1.); z++) {
 			for (int32_t y = floor(obb.minY); y < floor(obb.maxY + 1.); y++) {
-				block b = getBlockWorld(entity->world, x, y, z);
+				block b = world_get_block(entity->world, x, y, z);
 				if (b == 0) continue;
 				struct block_info* bi = getBlockInfo(b);
 				if (bi == NULL) continue;
@@ -1535,7 +1535,7 @@ void player_closeWindow(struct player* player, uint16_t windowID) {
 				pkt->data.play_client.blockaction.location.z = inv->te->z;
 				pkt->data.play_client.blockaction.action_id = 1;
 				pkt->data.play_client.blockaction.action_param = inv->players->entry_count - 1;
-				pkt->data.play_client.blockaction.block_type = getBlockWorld(player->world, inv->te->x, inv->te->y, inv->te->z) >> 4;
+				pkt->data.play_client.blockaction.block_type = world_get_block(player->world, inv->te->x, inv->te->y, inv->te->z) >> 4;
 				add_queue(bc_player->outgoingPacket, pkt);
 				END_BROADCAST(player->world->players)
 			}
@@ -1578,7 +1578,7 @@ void player_free(struct player* player) {
 		xfree(pkt);
 	}
 	del_queue(player->outgoingPacket);
-	struct chunk_req* cr;
+	struct chunk_request* cr;
 	while ((cr = pop_nowait_queue(player->chunkRequests)) != NULL) {
 		xfree(cr);
 	}
@@ -1607,6 +1607,6 @@ block player_can_place_block(struct player* player, block blk, int32_t x, int32_
 	if (bi != NULL && bi->canBePlaced != NULL && !(*bi->canBePlaced)(player->world, tbb, x, y, z)) {
 		return 0;
 	}
-	block b = getBlockWorld(player->world, x, y, z);
+	block b = world_get_block(player->world, x, y, z);
 	return (b == 0 || getBlockInfo(b)->material->replacable) ? tbb : 0;
 }

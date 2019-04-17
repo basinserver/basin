@@ -49,7 +49,7 @@ void main_tick() {
 	for (size_t i = 0; i < playersToLoad->size; i++) {
 		struct player* player = (struct player*) playersToLoad->data[i];
 		if (player == NULL) continue;
-		spawnPlayer(overworld, player);
+		world_spawn_player(overworld, player);
 		playersToLoad->data[i] = NULL;
 		playersToLoad->count--;
 		if (i == playersToLoad->size - 1) playersToLoad->size--;
@@ -79,7 +79,7 @@ void main_tick() {
 			if (def == NULL) continue;
 			if (def->defunct++ >= 21) {
 				//printf("frch\n");
-				freeChunk(def);
+				chunk_free(def);
 				defunctChunks->data[i] = NULL;
 				defunctChunks->count--;
 				if (i == defunctChunks->size - 1) defunctChunks->size--;
@@ -264,13 +264,13 @@ struct server* server_load(struct config_node* server) {
 		pfree(serv->pool);
 		return NULL;
 	}
-	serv->overworld = newWorld(8);
-	loadWorld(serv->overworld, (char*) ovr);
+	serv->overworld = world_new(8);
+	world_load(serv->overworld, (char*) ovr);
 	printf("Overworld Loaded\n");
-	//nether = newWorld();
-	//loadWorld(nether, neth);
-	//endworld = newWorld();
-	//loadWorld(endworld, ed);
+	//nether = world_new();
+	//world_load(nether, neth);
+	//endworld = world_new();
+	//world_load(endworld, ed);
 	serv->worlds = list_new(8, serv->pool);
 	list_append(serv->worlds, serv->overworld);
 	//add_collection(worlds, nether);
@@ -417,7 +417,7 @@ int main(int argc, char* argv[]) {
 	if (worlds == NULL) return -1;
 	for (size_t i = 0; i < worlds->size; i++) {
 		if (worlds->data[i] == NULL) continue;
-		pthread_create(&tt, NULL, &tick_world, worlds->data[i]);
+		pthread_create(&tt, NULL, &world_tick, worlds->data[i]);
 	}
 	pthread_create(&tt, NULL, &main_tick_thread, NULL);
 	for (int i = 0; i < overworld->chl_count; i++) {

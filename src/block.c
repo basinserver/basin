@@ -40,7 +40,7 @@ uint8_t getFaceFromPlayer(struct player* player) {
 void onBlockUpdate_checkPlace(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
 	struct block_info* bi = getBlockInfo(blk);
 	if (bi != NULL && bi->canBePlaced != NULL && !(*bi->canBePlaced)(world, blk, x, y, z)) {
-		setBlockWorld(world, 0, x, y, z);
+		world_set_block(world, 0, x, y, z);
 		dropBlockDrops(world, blk, NULL, x, y, z);
 	}
 }
@@ -68,12 +68,12 @@ uint8_t getBlockPower_block(struct world* world, block blk, int32_t x, int32_t y
 uint8_t getPropogatedPower_block(struct world* world, struct chunk* ch, int32_t x, int32_t y, int32_t z, uint8_t excludeFace) {
 	uint8_t maxPower = 0;
 	uint8_t cPower = 0;
-	if (excludeFace != XP && (cPower = getBlockPower_block(world, getBlockWorld_guess(world, ch, x + 1, y, z), x + 1, y, z, XN)) > maxPower) maxPower = cPower;
-	if (excludeFace != XN && (cPower = getBlockPower_block(world, getBlockWorld_guess(world, ch, x - 1, y, z), x - 1, y, z, XP)) > maxPower) maxPower = cPower;
-	if (excludeFace != ZP && (cPower = getBlockPower_block(world, getBlockWorld_guess(world, ch, x, y, z + 1), x, y, z + 1, ZN)) > maxPower) maxPower = cPower;
-	if (excludeFace != ZN && (cPower = getBlockPower_block(world, getBlockWorld_guess(world, ch, x, y, z - 1), x, y, z - 1, ZP)) > maxPower) maxPower = cPower;
-	if (excludeFace != YP && (cPower = getBlockPower_block(world, getBlockWorld_guess(world, ch, x, y + 1, z), x, y + 1, z, YN)) > maxPower) maxPower = cPower;
-	if (excludeFace != YN && (cPower = getBlockPower_block(world, getBlockWorld_guess(world, ch, x, y - 1, z), x, y - 1, z, YP)) > maxPower) maxPower = cPower;
+	if (excludeFace != XP && (cPower = getBlockPower_block(world, world_get_block_guess(world, ch, x + 1, y, z), x + 1, y, z, XN)) > maxPower) maxPower = cPower;
+	if (excludeFace != XN && (cPower = getBlockPower_block(world, world_get_block_guess(world, ch, x - 1, y, z), x - 1, y, z, XP)) > maxPower) maxPower = cPower;
+	if (excludeFace != ZP && (cPower = getBlockPower_block(world, world_get_block_guess(world, ch, x, y, z + 1), x, y, z + 1, ZN)) > maxPower) maxPower = cPower;
+	if (excludeFace != ZN && (cPower = getBlockPower_block(world, world_get_block_guess(world, ch, x, y, z - 1), x, y, z - 1, ZP)) > maxPower) maxPower = cPower;
+	if (excludeFace != YP && (cPower = getBlockPower_block(world, world_get_block_guess(world, ch, x, y + 1, z), x, y + 1, z, YN)) > maxPower) maxPower = cPower;
+	if (excludeFace != YN && (cPower = getBlockPower_block(world, world_get_block_guess(world, ch, x, y - 1, z), x, y - 1, z, YP)) > maxPower) maxPower = cPower;
 	if (maxPower > 0) {
 		maxPower--;
 	}
@@ -84,12 +84,12 @@ uint8_t getPropogatedPower_block(struct world* world, struct chunk* ch, int32_t 
 uint8_t getSpecificPower_block(struct world* world, struct chunk* ch, int32_t x, int32_t y, int32_t z, uint8_t face) {
 	uint8_t maxPower = 0;
 	uint8_t cPower = 0;
-	if (face == XP && (cPower = getBlockPower_block(world, getBlockWorld_guess(world, ch, x + 1, y, z), x + 1, y, z, XN)) > maxPower) maxPower = cPower;
-	if (face == XN && (cPower = getBlockPower_block(world, getBlockWorld_guess(world, ch, x - 1, y, z), x - 1, y, z, XP)) > maxPower) maxPower = cPower;
-	if (face == ZP && (cPower = getBlockPower_block(world, getBlockWorld_guess(world, ch, x, y, z + 1), x, y, z + 1, ZN)) > maxPower) maxPower = cPower;
-	if (face == ZN && (cPower = getBlockPower_block(world, getBlockWorld_guess(world, ch, x, y, z - 1), x, y, z - 1, ZP)) > maxPower) maxPower = cPower;
-	if (face == YP && (cPower = getBlockPower_block(world, getBlockWorld_guess(world, ch, x, y + 1, z), x, y + 1, z, YN)) > maxPower) maxPower = cPower;
-	if (face == YN && (cPower = getBlockPower_block(world, getBlockWorld_guess(world, ch, x, y - 1, z), x, y - 1, z, YP)) > maxPower) maxPower = cPower;
+	if (face == XP && (cPower = getBlockPower_block(world, world_get_block_guess(world, ch, x + 1, y, z), x + 1, y, z, XN)) > maxPower) maxPower = cPower;
+	if (face == XN && (cPower = getBlockPower_block(world, world_get_block_guess(world, ch, x - 1, y, z), x - 1, y, z, XP)) > maxPower) maxPower = cPower;
+	if (face == ZP && (cPower = getBlockPower_block(world, world_get_block_guess(world, ch, x, y, z + 1), x, y, z + 1, ZN)) > maxPower) maxPower = cPower;
+	if (face == ZN && (cPower = getBlockPower_block(world, world_get_block_guess(world, ch, x, y, z - 1), x, y, z - 1, ZP)) > maxPower) maxPower = cPower;
+	if (face == YP && (cPower = getBlockPower_block(world, world_get_block_guess(world, ch, x, y + 1, z), x, y + 1, z, YN)) > maxPower) maxPower = cPower;
+	if (face == YN && (cPower = getBlockPower_block(world, world_get_block_guess(world, ch, x, y - 1, z), x, y - 1, z, YP)) > maxPower) maxPower = cPower;
 	if (maxPower > 0) {
 		maxPower--;
 	}
@@ -109,7 +109,7 @@ int canBePlaced_torch(struct world* world, block blk, int32_t x, int32_t y, int3
 	else if (ori == 4) rori = SOUTH;
 	else if (ori == 5) rori = YP;
 	offsetCoordByFace(&ax, &ay, &az, rori);
-	block b = getBlockWorld(world, ax, ay, az);
+	block b = world_get_block(world, ax, ay, az);
 	struct block_info* bi = getBlockInfo(b);
 	if (rori == YN) {
 		if (bi->lightOpacity == 255) return 1;
@@ -127,7 +127,7 @@ block onBlockPlacedPlayer_lever(struct player* player, struct world* world, bloc
 	else if (face == YN) return blk | (f == EAST || f == WEST ? 0x00 : 0x07);
 	else if (face == YP) return blk | (f == NORTH || f == SOUTH ? 0x05 : 0x06);
 	offsetCoordByFace(&x, &y, &z, face);
-	return isNormalCube(getBlockInfo(getBlockWorld(world, x, y, z))) ? blk : 0;
+	return isNormalCube(getBlockInfo(world_get_block(world, x, y, z))) ? blk : 0;
 }
 
 //TODO: burnout on redstone torches
@@ -151,26 +151,26 @@ void onBlockUpdate_redstonetorch(struct world* world, block blk, int32_t x, int3
 	else if (rori == NORTH) arori = SOUTH;
 	else if (rori == SOUTH) arori = NORTH;
 	else if (rori == YN) arori = YP;
-	uint8_t ppower = getPropogatedPower_block(world, getChunk(world, ax >> 4, az >> 4), ax, ay, az, arori);
+	uint8_t ppower = getPropogatedPower_block(world, world_get_chunk(world, ax >> 4, az >> 4), ax, ay, az, arori);
 	if (blk >> 4 == BLK_NOTGATE >> 4 && ppower == 0) {
-		setBlockWorld(world, BLK_NOTGATE_1 | (blk & 0x0f), x, y, z);
+		world_set_block(world, BLK_NOTGATE_1 | (blk & 0x0f), x, y, z);
 	} else if (blk >> 4 == BLK_NOTGATE_1 >> 4 && ppower > 1) {
-		setBlockWorld(world, BLK_NOTGATE | (blk & 0x0f), x, y, z);
+		world_set_block(world, BLK_NOTGATE | (blk & 0x0f), x, y, z);
 	}
 }
 
 void onBlockUpdate_redstonedust(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
-	struct chunk* ch = getChunk(world, x >> 4, z >> 4);
+	struct chunk* ch = world_get_chunk(world, x >> 4, z >> 4);
 	uint8_t maxPower = getPropogatedPower_block(world, ch, x, y, z, -1);
 	if (maxPower != (blk & 0x0f)) {
-		setBlockWorld_guess(world, ch, BLK_REDSTONEDUST | maxPower, x, y, z);
+		world_set_block_guess(world, ch, BLK_REDSTONEDUST | maxPower, x, y, z);
 	}
 	onBlockUpdate_checkPlace(world, blk, x, y, z);
 }
 
 void onBlockUpdate_repeater(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
 	onBlockUpdate_checkPlace(world, blk, x, y, z);
-	if (isBlockTickScheduled(world, x, y, z)) {
+	if (world_is_block_tick_scheduled(world, x, y, z)) {
 		return;
 	}
 	uint8_t ori = blk & 0x03;
@@ -184,7 +184,7 @@ void onBlockUpdate_repeater(struct world* world, block blk, int32_t x, int32_t y
 	} else if (ori == 3) {
 		excl = EAST;
 	}
-	uint8_t sPower = getSpecificPower_block(world, getChunk(world, x >> 4, z >> 4), x, y, z, excl);
+	uint8_t sPower = getSpecificPower_block(world, world_get_chunk(world, x >> 4, z >> 4), x, y, z, excl);
 	uint8_t update = 0;
 	if (blk >> 4 == BLK_DIODE_1 >> 4 && sPower <= 0) {
 		update = 1;
@@ -198,7 +198,7 @@ void onBlockUpdate_repeater(struct world* world, block blk, int32_t x, int32_t y
 			int32_t sy = y;
 			int32_t sz = z;
 			offsetCoordByFace(&sx, &sy, &sz, excl);
-			block b = getBlockWorld(world, sx, sy, sz);
+			block b = world_get_block(world, sx, sy, sz);
 			if (b >> 4 == BLK_DIODE_1 >> 4 || b >> 4 == BLK_DIODE >> 4) {
 				priority = -3.;
 			}
@@ -206,24 +206,24 @@ void onBlockUpdate_repeater(struct world* world, block blk, int32_t x, int32_t y
 		if (priority == -1. && blk >> 4 == BLK_DIODE_1 >> 4) {
 			priority = -2.;
 		}
-		scheduleBlockTick(world, x, y, z, 2 * (((blk & 0x0f) >> 2) + 1), priority);
+        world_schedule_block_tick(world, x, y, z, 2 * (((blk & 0x0f) >> 2) + 1), priority);
 	}
 }
 
 void onBlockUpdate_lamp(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
-	struct chunk* ch = getChunk(world, x >> 4, z >> 4);
+	struct chunk* ch = world_get_chunk(world, x >> 4, z >> 4);
 	uint8_t maxPower = getPropogatedPower_block(world, ch, x, y, z, -1);
 	if (maxPower > 0 && blk >> 4 == BLK_REDSTONELIGHT >> 4) {
-		setBlockWorld_guess(world, ch, BLK_REDSTONELIGHT_1, x, y, z);
+		world_set_block_guess(world, ch, BLK_REDSTONELIGHT_1, x, y, z);
 	} else if (maxPower == 0 && blk >> 4 == BLK_REDSTONELIGHT_1 >> 4) {
-		setBlockWorld_guess(world, ch, BLK_REDSTONELIGHT, x, y, z);
+		world_set_block_guess(world, ch, BLK_REDSTONELIGHT, x, y, z);
 	}
 }
 
 void onBlockUpdate_tnt(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
-	uint8_t maxPower = getPropogatedPower_block(world, getChunk(world, x >> 4, z >> 4), x, y, z, -1);
+	uint8_t maxPower = getPropogatedPower_block(world, world_get_chunk(world, x >> 4, z >> 4), x, y, z, -1);
 	if (maxPower > 0) {
-		setBlockWorld(world, 0, x, y, z);
+		world_set_block(world, 0, x, y, z);
 		struct entity* e = newEntity(nextEntityID++, (double) x + .5, (double) y, (double) z + .5, ENT_PRIMEDTNT, 0., 0.);
 		e->data.tnt.fuse = 80;
 		e->objectData = blk >> 4;
@@ -231,7 +231,7 @@ void onBlockUpdate_tnt(struct world* world, block blk, int32_t x, int32_t y, int
 		e->motX = -sinf(ra) * .02;
 		e->motY = .2;
 		e->motZ = -cosf(ra) * .02;
-		spawnEntity(world, e);
+		world_spawn_entity(world, e);
 	}
 }
 
@@ -264,7 +264,7 @@ int scheduledTick_repeater(struct world* world, block blk, int32_t x, int32_t y,
 		int32_t sy = y;
 		int32_t sz = z;
 		offsetCoordByFace(&sx, &sy, &sz, lock1);
-		block b = getBlockWorld(world, sx, sy, sz);
+		block b = world_get_block(world, sx, sy, sz);
 		if (b >> 4 == BLK_DIODE_1 >> 4 && (b & 0x03) == mLock1) {
 			return 0;
 		}
@@ -274,23 +274,23 @@ int scheduledTick_repeater(struct world* world, block blk, int32_t x, int32_t y,
 		int32_t sy = y;
 		int32_t sz = z;
 		offsetCoordByFace(&sx, &sy, &sz, lock2);
-		block b = getBlockWorld(world, sx, sy, sz);
+		block b = world_get_block(world, sx, sy, sz);
 		if (b >> 4 == BLK_DIODE_1 >> 4 && (b & 0x03) == mLock2) {
 			return 0;
 		}
 	}
-	uint8_t sPower = getSpecificPower_block(world, getChunk(world, x >> 4, z >> 4), x, y, z, excl);
+	uint8_t sPower = getSpecificPower_block(world, world_get_chunk(world, x >> 4, z >> 4), x, y, z, excl);
 	//if (sPower > 0 && blk >> 4 == BLK_DIODE >> 4) {
 	//printf("attempt, power = %i\n", sPower);
 	if (blk >> 4 == BLK_DIODE_1 >> 4 && sPower <= 0) {
 		//} else if (sPower <= 0 && blk >> 4 == BLK_DIODE_1 >> 4) {
 		//printf("close\n");
-		setBlockWorld(world, BLK_DIODE | (blk & 0x0f), x, y, z);
+		world_set_block(world, BLK_DIODE | (blk & 0x0f), x, y, z);
 	} else if (blk >> 4 == BLK_DIODE >> 4) {
 		//printf("open\n");
-		setBlockWorld(world, BLK_DIODE_1 | (blk & 0x0f), x, y, z);
+		world_set_block(world, BLK_DIODE_1 | (blk & 0x0f), x, y, z);
 		if (sPower <= 0) {
-			scheduleBlockTick(world, x, y, z, 2 * (((blk & 0x0f) >> 2) + 1), -2.);
+            world_schedule_block_tick(world, x, y, z, 2 * (((blk & 0x0f) >> 2) + 1), -2.);
 			return -1;
 		}
 	}
@@ -299,27 +299,27 @@ int scheduledTick_repeater(struct world* world, block blk, int32_t x, int32_t y,
 }
 
 void onBlockInteract_repeater(struct world* world, block blk, int32_t x, int32_t y, int32_t z, struct player* player, uint8_t face, float curPosX, float curPosY, float curPosZ) {
-	setBlockWorld(world, (blk >> 4 << 4) | (((((blk & 0x0f) >> 2) + 1) & 0x03) << 2) | (blk & 0x03), x, y, z);
+	world_set_block(world, (blk >> 4 << 4) | (((((blk & 0x0f) >> 2) + 1) & 0x03) << 2) | (blk & 0x03), x, y, z);
 }
 
 void onBlockInteract_trapdoor(struct world* world, block blk, int32_t x, int32_t y, int32_t z, struct player* player, uint8_t face, float curPosX, float curPosY, float curPosZ) {
-	setBlockWorld(world, (blk >> 4 << 4) | (blk & 0b1011) | (blk & 0b0100 ? 0 : 0b0100), x, y, z);
+	world_set_block(world, (blk >> 4 << 4) | (blk & 0b1011) | (blk & 0b0100 ? 0 : 0b0100), x, y, z);
 }
 
 void onBlockUpdate_trapdoor(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
-	uint8_t maxPower = getPropogatedPower_block(world, getChunk(world, x >> 4, z >> 4), x, y, z, -1);
+	uint8_t maxPower = getPropogatedPower_block(world, world_get_chunk(world, x >> 4, z >> 4), x, y, z, -1);
 	if (maxPower > 0 && !(blk & 0b0100)) {
-		setBlockWorld(world, (blk >> 4 << 4) | (blk & 0b1011) | 0b0100, x, y, z);
+		world_set_block(world, (blk >> 4 << 4) | (blk & 0b1011) | 0b0100, x, y, z);
 	}		//TODO: closing?
 	onBlockUpdate_checkPlace(world, blk, x, y, z);
 }
 
 block onBlockPlacedPlayer_trapdoor(struct player* player, struct world* world, block blk, int32_t x, int32_t y, int32_t z, uint8_t face) {
 	if (face == YP || face == YN) {
-		if (isNormalCube(getBlockInfo(getBlockWorld(world, x + 1, y, z)))) face = XP;
-		else if (isNormalCube(getBlockInfo(getBlockWorld(world, x - 1, y, z)))) face = XN;
-		else if (isNormalCube(getBlockInfo(getBlockWorld(world, x, y, z + 1)))) face = ZP;
-		else if (isNormalCube(getBlockInfo(getBlockWorld(world, x, y, z - 1)))) face = ZN;
+		if (isNormalCube(getBlockInfo(world_get_block(world, x + 1, y, z)))) face = XP;
+		else if (isNormalCube(getBlockInfo(world_get_block(world, x - 1, y, z)))) face = XN;
+		else if (isNormalCube(getBlockInfo(world_get_block(world, x, y, z + 1)))) face = ZP;
+		else if (isNormalCube(getBlockInfo(world_get_block(world, x, y, z - 1)))) face = ZN;
 	}
 	if (face == XN) blk |= 2;
 	else if (face == XP) blk |= 3;
@@ -329,28 +329,28 @@ block onBlockPlacedPlayer_trapdoor(struct player* player, struct world* world, b
 
 int canBePlaced_trapdoor(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
 	uint8_t ori = blk & 0b0011;
-	if (ori == 2 && isNormalCube(getBlockInfo(getBlockWorld(world, x + 1, y, z)))) return 1;
-	else if (ori == 3 && isNormalCube(getBlockInfo(getBlockWorld(world, x - 1, y, z)))) return 1;
-	else if (ori == 0 && isNormalCube(getBlockInfo(getBlockWorld(world, x, y, z + 1)))) return 1;
-	else if (ori == 1 && isNormalCube(getBlockInfo(getBlockWorld(world, x, y, z - 1)))) return 1;
+	if (ori == 2 && isNormalCube(getBlockInfo(world_get_block(world, x + 1, y, z)))) return 1;
+	else if (ori == 3 && isNormalCube(getBlockInfo(world_get_block(world, x - 1, y, z)))) return 1;
+	else if (ori == 0 && isNormalCube(getBlockInfo(world_get_block(world, x, y, z + 1)))) return 1;
+	else if (ori == 1 && isNormalCube(getBlockInfo(world_get_block(world, x, y, z - 1)))) return 1;
 	return 0;
 }
 
 void onBlockInteract_lever(struct world* world, block blk, int32_t x, int32_t y, int32_t z, struct player* player, uint8_t face, float curPosX, float curPosY, float curPosZ) {
 	if (blk >> 4 == BLK_LEVER >> 4 && (blk & 0x08)) {
-		setBlockWorld(world, BLK_LEVER | (blk & 0x07), x, y, z);
+		world_set_block(world, BLK_LEVER | (blk & 0x07), x, y, z);
 	} else if (blk >> 4 == BLK_LEVER >> 4 && !(blk & 0x08)) {
-		setBlockWorld(world, BLK_LEVER | (blk & 0x07) | 0x08, x, y, z);
+		world_set_block(world, BLK_LEVER | (blk & 0x07) | 0x08, x, y, z);
 	}
 }
 
 void onBlockInteract_button(struct world* world, block blk, int32_t x, int32_t y, int32_t z, struct player* player, uint8_t face, float curPosX, float curPosY, float curPosZ) {
-	setBlockWorld(world, (blk ^ (blk & 0x0f)) | (blk & 0x07) | 0x08, x, y, z);
-	scheduleBlockTick(world, x, y, z, blk >> 4 == BLK_BUTTON >> 4 ? 20 : 30, 0.);
+	world_set_block(world, (blk ^ (blk & 0x0f)) | (blk & 0x07) | 0x08, x, y, z);
+    world_schedule_block_tick(world, x, y, z, blk >> 4 == BLK_BUTTON >> 4 ? 20 : 30, 0.);
 }
 
 int scheduledTick_button(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
-	setBlockWorld(world, (blk ^ (blk & 0x0f)) | (blk & 0x07), x, y, z);
+	world_set_block(world, (blk ^ (blk & 0x0f)) | (blk & 0x07), x, y, z);
 	return 0;
 }
 
@@ -362,23 +362,23 @@ block onBlockPlacedPlayer_button(struct player* player, struct world* world, blo
 	else if (face == YN) return blk | 0x00;
 	else if (face == YP) return blk | 0x05;
 	offsetCoordByFace(&x, &y, &z, face);
-	return isNormalCube(getBlockInfo(getBlockWorld(world, x, y, z))) ? blk : 0;
+	return isNormalCube(getBlockInfo(world_get_block(world, x, y, z))) ? blk : 0;
 }
 
 int canBePlaced_redstone(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
-	block b = getBlockWorld(world, x, y - 1, z);
+	block b = world_get_block(world, x, y - 1, z);
 	struct block_info* bi = getBlockInfo(b);
 	return isNormalCube(bi);
 }
 
 int canBePlaced_bed(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
-	block b = getBlockWorld(world, x, y - 1, z);
+	block b = world_get_block(world, x, y - 1, z);
 	struct block_info* bi = getBlockInfo(b);
 	return isNormalCube(bi);
 }
 
 void onBlockUpdate_bed(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
-	block b = getBlockWorld(world, x, y - 1, z);
+	block b = world_get_block(world, x, y - 1, z);
 	struct block_info* bi = getBlockInfo(b);
 	if (!isNormalCube(bi)) goto delete;
 	int facing = blk & 0b0011;
@@ -398,52 +398,52 @@ void onBlockUpdate_bed(struct world* world, block blk, int32_t x, int32_t y, int
 	int32_t oy = y;
 	int32_t oz = z;
 	offsetCoordByFace(&ox, &oy, &oz, rf);
-	b = getBlockWorld(world, ox, oy, oz);
+	b = world_get_block(world, ox, oy, oz);
 	if (b >> 4 == blk >> 4) return;
 	delete:;
-	setBlockWorld(world, 0, x, y, z);
+	world_set_block(world, 0, x, y, z);
 	if (head) dropBlockDrops(world, blk, NULL, x, y, z);
 }
 
 int canBePlaced_door(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
-	block b = getBlockWorld(world, x, y - 1, z);
+	block b = world_get_block(world, x, y - 1, z);
 	struct block_info* bi = getBlockInfo(b);
 	return (b >> 4 == blk >> 4 && !(b & 0b1000) && (blk & 0b1000)) || isNormalCube(bi);
 }
 
 void onBlockUpdate_door(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
-	block b = getBlockWorld(world, x, y - 1, z);
+	block b = world_get_block(world, x, y - 1, z);
 	struct block_info* bi = getBlockInfo(b);
 	int upper = blk & 0b1000;
 	if (!upper && !isNormalCube(bi)) goto delete;
-	b = getBlockWorld(world, x, y + (upper ? -1 : 1), z);
+	b = world_get_block(world, x, y + (upper ? -1 : 1), z);
 	int upperD = upper ? (blk & 0x0f) : (b & 0x0f);
 	if (b >> 4 == blk >> 4) {
-		uint8_t upperPower = getPropogatedPower_block(world, getChunk(world, x >> 4, z >> 4), x, y + (upper ? 0 : -1), z, -1);
-		uint8_t lowerPower = getPropogatedPower_block(world, getChunk(world, x >> 4, z >> 4), x, y + (upper ? -1 : 0), z, -1);
+		uint8_t upperPower = getPropogatedPower_block(world, world_get_chunk(world, x >> 4, z >> 4), x, y + (upper ? 0 : -1), z, -1);
+		uint8_t lowerPower = getPropogatedPower_block(world, world_get_chunk(world, x >> 4, z >> 4), x, y + (upper ? -1 : 0), z, -1);
 		uint8_t maxPower = upperPower > lowerPower ? upperPower : lowerPower;
 		if ((upperD & 0x02) && maxPower <= 0) {
-			setBlockWorld(world, (upper ? blk : b) ^ 0x02, x, y + (upper ? 0 : 1), z);
-			setBlockWorld(world, (upper ? b : blk) ^ 0x04, x, y + (upper ? -1 : 0), z);
+			world_set_block(world, (upper ? blk : b) ^ 0x02, x, y + (upper ? 0 : 1), z);
+			world_set_block(world, (upper ? b : blk) ^ 0x04, x, y + (upper ? -1 : 0), z);
 		} else if (!(upperD & 0x02) && maxPower > 0) {
-			setBlockWorld(world, (upper ? blk : b) | 0x02, x, y + (upper ? 0 : 1), z);
-			setBlockWorld(world, (upper ? b : blk) | 0x04, x, y + (upper ? -1 : 0), z);
+			world_set_block(world, (upper ? blk : b) | 0x02, x, y + (upper ? 0 : 1), z);
+			world_set_block(world, (upper ? b : blk) | 0x04, x, y + (upper ? -1 : 0), z);
 		}
 		return;
 	}
 	delete:;
-	setBlockWorld(world, 0, x, y, z);
+	world_set_block(world, 0, x, y, z);
 	if (!upper) dropBlockDrops(world, blk, NULL, x, y, z);
 }
 
 void onBlockInteract_woodendoor(struct world* world, block blk, int32_t x, int32_t y, int32_t z, struct player* player, uint8_t face, float curPosX, float curPosY, float curPosZ) {
 	uint8_t curMeta = blk & 0x0f;
 	uint8_t isUpper = curMeta & 0b1000;
-	uint8_t lowerMeta = isUpper ? getBlockWorld(world, x, y - 1, z) & 0x0f : curMeta;
+	uint8_t lowerMeta = isUpper ? world_get_block(world, x, y - 1, z) & 0x0f : curMeta;
 	uint8_t open = (lowerMeta & 0b0100) >> 2;
 	open = !open;
 	lowerMeta = (lowerMeta & 0b1011) | (open << 2);
-	setBlockWorld(world, (blk & 0xfff0) | lowerMeta, x, y + (isUpper ? -1 : 0), z);
+	world_set_block(world, (blk & 0xfff0) | lowerMeta, x, y + (isUpper ? -1 : 0), z);
 }
 
 void onBlockInteract_workbench(struct world* world, block blk, int32_t x, int32_t y, int32_t z, struct player* player, uint8_t face, float curPosX, float curPosY, float curPosZ) {
@@ -462,7 +462,7 @@ block onBlockPlaced_chest(struct world* world, block blk, int32_t x, int32_t y, 
 	newInventory(te->data.chest.inv, INVTYPE_CHEST, 2, 27);
 	te->data.chest.inv->te = te;
 	te->data.chest.inv->title = xstrdup("{\"text\": \"Chest\"}", 0);
-	setTileEntityWorld(world, x, y, z, te);
+	world_set_tile(world, x, y, z, te);
 	return (blk & ~0x0f) | meta;
 }
 
@@ -476,26 +476,26 @@ block onBlockPlaced_furnace(struct world* world, block blk, int32_t x, int32_t y
 	newInventory(te->data.furnace.inv, INVTYPE_FURNACE, 3, 3);
 	te->data.furnace.inv->te = te;
 	te->data.furnace.inv->title = xstrdup("{\"text\": \"Furnace\"}", 0);
-	setTileEntityWorld(world, x, y, z, te);
+	world_set_tile(world, x, y, z, te);
 	return (blk & ~0x0f) | meta;
 }
 
 int onBlockDestroyed_chest(struct world* world, block blk, int32_t x, int32_t y, int32_t z, block replacedBy) {
-	struct tile_entity* te = getTileEntityWorld(world, x, y, z);
+	struct tile_entity* te = world_get_tile(world, x, y, z);
 	if (te == NULL) return 0;
 	for (size_t i = 0; i < te->data.chest.inv->slot_count; i++) {
 		struct slot* sl = getSlot(NULL, te->data.chest.inv, i);
 		dropBlockDrop(world, sl, x, y, z);
 	}
-	setTileEntityWorld(world, x, y, z, NULL);
+	world_set_tile(world, x, y, z, NULL);
 	return 0;
 }
 
 void onBlockInteract_chest(struct world* world, block blk, int32_t x, int32_t y, int32_t z, struct player* player, uint8_t face, float curPosX, float curPosY, float curPosZ) {
-	struct tile_entity* te = getTileEntityWorld(world, x, y, z);
+	struct tile_entity* te = world_get_tile(world, x, y, z);
 	if (te == NULL || !streq_nocase(te->id, "minecraft:chest")) {
 		onBlockPlaced_chest(world, blk, x, y, z, 0);
-		te = getTileEntityWorld(world, x, y, z);
+		te = world_get_tile(world, x, y, z);
 	}
 //TODO: impl locks, loot
 	player_openInventory(player, te->data.chest.inv);
@@ -514,21 +514,21 @@ void onBlockInteract_chest(struct world* world, block blk, int32_t x, int32_t y,
 
 int onBlockDestroyed_furnace(struct world* world, block blk, int32_t x, int32_t y, int32_t z, block replacedBy) {
 	if ((replacedBy >> 4) == (BLK_FURNACE_1 >> 4) || (replacedBy >> 4) == (BLK_FURNACE >> 4)) return 0;
-	struct tile_entity* te = getTileEntityWorld(world, x, y, z);
+	struct tile_entity* te = world_get_tile(world, x, y, z);
 	if (te == NULL) return 0;
 	for (size_t i = 0; i < te->data.furnace.inv->slot_count; i++) {
 		struct slot* sl = getSlot(NULL, te->data.furnace.inv, i);
 		dropBlockDrop(world, sl, x, y, z);
 	}
-	setTileEntityWorld(world, x, y, z, NULL);
+	world_set_tile(world, x, y, z, NULL);
 	return 0;
 }
 
 void onBlockInteract_furnace(struct world* world, block blk, int32_t x, int32_t y, int32_t z, struct player* player, uint8_t face, float curPosX, float curPosY, float curPosZ) {
-	struct tile_entity* te = getTileEntityWorld(world, x, y, z);
+	struct tile_entity* te = world_get_tile(world, x, y, z);
 	if (te == NULL || !streq_nocase(te->id, "minecraft:furnace")) {
 		onBlockPlaced_furnace(world, blk, x, y, z, 0);
-		te = getTileEntityWorld(world, x, y, z);
+		te = world_get_tile(world, x, y, z);
 	}
 //TODO: impl locks, loot
 	player_openInventory(player, te->data.furnace.inv);
@@ -557,8 +557,8 @@ void update_furnace(struct world* world, struct tile_entity* te) {
 		burning = 1;
 		if (!te->tick) {
 			te->tick = &tetick_furnace;
-			enableTileEntityTickable(world, te);
-			setBlockWorld(world, BLK_FURNACE_1 | (getBlockWorld(world, te->x, te->y, te->z) & 0x0f), te->x, te->y, te->z);
+			world_tile_set_tickable(world, te);
+			world_set_block(world, BLK_FURNACE_1 | (world_get_block(world, te->x, te->y, te->z) & 0x0f), te->x, te->y, te->z);
 		}
 		//printf("bt = %i\n", te->data.furnace.burn_time);
 		if (te->data.furnace.burnTime <= 0 && st > 0 && fu != NULL) {
@@ -612,9 +612,9 @@ void update_furnace(struct world* world, struct tile_entity* te) {
 			pkt->data.play_client.windowproperty.value = 0;
 			add_queue(bc_player->outgoingPacket, pkt);
 			END_BROADCAST(te->data.furnace.inv->players)
-			disableTileEntityTickable(world, te);
+			world_tile_unset_tickable(world, te);
 			te->tick = NULL;
-			setBlockWorld(world, BLK_FURNACE | (getBlockWorld(world, te->x, te->y, te->z) & 0x0f), te->x, te->y, te->z);
+			world_set_block(world, BLK_FURNACE | (world_get_block(world, te->x, te->y, te->z) & 0x0f), te->x, te->y, te->z);
 		}
 		te->data.furnace.cookTime = 0;
 	}
@@ -723,25 +723,25 @@ int falling_canFallThrough(block b) {
 }
 
 void onBlockUpdate_falling(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
-	if (y > 0 && falling_canFallThrough(getBlockWorld(world, x, y - 1, z))) {
-		scheduleBlockTick(world, x, y, z, 4, 0.);
+	if (y > 0 && falling_canFallThrough(world_get_block(world, x, y - 1, z))) {
+        world_schedule_block_tick(world, x, y, z, 4, 0.);
 	}
 }
 
 int scheduledTick_falling(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
-	if (y > 0 && falling_canFallThrough(getBlockWorld(world, x, y - 1, z))) {
-		setBlockWorld(world, 0, x, y, z);
+	if (y > 0 && falling_canFallThrough(world_get_block(world, x, y - 1, z))) {
+		world_set_block(world, 0, x, y, z);
 		struct entity* e = newEntity(nextEntityID++, (double) x + .5, (double) y, (double) z + .5, ENT_FALLINGBLOCK, 0., 0.);
 		e->data.fallingblock.b = blk;
 		e->objectData = blk >> 4;
-		spawnEntity(world, e);
+		world_spawn_entity(world, e);
 	}
 	return 0;
 }
 
 void sponge_floodfill(struct world* world, int32_t x, int32_t y, int32_t z, int32_t* pos, uint32_t* removed) {
 	if (*removed > 64) return;
-	block b = getBlockWorld(world, x, y, z);
+	block b = world_get_block(world, x, y, z);
 	if (b >> 4 == BLK_WATER >> 4 || b >> 4 == BLK_WATER_1 >> 4) {
 		pos[*removed * 3] = x;
 		pos[*removed * 3 + 1] = y;
@@ -765,11 +765,11 @@ void onBlockUpdate_sponge(struct world* world, block blk, int32_t x, int32_t y, 
 				sponge_floodfill(world, x, y, z + 1, pos, &removed);
 				sponge_floodfill(world, x, y, z - 1, pos, &removed);
 				if (removed == 0) break;
-				else setBlockWorld(world, blk | 1, x, y, z);
+				else world_set_block(world, blk | 1, x, y, z);
 			}
 			uint32_t rRemoved = removed;
 			for (uint32_t i = lRemoved; i < removed; i++) {
-				setBlockWorld(world, 0, pos[i][0], pos[i][1], pos[i][2]);
+				world_set_block(world, 0, pos[i][0], pos[i][1], pos[i][2]);
 				sponge_floodfill(world, pos[i][0] - 1, pos[i][1], pos[i][2], pos, &rRemoved);
 				sponge_floodfill(world, pos[i][0] + 1, pos[i][1], pos[i][2], pos, &rRemoved);
 				sponge_floodfill(world, pos[i][0], pos[i][1] + 1, pos[i][2], pos, &rRemoved);
@@ -787,10 +787,10 @@ void onBlockUpdate_sponge(struct world* world, block blk, int32_t x, int32_t y, 
 int canBePlaced_ladder(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
 	uint8_t m = blk & 0x0f;
 	block b = 0;
-	if (m == 3) b = getBlockWorld(world, x, y, z - 1);
-	else if (m == 4) b = getBlockWorld(world, x + 1, y, z);
-	else if (m == 5) b = getBlockWorld(world, x - 1, y, z);
-	else b = getBlockWorld(world, x, y, z + 1);
+	if (m == 3) b = world_get_block(world, x, y, z - 1);
+	else if (m == 4) b = world_get_block(world, x + 1, y, z);
+	else if (m == 5) b = world_get_block(world, x - 1, y, z);
+	else b = world_get_block(world, x, y, z + 1);
 	return isNormalCube(getBlockInfo(b));
 }
 
@@ -799,10 +799,10 @@ block onBlockPlacedPlayer_ladder(struct player* player, struct world* world, blo
 	int zng = 0;
 	int xng = 0;
 	int xpg = 0;
-	if ((zpg = isNormalCube(getBlockInfo(getBlockWorld(world, x, y, z - 1)))) && face == ZP) return (blk & ~0xf) | 3;
-	else if ((zng = isNormalCube(getBlockInfo(getBlockWorld(world, x, y, z + 1)))) && face == ZN) return (blk & ~0xf) | 2;
-	else if ((xpg = isNormalCube(getBlockInfo(getBlockWorld(world, x + 1, y, z)))) && face == XN) return (blk & ~0xf) | 4;
-	else if ((xng = isNormalCube(getBlockInfo(getBlockWorld(world, x - 1, y, z)))) && face == XP) return (blk & ~0xf) | 5;
+	if ((zpg = isNormalCube(getBlockInfo(world_get_block(world, x, y, z - 1)))) && face == ZP) return (blk & ~0xf) | 3;
+	else if ((zng = isNormalCube(getBlockInfo(world_get_block(world, x, y, z + 1)))) && face == ZN) return (blk & ~0xf) | 2;
+	else if ((xpg = isNormalCube(getBlockInfo(world_get_block(world, x + 1, y, z)))) && face == XN) return (blk & ~0xf) | 4;
+	else if ((xng = isNormalCube(getBlockInfo(world_get_block(world, x - 1, y, z)))) && face == XP) return (blk & ~0xf) | 5;
 	else if (zpg) return (blk & ~0xf) | 2;
 	else if (zng) return (blk & ~0xf) | 3;
 	else if (xng) return (blk & ~0xf) | 4;
@@ -812,19 +812,19 @@ block onBlockPlacedPlayer_ladder(struct player* player, struct world* world, blo
 
 block onBlockPlacedPlayer_vine(struct player* player, struct world* world, block blk, int32_t x, int32_t y, int32_t z, uint8_t face) {
 	block out = blk & ~0x0f;
-	block b = getBlockWorld(world, x, y, z + 1);
+	block b = world_get_block(world, x, y, z + 1);
 	struct block_info* bi = getBlockInfo(b);
 	if (bi != NULL && bi->fullCube && bi->material->blocksMovement) out |= 0x1;
-	b = getBlockWorld(world, x - 1, y, z);
+	b = world_get_block(world, x - 1, y, z);
 	bi = getBlockInfo(b);
 	if (bi != NULL && bi->fullCube && bi->material->blocksMovement) out |= 0x2;
-	b = getBlockWorld(world, x, y, z - 1);
+	b = world_get_block(world, x, y, z - 1);
 	bi = getBlockInfo(b);
 	if (bi != NULL && bi->fullCube && bi->material->blocksMovement) out |= 0x4;
-	b = getBlockWorld(world, x + 1, y, z);
+	b = world_get_block(world, x + 1, y, z);
 	bi = getBlockInfo(b);
 	if (bi != NULL && bi->fullCube && bi->material->blocksMovement) out |= 0x8;
-	b = getBlockWorld(world, x, y + 1, z);
+	b = world_get_block(world, x, y + 1, z);
 	bi = getBlockInfo(b);
 //printf("block placed vine = ");
 	if ((b >> 4) == (BLK_VINE >> 4)) {
@@ -843,26 +843,26 @@ void onBlockUpdate_vine(struct world* world, block blk, int32_t x, int32_t y, in
 	block b = onBlockPlacedPlayer_vine(NULL, world, blk, x, y, z, -1);
 //printf("%i != %i\n", b, blk);
 	if (b != blk) {
-		if (b >> 4 == blk >> 4 && b >> 4 == BLK_VINE >> 4) setBlockWorld_noupdate(world, b, x, y, z);
-		else setBlockWorld(world, b, x, y, z);
+		if (b >> 4 == blk >> 4 && b >> 4 == BLK_VINE >> 4) world_set_block_noupdate(world, b, x, y, z);
+		else world_set_block(world, b, x, y, z);
 	}
 }
 
 int canBePlaced_vine(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
 //printf("cbp vine at\n");
-	block b = getBlockWorld(world, x, y, z + 1);
+	block b = world_get_block(world, x, y, z + 1);
 	struct block_info* bi = getBlockInfo(b);
 	if (bi != NULL && bi->fullCube && bi->material->blocksMovement) return 1;
-	b = getBlockWorld(world, x - 1, y, z);
+	b = world_get_block(world, x - 1, y, z);
 	bi = getBlockInfo(b);
 	if (bi != NULL && bi->fullCube && bi->material->blocksMovement) return 1;
-	b = getBlockWorld(world, x, y, z - 1);
+	b = world_get_block(world, x, y, z - 1);
 	bi = getBlockInfo(b);
 	if (bi != NULL && bi->fullCube && bi->material->blocksMovement) return 1;
-	b = getBlockWorld(world, x + 1, y, z);
+	b = world_get_block(world, x + 1, y, z);
 	bi = getBlockInfo(b);
 	if (bi != NULL && bi->fullCube && bi->material->blocksMovement) return 1;
-	b = getBlockWorld(world, x, y + 1, z);
+	b = world_get_block(world, x, y + 1, z);
 	if ((b >> 4) == (BLK_VINE >> 4)) return 1;
 	bi = getBlockInfo(b);
 	if (bi != NULL && bi->fullCube && bi->material->blocksMovement) return 1;
@@ -872,27 +872,27 @@ int canBePlaced_vine(struct world* world, block blk, int32_t x, int32_t y, int32
 
 void randomTick_vine(struct world* world, struct chunk* ch, block blk, int32_t x, int32_t y, int32_t z) {
 	if (rand() % 4 != 0) return;
-	block below = getBlockWorld_guess(world, ch, x, y - 1, z);
+	block below = world_get_block_guess(world, ch, x, y - 1, z);
 	if (below == 0) {
 		//printf("rtv grow\n");
-		setBlockWorld_guess(world, ch, onBlockPlacedPlayer_vine(NULL, world, BLK_VINE, x, y, z, -1), x, y - 1, z);
+		world_set_block_guess(world, ch, onBlockPlacedPlayer_vine(NULL, world, BLK_VINE, x, y, z, -1), x, y - 1, z);
 		//printf("rtv growdun\n");
 	}
 }
 
 int canBePlaced_requiredirt(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
-	block b = getBlockWorld(world, x, y - 1, z);
+	block b = world_get_block(world, x, y - 1, z);
 	return b == BLK_DIRT || b == BLK_GRASS;
 }
 
 int canBePlaced_sapling(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
-	block b = getBlockWorld(world, x, y - 1, z);
+	block b = world_get_block(world, x, y - 1, z);
 	return b == BLK_DIRT || b == BLK_GRASS || b == BLK_FARMLAND;
 }
 
 int canBePlaced_doubleplant(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
-	block b = getBlockWorld(world, x, y - 1, z);
-	block b2 = getBlockWorld(world, x, y + 1, z);
+	block b = world_get_block(world, x, y - 1, z);
+	block b2 = world_get_block(world, x, y + 1, z);
 	if ((b == blk && b2 != 0) || (b2 == blk && b != BLK_GRASS && b != BLK_DIRT)) {
 		return 0;
 	}
@@ -900,46 +900,46 @@ int canBePlaced_doubleplant(struct world* world, block blk, int32_t x, int32_t y
 }
 
 int canBePlaced_requiresand(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
-	block b = getBlockWorld(world, x, y - 1, z);
+	block b = world_get_block(world, x, y - 1, z);
 	return b == BLK_SAND;
 }
 
 int canBePlaced_cactus(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
-	block b = getBlockWorld(world, x, y - 1, z);
+	block b = world_get_block(world, x, y - 1, z);
 	if (b != BLK_SAND && b != BLK_CACTUS) return 0;
-	b = getBlockWorld(world, x, y, z + 1);
+	b = world_get_block(world, x, y, z + 1);
 	if (b != 0) return 0;
-	b = getBlockWorld(world, x, y, z - 1);
+	b = world_get_block(world, x, y, z - 1);
 	if (b != 0) return 0;
-	b = getBlockWorld(world, x + 1, y, z);
+	b = world_get_block(world, x + 1, y, z);
 	if (b != 0) return 0;
-	b = getBlockWorld(world, x - 1, y, z);
+	b = world_get_block(world, x - 1, y, z);
 	if (b != 0) return 0;
 	return 1;
 }
 
 int canBePlaced_reeds(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
-	block b = getBlockWorld(world, x, y - 1, z);
+	block b = world_get_block(world, x, y - 1, z);
 	if (b == BLK_REEDS) return 1;
 	if (b != BLK_DIRT && b != BLK_GRASS && b != BLK_SAND) return 0;
-	b = getBlockWorld(world, x, y - 1, z + 1);
+	b = world_get_block(world, x, y - 1, z + 1);
 	if ((b >> 4) == (BLK_WATER >> 4) || (b >> 4) == (BLK_WATER_1 >> 4)) return 1;
-	b = getBlockWorld(world, x, y - 1, z - 1);
+	b = world_get_block(world, x, y - 1, z - 1);
 	if ((b >> 4) == (BLK_WATER >> 4) || (b >> 4) == (BLK_WATER_1 >> 4)) return 1;
-	b = getBlockWorld(world, x + 1, y - 1, z);
+	b = world_get_block(world, x + 1, y - 1, z);
 	if ((b >> 4) == (BLK_WATER >> 4) || (b >> 4) == (BLK_WATER_1 >> 4)) return 1;
-	b = getBlockWorld(world, x - 1, y - 1, z);
+	b = world_get_block(world, x - 1, y - 1, z);
 	if ((b >> 4) == (BLK_WATER >> 4) || (b >> 4) == (BLK_WATER_1 >> 4)) return 1;
 	return 0;
 }
 
 int canBePlaced_requirefarmland(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
-	block b = getBlockWorld(world, x, y - 1, z);
+	block b = world_get_block(world, x, y - 1, z);
 	return b >> 4 == BLK_FARMLAND >> 4;
 }
 
 int canBePlaced_requiresoulsand(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
-	block b = getBlockWorld(world, x, y - 1, z);
+	block b = world_get_block(world, x, y - 1, z);
 	return b == BLK_HELLSAND;
 }
 
@@ -1074,7 +1074,7 @@ float crops_getGrowthChance(struct world* world, block b, int32_t x, int32_t y, 
 	float chance = 1.;
 	for (int32_t sx = x - 1; sx <= x + 1; sx++) {
 		for (int32_t sz = x - 1; sz <= x + 1; sz++) {
-			block b2 = getBlockWorld(world, sx, y - 1, sz);
+			block b2 = world_get_block(world, sx, y - 1, sz);
 			float subchance = 0.;
 			if ((b2 >> 4) == (BLK_FARMLAND >> 4)) {
 				subchance = 1.;
@@ -1088,12 +1088,12 @@ float crops_getGrowthChance(struct world* world, block b, int32_t x, int32_t y, 
 			chance += subchance;
 		}
 	}
-	int xSame = getBlockWorld(world, x - 1, y, z) >> 4 == b >> 4 || getBlockWorld(world, x + 1, y, z) >> 4 == b >> 4;
-	int zSame = getBlockWorld(world, x, y, z - 1) >> 4 == b >> 4 || getBlockWorld(world, x, y, z + 1) >> 4 == b >> 4;
+	int xSame = world_get_block(world, x - 1, y, z) >> 4 == b >> 4 || world_get_block(world, x + 1, y, z) >> 4 == b >> 4;
+	int zSame = world_get_block(world, x, y, z - 1) >> 4 == b >> 4 || world_get_block(world, x, y, z + 1) >> 4 == b >> 4;
 	if (xSame && zSame) {
 		chance /= 2.;
 	} else {
-		int dSame = getBlockWorld(world, x - 1, y, z - 1) >> 4 == b >> 4 || getBlockWorld(world, x + 1, y, z - 1) >> 4 == b >> 4 || getBlockWorld(world, x - 1, y, z + 1) >> 4 == b >> 4 || getBlockWorld(world, x + 1, y, z + 1) >> 4 == b >> 4;
+		int dSame = world_get_block(world, x - 1, y, z - 1) >> 4 == b >> 4 || world_get_block(world, x + 1, y, z - 1) >> 4 == b >> 4 || world_get_block(world, x - 1, y, z + 1) >> 4 == b >> 4 || world_get_block(world, x + 1, y, z + 1) >> 4 == b >> 4;
 		if (dSame) {
 			chance /= 2.;
 		}
@@ -1102,7 +1102,7 @@ float crops_getGrowthChance(struct world* world, block b, int32_t x, int32_t y, 
 }
 
 void randomTick_crops(struct world* world, struct chunk* ch, block blk, int32_t x, int32_t y, int32_t z) {
-	uint8_t lwu = getLightWorld_guess(world, ch, x, y + 1, z);
+	uint8_t lwu = world_get_light_guess(world, ch, x, y + 1, z);
 	if (lwu > 9) {
 		uint8_t age = blk & 0x0f;
 		if (blk >> 4 == BLK_CROPS >> 4) {
@@ -1110,7 +1110,7 @@ void randomTick_crops(struct world* world, struct chunk* ch, block blk, int32_t 
 				float gChance = crops_getGrowthChance(world, blk, x, y, z);
 				if (rand() % ((int) (25. / gChance) + 1) == 0) {
 					block nb = (blk & 0xfff0) | ((blk & 0x0f) + 1);
-					setBlockWorld_guess(world, ch, nb, x, y, z);
+					world_set_block_guess(world, ch, nb, x, y, z);
 				}
 			}
 		}
@@ -1122,7 +1122,7 @@ void randomTick_farmland(struct world* world, struct chunk* ch, block blk, int32
 	uint8_t hasWaterOrRain = 0; // TODO: true if raining
 	if (!hasWaterOrRain) for (int32_t sx = x - 4; sx <= x + 4; sx++) {
 		for (int32_t sz = z - 4; sz <= z + 4; sz++) {
-			if (streq_nocase(getBlockInfo(getBlockWorld_guess(world, ch, sx, y, sz))->material->name, "water")) {
+			if (streq_nocase(getBlockInfo(world_get_block_guess(world, ch, sx, y, sz))->material->name, "water")) {
 				hasWaterOrRain = 1;
 				goto postWater;
 			}
@@ -1131,28 +1131,28 @@ void randomTick_farmland(struct world* world, struct chunk* ch, block blk, int32
 	postWater: ;
 	if (hasWaterOrRain && moisture < 7) {
 		block nb = (blk & 0xfff0) | 7;
-		setBlockWorld_guess(world, ch, nb, x, y, z);
+		world_set_block_guess(world, ch, nb, x, y, z);
 	} else if (moisture > 0 && !hasWaterOrRain) {
 		block nb = (blk & 0xfff0) | (moisture - 1);
-		setBlockWorld_guess(world, ch, nb, x, y, z);
+		world_set_block_guess(world, ch, nb, x, y, z);
 	}
 }
 
 void randomTick_grass(struct world* world, struct chunk* chunk, block blk, int32_t x, int32_t y, int32_t z) {
-	struct block_info* ni = getBlockInfo(getBlockWorld_guess(world, chunk, x, y + 1, z));
-	uint8_t lwu = getLightWorld(world, x, y, z, 1);
+	struct block_info* ni = getBlockInfo(world_get_block_guess(world, chunk, x, y + 1, z));
+	uint8_t lwu = world_get_light(world, x, y, z, 1);
 	if (lwu < 4 && ni != NULL && ni->lightOpacity > 2) {
-		setBlockWorld_guess(world, chunk, BLK_DIRT, x, y, z);
+		world_set_block_guess(world, chunk, BLK_DIRT, x, y, z);
 	} else if (lwu >= 9) {
 		for (int i = 0; i < 4; i++) {
 			int32_t gx = x + rand() % 3 - 1;
 			int32_t gy = y + rand() % 5 - 3;
 			int32_t gz = z + rand() % 3 - 1;
-			block up = getBlockWorld_guess(world, chunk, gx, gy + 1, gz);
-			block blk = getBlockWorld_guess(world, chunk, gx, gy, gz);
+			block up = world_get_block_guess(world, chunk, gx, gy + 1, gz);
+			block blk = world_get_block_guess(world, chunk, gx, gy, gz);
 			ni = getBlockInfo(up);
-			if (blk == BLK_DIRT && (ni == NULL || ni->lightOpacity <= 2) && getLightWorld(world, gx, gy + 1, gz, 1) >= 4) {
-				setBlockWorld_guess(world, chunk, BLK_GRASS, gx, gy, gz);
+			if (blk == BLK_DIRT && (ni == NULL || ni->lightOpacity <= 2) && world_get_light(world, gx, gy + 1, gz, 1) >= 4) {
+				world_set_block_guess(world, chunk, BLK_GRASS, gx, gy, gz);
 			}
 		}
 	}
@@ -1166,24 +1166,24 @@ int tree_canGrowInto(block b) {
 }
 
 void tree_addHangingVine(struct world* world, struct chunk* chunk, block b, int32_t x, int32_t y, int32_t z) {
-	setBlockWorld_guess(world, chunk, b, x, y, z);
+	world_set_block_guess(world, chunk, b, x, y, z);
 	int32_t iy = y;
-	for (y--; y > iy - 4 && getBlockWorld_guess(world, chunk, x, y, z) == 0; y--) {
-		setBlockWorld_guess(world, chunk, b, x, y, z);
+	for (y--; y > iy - 4 && world_get_block_guess(world, chunk, x, y, z) == 0; y--) {
+		world_set_block_guess(world, chunk, b, x, y, z);
 	}
 }
 
 int tree_checkAndPlaceLeaf(struct world* world, struct chunk* chunk, block b, int32_t x, int32_t y, int32_t z) {
-	struct block_info* bi = getBlockInfo(getBlockWorld_guess(world, chunk, x, y, z));
+	struct block_info* bi = getBlockInfo(world_get_block_guess(world, chunk, x, y, z));
 	if (bi == NULL || streq_nocase(bi->material->name, "air") || streq_nocase(bi->material->name, "leaves")) {
-		setBlockWorld_guess(world, chunk, b, x, y, z);
+		world_set_block_guess(world, chunk, b, x, y, z);
 		return 1;
 	}
 	return 0;
 }
 
 void randomTick_sapling(struct world* world, struct chunk* chunk, block blk, int32_t x, int32_t y, int32_t z) {
-	uint8_t lwu = getLightWorld(world, x, y + 1, z, 1);
+	uint8_t lwu = world_get_light(world, x, y + 1, z, 1);
 	if (lwu >= 9 && rand() % 7 == 0) {
 		if ((blk & 0x8) == 0x8) {
 			uint8_t type = blk & 0x7;
@@ -1205,7 +1205,7 @@ void randomTick_sapling(struct world* world, struct chunk* chunk, block blk, int
 				log = BLK_LOG_BIG_OAK_1;
 				leaf = BLK_LEAVES_BIG_OAK_2;
 			}
-			uint8_t biome = getBiome(world, x, z);
+			uint8_t biome = world_get_biome(world, x, z);
 			uint8_t vines = type == 0 && (biome == BIOME_SWAMPLAND || biome == BIOME_SWAMPLANDM);
 			uint8_t cocoa = type == 3;
 			int big = type == 0 && rand() % 10 == 0;
@@ -1224,14 +1224,14 @@ void randomTick_sapling(struct world* world, struct chunk* chunk, block blk, int
 					if (ty >= y + 1 + height - 2) width = 2;
 					for (int tx = x - width; tx <= x + width; tx++) {
 						for (int tz = z - width; tz <= z + width; tz++) {
-							if (!tree_canGrowInto(getBlockWorld_guess(world, chunk, tx, ty, tz))) return;
+							if (!tree_canGrowInto(world_get_block_guess(world, chunk, tx, ty, tz))) return;
 						}
 					}
 				}
-				block down = getBlockWorld_guess(world, chunk, x, y - 1, z);
+				block down = world_get_block_guess(world, chunk, x, y - 1, z);
 				if ((down != BLK_GRASS && down != BLK_DIRT && down != BLK_FARMLAND) || y >= 256 - height - 1) return;
 				if (down == BLK_FARMLAND && type == 4) return;
-				setBlockWorld_guess(world, chunk, BLK_DIRT, x, y - 1, z);
+				world_set_block_guess(world, chunk, BLK_DIRT, x, y - 1, z);
 				if (type == 4) {
 					int k2 = height - rand() % 4 - 1;
 					int l2 = 3 - rand() % 3;
@@ -1252,9 +1252,9 @@ void randomTick_sapling(struct world* world, struct chunk* chunk, block blk, int
 							j1 += oz;
 							l2--;
 						}
-						struct block_info* bi = getBlockInfo(getBlockWorld_guess(world, chunk, i3, i2, j1));
+						struct block_info* bi = getBlockInfo(world_get_block_guess(world, chunk, i3, i2, j1));
 						if (bi != NULL && (streq_nocase(bi->material->name, "air") || streq_nocase(bi->material->name, "leaves") || streq_nocase(bi->material->name, "vine") || streq_nocase(bi->material->name, "plants"))) {
-							setBlockWorld_guess(world, chunk, log, i3, i2, j1);
+							world_set_block_guess(world, chunk, log, i3, i2, j1);
 							k1 = i2;
 						}
 					}
@@ -1319,9 +1319,9 @@ void randomTick_sapling(struct world* world, struct chunk* chunk, block blk, int
 							for (int k2 = z - i3; k2 <= z + i3; k2++) {
 								int zoff = k2 - z;
 								if (abs(xoff) != i3 || abs(zoff) != i3 || i3 <= 0) {
-									struct block_info* bi = getBlockInfo(getBlockWorld_guess(world, chunk, i2, yoff, k2));
+									struct block_info* bi = getBlockInfo(world_get_block_guess(world, chunk, i2, yoff, k2));
 									if (bi == NULL || !bi->fullCube) {
-										setBlockWorld_guess(world, chunk, leaf, i2, yoff, k2);
+										world_set_block_guess(world, chunk, leaf, i2, yoff, k2);
 									}
 								}
 							}
@@ -1345,9 +1345,9 @@ void randomTick_sapling(struct world* world, struct chunk* chunk, block blk, int
 						for (int tz = z - width; tz <= z + width; tz++) {
 							int tz2 = tz - z;
 							if (abs(tx2) != width || abs(tz2) != width || (rand() % 2 == 0 && dist_from_top != 0)) {
-								struct block_info* bi = getBlockInfo(getBlockWorld_guess(world, chunk, tx, ty, tz));
+								struct block_info* bi = getBlockInfo(world_get_block_guess(world, chunk, tx, ty, tz));
 								if (bi != NULL && (streq_nocase(bi->material->name, "air") || streq_nocase(bi->material->name, "leaves") || streq_nocase(bi->material->name, "vine"))) {
-									setBlockWorld_guess(world, chunk, leaf, tx, ty, tz);
+									world_set_block_guess(world, chunk, leaf, tx, ty, tz);
 								}
 							}
 						}
@@ -1355,14 +1355,14 @@ void randomTick_sapling(struct world* world, struct chunk* chunk, block blk, int
 				}
 				if (type != 4) {
 					for (int th = 0; th < height - (type == 1 ? (rand() % 3) : 0); th++) {
-						struct block_info* bi = getBlockInfo(getBlockWorld_guess(world, chunk, x, y + th, z));
+						struct block_info* bi = getBlockInfo(world_get_block_guess(world, chunk, x, y + th, z));
 						if (bi != NULL && (streq_nocase(bi->material->name, "air") || streq_nocase(bi->material->name, "leaves") || streq_nocase(bi->material->name, "vine") || streq_nocase(bi->material->name, "plants"))) {
-							setBlockWorld_guess(world, chunk, log, x, y + th, z);
+							world_set_block_guess(world, chunk, log, x, y + th, z);
 							if (vines && th > 0) {
-								if (rand() % 3 > 0 && getBlockWorld_guess(world, chunk, x - 1, y + th, z) == 0) setBlockWorld_guess(world, chunk, BLK_VINE | 0x8, x - 1, y + th, z);
-								if (rand() % 3 > 0 && getBlockWorld_guess(world, chunk, x + 1, y + th, z) == 0) setBlockWorld_guess(world, chunk, BLK_VINE | 0x2, x + 1, y + th, z);
-								if (rand() % 3 > 0 && getBlockWorld_guess(world, chunk, x, y + th, z - 1) == 0) setBlockWorld_guess(world, chunk, BLK_VINE | 0x1, x + 1, y + th, z - 1);
-								if (rand() % 3 > 0 && getBlockWorld_guess(world, chunk, x, y + th, z + 1) == 0) setBlockWorld_guess(world, chunk, BLK_VINE | 0x4, x + 1, y + th, z + 1);
+								if (rand() % 3 > 0 && world_get_block_guess(world, chunk, x - 1, y + th, z) == 0) world_set_block_guess(world, chunk, BLK_VINE | 0x8, x - 1, y + th, z);
+								if (rand() % 3 > 0 && world_get_block_guess(world, chunk, x + 1, y + th, z) == 0) world_set_block_guess(world, chunk, BLK_VINE | 0x2, x + 1, y + th, z);
+								if (rand() % 3 > 0 && world_get_block_guess(world, chunk, x, y + th, z - 1) == 0) world_set_block_guess(world, chunk, BLK_VINE | 0x1, x + 1, y + th, z - 1);
+								if (rand() % 3 > 0 && world_get_block_guess(world, chunk, x, y + th, z + 1) == 0) world_set_block_guess(world, chunk, BLK_VINE | 0x4, x + 1, y + th, z + 1);
 							}
 						}
 					}
@@ -1372,12 +1372,12 @@ void randomTick_sapling(struct world* world, struct chunk* chunk, block blk, int
 							int width = 2 - dist_from_top / 2;
 							for (int tx = x - width; tx <= x + width; tx++) {
 								for (int tz = z - width; tz <= z + width; tz++) {
-									struct block_info* bi = getBlockInfo(getBlockWorld_guess(world, chunk, tx, ty, tz));
+									struct block_info* bi = getBlockInfo(world_get_block_guess(world, chunk, tx, ty, tz));
 									if (bi != NULL && streq_nocase(bi->material->name, "leaves")) {
-										if (rand() % 4 == 0 && getBlockWorld_guess(world, chunk, tx - 1, ty, tz) == 0) tree_addHangingVine(world, chunk, BLK_VINE | 0x8, tx - 1, ty, tz);
-										if (rand() % 4 == 0 && getBlockWorld_guess(world, chunk, tx + 1, ty, tz) == 0) tree_addHangingVine(world, chunk, BLK_VINE | 0x2, tx + 1, ty, tz);
-										if (rand() % 4 == 0 && getBlockWorld_guess(world, chunk, tx, ty, tz - 1) == 0) tree_addHangingVine(world, chunk, BLK_VINE | 0x1, tx + 1, ty, tz - 1);
-										if (rand() % 4 == 0 && getBlockWorld_guess(world, chunk, tx, ty, tz + 1) == 0) tree_addHangingVine(world, chunk, BLK_VINE | 0x4, tx + 1, ty, tz + 1);
+										if (rand() % 4 == 0 && world_get_block_guess(world, chunk, tx - 1, ty, tz) == 0) tree_addHangingVine(world, chunk, BLK_VINE | 0x8, tx - 1, ty, tz);
+										if (rand() % 4 == 0 && world_get_block_guess(world, chunk, tx + 1, ty, tz) == 0) tree_addHangingVine(world, chunk, BLK_VINE | 0x2, tx + 1, ty, tz);
+										if (rand() % 4 == 0 && world_get_block_guess(world, chunk, tx, ty, tz - 1) == 0) tree_addHangingVine(world, chunk, BLK_VINE | 0x1, tx + 1, ty, tz - 1);
+										if (rand() % 4 == 0 && world_get_block_guess(world, chunk, tx, ty, tz + 1) == 0) tree_addHangingVine(world, chunk, BLK_VINE | 0x4, tx + 1, ty, tz + 1);
 									}
 								}
 							}
@@ -1395,7 +1395,7 @@ void randomTick_sapling(struct world* world, struct chunk* chunk, block blk, int
 
 			}
 		} else {
-			setBlockWorld_guess(world, chunk, (blk | 0x8), x, y, z);
+			world_set_block_guess(world, chunk, (blk | 0x8), x, y, z);
 		}
 	}
 }
@@ -1412,7 +1412,7 @@ block onBlockPlacedPlayer_log(struct player* player, struct world* world, block 
 
 void onBlockInteract_fencegate(struct world* world, block blk, int32_t x, int32_t y, int32_t z, struct player* player, uint8_t face, float curPosX, float curPosY, float curPosZ) {
 	blk ^= (block) 0b0100; // toggle opened bit
-	setBlockWorld_guess(world, NULL, blk, x, y, z);
+	world_set_block_guess(world, NULL, blk, x, y, z);
 }
 
 int fluid_getDepth(int water, block b) {
@@ -1423,7 +1423,7 @@ int fluid_getDepth(int water, block b) {
 }
 
 int fluid_checkAdjacentBlock(int water, struct world* world, struct chunk* ch, int32_t x, uint8_t y, int32_t z, int cmin, int* adj) {
-	block b = getBlockWorld_guess(world, ch, x, y, z);
+	block b = world_get_block_guess(world, ch, x, y, z);
 	int m = fluid_getDepth(water, b);
 	if (m < 0) return cmin;
 	else {
@@ -1450,30 +1450,30 @@ int fluid_canFlowInto(int water, block b) {
 
 int lava_checkForMixing(struct world* world, struct chunk* ch, block blk, int32_t x, uint8_t y, int32_t z) {
 	int cww = 0;
-	block b = getBlockWorld_guess(world, ch, x + 1, y, z);
+	block b = world_get_block_guess(world, ch, x + 1, y, z);
 	if (b >> 4 == BLK_WATER >> 4 || b >> 4 == BLK_WATER_1 >> 4) cww = 1;
 	if (!cww) {
-		b = getBlockWorld_guess(world, ch, x - 1, y, z);
+		b = world_get_block_guess(world, ch, x - 1, y, z);
 		if (b >> 4 == BLK_WATER >> 4 || b >> 4 == BLK_WATER_1 >> 4) cww = 1;
 	}
 	if (!cww) {
-		b = getBlockWorld_guess(world, ch, x, y, z + 1);
+		b = world_get_block_guess(world, ch, x, y, z + 1);
 		if (b >> 4 == BLK_WATER >> 4 || b >> 4 == BLK_WATER_1 >> 4) cww = 1;
 	}
 	if (!cww) {
-		b = getBlockWorld_guess(world, ch, x, y, z - 1);
+		b = world_get_block_guess(world, ch, x, y, z - 1);
 		if (b >> 4 == BLK_WATER >> 4 || b >> 4 == BLK_WATER_1 >> 4) cww = 1;
 	}
 	if (!cww) {
-		b = getBlockWorld_guess(world, ch, x, y + 1, z);
+		b = world_get_block_guess(world, ch, x, y + 1, z);
 		if (b >> 4 == BLK_WATER >> 4 || b >> 4 == BLK_WATER_1 >> 4) cww = 1;
 	}
 	if (cww) {
 		if ((blk & 0x0f) == 0) {
-			setBlockWorld_guess(world, ch, BLK_OBSIDIAN, x, y, z);
+			world_set_block_guess(world, ch, BLK_OBSIDIAN, x, y, z);
 			return 1;
 		} else if ((blk & 0x0f) <= 4) {
-			setBlockWorld_guess(world, ch, BLK_COBBLESTONE, x, y, z);
+			world_set_block_guess(world, ch, BLK_COBBLESTONE, x, y, z);
 			return 1;
 		}
 	}
@@ -1486,16 +1486,16 @@ void fluid_doFlowInto(int water, struct world* world, struct chunk* ch, int32_t 
 	if (bi != NULL && !streq_nocase(bi->material->name, "air") && !streq_nocase(bi->material->name, "lava")) {
 		dropBlockDrops(world, b, NULL, x, y, z);
 	}
-	setBlockWorld_guess(world, ch, (water ? BLK_WATER : BLK_LAVA) | level, x, y, z);
-	scheduleBlockTick(world, x, y, z, water ? 5 : (world->dimension == -1 ? 10 : 30), 0.);
+	world_set_block_guess(world, ch, (water ? BLK_WATER : BLK_LAVA) | level, x, y, z);
+    world_schedule_block_tick(world, x, y, z, water ? 5 : (world->dimension == -1 ? 10 : 30), 0.);
 }
 
 void onBlockUpdate_staticfluid(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
 	int water = (blk >> 4) == (BLK_WATER >> 4) || (blk >> 4) == (BLK_WATER_1 >> 4);
 	if (water || !lava_checkForMixing(world, NULL, blk, x, y, z)) {
-		scheduleBlockTick(world, x, y, z, water ? 5 : (world->dimension == -1 ? 10 : 30), 0.);
-		if (water) setBlockWorld_noupdate(world, BLK_WATER | (blk & 0x0f), x, y, z);
-		else if (!water) setBlockWorld_noupdate(world, BLK_LAVA | (blk & 0x0f), x, y, z);
+        world_schedule_block_tick(world, x, y, z, water ? 5 : (world->dimension == -1 ? 10 : 30), 0.);
+		if (water) world_set_block_noupdate(world, BLK_WATER | (blk & 0x0f), x, y, z);
+		else if (!water) world_set_block_noupdate(world, BLK_LAVA | (blk & 0x0f), x, y, z);
 	}
 }
 
@@ -1505,10 +1505,10 @@ void randomTick_staticlava(struct world* world, struct chunk* ch, block blk, int
 		for (int i = 0; i < 3; i++) {
 			int32_t nx = x + rand() % 3 - 1;
 			int32_t nz = z + rand() % 3 - 1;
-			if (getBlockWorld_guess(world, ch, nx, y + 1, nz) == 0) {
-				struct block_info* bi = getBlockInfo(getBlockWorld_guess(world, ch, nx, y, nz));
+			if (world_get_block_guess(world, ch, nx, y + 1, nz) == 0) {
+				struct block_info* bi = getBlockInfo(world_get_block_guess(world, ch, nx, y, nz));
 				if (bi != NULL && bi->material->flammable) {
-					setBlockWorld_guess(world, ch, BLK_FIRE, nx, y + 1, nz);
+					world_set_block_guess(world, ch, BLK_FIRE, nx, y + 1, nz);
 				}
 			}
 		}
@@ -1516,34 +1516,34 @@ void randomTick_staticlava(struct world* world, struct chunk* ch, block blk, int
 		for (int i = 0; i < t; i++) {
 			int32_t nx = x + rand() % 3 - 1;
 			int32_t nz = z + rand() % 3 - 1;
-			block mb = getBlockWorld_guess(world, ch, nx, y + 1, nz);
+			block mb = world_get_block_guess(world, ch, nx, y + 1, nz);
 			struct block_info* bi = getBlockInfo(mb);
 			if (mb == 0 || bi == NULL) {
 				int g = 0;
-				bi = getBlockInfo(getBlockWorld_guess(world, ch, nx + 1, y + 1, nz));
+				bi = getBlockInfo(world_get_block_guess(world, ch, nx + 1, y + 1, nz));
 				if (bi != NULL && bi->material->flammable) g = 1;
 				if (!g) {
-					bi = getBlockInfo(getBlockWorld_guess(world, ch, nx - 1, y + 1, nz));
+					bi = getBlockInfo(world_get_block_guess(world, ch, nx - 1, y + 1, nz));
 					if (bi != NULL && bi->material->flammable) g = 1;
 				}
 				if (!g) {
-					bi = getBlockInfo(getBlockWorld_guess(world, ch, nx, y + 1, nz - 1));
+					bi = getBlockInfo(world_get_block_guess(world, ch, nx, y + 1, nz - 1));
 					if (bi != NULL && bi->material->flammable) g = 1;
 				}
 				if (!g) {
-					bi = getBlockInfo(getBlockWorld_guess(world, ch, nx, y + 1, nz + 1));
+					bi = getBlockInfo(world_get_block_guess(world, ch, nx, y + 1, nz + 1));
 					if (bi != NULL && bi->material->flammable) g = 1;
 				}
 				if (!g) {
-					bi = getBlockInfo(getBlockWorld_guess(world, ch, nx, y, nz - 1));
+					bi = getBlockInfo(world_get_block_guess(world, ch, nx, y, nz - 1));
 					if (bi != NULL && bi->material->flammable) g = 1;
 				}
 				if (!g) {
-					bi = getBlockInfo(getBlockWorld_guess(world, ch, nx, y + 2, nz - 1));
+					bi = getBlockInfo(world_get_block_guess(world, ch, nx, y + 2, nz - 1));
 					if (bi != NULL && bi->material->flammable) g = 1;
 				}
 				if (g) {
-					setBlockWorld_guess(world, ch, BLK_FIRE, nx, y + 1, nz);
+					world_set_block_guess(world, ch, BLK_FIRE, nx, y + 1, nz);
 					return;
 				}
 			} else if (bi->material->blocksMovement) return;
@@ -1556,7 +1556,7 @@ void onBlockUpdate_flowinglava(struct world* world, block blk, int32_t x, int32_
 }
 
 int scheduledTick_flowingfluid(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
-	struct chunk* ch = getChunk(world, x >> 4, z >> 4);
+	struct chunk* ch = world_get_chunk(world, x >> 4, z >> 4);
 	if (ch == NULL) return 0;
 	int level = blk & 0x0f;
 	int resistance = 1;
@@ -1572,13 +1572,13 @@ int scheduledTick_flowingfluid(struct world* world, block blk, int32_t x, int32_
 		l = fluid_checkAdjacentBlock(water, world, ch, x, y, z - 1, l, &adjSource);
 		int i1 = l + resistance;
 		if (i1 >= 8 || l < 0) i1 = -1;
-		int ha = fluid_getDepth(water, getBlockWorld_guess(world, ch, x, y + 1, z));
+		int ha = fluid_getDepth(water, world_get_block_guess(world, ch, x, y + 1, z));
 		if (ha >= 0) {
 			if (ha >= 8) i1 = ha;
 			else i1 = ha + 8;
 		}
 		if (adjSource >= 2 && water) {
-			block below = getBlockWorld_guess(world, ch, x, y - 1, z);
+			block below = world_get_block_guess(world, ch, x, y - 1, z);
 			if ((below >> 4) == (BLK_WATER >> 4) || (below >> 4) == (BLK_WATER_1 >> 4)) {
 				i1 = 0;
 			} else {
@@ -1590,25 +1590,25 @@ int scheduledTick_flowingfluid(struct world* world, block blk, int32_t x, int32_
 			tickRate *= 4;
 		}
 		if (i1 == level) {
-			if (water) setBlockWorld_noupdate(world, BLK_WATER_1 | (i1), x, y, z);
-			else if (!water) setBlockWorld_noupdate(world, BLK_LAVA_1 | (i1), x, y, z);
+			if (water) world_set_block_noupdate(world, BLK_WATER_1 | (i1), x, y, z);
+			else if (!water) world_set_block_noupdate(world, BLK_LAVA_1 | (i1), x, y, z);
 			tickRate = 0;
 		} else {
 			level = i1;
-			if (i1 < 0) setBlockWorld_guess(world, ch, 0, x, y, z);
+			if (i1 < 0) world_set_block_guess(world, ch, 0, x, y, z);
 			else {
-				setBlockWorld_guess(world, ch, (blk & ~0x0f) | i1, x, y, z);
+				world_set_block_guess(world, ch, (blk & ~0x0f) | i1, x, y, z);
 			}
 		}
 	} else {
-		if (water) setBlockWorld_noupdate(world, BLK_WATER_1 | (level), x, y, z);
-		else if (!water) setBlockWorld_noupdate(world, BLK_LAVA_1 | (level), x, y, z);
+		if (water) world_set_block_noupdate(world, BLK_WATER_1 | (level), x, y, z);
+		else if (!water) world_set_block_noupdate(world, BLK_LAVA_1 | (level), x, y, z);
 		tickRate = 0;
 	}
-	block down = getBlockWorld_guess(world, ch, x, y - 1, z);
+	block down = world_get_block_guess(world, ch, x, y - 1, z);
 	if (fluid_canFlowInto(water, down)) {
 		if (!water && ((down >> 4) == (BLK_WATER >> 4) || (down >> 4) == (BLK_WATER_1 >> 4))) {
-			setBlockWorld_guess(world, ch, BLK_STONE, x, y - 1, z);
+			world_set_block_guess(world, ch, BLK_STONE, x, y - 1, z);
 			//trigger mix effects
 			return tickRate;
 		}
@@ -1618,13 +1618,13 @@ int scheduledTick_flowingfluid(struct world* world, block blk, int32_t x, int32_
 			int k1 = level + resistance;
 			if (level >= 8) k1 = 1;
 			if (k1 >= 8) return tickRate;
-			block b = getBlockWorld_guess(world, ch, x + 1, y, z);
+			block b = world_get_block_guess(world, ch, x + 1, y, z);
 			if (fluid_canFlowInto(water, b)) fluid_doFlowInto(water, world, ch, x + 1, y, z, k1, b);
-			b = getBlockWorld_guess(world, ch, x - 1, y, z);
+			b = world_get_block_guess(world, ch, x - 1, y, z);
 			if (fluid_canFlowInto(water, b)) fluid_doFlowInto(water, world, ch, x - 1, y, z, k1, b);
-			b = getBlockWorld_guess(world, ch, x, y, z + 1);
+			b = world_get_block_guess(world, ch, x, y, z + 1);
 			if (fluid_canFlowInto(water, b)) fluid_doFlowInto(water, world, ch, x, y, z + 1, k1, b);
-			b = getBlockWorld_guess(world, ch, x, y, z - 1);
+			b = world_get_block_guess(world, ch, x, y, z - 1);
 			if (fluid_canFlowInto(water, b)) fluid_doFlowInto(water, world, ch, x, y, z - 1, k1, b);
 		}
 	}

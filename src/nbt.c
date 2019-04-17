@@ -8,8 +8,8 @@
 #include <basin/nbt.h>
 #include <basin/network.h>
 #include <avuna/string.h>
+#include <avuna/llist.h>
 #include <stdlib.h>
-#include "util.h"
 #include <zlib.h>
 #include <stdio.h>
 
@@ -23,6 +23,7 @@ struct nbt_tag* nbt_clone(struct mempool* pool, struct nbt_tag* nbt) {
 	new_tag->name = nbt->name == NULL ? NULL : xstrdup(nbt->name, 0);
 	new_tag->id = nbt->id;
 	new_tag->children = nbt->children == NULL ? NULL : hashmap_new(8, new_tag->pool);
+	new_tag->children_list = nbt->children_list == NULL ? NULL : llist_new(new_tag->pool);
 	memcpy(&new_tag->data, &nbt->data, sizeof(union nbt_data));
 	if (nbt->id == NBT_TAG_BYTEARRAY) {
 		new_tag->data.nbt_bytearray.data = pmalloc(new_tag->pool, (size_t) new_tag->data.nbt_bytearray.len);
@@ -36,11 +37,15 @@ struct nbt_tag* nbt_clone(struct mempool* pool, struct nbt_tag* nbt) {
 		new_tag->data.nbt_intarray.ints = pmalloc(new_tag->pool, new_tag->data.nbt_intarray.count * 4);
 		memcpy(new_tag->data.nbt_intarray.ints, nbt->data.nbt_intarray.ints, new_tag->data.nbt_intarray.count * 4);
 	}
-	if (new_tag->children != NULL) {
-		ITER_MAP(new_tag->children) {
+	if (nbt->children != NULL) {
+		ITER_LLIST(nbt->children_list, value) {
 			struct nbt_tag* child = value;
-			bucket_entry->data = nbt_clone(pool, child);
-			ITER_MAP_END();
+			child = nbt_clone(pool, child);
+			llist_append(new_tag->children_list, child);
+			if (new_tag->children != NULL) {
+				hashmap_put(new_tag->children, child->name, child);
+			}
+			ITER_LLIST_END();
 		}
 	}
 	return new_tag;
@@ -196,10 +201,10 @@ ssize_t __recurReadNBT(struct mempool* pool, struct nbt_tag** root, unsigned cha
 				st = NULL;
 				continue;
 			}
-			if (cur->children == NULL) {
-				cur->children = hashmap_new(8, pool);
+			if (cur->children_list == NULL) {
+				cur->children_list = llist_new(pool);
 			}
-			hashmap_put(cur->children, st->name, st);
+			llist_append(cur->children_list, st);
 		}
 	} else if (cur->id == NBT_TAG_COMPOUND) {
 		struct nbt_tag *st = NULL;
@@ -215,8 +220,10 @@ ssize_t __recurReadNBT(struct mempool* pool, struct nbt_tag** root, unsigned cha
 			}
 			if (cur->children == NULL) {
 				cur->children = hashmap_new(8, pool);
+				cur->children_list = llist_new(pool);
 			}
 			hashmap_put(cur->children, st->name, st);
+			llist_append(cur->children_list, st);
 		} while (st != NULL && st->id != NBT_TAG_END && buflen > 0);
 	} else if (cur->id == NBT_TAG_INTARRAY) {
 		if (buflen < 4) {
@@ -409,23 +416,23 @@ ssize_t __recurWriteNBT(struct nbt_tag* root, unsigned char* buffer, size_t bufl
 		r += 5;
 		buffer += 5;
 		buflen -= 5;
-		ITER_MAP(root->children) {
+		ITER_LLIST(root->children_list, value) {
 			ssize_t sub_read = __recurWriteNBT(value, buffer, buflen, 1);
 			r += sub_read;
 			buffer += sub_read;
 			buflen -= sub_read;
 			if (buflen <= 0) goto break_iter_map;
-			ITER_MAP_END();
+			ITER_LLIST_END();
 		}
 		break_iter_map:;
 	} else if (root->id == NBT_TAG_COMPOUND) {
-		ITER_MAP(root->children) {
+		ITER_LLIST(root->children_list, value) {
 			ssize_t sub_read = __recurWriteNBT(value, buffer, buflen, 0);
 			r += sub_read;
 			buffer += sub_read;
 			buflen -= sub_read;
 			if (buflen <= 0) goto break_iter_map2;
-			ITER_MAP_END();
+			ITER_LLIST_END();
 		}
 		break_iter_map2:;
 		if (buflen <= 1) return 0;

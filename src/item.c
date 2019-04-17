@@ -20,7 +20,7 @@
 
 int onItemInteract_bed(struct world* world, struct player* player, uint8_t slot_index, struct slot* slot, int32_t x, int32_t y, int32_t z, uint8_t face) {
 	if (face != YP) return 0;
-	if (!getBlockInfo(getBlockWorld(world, x, y, z))->material->replacable) offsetCoordByFace(&x, &y, &z, face);
+	if (!getBlockInfo(world_get_block(world, x, y, z))->material->replacable) offsetCoordByFace(&x, &y, &z, face);
 	uint32_t h = (uint32_t) floor(player->entity->yaw / 90. + .5) & 3;
 	uint8_t rf = 0;
 	if (h == 0) rf = SOUTH;
@@ -31,15 +31,15 @@ int onItemInteract_bed(struct world* world, struct player* player, uint8_t slot_
 	int32_t y2 = y;
 	int32_t z2 = z;
 	offsetCoordByFace(&x2, &y2, &z2, rf);
-	block pre = getBlockWorld(world, x, y, z);
-	block pre2 = getBlockWorld(world, x2, y2, z2);
+	block pre = world_get_block(world, x, y, z);
+	block pre2 = world_get_block(world, x2, y2, z2);
 	block b = BLK_BED | h;
 	block b2 = b;
 	b2 |= 0b1000;
-	if (player_can_place_block(player, b, x, y, z, face) && !setBlockWorld_noupdate(player->world, b, x, y, z)) {
-		if (!player_can_place_block(player, b2, x2, y2, z2, face) || setBlockWorld(player->world, b2, x2, y2, z2)) {
-			setBlockWorld(player->world, pre, x, y, z);
-			setBlockWorld(player->world, pre2, x2, y2, z2);
+	if (player_can_place_block(player, b, x, y, z, face) && !world_set_block_noupdate(player->world, b, x, y, z)) {
+		if (!player_can_place_block(player, b2, x2, y2, z2, face) || world_set_block(player->world, b2, x2, y2, z2)) {
+			world_set_block(player->world, pre, x, y, z);
+			world_set_block(player->world, pre2, x2, y2, z2);
 			setSlot(player, player->inventory, 36 + player->currentItem, slot, 1, 1);
 			return 0;
 		} else if (player->gamemode != 1) {
@@ -48,16 +48,16 @@ int onItemInteract_bed(struct world* world, struct player* player, uint8_t slot_
 			}
 			setSlot(player, player->inventory, 36 + player->currentItem, slot, 1, 1);
 		}
-		updateBlockWorld_guess(world, NULL, x, y, z);
-		updateBlockWorld_guess(world, NULL, x + 1, y, z);
-		updateBlockWorld_guess(world, NULL, x - 1, y, z);
-		updateBlockWorld_guess(world, NULL, x, y + 1, z);
-		updateBlockWorld_guess(world, NULL, x, y - 1, z);
-		updateBlockWorld_guess(world, NULL, x, y, z + 1);
-		updateBlockWorld_guess(world, NULL, x, y, z - 1);
+		world_update_block_guess(world, NULL, x, y, z);
+		world_update_block_guess(world, NULL, x + 1, y, z);
+		world_update_block_guess(world, NULL, x - 1, y, z);
+		world_update_block_guess(world, NULL, x, y + 1, z);
+		world_update_block_guess(world, NULL, x, y - 1, z);
+		world_update_block_guess(world, NULL, x, y, z + 1);
+		world_update_block_guess(world, NULL, x, y, z - 1);
 	} else {
-		setBlockWorld(player->world, pre, x, y, z);
-		setBlockWorld(player->world, pre2, x2, y2, z2);
+		world_set_block(player->world, pre, x, y, z);
+		world_set_block(player->world, pre2, x2, y2, z2);
 		setSlot(player, player->inventory, 36 + player->currentItem, slot, 1, 1);
 	}
 	return 0;
@@ -74,9 +74,9 @@ int onItemInteract_painting(struct world* world, struct player* player, uint8_t 
 		if (face == SOUTH) ent->data.painting.direction = 0;
 		if (face == WEST) ent->data.painting.direction = 1;
 		if (face == EAST) ent->data.painting.direction = 3;
-		block b = getBlockWorld(world, x, y, z);
+		block b = world_get_block(world, x, y, z);
 		if (!isNormalCube(getBlockInfo(b))) return 0;
-		b = getBlockWorld(world, ox, oy, oz);
+		b = world_get_block(world, ox, oy, oz);
 		if (b != 0) return 0;
 		int32_t p = -1;
 		for (int32_t i = 0; i < 50; i++) {
@@ -85,58 +85,58 @@ int onItemInteract_painting(struct world* world, struct player* player, uint8_t 
 
 			}
 			if (p >= 7) {
-				b = getBlockWorld(world, x + (face == ZP ? 1 : (face == ZN ? -1 : 0)), y, z + (face == XP ? 1 : (face == XN ? -1 : 0)));
+				b = world_get_block(world, x + (face == ZP ? 1 : (face == ZN ? -1 : 0)), y, z + (face == XP ? 1 : (face == XN ? -1 : 0)));
 				if (!isNormalCube(getBlockInfo(b))) continue;
-				b = getBlockWorld(world, ox + (face == ZP ? 1 : (face == ZN ? -1 : 0)), oy, oz + (face == XP ? 1 : (face == XN ? -1 : 0)));
+				b = world_get_block(world, ox + (face == ZP ? 1 : (face == ZN ? -1 : 0)), oy, oz + (face == XP ? 1 : (face == XN ? -1 : 0)));
 				if (b != 0) return 0;
 			}
 			if (p >= 12) {
-				b = getBlockWorld(world, x, y + 1, z);
+				b = world_get_block(world, x, y + 1, z);
 				if (!isNormalCube(getBlockInfo(b))) continue;
-				b = getBlockWorld(world, ox, oy + 1, oz);
+				b = world_get_block(world, ox, oy + 1, oz);
 				if (b != 0) return 0;
 			}
 			if (p >= 14) {
-				b = getBlockWorld(world, x + (face == ZP ? 1 : (face == ZN ? -1 : 0)), y + 1, z + (face == XP ? 1 : (face == XN ? -1 : 0)));
+				b = world_get_block(world, x + (face == ZP ? 1 : (face == ZN ? -1 : 0)), y + 1, z + (face == XP ? 1 : (face == XN ? -1 : 0)));
 				if (!isNormalCube(getBlockInfo(b))) continue;
-				b = getBlockWorld(world, ox + (face == ZP ? 1 : (face == ZN ? -1 : 0)), oy + 1, oz + (face == XP ? 1 : (face == XN ? -1 : 0)));
+				b = world_get_block(world, ox + (face == ZP ? 1 : (face == ZN ? -1 : 0)), oy + 1, oz + (face == XP ? 1 : (face == XN ? -1 : 0)));
 				if (b != 0) return 0;
 			}
 			if (p >= 20) {
-				b = getBlockWorld(world, x + (face == ZP ? 1 : (face == ZN ? -1 : 0)) * 2, y, z + (face == XP ? 1 : (face == XN ? -1 : 0)) * 2);
+				b = world_get_block(world, x + (face == ZP ? 1 : (face == ZN ? -1 : 0)) * 2, y, z + (face == XP ? 1 : (face == XN ? -1 : 0)) * 2);
 				if (!isNormalCube(getBlockInfo(b))) continue;
-				b = getBlockWorld(world, x - (face == ZP ? 1 : (face == ZN ? -1 : 0)), y, z - (face == XP ? 1 : (face == XN ? -1 : 0)));
+				b = world_get_block(world, x - (face == ZP ? 1 : (face == ZN ? -1 : 0)), y, z - (face == XP ? 1 : (face == XN ? -1 : 0)));
 				if (!isNormalCube(getBlockInfo(b))) continue;
-				b = getBlockWorld(world, x + (face == ZP ? 1 : (face == ZN ? -1 : 0)) * 2, y + 1, z + (face == XP ? 1 : (face == XN ? -1 : 0))) * 2;
+				b = world_get_block(world, x + (face == ZP ? 1 : (face == ZN ? -1 : 0)) * 2, y + 1, z + (face == XP ? 1 : (face == XN ? -1 : 0))) * 2;
 				if (!isNormalCube(getBlockInfo(b))) continue;
-				b = getBlockWorld(world, x - (face == ZP ? 1 : (face == ZN ? -1 : 0)), y + 1, z - (face == XP ? 1 : (face == XN ? -1 : 0)));
+				b = world_get_block(world, x - (face == ZP ? 1 : (face == ZN ? -1 : 0)), y + 1, z - (face == XP ? 1 : (face == XN ? -1 : 0)));
 				if (!isNormalCube(getBlockInfo(b))) continue;
-				b = getBlockWorld(world, ox + (face == ZP ? 1 : (face == ZN ? -1 : 0)) * 2, oy, oz + (face == XP ? 1 : (face == XN ? -1 : 0)) * 2);
+				b = world_get_block(world, ox + (face == ZP ? 1 : (face == ZN ? -1 : 0)) * 2, oy, oz + (face == XP ? 1 : (face == XN ? -1 : 0)) * 2);
 				if (b != 0) return 0;
-				b = getBlockWorld(world, ox - (face == ZP ? 1 : (face == ZN ? -1 : 0)), oy, oz - (face == XP ? 1 : (face == XN ? -1 : 0)));
+				b = world_get_block(world, ox - (face == ZP ? 1 : (face == ZN ? -1 : 0)), oy, oz - (face == XP ? 1 : (face == XN ? -1 : 0)));
 				if (b != 0) return 0;
-				b = getBlockWorld(world, ox + (face == ZP ? 1 : (face == ZN ? -1 : 0)) * 2, oy + 1, oz + (face == XP ? 1 : (face == XN ? -1 : 0))) * 2;
+				b = world_get_block(world, ox + (face == ZP ? 1 : (face == ZN ? -1 : 0)) * 2, oy + 1, oz + (face == XP ? 1 : (face == XN ? -1 : 0))) * 2;
 				if (b != 0) return 0;
-				b = getBlockWorld(world, ox - (face == ZP ? 1 : (face == ZN ? -1 : 0)), oy + 1, oz - (face == XP ? 1 : (face == XN ? -1 : 0)));
+				b = world_get_block(world, ox - (face == ZP ? 1 : (face == ZN ? -1 : 0)), oy + 1, oz - (face == XP ? 1 : (face == XN ? -1 : 0)));
 				if (b != 0) return 0;
 			}
 			if (p >= 21) {
 				for (int32_t i = 2; i <= (p < 24 ? 2 : 3); i++) {
-					b = getBlockWorld(world, x + (face == ZP ? 1 : (face == ZN ? -1 : 0)) * 2, y + i, z + (face == XP ? 1 : (face == XN ? -1 : 0)) * 2);
+					b = world_get_block(world, x + (face == ZP ? 1 : (face == ZN ? -1 : 0)) * 2, y + i, z + (face == XP ? 1 : (face == XN ? -1 : 0)) * 2);
 					if (!isNormalCube(getBlockInfo(b))) continue;
-					b = getBlockWorld(world, x + (face == ZP ? 1 : (face == ZN ? -1 : 0)), y + i, z + (face == XP ? 1 : (face == XN ? -1 : 0)));
+					b = world_get_block(world, x + (face == ZP ? 1 : (face == ZN ? -1 : 0)), y + i, z + (face == XP ? 1 : (face == XN ? -1 : 0)));
 					if (!isNormalCube(getBlockInfo(b))) continue;
-					b = getBlockWorld(world, x * 2, y + i, z);
+					b = world_get_block(world, x * 2, y + i, z);
 					if (!isNormalCube(getBlockInfo(b))) continue;
-					b = getBlockWorld(world, x - (face == ZP ? 1 : (face == ZN ? -1 : 0)), y + i, z - (face == XP ? 1 : (face == XN ? -1 : 0)));
+					b = world_get_block(world, x - (face == ZP ? 1 : (face == ZN ? -1 : 0)), y + i, z - (face == XP ? 1 : (face == XN ? -1 : 0)));
 					if (!isNormalCube(getBlockInfo(b))) continue;
-					b = getBlockWorld(world, ox + (face == ZP ? 1 : (face == ZN ? -1 : 0)) * 2, oy + i, oz + (face == XP ? 1 : (face == XN ? -1 : 0)) * 2);
+					b = world_get_block(world, ox + (face == ZP ? 1 : (face == ZN ? -1 : 0)) * 2, oy + i, oz + (face == XP ? 1 : (face == XN ? -1 : 0)) * 2);
 					if (b != 0) return 0;
-					b = getBlockWorld(world, ox + (face == ZP ? 1 : (face == ZN ? -1 : 0)), oy + i, oz + (face == XP ? 1 : (face == XN ? -1 : 0)));
+					b = world_get_block(world, ox + (face == ZP ? 1 : (face == ZN ? -1 : 0)), oy + i, oz + (face == XP ? 1 : (face == XN ? -1 : 0)));
 					if (b != 0) return 0;
-					b = getBlockWorld(world, ox, oy + i, oz);
+					b = world_get_block(world, ox, oy + i, oz);
 					if (b != 0) return 0;
-					b = getBlockWorld(world, ox - (face == ZP ? 1 : (face == ZN ? -1 : 0)), oy + i, oz - (face == XP ? 1 : (face == XN ? -1 : 0)));
+					b = world_get_block(world, ox - (face == ZP ? 1 : (face == ZN ? -1 : 0)), oy + i, oz - (face == XP ? 1 : (face == XN ? -1 : 0)));
 					if (b != 0) return 0;
 				}
 			}
@@ -172,7 +172,7 @@ int onItemInteract_painting(struct world* world, struct player* player, uint8_t 
 		else if (p == 23) ent->data.painting.title = "BurningSkull";
 		else if (p == 24) ent->data.painting.title = "Skeleton";
 		else if (p == 25) ent->data.painting.title = "DonkeyKong";
-		spawnEntity(world, ent);
+		world_spawn_entity(world, ent);
 		if (player->gamemode != 1) setSlot(player, player->inventory, 36 + player->currentItem, NULL, 1, 1);
 	}
 	return 0;
@@ -180,7 +180,7 @@ int onItemInteract_painting(struct world* world, struct player* player, uint8_t 
 }
 
 int onItemInteract_minecart(struct world* world, struct player* player, uint8_t slot_index, struct slot* slot, int32_t x, int32_t y, int32_t z, uint8_t face) {
-	block b = getBlockWorld(world, x, y, z);
+	block b = world_get_block(world, x, y, z);
 	if (b >> 4 != BLK_RAIL >> 4 && b >> 4 != BLK_ACTIVATORRAIL >> 4 && b >> 4 != BLK_GOLDENRAIL >> 4 && b >> 4 != BLK_DETECTORRAIL >> 4) return 0;
 	double dy = 0.;
 	if (b & 0b0110) dy += .5;
@@ -191,7 +191,7 @@ int onItemInteract_minecart(struct world* world, struct player* player, uint8_t 
 	else if (slot->item == ITM_MINECARTHOPPER) et = ENT_MINECARTHOPPER;
 	else if (slot->item == ITM_MINECARTCOMMANDBLOCK) et = ENT_MINECARTCOMMANDBLOCK;
 	struct entity* ent = newEntity(nextEntityID++, (double) x + .5, (double) y + dy, (double) z + .5, et, 0., 0.);
-	spawnEntity(world, ent);
+	world_spawn_entity(world, ent);
 	if (player->gamemode != 1) setSlot(player, player->inventory, 36 + player->currentItem, NULL, 1, 1);
 	return 0;
 
@@ -199,9 +199,9 @@ int onItemInteract_minecart(struct world* world, struct player* player, uint8_t 
 
 int onItemInteract_door(struct world* world, struct player* player, uint8_t slot_index, struct slot* slot, int32_t x, int32_t y, int32_t z, uint8_t face, float cx, float cy, float cz) {
 	if (face != YP) return 0;
-	if (!getBlockInfo(getBlockWorld(world, x, y, z))->material->replacable) offsetCoordByFace(&x, &y, &z, face);
-	block pre = getBlockWorld(world, x, y, z);
-	block pre2 = getBlockWorld(world, x, y + 1, z);
+	if (!getBlockInfo(world_get_block(world, x, y, z))->material->replacable) offsetCoordByFace(&x, &y, &z, face);
+	block pre = world_get_block(world, x, y, z);
+	block pre2 = world_get_block(world, x, y + 1, z);
 	block b = BLK_DOOROAK;
 	if (slot->item == ITM_DOORSPRUCE) b = BLK_DOORSPRUCE;
 	else if (slot->item == ITM_DOORBIRCH) b = BLK_DOORBIRCH;
@@ -219,10 +219,10 @@ int onItemInteract_door(struct world* world, struct player* player, uint8_t slot
 		b2 |= 0x01;
 	}
 	b2 |= 0b1000;
-	if (player_can_place_block(player, b, x, y, z, face) && !setBlockWorld_noupdate(player->world, b, x, y, z)) {
-		if (!player_can_place_block(player, b2, x, y + 1, z, face) || setBlockWorld(player->world, b2, x, y + 1, z)) {
-			setBlockWorld(player->world, pre, x, y, z);
-			setBlockWorld(player->world, pre2, x, y + 1, z);
+	if (player_can_place_block(player, b, x, y, z, face) && !world_set_block_noupdate(player->world, b, x, y, z)) {
+		if (!player_can_place_block(player, b2, x, y + 1, z, face) || world_set_block(player->world, b2, x, y + 1, z)) {
+			world_set_block(player->world, pre, x, y, z);
+			world_set_block(player->world, pre2, x, y + 1, z);
 			setSlot(player, player->inventory, 36 + player->currentItem, slot, 1, 1);
 			return 0;
 		} else if (player->gamemode != 1) {
@@ -231,24 +231,24 @@ int onItemInteract_door(struct world* world, struct player* player, uint8_t slot
 			}
 			setSlot(player, player->inventory, 36 + player->currentItem, slot, 1, 1);
 		}
-		updateBlockWorld_guess(world, NULL, x, y, z);
-		updateBlockWorld_guess(world, NULL, x + 1, y, z);
-		updateBlockWorld_guess(world, NULL, x - 1, y, z);
-		updateBlockWorld_guess(world, NULL, x, y + 1, z);
-		updateBlockWorld_guess(world, NULL, x, y - 1, z);
-		updateBlockWorld_guess(world, NULL, x, y, z + 1);
-		updateBlockWorld_guess(world, NULL, x, y, z - 1);
+		world_update_block_guess(world, NULL, x, y, z);
+		world_update_block_guess(world, NULL, x + 1, y, z);
+		world_update_block_guess(world, NULL, x - 1, y, z);
+		world_update_block_guess(world, NULL, x, y + 1, z);
+		world_update_block_guess(world, NULL, x, y - 1, z);
+		world_update_block_guess(world, NULL, x, y, z + 1);
+		world_update_block_guess(world, NULL, x, y, z - 1);
 	} else {
-		setBlockWorld(player->world, pre, x, y, z);
-		setBlockWorld(player->world, pre2, x, y + 1, z);
+		world_set_block(player->world, pre, x, y, z);
+		world_set_block(player->world, pre2, x, y + 1, z);
 		setSlot(player, player->inventory, 36 + player->currentItem, slot, 1, 1);
 	}
 	return 0;
 }
 
 int onItemInteract_itemblock(struct world* world, struct player* player, uint8_t slot_index, struct slot* slot, int32_t x, int32_t y, int32_t z, uint8_t face) {
-	if (!getBlockInfo(getBlockWorld(world, x, y, z))->material->replacable) offsetCoordByFace(&x, &y, &z, face);
-	block pre = getBlockWorld(world, x, y, z);
+	if (!getBlockInfo(world_get_block(world, x, y, z))->material->replacable) offsetCoordByFace(&x, &y, &z, face);
+	block pre = world_get_block(world, x, y, z);
 	uint8_t f = 0;
 	uint32_t h = (uint32_t) floor(player->entity->yaw / 90. + .5) & 3;
 	if (h == 0) f = SOUTH;
@@ -283,8 +283,8 @@ int onItemInteract_itemblock(struct world* world, struct player* player, uint8_t
 		b = BLK_COMPARATOR;
 	}
 	if (player_can_place_block(player, b, x, y, z, face)) {
-		if (setBlockWorld(player->world, b, x, y, z)) {
-			setBlockWorld(player->world, pre, x, y, z);
+		if (world_set_block(player->world, b, x, y, z)) {
+			world_set_block(player->world, pre, x, y, z);
 			setSlot(player, player->inventory, 36 + player->currentItem, slot, 1, 1);
 		} else if (player->gamemode != 1) {
 			if (--slot->itemCount <= 0) {
@@ -293,7 +293,7 @@ int onItemInteract_itemblock(struct world* world, struct player* player, uint8_t
 			setSlot(player, player->inventory, 36 + player->currentItem, slot, 1, 1);
 		}
 	} else {
-		setBlockWorld(player->world, pre, x, y, z);
+		world_set_block(player->world, pre, x, y, z);
 		setSlot(player, player->inventory, 36 + player->currentItem, slot, 1, 1);
 	}
 	return 0;
@@ -333,7 +333,7 @@ void offsetCoordByFace(int32_t* x, int32_t* y, int32_t* z, uint8_t face) {
 int onItemInteract_flintandsteel(struct world* world, struct player* player, uint8_t slot_index, struct slot* slot, int32_t x, int32_t y, int32_t z, uint8_t face) {
 	if (slot == NULL) return 0;
 	offsetCoordByFace(&x, &y, &z, face);
-	if (getBlockWorld(world, x, y, z) != 0) return 0;
+	if (world_get_block(world, x, y, z) != 0) return 0;
 	if (!player_can_place_block(player, BLK_FIRE, x, y, z, face)) return 0;
 	struct item_info* ii = getItemInfo(slot->item);
 	if (ii == NULL) return 0;
@@ -341,15 +341,15 @@ int onItemInteract_flintandsteel(struct world* world, struct player* player, uin
 		slot = NULL;
 	}
 	setSlot(player, player->inventory, slot_index, slot, 1, 1);
-	setBlockWorld(world, BLK_FIRE, x, y, z);
+	world_set_block(world, BLK_FIRE, x, y, z);
 	return 0;
 }
 
 int onItemInteract_spawnegg(struct world* world, struct player* player, uint8_t slot_index, struct slot* slot, int32_t x, int32_t y, int32_t z, uint8_t face) {
 	if (slot == NULL || slot->nbt == NULL) return 0;
 	//TODO: mob spawners
-	if (getBlockInfo(getBlockWorld(world, x, y, z))->boundingBox_count > 0) offsetCoordByFace(&x, &y, &z, face);
-	//if (getBlockWorld(world, x, y, z) != 0) return 0;
+	if (getBlockInfo(world_get_block(world, x, y, z))->boundingBox_count > 0) offsetCoordByFace(&x, &y, &z, face);
+	//if (world_get_block(world, x, y, z) != 0) return 0;
 	struct item_info* ii = getItemInfo(slot->item);
 	if (ii == NULL) return 0;
 	struct nbt_tag* et = nbt_get(slot->nbt, "EntityTag");
@@ -358,7 +358,7 @@ int onItemInteract_spawnegg(struct world* world, struct player* player, uint8_t 
 	if (tmp == NULL || tmp->id != NBT_TAG_STRING) return 0;
 	uint32_t etx = getIDFromEntityDataName(tmp->data.nbt_string);
 	struct entity* ent = newEntity(nextEntityID++, (float) x + .5, (float) y, (float) z + .5, etx, 0., 0.);
-	spawnEntity(world, ent);
+	world_spawn_entity(world, ent);
 	if (player->gamemode != 1 && --slot->itemCount <= 0) {
 		slot = NULL;
 	}
@@ -368,9 +368,9 @@ int onItemInteract_spawnegg(struct world* world, struct player* player, uint8_t 
 
 int onItemInteract_reeds(struct world* world, struct player* player, uint8_t slot_index, struct slot* slot, int32_t x, int32_t y, int32_t z, uint8_t face) {
 	if (slot == NULL) return 0;
-	if (!getBlockInfo(getBlockWorld(world, x, y, z))->material->replacable) offsetCoordByFace(&x, &y, &z, face);
+	if (!getBlockInfo(world_get_block(world, x, y, z))->material->replacable) offsetCoordByFace(&x, &y, &z, face);
 	if (!player_can_place_block(player, BLK_REEDS, x, y, z, face)) return 0;
-	if (getBlockWorld(world, x, y, z) != 0) return 0;
+	if (world_get_block(world, x, y, z) != 0) return 0;
 	if (!canBePlaced_reeds(world, BLK_REEDS, x, y, z)) return 0;
 	struct item_info* ii = getItemInfo(slot->item);
 	if (ii == NULL) return 0;
@@ -378,21 +378,21 @@ int onItemInteract_reeds(struct world* world, struct player* player, uint8_t slo
 		slot = NULL;
 	}
 	setSlot(player, player->inventory, slot_index, slot, 1, 1);
-	setBlockWorld(world, BLK_REEDS, x, y, z);
+	world_set_block(world, BLK_REEDS, x, y, z);
 	return 0;
 }
 
 int onItemInteract_bucket(struct world* world, struct player* player, uint8_t slot_index, struct slot* slot, int32_t x, int32_t y, int32_t z, uint8_t face) {
 	if (slot == NULL) return 0;
-	if (!getBlockInfo(getBlockWorld(world, x, y, z))->material->replacable) offsetCoordByFace(&x, &y, &z, face);
-	block b = getBlockWorld(world, x, y, z);
+	if (!getBlockInfo(world_get_block(world, x, y, z))->material->replacable) offsetCoordByFace(&x, &y, &z, face);
+	block b = world_get_block(world, x, y, z);
 	struct block_info* bi = getBlockInfo(b);
 	if (bi == NULL) return 0;
 	uint16_t ba = b >> 4;
 	if (slot->item == ITM_BUCKETWATER) {
 		if (b != 0 && !bi->material->replacable && ba != BLK_WATER >> 4 && ba != BLK_WATER_1 >> 4) return 0;
 		if (!player_can_place_block(player, BLK_WATER_1, x, y, z, face)) return 0;
-		setBlockWorld(world, BLK_WATER_1, x, y, z);
+		world_set_block(world, BLK_WATER_1, x, y, z);
 		if (player->gamemode != 1) {
 			slot->item = ITM_BUCKET;
 			setSlot(player, player->inventory, slot_index, slot, 1, 1);
@@ -400,7 +400,7 @@ int onItemInteract_bucket(struct world* world, struct player* player, uint8_t sl
 	} else if (slot->item == ITM_BUCKETLAVA) {
 		if (b != 0 && !bi->material->replacable && ba != BLK_LAVA >> 4 && ba != BLK_LAVA_1 >> 4) return 0;
 		if (!player_can_place_block(player, BLK_LAVA_1, x, y, z, face)) return 0;
-		setBlockWorld(world, BLK_LAVA_1, x, y, z);
+		world_set_block(world, BLK_LAVA_1, x, y, z);
 		if (player->gamemode != 1) {
 			slot->item = ITM_BUCKET;
 			setSlot(player, player->inventory, slot_index, slot, 1, 1);
@@ -408,13 +408,13 @@ int onItemInteract_bucket(struct world* world, struct player* player, uint8_t sl
 	} else if (slot->item == ITM_BUCKET) {
 		if ((b & 0x0f) != 0) return 0;
 		if (ba == BLK_WATER >> 4 || ba == BLK_WATER_1 >> 4) {
-			setBlockWorld(world, 0, x, y, z);
+			world_set_block(world, 0, x, y, z);
 			if (player->gamemode != 1) {
 				slot->item = ITM_BUCKETWATER;
 				setSlot(player, player->inventory, slot_index, slot, 1, 1);
 			}
 		} else if (ba == BLK_LAVA >> 4 || ba == BLK_LAVA_1 >> 4) {
-			setBlockWorld(world, 0, x, y, z);
+			world_set_block(world, 0, x, y, z);
 			if (player->gamemode != 1) {
 				slot->item = ITM_BUCKETLAVA;
 				setSlot(player, player->inventory, slot_index, slot, 1, 1);
@@ -427,7 +427,7 @@ int onItemInteract_bucket(struct world* world, struct player* player, uint8_t sl
 int onItemInteract_bonemeal(struct world* world, struct player* player, uint8_t slot_index, struct slot* slot, int32_t x, int32_t y, int32_t z, uint8_t face) {
 	if (slot == NULL) return 0;
 	if (!player_can_place_block(player, ITM_DYEPOWDER_BLACK, x, y, z, face)) return 0;
-	block b = getBlockWorld(world, x, y, z);
+	block b = world_get_block(world, x, y, z);
 	uint16_t ba = b >> 4;
 	if (ba == (BLK_CROPS >> 4) || (ba == BLK_PUMPKINSTEM >> 4) || (ba == BLK_PUMPKINSTEM_1 >> 4) || (ba == BLK_CARROTS >> 4) || (ba == BLK_POTATOES >> 4) || (ba == BLK_BEETROOTS >> 4) || (ba == BLK_COCOA >> 4)) {
 		uint16_t grow = 2 + rand() % 3;
@@ -436,9 +436,9 @@ int onItemInteract_bonemeal(struct world* world, struct player* player, uint8_t 
 		uint16_t age = b & 0x0f;
 		age += grow;
 		if (age > maxAge) age = maxAge;
-		setBlockWorld(world, (ba << 4) | age, x, y, z);
+		world_set_block(world, (ba << 4) | age, x, y, z);
 	} else if (ba == (BLK_SAPLING_OAK >> 4)) {
-		randomTick_sapling(world, getChunk(world, x >> 4, z >> 4), b, x, y, z);
+		randomTick_sapling(world, world_get_chunk(world, x >> 4, z >> 4), b, x, y, z);
 	} else if (b == BLK_GRASS || b == BLK_DIRT) {
 		for (int i = 0; i < 128; i++) {
 			int j = 0;
@@ -446,20 +446,20 @@ int onItemInteract_bonemeal(struct world* world, struct player* player, uint8_t 
 			uint8_t by = y + 1;
 			int32_t bz = z;
 			while (1) {
-				block bb = getBlockWorld(world, bx, by - 1, bz);
-				block b = getBlockWorld(world, bx, by, bz);
+				block bb = world_get_block(world, bx, by - 1, bz);
+				block b = world_get_block(world, bx, by, bz);
 				struct block_info* bi = getBlockInfo(b);
 				if (j >= i / 16) {
 					if (streq_nocase(bi->material->name, "air")) {
 						if (rand() % 8 == 0) {
 							block nb = rand() % 3 > 0 ? BLK_FLOWER1_DANDELION : BLK_FLOWER2_POPPY; // TODO: biome registry
 							if (bb == BLK_DIRT || bb == BLK_GRASS) {
-								setBlockWorld(world, nb, bx, by, bz);
+								world_set_block(world, nb, bx, by, bz);
 							}
 						} else {
 							block nb = BLK_TALLGRASS_GRASS;
 							if (bb == BLK_DIRT || bb == BLK_GRASS) {
-								setBlockWorld(world, nb, bx, by, bz);
+								world_set_block(world, nb, bx, by, bz);
 							}
 						}
 					}
@@ -482,15 +482,15 @@ int onItemInteract_bonemeal(struct world* world, struct player* player, uint8_t 
 
 int onItemInteract_seeds(struct world* world, struct player* player, uint8_t slot_index, struct slot* slot, int32_t x, int32_t y, int32_t z, uint8_t face) {
 	if (slot == NULL) return 0;
-	if (!getBlockInfo(getBlockWorld(world, x, y, z))->material->replacable) offsetCoordByFace(&x, &y, &z, face);
+	if (!getBlockInfo(world_get_block(world, x, y, z))->material->replacable) offsetCoordByFace(&x, &y, &z, face);
 	if (!player_can_place_block(player, ITM_DYEPOWDER_BLACK, x, y, z, face)) return 0;
-	block b = getBlockWorld(world, x, y, z);
+	block b = world_get_block(world, x, y, z);
 	if (slot->item == ITM_DYEPOWDER_BLACK) {
 		if (slot->damage == 3 && (face == 1 || face == 0 || b != BLK_LOG_JUNGLE)) return 0;
 		if (slot->damage == 15) return onItemInteract_bonemeal(world, player, slot_index, slot, x, y, z, face);
 		else if (slot->damage != 3) return 0;
 	} else if (face != 1 || (b >> 4) != (slot->item == ITM_NETHERSTALKSEEDS ? (BLK_HELLSAND >> 4) : (BLK_FARMLAND >> 4))) return 0;
-	b = getBlockWorld(world, x, y, z);
+	b = world_get_block(world, x, y, z);
 	if (b != 0) return 0;
 	block tp = 0;
 	if (slot->item == ITM_SEEDS) tp = BLK_CROPS;
@@ -505,7 +505,7 @@ int onItemInteract_seeds(struct world* world, struct player* player, uint8_t slo
 		slot = NULL;
 	}
 	setSlot(player, player->inventory, slot_index, slot, 1, 1);
-	setBlockWorld(world, tp, x, y, z);
+	world_set_block(world, tp, x, y, z);
 	return 0;
 }
 
@@ -513,14 +513,14 @@ int onItemInteract_hoe(struct world* world, struct player* player, uint8_t slot_
 	if (slot == NULL) return 0;
 	struct item_info* ii = getItemInfo(slot->item);
 	if (ii == NULL) return 0;
-	block b = getBlockWorld(world, x, y, z);
+	block b = world_get_block(world, x, y, z);
 	if (b == BLK_DIRT || b == BLK_GRASS) {
 		if (!player_can_place_block(player, slot->item, x, y, z, face)) return 0;
 		if (player->gamemode != 1 && ++slot->damage >= ii->maxDamage) {
 			slot = NULL;
 		}
 		setSlot(player, player->inventory, slot_index, slot, 1, 1);
-		setBlockWorld(world, BLK_FARMLAND, x, y, z);
+		world_set_block(world, BLK_FARMLAND, x, y, z);
 	}
 	return 0;
 }
@@ -529,14 +529,14 @@ int onItemInteract_shovel(struct world* world, struct player* player, uint8_t sl
 	if (slot == NULL) return 0;
 	struct item_info* ii = getItemInfo(slot->item);
 	if (ii == NULL) return 0;
-	block b = getBlockWorld(world, x, y, z);
+	block b = world_get_block(world, x, y, z);
 	if (b == BLK_GRASS) {
 		if (!player_can_place_block(player, slot->item, x, y, z, face)) return 0;
 		if (player->gamemode != 1 && ++slot->damage >= ii->maxDamage) {
 			slot = NULL;
 		}
 		setSlot(player, player->inventory, slot_index, slot, 1, 1);
-		setBlockWorld(world, BLK_GRASSPATH, x, y, z);
+		world_set_block(world, BLK_GRASSPATH, x, y, z);
 	}
 	return 0;
 }
@@ -638,7 +638,7 @@ void onItemUse_bow(struct world* world, struct player* player, uint8_t slot_inde
 			}
 			setSlot(player, player->inventory, bs, ammo, 1, 1);
 		}
-		spawnEntity(player->world, arrow);
+		world_spawn_entity(player->world, arrow);
 	}
 }
 

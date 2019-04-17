@@ -27,6 +27,7 @@ struct server {
     struct list* worlds;
     struct queue* prepared_connections;
     struct hashmap* players_by_entity_id;
+    uint32_t next_entity_id;
     //  struct queue* playersToLoad;
 
 };

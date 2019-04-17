@@ -35,7 +35,7 @@ void loadEntity(struct player* to, struct entity* from);
 
 void onInventoryUpdate(struct player* player, struct inventory* inv, int slot);
 
-void tick_world(struct world* world);
+void world_tick(struct world* world);
 
 void sendMessageToPlayer(struct player* player, char* text, char* color);
 

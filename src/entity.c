@@ -59,8 +59,8 @@ void add_entity_info(uint32_t eid, struct entity_info* bm) {
 
 int onTick_tnt(struct world* world, struct entity* ent) {
 	if (ent->data.tnt.fuse-- <= 0) {
-		despawnEntity(world, ent);
-		explode(world, NULL, ent->x, ent->y + .5, ent->z, 4.);
+		world_despawn_entity(world, ent);
+		world_explode(world, NULL, ent->x, ent->y + .5, ent->z, 4.);
 		freeEntity(ent);
 		return 1;
 	}
@@ -70,7 +70,7 @@ int onTick_tnt(struct world* world, struct entity* ent) {
 int onTick_fallingblock(struct world* world, struct entity* ent) {
 	// TODO: mc has some methods to prevent dupes here, we should see if basin is afflicted
 	if (ent->onGround && ent->age > 1) {
-		block b = getBlockWorld(world, (int32_t) floor(ent->x), (int32_t) floor(ent->y), (int32_t) floor(ent->z));
+		block b = world_get_block(world, (int32_t) floor(ent->x), (int32_t) floor(ent->y), (int32_t) floor(ent->z));
 		if (!falling_canFallThrough(b)) {
 			struct slot sl;
 			sl.item = ent->data.fallingblock.b >> 4;
@@ -81,10 +81,10 @@ int onTick_fallingblock(struct world* world, struct entity* ent) {
 			//ent->onGround = 0;
 			//return 0;
 		} else {
-			setBlockWorld(world, ent->data.fallingblock.b, (int32_t) floor(ent->x), (int32_t) floor(ent->y), (int32_t) floor(ent->z));
+			world_set_block(world, ent->data.fallingblock.b, (int32_t) floor(ent->x), (int32_t) floor(ent->y), (int32_t) floor(ent->z));
 		}
 		//TODO: tile entities
-		despawnEntity(world, ent);
+		world_despawn_entity(world, ent);
 		freeEntity(ent);
 		return 1;
 	}
@@ -133,8 +133,8 @@ void onInteract_mooshroom(struct world* world, struct entity* entity, struct pla
 		struct entity* ent = newEntity(nextEntityID++, entity->x, entity->y, entity->z, ENT_COW, entity->yaw, entity->pitch);
 		ent->health = entity->health;
 		memcpy(&ent->data, &entity->data, sizeof(union entity_data));
-		spawnEntity(world, ent);
-		despawnEntity(world, entity);
+		world_spawn_entity(world, ent);
+		world_despawn_entity(world, entity);
 		freeEntity(entity);
 		struct item_info* ii = getItemInfo(ITM_SHEARS);
 		if (ii != NULL && ii->onItemAttacked != NULL) (*ii->onItemAttacked)(world, interacter, slot_index, item, ent);
@@ -156,7 +156,7 @@ int tick_arrow(struct world* world, struct entity* entity) {
 		//printf("hf = %i -- %f, %f, %f\n", hf, entity->x, entity->y, entity->z);
 		//printf("hf = %i -- %f, %f\n", hf, entity->yaw, entity->pitch);
 		struct entity* ehit = NULL;
-		struct entity* shooter = getEntity(world, entity->objectData - 1);
+		struct entity* shooter = world_get_entity(world, entity->objectData - 1);
 		double bd = 999.;
 		BEGIN_HASHMAP_ITERATION(world->entities)
 		struct entity* e2 = value;
@@ -200,7 +200,7 @@ int tick_arrow(struct world* world, struct entity* entity) {
 			}				//TODO: else bounce
 							//TODO: arrow sound
 			if (ehit->type != ENT_ENDERMAN) {
-				despawnEntity(world, entity);
+				world_despawn_entity(world, entity);
 				freeEntity(entity);
 				return 1;
 			}
@@ -233,7 +233,7 @@ int tick_arrow(struct world* world, struct entity* entity) {
 		}
 		entity->data.arrow.ticksInGround++;
 		if (entity->data.arrow.ticksInGround == 1200) {
-			despawnEntity(world, entity);
+			world_despawn_entity(world, entity);
 			freeEntity(entity);
 			return 1;
 		}
@@ -271,7 +271,7 @@ int tick_itemstack(struct world* world, struct entity* entity) {
 		return 0;
 	}
 	if (entity->age >= 6000) {
-		despawnEntity(world, entity);
+		world_despawn_entity(world, entity);
 		freeEntity(entity);
 		return 1;
 	}
@@ -288,7 +288,7 @@ int tick_itemstack(struct world* world, struct entity* entity) {
 //int32_t cz = ((int32_t) entity->z) >> 4;
 //for (int32_t icx = cx - 1; icx <= cx + 1; icx++)
 //for (int32_t icz = cz - 1; icz <= cz + 1; icz++) {
-//struct chunk* ch = getChunk(entity->world, icx, icz);
+//struct chunk* ch = world_get_chunk(entity->world, icx, icz);
 //if (ch != NULL) {
 	BEGIN_HASHMAP_ITERATION(entity->world->entities)
 	struct entity* oe = (struct entity*) value;
@@ -310,7 +310,7 @@ int tick_itemstack(struct world* world, struct entity* entity) {
 				pkt->data.play_client.collectitem.pickup_item_count = os - r;
 				add_queue(bc_player->outgoingPacket, pkt);
 				END_BROADCAST(entity->world->players)
-				despawnEntity(world, entity);
+				world_despawn_entity(world, entity);
 				freeEntity(entity);
 				return 1;
 			} else {
@@ -334,7 +334,7 @@ int tick_itemstack(struct world* world, struct entity* entity) {
 			oebb.minZ -= .625;
 			oebb.maxZ += .625;
 			if (boundingbox_intersects(&oebb, &cebb)) {
-				despawnEntity(world, entity);
+				world_despawn_entity(world, entity);
 				oe->data.itemstack.slot->itemCount += entity->data.itemstack.slot->itemCount;
 				freeEntity(entity);
 				BEGIN_BROADCAST_DIST(oe, 128.)
@@ -642,7 +642,7 @@ int entity_inFluid(struct entity* entity, uint16_t blk, float ydown, int meta_ch
 	for (int32_t x = floor(pbb.minX); x < floor(pbb.maxX + 1.); x++) {
 		for (int32_t z = floor(pbb.minZ); z < floor(pbb.maxZ + 1.); z++) {
 			for (int32_t y = floor(pbb.minY); y < floor(pbb.maxY + 1.); y++) {
-				block b = getBlockWorld(entity->world, x, y, z);
+				block b = world_get_block(entity->world, x, y, z);
 				if (meta_check ? (b != blk) : ((b >> 4) != (blk >> 4))) continue;
 				struct block_info* bi = getBlockInfo(b);
 				if (bi == NULL) continue;
@@ -859,7 +859,7 @@ int getSwingTime(struct entity* ent) {
 
 block entity_adjustCollision(struct world* world, struct entity* ent, struct chunk* ch, block b, int32_t x, int32_t y, int32_t z) {
 	if (b >> 4 == BLK_DOORIRON >> 4 || b >> 4 == BLK_DOOROAK >> 4 || b >> 4 == BLK_DOORSPRUCE >> 4 || b >> 4 == BLK_DOORBIRCH >> 4 || b >> 4 == BLK_DOORJUNGLE >> 4 || b >> 4 == BLK_DOORACACIA >> 4 || b >> 4 == BLK_DOORDARKOAK >> 4) {
-		if (b & 0b1000) return getBlockWorld_guess(world, ch, x, y - 1, z);
+		if (b & 0b1000) return world_get_block_guess(world, ch, x, y - 1, z);
 	}
 	return b;
 }
@@ -870,9 +870,9 @@ void entity_adjustBoundingBox(struct world* world, struct entity* ent, struct ch
 		block lb = b;
 		block ub = b;
 		if (b & 0b1000) {
-			lb = getBlockWorld_guess(world, ch, x, y - 1, z);
+			lb = world_get_block_guess(world, ch, x, y - 1, z);
 		} else {
-			ub = getBlockWorld_guess(world, ch, x, y + 1, z);
+			ub = world_get_block_guess(world, ch, x, y + 1, z);
 		}
 		if ((lb & 0b0010) && (ub & 0b0001)) {
 			uint8_t face = lb & 0b0011;
@@ -927,11 +927,11 @@ int moveEntity(struct entity* entity, double* mx, double* my, double* mz, float 
 	pbb.minZ += shrink;
 	pbb.maxZ -= shrink;
 	double ny = *my;
-	struct chunk* ch = getChunk(entity->world, (int32_t) entity->x / 16, (int32_t) entity->z / 16);
+	struct chunk* ch = world_get_chunk(entity->world, (int32_t) entity->x / 16, (int32_t) entity->z / 16);
 	for (int32_t x = floor(obb.minX); x < floor(obb.maxX + 1.); x++) {
 		for (int32_t z = floor(obb.minZ); z < floor(obb.maxZ + 1.); z++) {
 			for (int32_t y = floor(obb.minY); y < floor(obb.maxY + 1.); y++) {
-				block b = getBlockWorld_guess(entity->world, ch, x, y, z);
+				block b = world_get_block_guess(entity->world, ch, x, y, z);
 				if (b == 0) continue;
 				b = entity_adjustCollision(entity->world, entity, ch, b, x, y, z);
 				struct block_info* bi = getBlockInfo(b);
@@ -975,7 +975,7 @@ int moveEntity(struct entity* entity, double* mx, double* my, double* mz, float 
 	for (int32_t x = floor(obb.minX); x < floor(obb.maxX + 1.); x++) {
 		for (int32_t z = floor(obb.minZ); z < floor(obb.maxZ + 1.); z++) {
 			for (int32_t y = floor(obb.minY); y < floor(obb.maxY + 1.); y++) {
-				block b = getBlockWorld_guess(entity->world, ch, x, y, z);
+				block b = world_get_block_guess(entity->world, ch, x, y, z);
 				if (b == 0) continue;
 				b = entity_adjustCollision(entity->world, entity, ch, b, x, y, z);
 				struct block_info* bi = getBlockInfo(b);
@@ -1014,7 +1014,7 @@ int moveEntity(struct entity* entity, double* mx, double* my, double* mz, float 
 	for (int32_t x = floor(obb.minX); x < floor(obb.maxX + 1.); x++) {
 		for (int32_t z = floor(obb.minZ); z < floor(obb.maxZ + 1.); z++) {
 			for (int32_t y = floor(obb.minY); y < floor(obb.maxY + 1.); y++) {
-				block b = getBlockWorld_guess(entity->world, ch, x, y, z);
+				block b = world_get_block_guess(entity->world, ch, x, y, z);
 				if (b == 0) continue;
 				b = entity_adjustCollision(entity->world, entity, ch, b, x, y, z);
 				struct block_info* bi = getBlockInfo(b);
@@ -1056,9 +1056,9 @@ int moveEntity(struct entity* entity, double* mx, double* my, double* mz, float 
 	int32_t bx = floor(entity->x);
 	int32_t by = floor(entity->y - .20000000298023224);
 	int32_t bz = floor(entity->z);
-	block lb = getBlockWorld_guess(entity->world, ch, bx, by, bz);
+	block lb = world_get_block_guess(entity->world, ch, bx, by, bz);
 	if (lb == BLK_AIR) {
-		block lbb = getBlockWorld_guess(entity->world, ch, bx, by - 1, bz);
+		block lbb = world_get_block_guess(entity->world, ch, bx, by - 1, bz);
 		uint16_t lbi = lbb >> 4;
 		if ((lbi >= (BLK_FENCE >> 4) && lbi <= (BLK_ACACIAFENCE >> 4)) || (lbi >= (BLK_FENCEGATE >> 4) && lbi <= (BLK_ACACIAFENCEGATE >> 4)) || lbi == BLK_COBBLEWALL_NORMAL >> 4) {
 			lb = lbb;
@@ -1283,7 +1283,7 @@ int entity_inBlock(struct entity* ent, block blk) { // blk = 0 for any block
 	for (int32_t x = floor(obb.minX); x < floor(obb.maxX + 1.); x++) {
 		for (int32_t z = floor(obb.minZ); z < floor(obb.maxZ + 1.); z++) {
 			for (int32_t y = floor(obb.minY); y < floor(obb.maxY + 1.); y++) {
-				block b = getBlockWorld(ent->world, x, y, z);
+				block b = world_get_block(ent->world, x, y, z);
 				if (b == 0 || (blk != 0 && blk != b)) continue;
 				struct block_info* bi = getBlockInfo(b);
 				if (bi == NULL) continue;
@@ -1323,31 +1323,31 @@ void pushOutOfBlocks(struct entity* ent) {
 	float fbx = 0.;
 	float fby = 0.;
 	float fbz = 0.;
-	if (dx < ld && !isNormalCube(getBlockInfo(getBlockWorld(ent->world, bx - 1, by, bz)))) {
+	if (dx < ld && !isNormalCube(getBlockInfo(world_get_block(ent->world, bx - 1, by, bz)))) {
 		ld = dx;
 		fbx = -1.;
 		fby = 0.;
 		fbz = 0.;
 	}
-	if ((1. - dx) < ld && !isNormalCube(getBlockInfo(getBlockWorld(ent->world, bx + 1, by, bz)))) {
+	if ((1. - dx) < ld && !isNormalCube(getBlockInfo(world_get_block(ent->world, bx + 1, by, bz)))) {
 		ld = 1. - dx;
 		fbx = 1.;
 		fby = 0.;
 		fbz = 0.;
 	}
-	if (dz < ld && !isNormalCube(getBlockInfo(getBlockWorld(ent->world, bx, by, bz - 1)))) {
+	if (dz < ld && !isNormalCube(getBlockInfo(world_get_block(ent->world, bx, by, bz - 1)))) {
 		ld = dx;
 		fbx = 0.;
 		fby = 0.;
 		fbz = -1.;
 	}
-	if ((1. - dz) < ld && !isNormalCube(getBlockInfo(getBlockWorld(ent->world, bx, by, bz + 1)))) {
+	if ((1. - dz) < ld && !isNormalCube(getBlockInfo(world_get_block(ent->world, bx, by, bz + 1)))) {
 		ld = 1. - dz;
 		fbx = 0.;
 		fby = 0.;
 		fbz = 1.;
 	}
-	if ((1. - dy) < ld && !isNormalCube(getBlockInfo(getBlockWorld(ent->world, bx, by + 1, bz)))) {
+	if ((1. - dy) < ld && !isNormalCube(getBlockInfo(world_get_block(ent->world, bx, by + 1, bz)))) {
 		ld = 1. - dy;
 		fbx = 0.;
 		fby = 1.;
@@ -1429,7 +1429,7 @@ void tick_entity(struct world* world, struct entity* entity) {
 		if (gravity != 0. && !entity->immovable) entity->motY -= gravity;
 		if (!ar) {
 			if (entity->onGround) {
-				struct block_info* bi = getBlockInfo(getBlockWorld(entity->world, (int32_t) floor(entity->x), (int32_t) floor(entity->y) - 1, (int32_t) floor(entity->z)));
+				struct block_info* bi = getBlockInfo(world_get_block(entity->world, (int32_t) floor(entity->x), (int32_t) floor(entity->y) - 1, (int32_t) floor(entity->z)));
 				if (bi != NULL) friction = bi->slipperiness * .98;
 			}
 			entity->motX *= friction;
@@ -1481,7 +1481,7 @@ void tick_entity(struct world* world, struct entity* entity) {
 	 int32_t lcz = ((int32_t) entity->lz) >> 4;
 	 if (cx != lcx || cz != lcz) {
 	 struct chunk* lch = getChunk(entity->world, lcx, lcz);
-	 struct chunk* cch = getChunk(entity->world, cx, cz);
+	 struct chunk* cch = world_get_chunk(entity->world, cx, cz);
 	 put_hashmap(lch->entities, entity->id, NULL);
 	 put_hashmap(cch->entities, entity->id, entity);
 	 }*/

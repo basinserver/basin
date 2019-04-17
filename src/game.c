@@ -238,7 +238,7 @@ void dropBlockDrop(struct world* world, struct slot* slot, int32_t x, int32_t y,
 	item->motZ = randFloat() * .2 - .1;
 	item->data.itemstack.delayBeforeCanPickup = 0;
 	duplicateSlot(slot, item->data.itemstack.slot);
-	spawnEntity(world, item);
+    world_spawn_entity(world, item);
 	BEGIN_BROADCAST_DIST(item, 128.)
 	loadEntity(bc_player, item);
 	END_BROADCAST(item->world->players)
@@ -258,7 +258,7 @@ void dropPlayerItem(struct player* player, struct slot* drop) {
 	item->motZ += sin(nos) * mag;
 	item->data.itemstack.delayBeforeCanPickup = 20;
 	duplicateSlot(drop, item->data.itemstack.slot);
-	spawnEntity(player->world, item);
+    world_spawn_entity(player->world, item);
 	BEGIN_BROADCAST_DIST(player->entity, 128.)
 	loadEntity(bc_player, item);
 	END_BROADCAST(player->world->players)
@@ -290,7 +290,7 @@ void dropEntityItem_explode(struct entity* entity, struct slot* drop) {
 	item->motY = .2;
 	item->data.itemstack.delayBeforeCanPickup = 20;
 	duplicateSlot(drop, item->data.itemstack.slot);
-	spawnEntity(entity->world, item);
+    world_spawn_entity(entity->world, item);
 	BEGIN_BROADCAST_DIST(entity, 128.)
 	loadEntity(bc_player, item);
 	END_BROADCAST(entity->world->players)

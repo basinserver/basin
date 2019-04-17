@@ -8,6 +8,10 @@
 #ifndef BLOCK_H_
 #define BLOCK_H_
 
+#include <stdint.h>
+
+typedef uint16_t block;
+
 #include <basin/world.h>
 #include <basin/player.h>
 #include <basin/item.h>
