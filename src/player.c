@@ -53,7 +53,7 @@ struct player* player_new(struct entity* entity, char* name, struct uuid uuid, s
 	player->digging = -1.;
 	player->digspeed = 0.;
 	player->inventory = xmalloc(sizeof(struct inventory));
-	newInventory(player->inventory, INVTYPE_PLAYERINVENTORY, 0, 46);
+	inventory_new(player->inventory, INVTYPE_PLAYERINVENTORY, 0, 46);
 	player->openInv = NULL;
 	hashmap_put(player->inventory->players, player->entity->id, player);
 	player->loadedChunks = new_hashmap(1, 1);
@@ -283,7 +283,7 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 		END_BROADCAST(player->world->players)
 	} else if (inp->id == PKT_PLAY_SERVER_PLAYERDIGGING) {
 		pthread_mutex_lock(&player->inventory->mut);
-		struct slot* ci = getSlot(player, player->inventory, player->currentItem + 36);
+		struct slot* ci = inventory_get(player, player->inventory, player->currentItem + 36);
 		struct item_info* ii = ci == NULL ? NULL : getItemInfo(ci->item);
 		if (inp->data.play_server.playerdigging.status == 0) {
 			if (entity_dist_block(player->entity, inp->data.play_server.playerdigging.location.x, inp->data.play_server.playerdigging.location.y, inp->data.play_server.playerdigging.location.z) > player->reachDistance) {
@@ -309,7 +309,7 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 				END_BROADCAST(player->world->players)
 			} else if (hard == 0. || player->gamemode == 1) {
 				if (player->gamemode == 1) {
-					struct slot* slot = getSlot(player, player->inventory, 36 + player->currentItem);
+					struct slot* slot = inventory_get(player, player->inventory, 36 + player->currentItem);
 					if (slot != NULL && (slot->item == ITM_SWORDWOOD || slot->item == ITM_SWORDGOLD || slot->item == ITM_SWORDSTONE || slot->item == ITM_SWORDIRON || slot->item == ITM_SWORDDIAMOND)) {
 						pthread_mutex_unlock(&player->inventory->mut);
 						goto cont;
@@ -380,10 +380,10 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 				pthread_mutex_unlock(&player->inventory->mut);
 				goto cont;
 			}
-			struct slot* ci = getSlot(player, player->inventory, 36 + player->currentItem);
+			struct slot* ci = inventory_get(player, player->inventory, 36 + player->currentItem);
 			if (ci != NULL) {
 				dropPlayerItem(player, ci);
-				setSlot(player, player->inventory, 36 + player->currentItem, NULL, 1, 1);
+				inventory_set_slot(player, player->inventory, 36 + player->currentItem, NULL, 1, 1);
 			}
 			pthread_mutex_unlock(&player->inventory->mut);
 		} else if (inp->data.play_server.playerdigging.status == 4) {
@@ -391,21 +391,21 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 				pthread_mutex_unlock(&player->inventory->mut);
 				goto cont;
 			}
-			struct slot* ci = getSlot(player, player->inventory, 36 + player->currentItem);
+			struct slot* ci = inventory_get(player, player->inventory, 36 + player->currentItem);
 			if (ci != NULL) {
-				uint8_t ss = ci->itemCount;
-				ci->itemCount = 1;
+				uint8_t ss = ci->count;
+				ci->count = 1;
 				dropPlayerItem(player, ci);
-				ci->itemCount = ss;
-				if (--ci->itemCount == 0) {
+				ci->count = ss;
+				if (--ci->count == 0) {
 					ci = NULL;
 				}
-				setSlot(player, player->inventory, 36 + player->currentItem, ci, 1, 1);
+				inventory_set_slot(player, player->inventory, 36 + player->currentItem, ci, 1, 1);
 			}
 			pthread_mutex_unlock(&player->inventory->mut);
 		} else if (inp->data.play_server.playerdigging.status == 5) {
 			if (player->itemUseDuration > 0) {
-				struct slot* ihs = getSlot(player, player->inventory, player->itemUseHand ? 45 : (36 + player->currentItem));
+				struct slot* ihs = inventory_get(player, player->inventory, player->itemUseHand ? 45 : (36 + player->currentItem));
 				struct item_info* ihi = ihs == NULL ? NULL : getItemInfo(ihs->item);
 				if (ihs == NULL || ihi == NULL) {
 					player->itemUseDuration = 0;
@@ -421,7 +421,7 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 			}
 			pthread_mutex_unlock(&player->inventory->mut);
 		} else if (inp->data.play_server.playerdigging.status == 6) {
-			swapSlots(player, player->inventory, 45, 36 + player->currentItem, 1);
+			inventory_swap(player, player->inventory, 45, 36 + player->currentItem, 1);
 			pthread_mutex_unlock(&player->inventory->mut);
 		} else pthread_mutex_unlock(&player->inventory->mut);
 	} else if (inp->id == PKT_PLAY_SERVER_CREATIVEINVENTORYACTION) {
@@ -435,7 +435,7 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 				dropPlayerItem(player, &inp->data.play_server.creativeinventoryaction.clicked_item);
 			} else {
 				int16_t sl = inp->data.play_server.creativeinventoryaction.slot;
-				setSlot(player, inv, sl, &inp->data.play_server.creativeinventoryaction.clicked_item, 1, 1);
+				inventory_set_slot(player, inv, sl, &inp->data.play_server.creativeinventoryaction.clicked_item, 1, 1);
 			}
 			pthread_mutex_unlock(&inv->mut);
 		}
@@ -456,7 +456,7 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 		if (player->openInv != NULL) goto cont;
 		if (entity_dist_block(player->entity, inp->data.play_server.playerblockplacement.location.x, inp->data.play_server.playerblockplacement.location.y, inp->data.play_server.playerblockplacement.location.z) > player->reachDistance) goto cont;
 		pthread_mutex_lock(&player->inventory->mut);
-		struct slot* ci = getSlot(player, player->inventory, 36 + player->currentItem);
+		struct slot* ci = inventory_get(player, player->inventory, 36 + player->currentItem);
 		int32_t x = inp->data.play_server.playerblockplacement.location.x;
 		int32_t y = inp->data.play_server.playerblockplacement.location.y;
 		int32_t z = inp->data.play_server.playerblockplacement.location.z;
@@ -468,7 +468,7 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 				pthread_mutex_unlock(&player->inventory->mut);
 				if ((*ii->onItemInteract)(player->world, player, player->currentItem + 36, ci, x, y, z, face, inp->data.play_server.playerblockplacement.cursor_position_x, inp->data.play_server.playerblockplacement.cursor_position_y, inp->data.play_server.playerblockplacement.cursor_position_z)) goto pbp_cont;
 				pthread_mutex_lock(&player->inventory->mut);
-				ci = getSlot(player, player->inventory, 36 + player->currentItem);
+				ci = inventory_get(player, player->inventory, 36 + player->currentItem);
 			}
 		}
 		struct block_info* bi = getBlockInfo(b);
@@ -476,7 +476,7 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 			pthread_mutex_unlock(&player->inventory->mut);
 			(*bi->onBlockInteract)(player->world, b, x, y, z, player, face, inp->data.play_server.playerblockplacement.cursor_position_x, inp->data.play_server.playerblockplacement.cursor_position_y, inp->data.play_server.playerblockplacement.cursor_position_z);
 			pthread_mutex_lock(&player->inventory->mut);
-			ci = getSlot(player, player->inventory, 36 + player->currentItem);
+			ci = inventory_get(player, player->inventory, 36 + player->currentItem);
 		} else if (ci != NULL && ci->item < 256) {
 			if (bi == NULL || !bi->material->replacable) {
 				if (face == 0) y--;
@@ -494,10 +494,10 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 				if (tbi == NULL) goto pbp_cont;
 				struct boundingbox pbb;
 				int bad = 0;
-				//int32_t cx = x >> 4;
-				//int32_t cz = z >> 4;
-				//for (int32_t icx = cx - 1; icx <= cx + 1; icx++)
-				//for (int32_t icz = cz - 1; icz <= cz + 1; icz++) {
+				//int32_t chunk_x = x >> 4;
+				//int32_t chunk_z = z >> 4;
+				//for (int32_t icx = chunk_x - 1; icx <= chunk_x + 1; icx++)
+				//for (int32_t icz = chunk_z - 1; icz <= chunk_z + 1; icz++) {
 				//struct chunk* ch = world_get_chunk(player->world, icx, icz);
 				//if (ch != NULL) {
 				BEGIN_HASHMAP_ITERATION(player->world->entities)
@@ -534,24 +534,24 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 					if ((tbb = player_can_place_block(player, tbb, x, y, z, face))) {
 						if (world_set_block(player->world, tbb, x, y, z)) {
 							world_set_block(player->world, b2, x, y, z);
-							setSlot(player, player->inventory, 36 + player->currentItem, ci, 1, 1);
+							inventory_set_slot(player, player->inventory, 36 + player->currentItem, ci, 1, 1);
 						} else if (player->gamemode != 1) {
-							if (--ci->itemCount <= 0) {
+							if (--ci->count <= 0) {
 								ci = NULL;
 							}
-							setSlot(player, player->inventory, 36 + player->currentItem, ci, 1, 1);
+							inventory_set_slot(player, player->inventory, 36 + player->currentItem, ci, 1, 1);
 						}
 					} else {
 						world_set_block(player->world, b2, x, y, z);
-						setSlot(player, player->inventory, 36 + player->currentItem, ci, 1, 1);
+						inventory_set_slot(player, player->inventory, 36 + player->currentItem, ci, 1, 1);
 					}
 				} else {
 					world_set_block(player->world, b2, x, y, z);
-					setSlot(player, player->inventory, 36 + player->currentItem, ci, 1, 1);
+					inventory_set_slot(player, player->inventory, 36 + player->currentItem, ci, 1, 1);
 				}
 			} else {
 				world_set_block(player->world, b2, x, y, z);
-				setSlot(player, player->inventory, 36 + player->currentItem, ci, 1, 1);
+				inventory_set_slot(player, player->inventory, 36 + player->currentItem, ci, 1, 1);
 			}
 		}
 		pbp_cont: ;
@@ -571,8 +571,8 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 		int force_desync = 0;
 		if (mode == 5 && b == 10 && player->gamemode != 1) force_desync = 1;
 		if (slot >= 0 || force_desync) {
-			struct slot* invs = force_desync ? NULL : getSlot(player, inv, slot);
-			if ((mode != 4 && mode != 2 && mode != 5 && mode != 3 && ((inp->data.play_server.clickwindow.clicked_item.item < 0) != (invs == NULL))) || (invs != NULL && inp->data.play_server.clickwindow.clicked_item.item >= 0 && !(itemsStackable(invs, &inp->data.play_server.clickwindow.clicked_item) && invs->itemCount == inp->data.play_server.clickwindow.clicked_item.itemCount)) || force_desync) {
+			struct slot* invs = force_desync ? NULL : inventory_get(player, inv, slot);
+			if ((mode != 4 && mode != 2 && mode != 5 && mode != 3 && ((inp->data.play_server.clickwindow.clicked_item.item < 0) != (invs == NULL))) || (invs != NULL && inp->data.play_server.clickwindow.clicked_item.item >= 0 && !(slot_stackable(invs, &inp->data.play_server.clickwindow.clicked_item) && invs->count == inp->data.play_server.clickwindow.clicked_item.count)) || force_desync) {
 				//printf("desync\n");
 				struct packet* pkt = xmalloc(sizeof(struct packet));
 				pkt->id = PKT_PLAY_CLIENT_CONFIRMTRANSACTION;
@@ -587,7 +587,7 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 					pkt->data.play_client.windowitems.count = inv->slot_count;
 					pkt->data.play_client.windowitems.slot_data = xmalloc(sizeof(struct slot) * inv->slot_count);
 					for (size_t i = 0; i < inv->slot_count; i++) {
-						duplicateSlot(inv->slots[i], &pkt->data.play_client.windowitems.slot_data[i]);
+						slot_duplicate(inv->slots[i], &pkt->data.play_client.windowitems.slot_data[i]);
 					}
 					add_queue(player->outgoingPacket, pkt);
 				}
@@ -597,14 +597,14 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 				pkt->data.play_client.windowitems.count = player->inventory->slot_count;
 				pkt->data.play_client.windowitems.slot_data = xmalloc(sizeof(struct slot) * player->inventory->slot_count);
 				for (size_t i = 0; i < player->inventory->slot_count; i++) {
-					duplicateSlot(player->inventory->slots[i], &pkt->data.play_client.windowitems.slot_data[i]);
+					slot_duplicate(player->inventory->slots[i], &pkt->data.play_client.windowitems.slot_data[i]);
 				}
 				add_queue(player->outgoingPacket, pkt);
 				pkt = xmalloc(sizeof(struct packet));
 				pkt->id = PKT_PLAY_CLIENT_SETSLOT;
 				pkt->data.play_client.setslot.window_id = -1;
 				pkt->data.play_client.setslot.slot = -1;
-				duplicateSlot(player->inHand, &pkt->data.play_client.setslot.slot_data);
+				slot_duplicate(player->inHand, &pkt->data.play_client.setslot.slot_data);
 				add_queue(player->outgoingPacket, pkt);
 			} else {
 				if (mode != 5 && inv->dragSlot_count > 0) {
@@ -617,273 +617,273 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 						if (player->inHand == NULL) {
 							player->inHand = invs;
 							invs = NULL;
-							setSlot(player, inv, 0, invs, 0, 0);
-							craftOnce(player, inv);
-						} else if (itemsStackable(player->inHand, invs) && (player->inHand->itemCount + invs->itemCount) < maxStackSize(player->inHand)) {
-							player->inHand->itemCount += invs->itemCount;
+							inventory_set_slot(player, inv, 0, invs, 0, 0);
+							crafting_once(player, inv);
+						} else if (slot_stackable(player->inHand, invs) && (player->inHand->count + invs->count) < slot_max_size(player->inHand)) {
+							player->inHand->count += invs->count;
 							invs = NULL;
-							setSlot(player, inv, 0, invs, 0, 1);
-							craftOnce(player, inv);
+							inventory_set_slot(player, inv, 0, invs, 0, 1);
+							crafting_once(player, inv);
 						}
 					} else if (b == 0) {
-						if (itemsStackable(player->inHand, invs)) {
+						if (slot_stackable(player->inHand, invs)) {
 							if (sto) {
-								uint8_t os = player->inHand->itemCount;
-								int mss = maxStackSize(player->inHand);
-								player->inHand->itemCount += invs->itemCount;
-								if (player->inHand->itemCount > mss) player->inHand->itemCount = mss;
-								int dr = player->inHand->itemCount - os;
-								if (dr >= invs->itemCount) {
+								uint8_t os = player->inHand->count;
+								int mss = slot_max_size(player->inHand);
+								player->inHand->count += invs->count;
+								if (player->inHand->count > mss) player->inHand->count = mss;
+								int dr = player->inHand->count - os;
+								if (dr >= invs->count) {
 									invs = NULL;
-								} else invs->itemCount -= dr;
-								setSlot(player, inv, slot, invs, 0, 1);
+								} else invs->count -= dr;
+								inventory_set_slot(player, inv, slot, invs, 0, 1);
 							} else {
-								uint8_t os = invs->itemCount;
-								int mss = maxStackSize(player->inHand);
-								invs->itemCount += player->inHand->itemCount;
-								if (invs->itemCount > mss) invs->itemCount = mss;
-								setSlot(player, inv, slot, invs, 0, 1);
-								int dr = invs->itemCount - os;
-								if (dr >= player->inHand->itemCount) {
+								uint8_t os = invs->count;
+								int mss = slot_max_size(player->inHand);
+								invs->count += player->inHand->count;
+								if (invs->count > mss) invs->count = mss;
+								inventory_set_slot(player, inv, slot, invs, 0, 1);
+								int dr = invs->count - os;
+								if (dr >= player->inHand->count) {
 									freeSlot(player->inHand);
 									xfree(player->inHand);
 									player->inHand = NULL;
 								} else {
-									player->inHand->itemCount -= dr;
+									player->inHand->count -= dr;
 								}
 							}
-						} else if (player->inHand == NULL || validItemForSlot(inv->type, slot, player->inHand)) {
+						} else if (player->inHand == NULL || inventory_validate(inv->type, slot, player->inHand)) {
 							struct slot* t = invs;
 							invs = player->inHand;
 							player->inHand = t;
-							setSlot(player, inv, slot, invs, 0, 0);
+							inventory_set_slot(player, inv, slot, invs, 0, 0);
 						}
 					} else if (b == 1) {
 						if (player->inHand == NULL && invs != NULL) {
 							player->inHand = xmalloc(sizeof(struct slot));
-							duplicateSlot(invs, player->inHand);
-							uint8_t os = invs->itemCount;
-							invs->itemCount /= 2;
-							player->inHand->itemCount = os - invs->itemCount;
-							setSlot(player, inv, slot, invs, 0, 1);
-						} else if (player->inHand != NULL && !sto && validItemForSlot(inv->type, slot, player->inHand) && (invs == NULL || (itemsStackable(player->inHand, invs) && player->inHand->itemCount + invs->itemCount < maxStackSize(player->inHand)))) {
+							slot_duplicate(invs, player->inHand);
+							uint8_t os = invs->count;
+							invs->count /= 2;
+							player->inHand->count = os - invs->count;
+							inventory_set_slot(player, inv, slot, invs, 0, 1);
+						} else if (player->inHand != NULL && !sto && inventory_validate(inv->type, slot, player->inHand) && (invs == NULL || (slot_stackable(player->inHand, invs) && player->inHand->count + invs->count < slot_max_size(player->inHand)))) {
 							if (invs == NULL) {
 								invs = xmalloc(sizeof(struct slot));
-								duplicateSlot(player->inHand, invs);
-								invs->itemCount = 1;
+								slot_duplicate(player->inHand, invs);
+								invs->count = 1;
 							} else {
-								invs->itemCount++;
+								invs->count++;
 							}
-							if (--player->inHand->itemCount <= 0) {
+							if (--player->inHand->count <= 0) {
 								freeSlot(player->inHand);
 								xfree(player->inHand);
 								player->inHand = NULL;
 							}
-							setSlot(player, inv, slot, invs, 0, 1);
+							inventory_set_slot(player, inv, slot, invs, 0, 1);
 						}
 					}
 				} else if (mode == 1 && invs != NULL) {
 					if (inv->type == INVTYPE_PLAYERINVENTORY) {
 						int16_t it = invs->item;
 						if (slot == 0) {
-							int amt = craftAll(player, inv);
+							int amt = crafting_all(player, inv);
 							for (int i = 0; i < amt; i++)
-								addInventoryItem(player, inv, invs, 44, 8, 0);
+								inventory_add(player, inv, invs, 44, 8, 0);
 							onInventoryUpdate(player, inv, 1); // 2-4 would just repeat the calculation
 						} else if (slot != 45 && it == ITM_SHIELD && inv->slots[45] == NULL) {
-							swapSlots(player, inv, 45, slot, 0);
+							inventory_swap(player, inv, 45, slot, 0);
 						} else if (slot != 5 && inv->slots[5] == NULL && (it == BLK_PUMPKIN || it == ITM_HELMETCLOTH || it == ITM_HELMETCHAIN || it == ITM_HELMETIRON || it == ITM_HELMETDIAMOND || it == ITM_HELMETGOLD)) {
-							swapSlots(player, inv, 5, slot, 0);
+							inventory_swap(player, inv, 5, slot, 0);
 						} else if (slot != 6 && inv->slots[6] == NULL && (it == ITM_CHESTPLATECLOTH || it == ITM_CHESTPLATECHAIN || it == ITM_CHESTPLATEIRON || it == ITM_CHESTPLATEDIAMOND || it == ITM_CHESTPLATEGOLD)) {
-							swapSlots(player, inv, 6, slot, 0);
+							inventory_swap(player, inv, 6, slot, 0);
 						} else if (slot != 7 && inv->slots[7] == NULL && (it == ITM_LEGGINGSCLOTH || it == ITM_LEGGINGSCHAIN || it == ITM_LEGGINGSIRON || it == ITM_LEGGINGSDIAMOND || it == ITM_LEGGINGSGOLD)) {
-							swapSlots(player, inv, 7, slot, 0);
+							inventory_swap(player, inv, 7, slot, 0);
 						} else if (slot != 8 && inv->slots[8] == NULL && (it == ITM_BOOTSCLOTH || it == ITM_BOOTSCHAIN || it == ITM_BOOTSIRON || it == ITM_BOOTSDIAMOND || it == ITM_BOOTSGOLD)) {
-							swapSlots(player, inv, 8, slot, 0);
+							inventory_swap(player, inv, 8, slot, 0);
 						} else if (slot > 35 && slot < 45 && invs != NULL) {
-							int r = addInventoryItem(player, inv, invs, 9, 36, 0);
-							if (r <= 0) setSlot(player, inv, slot, NULL, 0, 1);
+							int r = inventory_add(player, inv, invs, 9, 36, 0);
+							if (r <= 0) inventory_set_slot(player, inv, slot, NULL, 0, 1);
 						} else if (slot > 8 && slot < 36 && invs != NULL) {
-							int r = addInventoryItem(player, inv, invs, 36, 45, 0);
-							if (r <= 0) setSlot(player, inv, slot, NULL, 0, 1);
+							int r = inventory_add(player, inv, invs, 36, 45, 0);
+							if (r <= 0) inventory_set_slot(player, inv, slot, NULL, 0, 1);
 						} else if ((slot == 45 || slot < 9) && invs != NULL) {
-							int r = addInventoryItem(player, inv, invs, 9, 36, 0);
-							if (r <= 0) setSlot(player, inv, slot, NULL, 0, 1);
+							int r = inventory_add(player, inv, invs, 9, 36, 0);
+							if (r <= 0) inventory_set_slot(player, inv, slot, NULL, 0, 1);
 							else {
-								r = addInventoryItem(player, inv, invs, 36, 45, 0);
-								if (r <= 0) setSlot(player, inv, slot, NULL, 0, 1);
+								r = inventory_add(player, inv, invs, 36, 45, 0);
+								if (r <= 0) inventory_set_slot(player, inv, slot, NULL, 0, 1);
 							}
 						}
 					} else if (inv->type == INVTYPE_WORKBENCH) {
 						if (slot == 0) {
-							int amt = craftAll(player, inv);
+							int amt = crafting_all(player, inv);
 							for (int i = 0; i < amt; i++)
-								addInventoryItem(player, inv, inv->slots[0], 45, 9, 0);
+								inventory_add(player, inv, inv->slots[0], 45, 9, 0);
 							onInventoryUpdate(player, inv, 1); // 2-4 would just repeat the calculation
 						} else if (slot <= 9) {
-							int r = addInventoryItem(player, inv, invs, 10, 46, 0);
-							if (r <= 0) setSlot(player, inv, slot, NULL, 0, 1);
+							int r = inventory_add(player, inv, invs, 10, 46, 0);
+							if (r <= 0) inventory_set_slot(player, inv, slot, NULL, 0, 1);
 						} else if (slot > 9 && slot < 37) {
-							int r = addInventoryItem(player, inv, invs, 37, 46, 0);
-							if (r <= 0) setSlot(player, inv, slot, NULL, 0, 1);
+							int r = inventory_add(player, inv, invs, 37, 46, 0);
+							if (r <= 0) inventory_set_slot(player, inv, slot, NULL, 0, 1);
 						} else if (slot > 36 && slot < 46) {
-							int r = addInventoryItem(player, inv, invs, 10, 37, 0);
-							if (r <= 0) setSlot(player, inv, slot, NULL, 0, 1);
+							int r = inventory_add(player, inv, invs, 10, 37, 0);
+							if (r <= 0) inventory_set_slot(player, inv, slot, NULL, 0, 1);
 						}
 					} else if (inv->type == INVTYPE_CHEST) {
 						if (slot < 27) {
-							int r = addInventoryItem(player, inv, invs, 62, 26, 0);
-							if (r <= 0) setSlot(player, inv, slot, NULL, 0, 1);
+							int r = inventory_add(player, inv, invs, 62, 26, 0);
+							if (r <= 0) inventory_set_slot(player, inv, slot, NULL, 0, 1);
 						} else if (slot >= 27) {
-							int r = addInventoryItem(player, inv, invs, 0, 27, 0);
-							if (r <= 0) setSlot(player, inv, slot, NULL, 0, 1);
+							int r = inventory_add(player, inv, invs, 0, 27, 0);
+							if (r <= 0) inventory_set_slot(player, inv, slot, NULL, 0, 1);
 						}
 					} else if (inv->type == INVTYPE_FURNACE) {
 						if (slot > 2) {
-							if (smelting_output(invs) != NULL) swapSlots(player, inv, 0, slot, 0);
-							else if (smelting_burnTime(invs) > 0) swapSlots(player, inv, 1, slot, 0);
+							if (smelting_output(invs) != NULL) inventory_swap(player, inv, 0, slot, 0);
+							else if (smelting_burnTime(invs) > 0) inventory_swap(player, inv, 1, slot, 0);
 							else if (slot > 29) {
-								int r = addInventoryItem(player, inv, invs, 3, 30, 0);
-								if (r <= 0) setSlot(player, inv, slot, NULL, 0, 1);
+								int r = inventory_add(player, inv, invs, 3, 30, 0);
+								if (r <= 0) inventory_set_slot(player, inv, slot, NULL, 0, 1);
 							} else if (slot < 30) {
-								int r = addInventoryItem(player, inv, invs, 30, 39, 0);
-								if (r <= 0) setSlot(player, inv, slot, NULL, 0, 1);
+								int r = inventory_add(player, inv, invs, 30, 39, 0);
+								if (r <= 0) inventory_set_slot(player, inv, slot, NULL, 0, 1);
 							}
 						} else {
-							int r = addInventoryItem(player, inv, invs, 38, 2, 0);
-							if (r <= 0) setSlot(player, inv, slot, NULL, 0, 1);
+							int r = inventory_add(player, inv, invs, 38, 2, 0);
+							if (r <= 0) inventory_set_slot(player, inv, slot, NULL, 0, 1);
 						}
 					}
 				} else if (mode == 2) {
 					if (inv->type == INVTYPE_PLAYERINVENTORY) {
 						if (slot == 0) {
-							struct slot* invb = getSlot(player, inv, 36 + b);
+							struct slot* invb = inventory_get(player, inv, 36 + b);
 							if (invb == NULL) {
-								setSlot(player, inv, 36 + b, inv->slots[0], 0, 1);
-								setSlot(player, inv, 0, NULL, 0, 1);
-								craftOnce(player, inv);
+								inventory_set_slot(player, inv, 36 + b, inv->slots[0], 0, 1);
+								inventory_set_slot(player, inv, 0, NULL, 0, 1);
+								crafting_once(player, inv);
 							}
-						} else if (b >= 0 && b <= 8) swapSlots(player, inv, 36 + b, slot, 0);
+						} else if (b >= 0 && b <= 8) inventory_swap(player, inv, 36 + b, slot, 0);
 					} else if (inv->type == INVTYPE_WORKBENCH) {
 						if (slot == 0) {
-							struct slot* invb = getSlot(player, inv, 37 + b);
+							struct slot* invb = inventory_get(player, inv, 37 + b);
 							if (invb == NULL) {
-								setSlot(player, inv, 37 + b, inv->slots[0], 0, 1);
-								setSlot(player, inv, 0, NULL, 0, 1);
-								craftOnce(player, inv);
+								inventory_set_slot(player, inv, 37 + b, inv->slots[0], 0, 1);
+								inventory_set_slot(player, inv, 0, NULL, 0, 1);
+								crafting_once(player, inv);
 							}
-						} else if (b >= 0 && b <= 8) swapSlots(player, inv, 37 + b, slot, 0);
+						} else if (b >= 0 && b <= 8) inventory_swap(player, inv, 37 + b, slot, 0);
 					} else if (inv->type == INVTYPE_CHEST) {
-						if (b >= 0 && b <= 8) swapSlots(player, inv, 54 + b, slot, 0);
+						if (b >= 0 && b <= 8) inventory_swap(player, inv, 54 + b, slot, 0);
 					} else if (inv->type == INVTYPE_FURNACE) {
-						if (b >= 0 && b <= 8) swapSlots(player, inv, 30 + b, slot, 0);
+						if (b >= 0 && b <= 8) inventory_swap(player, inv, 30 + b, slot, 0);
 					}
 				} else if (mode == 3) {
 					if (player->gamemode == 1) {
 						if (invs != NULL && player->inHand == NULL) {
 							player->inHand = xmalloc(sizeof(struct slot));
-							duplicateSlot(invs, player->inHand);
-							player->inHand->itemCount = maxStackSize(player->inHand);
+							slot_duplicate(invs, player->inHand);
+							player->inHand->count = slot_max_size(player->inHand);
 						}
 					}
 					//middle click, NOP in survival?
 				} else if (mode == 4 && invs != NULL) {
 					if (b == 0) {
-						uint8_t p = invs->itemCount;
-						invs->itemCount = 1;
+						uint8_t p = invs->count;
+						invs->count = 1;
 						dropPlayerItem(player, invs);
-						invs->itemCount = p - 1;
-						if (invs->itemCount == 0) invs = NULL;
-						setSlot(player, inv, slot, invs, 1, 1);
+						invs->count = p - 1;
+						if (invs->count == 0) invs = NULL;
+						inventory_set_slot(player, inv, slot, invs, 1, 1);
 					} else if (b == 1) {
 						dropPlayerItem(player, invs);
 						invs = NULL;
-						setSlot(player, inv, slot, invs, 1, 1);
+						inventory_set_slot(player, inv, slot, invs, 1, 1);
 					}
-					if (s0ic && slot == 0) craftOnce(player, inv);
+					if (s0ic && slot == 0) crafting_once(player, inv);
 				} else if (mode == 5) {
 					if (b == 1 || b == 5 || b == 9) {
 						int ba = 0;
 						if (inv->type == INVTYPE_PLAYERINVENTORY) {
 							if (slot == 0 || (slot >= 5 && slot <= 8)) ba = 1;
 						}
-						if (!ba && inv->dragSlot_count < inv->slot_count && validItemForSlot(inv->type, slot, player->inHand) && (invs == NULL || itemsStackable(invs, player->inHand))) {
+						if (!ba && inv->dragSlot_count < inv->slot_count && inventory_validate(inv->type, slot, player->inHand) && (invs == NULL || slot_stackable(invs, player->inHand))) {
 							inv->dragSlot[inv->dragSlot_count++] = slot;
 						}
 					}
 				} else if (mode == 6 && player->inHand != NULL) {
-					int mss = maxStackSize(player->inHand);
+					int mss = slot_max_size(player->inHand);
 					if (inv->type == INVTYPE_PLAYERINVENTORY) {
-						if (player->inHand->itemCount < mss) {
+						if (player->inHand->count < mss) {
 							for (size_t i = 9; i < 36; i++) {
-								struct slot* invi = getSlot(player, inv, i);
-								if (itemsStackable(player->inHand, invi)) {
-									uint8_t oc = player->inHand->itemCount;
-									player->inHand->itemCount += invi->itemCount;
-									if (player->inHand->itemCount > mss) player->inHand->itemCount = mss;
-									invi->itemCount -= player->inHand->itemCount - oc;
-									if (invi->itemCount <= 0) invi = NULL;
-									setSlot(player, inv, i, invi, 0, 1);
-									if (player->inHand->itemCount >= mss) break;
+								struct slot* invi = inventory_get(player, inv, i);
+								if (slot_stackable(player->inHand, invi)) {
+									uint8_t oc = player->inHand->count;
+									player->inHand->count += invi->count;
+									if (player->inHand->count > mss) player->inHand->count = mss;
+									invi->count -= player->inHand->count - oc;
+									if (invi->count <= 0) invi = NULL;
+									inventory_set_slot(player, inv, i, invi, 0, 1);
+									if (player->inHand->count >= mss) break;
 								}
 							}
 						}
-						if (player->inHand->itemCount < mss) {
+						if (player->inHand->count < mss) {
 							for (size_t i = 36; i < 45; i++) {
-								struct slot* invi = getSlot(player, inv, i);
-								if (itemsStackable(player->inHand, invi)) {
-									uint8_t oc = player->inHand->itemCount;
-									player->inHand->itemCount += invi->itemCount;
-									if (player->inHand->itemCount > mss) player->inHand->itemCount = mss;
-									invi->itemCount -= player->inHand->itemCount - oc;
-									if (invi->itemCount <= 0) invi = NULL;
-									setSlot(player, inv, i, invi, 0, 1);
-									if (player->inHand->itemCount >= mss) break;
+								struct slot* invi = inventory_get(player, inv, i);
+								if (slot_stackable(player->inHand, invi)) {
+									uint8_t oc = player->inHand->count;
+									player->inHand->count += invi->count;
+									if (player->inHand->count > mss) player->inHand->count = mss;
+									invi->count -= player->inHand->count - oc;
+									if (invi->count <= 0) invi = NULL;
+									inventory_set_slot(player, inv, i, invi, 0, 1);
+									if (player->inHand->count >= mss) break;
 								}
 							}
 						}
 					} else if (inv->type == INVTYPE_WORKBENCH) {
-						if (player->inHand->itemCount < mss) {
+						if (player->inHand->count < mss) {
 							for (size_t i = 1; i < 46; i++) {
-								struct slot* invi = getSlot(player, inv, i);
-								if (itemsStackable(player->inHand, invi)) {
-									uint8_t oc = player->inHand->itemCount;
-									player->inHand->itemCount += invi->itemCount;
-									if (player->inHand->itemCount > mss) player->inHand->itemCount = mss;
-									invi->itemCount -= player->inHand->itemCount - oc;
-									if (invi->itemCount <= 0) invi = NULL;
-									setSlot(player, inv, i, invi, 0, 1);
-									if (player->inHand->itemCount >= mss) break;
+								struct slot* invi = inventory_get(player, inv, i);
+								if (slot_stackable(player->inHand, invi)) {
+									uint8_t oc = player->inHand->count;
+									player->inHand->count += invi->count;
+									if (player->inHand->count > mss) player->inHand->count = mss;
+									invi->count -= player->inHand->count - oc;
+									if (invi->count <= 0) invi = NULL;
+									inventory_set_slot(player, inv, i, invi, 0, 1);
+									if (player->inHand->count >= mss) break;
 								}
 							}
 						}
 					} else if (inv->type == INVTYPE_CHEST) {
-						if (player->inHand->itemCount < mss) {
+						if (player->inHand->count < mss) {
 							for (size_t i = 0; i < 63; i++) {
-								struct slot* invi = getSlot(player, inv, i);
-								if (itemsStackable(player->inHand, invi)) {
-									uint8_t oc = player->inHand->itemCount;
-									player->inHand->itemCount += invi->itemCount;
-									if (player->inHand->itemCount > mss) player->inHand->itemCount = mss;
-									invi->itemCount -= player->inHand->itemCount - oc;
-									if (invi->itemCount <= 0) invi = NULL;
-									setSlot(player, inv, i, invi, 0, 1);
-									if (player->inHand->itemCount >= mss) break;
+								struct slot* invi = inventory_get(player, inv, i);
+								if (slot_stackable(player->inHand, invi)) {
+									uint8_t oc = player->inHand->count;
+									player->inHand->count += invi->count;
+									if (player->inHand->count > mss) player->inHand->count = mss;
+									invi->count -= player->inHand->count - oc;
+									if (invi->count <= 0) invi = NULL;
+									inventory_set_slot(player, inv, i, invi, 0, 1);
+									if (player->inHand->count >= mss) break;
 								}
 							}
 						}
 					} else if (inv->type == INVTYPE_FURNACE) {
-						if (player->inHand->itemCount < mss) {
+						if (player->inHand->count < mss) {
 							for (size_t i = 3; i < 39; i++) {
-								struct slot* invi = getSlot(player, inv, i);
-								if (itemsStackable(player->inHand, invi)) {
-									uint8_t oc = player->inHand->itemCount;
-									player->inHand->itemCount += invi->itemCount;
-									if (player->inHand->itemCount > mss) player->inHand->itemCount = mss;
-									invi->itemCount -= player->inHand->itemCount - oc;
-									if (invi->itemCount <= 0) invi = NULL;
-									setSlot(player, inv, i, invi, 0, 1);
-									if (player->inHand->itemCount >= mss) break;
+								struct slot* invi = inventory_get(player, inv, i);
+								if (slot_stackable(player->inHand, invi)) {
+									uint8_t oc = player->inHand->count;
+									player->inHand->count += invi->count;
+									if (player->inHand->count > mss) player->inHand->count = mss;
+									invi->count -= player->inHand->count - oc;
+									if (invi->count <= 0) invi = NULL;
+									inventory_set_slot(player, inv, i, invi, 0, 1);
+									if (player->inHand->count >= mss) break;
 								}
 							}
 						}
@@ -902,11 +902,11 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 			}
 			if (mode == 0 && player->inHand != NULL) {
 				if (b == 1) {
-					uint8_t p = player->inHand->itemCount;
-					player->inHand->itemCount = 1;
+					uint8_t p = player->inHand->count;
+					player->inHand->count = 1;
 					dropPlayerItem(player, player->inHand);
-					player->inHand->itemCount = p - 1;
-					if (player->inHand->itemCount == 0) {
+					player->inHand->count = p - 1;
+					if (player->inHand->count == 0) {
 						freeSlot(player->inHand);
 						xfree(player->inHand);
 						player->inHand = NULL;
@@ -923,84 +923,84 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 					inv->dragSlot_count = 0;
 				} else if (inv->dragSlot_count > 0) {
 					if (b == 2) {
-						uint8_t total = player->inHand->itemCount;
+						uint8_t total = player->inHand->count;
 						uint8_t per = total / inv->dragSlot_count;
 						if (per == 0) per = 1;
 						for (int i = 0; i < inv->dragSlot_count; i++) {
 							int sl = inv->dragSlot[i];
-							struct slot* ssl = getSlot(player, inv, sl);
+							struct slot* ssl = inventory_get(player, inv, sl);
 							if (ssl == NULL) {
 								ssl = xmalloc(sizeof(struct slot));
-								duplicateSlot(player->inHand, ssl);
-								ssl->itemCount = per;
-								setSlot(player, inv, sl, ssl, 0, 1);
-								if (per >= player->inHand->itemCount) {
+								slot_duplicate(player->inHand, ssl);
+								ssl->count = per;
+								inventory_set_slot(player, inv, sl, ssl, 0, 1);
+								if (per >= player->inHand->count) {
 									freeSlot(player->inHand);
 									xfree(player->inHand);
 									player->inHand = NULL;
 									break;
 								}
-								player->inHand->itemCount -= per;
+								player->inHand->count -= per;
 							} else {
-								uint8_t os = ssl->itemCount;
-								ssl->itemCount += per;
-								int mss = maxStackSize(player->inHand);
-								if (ssl->itemCount > mss) ssl->itemCount = mss;
-								setSlot(player, inv, sl, ssl, 0, 1);
-								if (per >= player->inHand->itemCount) {
+								uint8_t os = ssl->count;
+								ssl->count += per;
+								int mss = slot_max_size(player->inHand);
+								if (ssl->count > mss) ssl->count = mss;
+								inventory_set_slot(player, inv, sl, ssl, 0, 1);
+								if (per >= player->inHand->count) {
 									freeSlot(player->inHand);
 									xfree(player->inHand);
 									player->inHand = NULL;
 									break;
 								}
-								player->inHand->itemCount -= ssl->itemCount - os;
+								player->inHand->count -= ssl->count - os;
 							}
 						}
 					} else if (b == 6) {
 						uint8_t per = 1;
 						for (int i = 0; i < inv->dragSlot_count; i++) {
 							int sl = inv->dragSlot[i];
-							struct slot* ssl = getSlot(player, inv, sl);
+							struct slot* ssl = inventory_get(player, inv, sl);
 							if (ssl == NULL) {
 								ssl = xmalloc(sizeof(struct slot));
-								duplicateSlot(player->inHand, ssl);
-								ssl->itemCount = per;
-								setSlot(player, inv, sl, ssl, 0, 1);
-								if (per >= player->inHand->itemCount) {
+								slot_duplicate(player->inHand, ssl);
+								ssl->count = per;
+								inventory_set_slot(player, inv, sl, ssl, 0, 1);
+								if (per >= player->inHand->count) {
 									freeSlot(player->inHand);
 									xfree(player->inHand);
 									player->inHand = NULL;
 									break;
 								}
-								player->inHand->itemCount -= per;
+								player->inHand->count -= per;
 							} else {
-								uint8_t os = ssl->itemCount;
-								ssl->itemCount += per;
-								int mss = maxStackSize(player->inHand);
-								if (ssl->itemCount > mss) ssl->itemCount = mss;
-								setSlot(player, inv, sl, ssl, 0, 1);
-								if (per >= player->inHand->itemCount) {
+								uint8_t os = ssl->count;
+								ssl->count += per;
+								int mss = slot_max_size(player->inHand);
+								if (ssl->count > mss) ssl->count = mss;
+								inventory_set_slot(player, inv, sl, ssl, 0, 1);
+								if (per >= player->inHand->count) {
 									freeSlot(player->inHand);
 									xfree(player->inHand);
 									player->inHand = NULL;
 									break;
 								}
-								player->inHand->itemCount -= ssl->itemCount - os;
+								player->inHand->count -= ssl->count - os;
 							}
 						}
 					} else if (b == 10 && player->gamemode == 1) {
-						uint8_t per = maxStackSize(player->inHand);
+						uint8_t per = slot_max_size(player->inHand);
 						for (int i = 0; i < inv->dragSlot_count; i++) {
 							int sl = inv->dragSlot[i];
-							struct slot* ssl = getSlot(player, inv, sl);
+							struct slot* ssl = inventory_get(player, inv, sl);
 							if (ssl == NULL) {
 								ssl = xmalloc(sizeof(struct slot));
-								duplicateSlot(player->inHand, ssl);
-								ssl->itemCount = per;
-								setSlot(player, inv, sl, ssl, 0, 1);
+								slot_duplicate(player->inHand, ssl);
+								ssl->count = per;
+								inventory_set_slot(player, inv, sl, ssl, 0, 1);
 							} else {
-								ssl->itemCount = per;
-								setSlot(player, inv, sl, ssl, 0, 1);
+								ssl->count = per;
+								inventory_set_slot(player, inv, sl, ssl, 0, 1);
 							}
 						}
 					}
@@ -1017,7 +1017,7 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 				struct entity_info* ei = getEntityInfo(ent->type);
 				if (ei != NULL && ei->onInteract != NULL) {
 					pthread_mutex_lock(&player->inventory->mut);
-					(*ei->onInteract)(player->world, ent, player, getSlot(player, player->inventory, 36 + player->currentItem), 36 + player->currentItem);
+					(*ei->onInteract)(player->world, ent, player, inventory_get(player, player->inventory, 36 + player->currentItem), 36 + player->currentItem);
 					pthread_mutex_unlock(&player->inventory->mut);
 				}
 			}
@@ -1025,7 +1025,7 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 			struct entity* ent = world_get_entity(player->world, inp->data.play_server.useentity.target);
 			if (ent != NULL && ent != player->entity && ent->health > 0. && ent->world == player->world && entity_dist(ent, player->entity) < 4. && (tick_counter - player->lastSwing) >= 3) {
 				pthread_mutex_lock(&player->inventory->mut);
-				damageEntityWithItem(ent, player->entity, 36 + player->currentItem, getSlot(player, player->inventory, 36 + player->currentItem));
+				damageEntityWithItem(ent, player->entity, 36 + player->currentItem, inventory_get(player, player->inventory, 36 + player->currentItem));
 				pthread_mutex_unlock(&player->inventory->mut);
 			}
 			player->lastSwing = tick_counter;
@@ -1063,7 +1063,7 @@ void player_receive_packet(struct player* player, struct packet* inp) {
 	} else if (inp->id == PKT_PLAY_SERVER_USEITEM) {
 		int32_t hand = inp->data.play_server.useitem.hand;
 		pthread_mutex_lock(&player->inventory->mut);
-		struct slot* cs = getSlot(player, player->inventory, hand ? 45 : (36 + player->currentItem));
+		struct slot* cs = inventory_get(player, player->inventory, hand ? 45 : (36 + player->currentItem));
 		if (cs != NULL) {
 			struct item_info* ii = getItemInfo(cs->item);
 			if (ii != NULL && (ii->canUseItem == NULL || (*ii->canUseItem)(player->world, player, hand ? 45 : (36 + player->currentItem), cs))) {
@@ -1182,8 +1182,8 @@ void player_tick(struct world* world, struct player* player) {
 			struct chunk* ch = (struct chunk*) value;
 			if (ch->x < pcx - CHUNK_VIEW_DISTANCE || ch->x > pcx + CHUNK_VIEW_DISTANCE || ch->z < pcz - CHUNK_VIEW_DISTANCE || ch->z > pcz + CHUNK_VIEW_DISTANCE) {
 				struct chunk_request* cr = xmalloc(sizeof(struct chunk_request));
-				cr->cx = ch->x;
-				cr->cz = ch->z;
+				cr->chunk_x = ch->x;
+				cr->chunk_z = ch->z;
 				cr->world = world;
 				cr->load = 0;
 				add_queue(player->chunkRequests, cr);
@@ -1196,8 +1196,8 @@ void player_tick(struct world* world, struct player* player) {
 			for (int i = 0; i < ((r == 0) ? 1 : (r * 8)); i++) {
 				if (we0 || !contains_hashmap(player->loadedChunks, chunk_get_key_direct(x, z))) {
 					struct chunk_request* cr = xmalloc(sizeof(struct chunk_request));
-					cr->cx = x;
-					cr->cz = z;
+					cr->chunk_x = x;
+					cr->chunk_z = z;
 					cr->world = world;
 					cr->load = 1;
 					add_queue(player->chunkRequests, cr);
@@ -1219,15 +1219,15 @@ void player_tick(struct world* world, struct player* player) {
 			for (int32_t fz = lpcz - CHUNK_VIEW_DISTANCE; fz <= lpcz + CHUNK_VIEW_DISTANCE; fz++) {
 				beginProfilerSection("chunkUnloading_live");
 				struct chunk_request* cr = xmalloc(sizeof(struct chunk_request));
-				cr->cx = lpcx < pcx ? (fx - CHUNK_VIEW_DISTANCE) : (fx + CHUNK_VIEW_DISTANCE);
-				cr->cz = fz;
+				cr->chunk_x = lpcx < pcx ? (fx - CHUNK_VIEW_DISTANCE) : (fx + CHUNK_VIEW_DISTANCE);
+				cr->chunk_z = fz;
 				cr->load = 0;
 				add_queue(player->chunkRequests, cr);
 				endProfilerSection("chunkUnloading_live");
 				beginProfilerSection("chunkLoading_live");
 				cr = xmalloc(sizeof(struct chunk_request));
-				cr->cx = lpcx < pcx ? (fx + CHUNK_VIEW_DISTANCE) : (fx - CHUNK_VIEW_DISTANCE);
-				cr->cz = fz;
+				cr->chunk_x = lpcx < pcx ? (fx + CHUNK_VIEW_DISTANCE) : (fx - CHUNK_VIEW_DISTANCE);
+				cr->chunk_z = fz;
 				cr->world = world;
 				cr->load = 1;
 				add_queue(player->chunkRequests, cr);
@@ -1238,15 +1238,15 @@ void player_tick(struct world* world, struct player* player) {
 			for (int32_t fx = lpcx - CHUNK_VIEW_DISTANCE; fx <= lpcx + CHUNK_VIEW_DISTANCE; fx++) {
 				beginProfilerSection("chunkUnloading_live");
 				struct chunk_request* cr = xmalloc(sizeof(struct chunk_request));
-				cr->cx = fx;
-				cr->cz = lpcz < pcz ? (fz - CHUNK_VIEW_DISTANCE) : (fz + CHUNK_VIEW_DISTANCE);
+				cr->chunk_x = fx;
+				cr->chunk_z = lpcz < pcz ? (fz - CHUNK_VIEW_DISTANCE) : (fz + CHUNK_VIEW_DISTANCE);
 				cr->load = 0;
 				add_queue(player->chunkRequests, cr);
 				endProfilerSection("chunkUnloading_live");
 				beginProfilerSection("chunkLoading_live");
 				cr = xmalloc(sizeof(struct chunk_request));
-				cr->cx = fx;
-				cr->cz = lpcz < pcz ? (fz + CHUNK_VIEW_DISTANCE) : (fz - CHUNK_VIEW_DISTANCE);
+				cr->chunk_x = fx;
+				cr->chunk_z = lpcz < pcz ? (fz + CHUNK_VIEW_DISTANCE) : (fz - CHUNK_VIEW_DISTANCE);
 				cr->load = 1;
 				cr->world = world;
 				add_queue(player->chunkRequests, cr);
@@ -1258,7 +1258,7 @@ void player_tick(struct world* world, struct player* player) {
 	}
 	endProfilerSection("chunks");
 	if (player->itemUseDuration > 0) {
-		struct slot* ihs = getSlot(player, player->inventory, player->itemUseHand ? 45 : (36 + player->currentItem));
+		struct slot* ihs = inventory_get(player, player->inventory, player->itemUseHand ? 45 : (36 + player->currentItem));
 		struct item_info* ihi = ihs == NULL ? NULL : getItemInfo(ihs->item);
 		if (ihs == NULL || ihi == NULL) {
 			player->itemUseDuration = 0;
@@ -1284,7 +1284,7 @@ void player_tick(struct world* world, struct player* player) {
 		float digspeed = 0.;
 		if (bi->hardness > 0.) {
 			pthread_mutex_lock(&player->inventory->mut);
-			struct slot* ci = getSlot(player, player->inventory, 36 + player->currentItem);
+			struct slot* ci = inventory_get(player, player->inventory, 36 + player->currentItem);
 			struct item_info* cii = ci == NULL ? NULL : getItemInfo(ci->item);
 			int hasProperTool = (cii == NULL ? 0 : tools_proficient(cii->toolType, cii->harvestLevel, bw));
 			int hasProperTool2 = (cii == NULL ? 0 : tools_proficient(cii->toolType, 0xFF, bw));
@@ -1337,10 +1337,10 @@ void player_tick(struct world* world, struct player* player) {
 	}
 	endProfilerSection("entity_transmission");
 	beginProfilerSection("player_transmission");
-	//int32_t cx = ((int32_t) player->entity->x) >> 4;
-	//int32_t cz = ((int32_t) player->entity->z) >> 4;
-	//for (int32_t icx = cx - CHUNK_VIEW_DISTANCE; icx <= cx + CHUNK_VIEW_DISTANCE; icx++)
-	//for (int32_t icz = cz - CHUNK_VIEW_DISTANCE; icz <= cz + CHUNK_VIEW_DISTANCE; icz++) {
+	//int32_t chunk_x = ((int32_t) player->entity->x) >> 4;
+	//int32_t chunk_z = ((int32_t) player->entity->z) >> 4;
+	//for (int32_t icx = chunk_x - CHUNK_VIEW_DISTANCE; icx <= chunk_x + CHUNK_VIEW_DISTANCE; icx++)
+	//for (int32_t icz = chunk_z - CHUNK_VIEW_DISTANCE; icz <= chunk_z + CHUNK_VIEW_DISTANCE; icz++) {
 	//struct chunk* ch = world_get_chunk(player->world, icx, icz);
 	//if (ch != NULL) {
 	BEGIN_HASHMAP_ITERATION(player->world->entities)
@@ -1417,7 +1417,7 @@ void player_kick(struct player* player, char* message) {
 
 float player_getAttackStrength(struct player* player, float adjust) {
 	float cooldownPeriod = 4.;
-	struct slot* sl = getSlot(player, player->inventory, 36 + player->currentItem);
+	struct slot* sl = inventory_get(player, player->inventory, 36 + player->currentItem);
 	if (sl != NULL) {
 		struct item_info* ii = getItemInfo(sl->item);
 		if (ii != NULL) {
@@ -1512,30 +1512,30 @@ void player_closeWindow(struct player* player, uint16_t windowID) {
 			for (int i = 1; i < 5; i++) {
 				if (inv->slots[i] != NULL) {
 					dropPlayerItem(player, inv->slots[i]);
-					setSlot(player, inv, i, NULL, 0, 1);
+					inventory_set_slot(player, inv, i, NULL, 0, 1);
 				}
 			}
 		} else if (inv->type == INVTYPE_WORKBENCH) {
 			for (int i = 1; i < 10; i++) {
 				if (inv->slots[i] != NULL) {
 					dropPlayerItem(player, inv->slots[i]);
-					setSlot(player, inv, i, NULL, 0, 1);
+					inventory_set_slot(player, inv, i, NULL, 0, 1);
 				}
 			}
 			pthread_mutex_unlock(&inv->mut);
 			freeInventory(inv);
 			inv = NULL;
 		} else if (inv->type == INVTYPE_CHEST) {
-			if (inv->te != NULL) {
+			if (inv->tile != NULL) {
 				BEGIN_BROADCAST_DIST(player->entity, 128.)
 				struct packet* pkt = xmalloc(sizeof(struct packet));
 				pkt->id = PKT_PLAY_CLIENT_BLOCKACTION;
-				pkt->data.play_client.blockaction.location.x = inv->te->x;
-				pkt->data.play_client.blockaction.location.y = inv->te->y;
-				pkt->data.play_client.blockaction.location.z = inv->te->z;
+				pkt->data.play_client.blockaction.location.x = inv->tile->x;
+				pkt->data.play_client.blockaction.location.y = inv->tile->y;
+				pkt->data.play_client.blockaction.location.z = inv->tile->z;
 				pkt->data.play_client.blockaction.action_id = 1;
 				pkt->data.play_client.blockaction.action_param = inv->players->entry_count - 1;
-				pkt->data.play_client.blockaction.block_type = world_get_block(player->world, inv->te->x, inv->te->y, inv->te->z) >> 4;
+				pkt->data.play_client.blockaction.block_type = world_get_block(player->world, inv->tile->x, inv->tile->y, inv->tile->z) >> 4;
 				add_queue(bc_player->outgoingPacket, pkt);
 				END_BROADCAST(player->world->players)
 			}

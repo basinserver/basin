@@ -47,7 +47,7 @@ struct slot* smelting_output(struct slot* input) {
 	for (size_t i = 0; i < smelting_recipes->count; i++) {
 		if (smelting_recipes->data[i] == NULL) continue;
 		struct smelting_recipe* sf = (struct smelting_recipe*) smelting_recipes->data[i];
-		if (itemsStackable2(input, &sf->input)) {
+		if (slot_stackable_damage_ignore(input, &sf->input)) {
             pthread_rwlock_unlock(&smelting_fuels->rwlock);
 		    return &sf->output;
 		}
@@ -122,7 +122,7 @@ void init_smelting() {
             goto format_error_recipe;
         }
         recipe->input.damage = (int16_t) input_damage_json->data.number;
-        recipe->input.itemCount = 1;
+        recipe->input.count = 1;
         recipe->input.nbt = NULL;
         struct json_object* output_json = json_get(child_json, "output_item");
         if (output_json == NULL || output_json->type != JSON_NUMBER) {
@@ -141,7 +141,7 @@ void init_smelting() {
         if (output_count_json == NULL || output_count_json->type != JSON_NUMBER) {
             goto format_error_recipe;
         }
-        recipe->output.itemCount = (uint8_t) output_count_json->data.number;
+        recipe->output.count = (uint8_t) output_count_json->data.number;
         recipe->output.nbt = NULL;
         add_smelting_recipe(recipe);
         continue;

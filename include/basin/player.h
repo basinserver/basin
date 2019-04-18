@@ -15,6 +15,7 @@ typedef struct _acstate {
 } acstate_t;
 
 struct player {
+	struct mempool* pool;
 		struct entity* entity;
 		struct world* world;
 		char* name;

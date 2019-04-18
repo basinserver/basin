@@ -75,7 +75,7 @@ int onTick_fallingblock(struct world* world, struct entity* ent) {
 			struct slot sl;
 			sl.item = ent->data.fallingblock.b >> 4;
 			sl.damage = ent->data.fallingblock.b & 0x0f;
-			sl.itemCount = 1;
+			sl.count = 1;
 			sl.nbt = NULL;
 			dropBlockDrop(world, &sl, (int32_t) floor(ent->x), (int32_t) floor(ent->y - .01), (int32_t) floor(ent->z));
 			//ent->onGround = 0;
@@ -93,18 +93,18 @@ int onTick_fallingblock(struct world* world, struct entity* ent) {
 
 void onInteract_cow(struct world* world, struct entity* entity, struct player* interacter, struct slot* item, int16_t slot_index) {
 	if (item->item == ITM_BUCKET && interacter->gamemode != 1) { // TODO: not child
-		if (item->itemCount == 1) {
+		if (item->count == 1) {
 			item->item = ITM_MILK;
-			setSlot(interacter, interacter->inventory, slot_index, item, 1, 0);
+			inventory_set_slot(interacter, interacter->inventory, slot_index, item, 1, 0);
 		} else {
-			item->itemCount--;
-			setSlot(interacter, interacter->inventory, slot_index, item, 1, 0);
+			item->count--;
+			inventory_set_slot(interacter, interacter->inventory, slot_index, item, 1, 0);
 			struct slot slot;
 			slot.item = ITM_MILK;
-			slot.itemCount = 1;
+			slot.count = 1;
 			slot.damage = 0;
 			slot.nbt = NULL;
-			if (addInventoryItem_PI(interacter, interacter->inventory, &slot, 1)) {
+			if (inventory_add_player(interacter, interacter->inventory, &slot, 1)) {
 				dropPlayerItem(interacter, &slot);
 			}
 		}
@@ -113,18 +113,18 @@ void onInteract_cow(struct world* world, struct entity* entity, struct player* i
 
 void onInteract_mooshroom(struct world* world, struct entity* entity, struct player* interacter, struct slot* item, int16_t slot_index) {
 	if (item->item == ITM_BOWL && interacter->gamemode != 1) { // TODO: not child
-		if (item->itemCount == 1) {
+		if (item->count == 1) {
 			item->item = ITM_MUSHROOMSTEW;
-			setSlot(interacter, interacter->inventory, slot_index, item, 1, 0);
+			inventory_set_slot(interacter, interacter->inventory, slot_index, item, 1, 0);
 		} else {
-			item->itemCount--;
-			setSlot(interacter, interacter->inventory, slot_index, item, 1, 0);
+			item->count--;
+			inventory_set_slot(interacter, interacter->inventory, slot_index, item, 1, 0);
 			struct slot slot;
 			slot.item = ITM_MUSHROOMSTEW;
-			slot.itemCount = 1;
+			slot.count = 1;
 			slot.damage = 0;
 			slot.nbt = NULL;
-			if (addInventoryItem_PI(interacter, interacter->inventory, &slot, 1)) {
+			if (inventory_add_player(interacter, interacter->inventory, &slot, 1)) {
 				dropPlayerItem(interacter, &slot);
 			}
 		}
@@ -140,7 +140,7 @@ void onInteract_mooshroom(struct world* world, struct entity* entity, struct pla
 		if (ii != NULL && ii->onItemAttacked != NULL) (*ii->onItemAttacked)(world, interacter, slot_index, item, ent);
 		struct slot slot;
 		slot.item = BLK_MUSHROOM_1;
-		slot.itemCount = 5;
+		slot.count = 5;
 		slot.damage = 0;
 		slot.nbt = NULL;
 		dropEntityItem_explode(ent, &slot);	// TODO: fix?
@@ -284,10 +284,10 @@ int tick_itemstack(struct world* world, struct entity* entity) {
 	cebb.minZ -= .625;
 	cebb.maxZ += .625;
 	struct boundingbox oebb;
-//int32_t cx = ((int32_t) entity->x) >> 4;
-//int32_t cz = ((int32_t) entity->z) >> 4;
-//for (int32_t icx = cx - 1; icx <= cx + 1; icx++)
-//for (int32_t icz = cz - 1; icz <= cz + 1; icz++) {
+//int32_t chunk_x = ((int32_t) entity->x) >> 4;
+//int32_t chunk_z = ((int32_t) entity->z) >> 4;
+//for (int32_t icx = chunk_x - 1; icx <= chunk_x + 1; icx++)
+//for (int32_t icz = chunk_z - 1; icz <= chunk_z + 1; icz++) {
 //struct chunk* ch = world_get_chunk(entity->world, icx, icz);
 //if (ch != NULL) {
 	BEGIN_HASHMAP_ITERATION(entity->world->entities)
@@ -297,9 +297,9 @@ int tick_itemstack(struct world* world, struct entity* entity) {
 		getEntityCollision(oe, &oebb);
 		//printf("%f, %f, %f vs %f, %f, %f\n", entity->x, entity->y, entity->z, oe->x, oe->y, oe->z);
 		if (boundingbox_intersects(&oebb, &cebb)) {
-			int os = entity->data.itemstack.slot->itemCount;
+			int os = entity->data.itemstack.slot->count;
 			pthread_mutex_lock(&oe->data.player.player->inventory->mut);
-			int r = addInventoryItem_PI(oe->data.player.player, oe->data.player.player->inventory, entity->data.itemstack.slot, 1);
+			int r = inventory_add_player(oe->data.player.player, oe->data.player.player->inventory, entity->data.itemstack.slot, 1);
 			pthread_mutex_unlock(&oe->data.player.player->inventory->mut);
 			if (r <= 0) {
 				BEGIN_BROADCAST_DIST(entity, 32.)
@@ -326,7 +326,7 @@ int tick_itemstack(struct world* world, struct entity* entity) {
 			break;
 		}
 	} else if (oe->type == ENT_ITEM) {
-		if (oe->data.itemstack.slot->item == entity->data.itemstack.slot->item && oe->data.itemstack.slot->damage == entity->data.itemstack.slot->damage && oe->data.itemstack.slot->itemCount + entity->data.itemstack.slot->itemCount <= maxStackSize(entity->data.itemstack.slot)) {
+		if (oe->data.itemstack.slot->item == entity->data.itemstack.slot->item && oe->data.itemstack.slot->damage == entity->data.itemstack.slot->damage && oe->data.itemstack.slot->count + entity->data.itemstack.slot->count <= slot_max_size(entity->data.itemstack.slot)) {
 			getEntityCollision(oe, &oebb);
 			oebb.minX -= .625;
 			oebb.maxX += .625;
@@ -335,7 +335,7 @@ int tick_itemstack(struct world* world, struct entity* entity) {
 			oebb.maxZ += .625;
 			if (boundingbox_intersects(&oebb, &cebb)) {
 				world_despawn_entity(world, entity);
-				oe->data.itemstack.slot->itemCount += entity->data.itemstack.slot->itemCount;
+				oe->data.itemstack.slot->count += entity->data.itemstack.slot->count;
 				freeEntity(entity);
 				BEGIN_BROADCAST_DIST(oe, 128.)
 				struct packet* pkt = xmalloc(sizeof(struct packet));
@@ -1168,7 +1168,7 @@ int damageEntity(struct entity* attacked, float damage, int armorable) {
 		struct player* player = attacked->data.player.player;
 		if (player->gamemode == 1 && player->entity->y >= -64.) return 0;
 		if (armorable) for (int i = 5; i <= 8; i++) {
-			struct slot* sl = getSlot(player, player->inventory, i);
+			struct slot* sl = inventory_get(player, player->inventory, i);
 			if (sl != NULL) {
 				struct item_info* ii = getItemInfo(sl->item);
 				if (ii != NULL) {
@@ -1187,7 +1187,7 @@ int damageEntity(struct entity* attacked, float damage, int armorable) {
 		struct player* player = attacked->data.player.player;
 		if (player->gamemode == 1 && player->entity->y >= -64.) return 0;
 		if (armorable) for (int i = 5; i <= 8; i++) {
-			struct slot* sl = getSlot(player, player->inventory, i);
+			struct slot* sl = inventory_get(player, player->inventory, i);
 			if (sl != NULL) {
 				struct item_info* ii = getItemInfo(sl->item);
 				if (ii != NULL && ii->onEntityHitWhileWearing != NULL) {
@@ -1211,9 +1211,9 @@ int damageEntity(struct entity* attacked, float damage, int armorable) {
 			struct player* player = attacked->data.player.player;
 			broadcastf("default", "%s died", player->name);
 			for (size_t i = 0; i < player->inventory->slot_count; i++) {
-				struct slot* slot = getSlot(player, player->inventory, i);
+				struct slot* slot = inventory_get(player, player->inventory, i);
 				if (slot != NULL) dropEntityItem_explode(player->entity, slot);
-				setSlot(player, player->inventory, i, 0, 0, 1);
+				inventory_set_slot(player, player->inventory, i, 0, 0, 1);
 			}
 			if (player->inHand != NULL) {
 				dropEntityItem_explode(player->entity, player->inHand);
@@ -1230,7 +1230,7 @@ int damageEntity(struct entity* attacked, float damage, int armorable) {
 				if (amt <= 0) continue;
 				struct slot it;
 				it.item = el->id;
-				it.itemCount = amt;
+				it.count = amt;
 				it.damage = el->metaMax == el->metaMin ? el->metaMax : (rand() % (el->metaMax - el->metaMin) + el->metaMin);
 				it.nbt = NULL;
 				dropEntityItem_explode(attacked, &it);
@@ -1475,13 +1475,13 @@ void tick_entity(struct world* world, struct entity* entity) {
 			END_HASHMAP_ITERATION(entity->loadingPlayers);
 		}
 	}
-	/*int32_t cx = ((int32_t) entity->x) >> 4;
-	 int32_t cz = ((int32_t) entity->z) >> 4;
+	/*int32_t chunk_x = ((int32_t) entity->x) >> 4;
+	 int32_t chunk_z = ((int32_t) entity->z) >> 4;
 	 int32_t lcx = ((int32_t) entity->lx) >> 4;
 	 int32_t lcz = ((int32_t) entity->lz) >> 4;
-	 if (cx != lcx || cz != lcz) {
+	 if (chunk_x != lcx || chunk_z != lcz) {
 	 struct chunk* lch = getChunk(entity->world, lcx, lcz);
-	 struct chunk* cch = world_get_chunk(entity->world, cx, cz);
+	 struct chunk* cch = world_get_chunk(entity->world, chunk_x, chunk_z);
 	 put_hashmap(lch->entities, entity->id, NULL);
 	 put_hashmap(cch->entities, entity->id, entity);
 	 }*/

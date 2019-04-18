@@ -115,7 +115,7 @@ struct chunk* region_load_chunk(struct region* region, int8_t local_chunk_x, int
     tmp = nbt_get(level, "zPos");
     if (tmp == NULL || tmp->id != NBT_TAG_INT) goto region_error;
     int32_t zPos = tmp->data.nbt_int;
-    struct chunk* chunk = chunk_new(chunk_pool, xPos, zPos);
+    struct chunk* chunk = chunk_new(chunk_pool, (int16_t) xPos, (int16_t) zPos);
     tmp = nbt_get(level, "LightPopulated");
     if (tmp == NULL || tmp->id != NBT_TAG_BYTE) goto region_error;
     chunk->lightpopulated = tmp->data.nbt_byte;
@@ -137,8 +137,9 @@ struct chunk* region_load_chunk(struct region* region, int8_t local_chunk_x, int
     ITER_LLIST(tmp->children_list, value) {
         struct nbt_tag* child = value;
         if (child == NULL || child->id != NBT_TAG_COMPOUND) continue;
-        struct tile_entity* te = parseTileEntity(child);
-        list_append(chunk->tileEntities, te);
+        struct tile_entity* tile = tile_parse(child);
+        uint64_t key = (uint64_t) (tile->x & 0x0f) << 16 | (uint64_t) tile->y << 8 | (uint64_t) (tile->z & 0x0f);
+        hashmap_putint(chunk->tileEntities, key, tile);
         ITER_LLIST_END();
     }
     //TODO: tileticks
@@ -198,7 +199,7 @@ struct chunk* region_load_chunk(struct region* region, int8_t local_chunk_x, int
                     if (section->palette_count >= 256) {
                         pprefree(chunk->pool, section->palette);
                         section->palette = NULL;
-                        section->bpb = 13;
+                        section->bits_per_block = 13;
                         section->palette_count = 0;
                         break;
                     }
@@ -207,23 +208,23 @@ struct chunk* region_load_chunk(struct region* region, int8_t local_chunk_x, int
                 cx: ;
             }
             if (section->palette != NULL) {
-                section->bpb = (uint8_t) ceil(log2(section->palette_count));
-                if (section->bpb < 4) section->bpb = 4;
+                section->bits_per_block = (uint8_t) ceil(log2(section->palette_count));
+                if (section->bits_per_block < 4) section->bits_per_block = 4;
                 section->palette = prealloc(chunk->pool, section->palette, section->palette_count * sizeof(block));
             }
             int32_t bi = 0;
-            section->blocks = pmalloc(chunk->pool, (size_t) (512 * section->bpb + 4));
-            section->block_size = (size_t) (512 * section->bpb);
+            section->blocks = pmalloc(chunk->pool, (size_t) (512 * section->bits_per_block + 4));
+            section->block_size = (size_t) (512 * section->bits_per_block);
             section->block_mask = 0;
-            for (int i = 0; i < section->bpb; i++)
+            for (int i = 0; i < section->bits_per_block; i++)
                 section->block_mask |= 1 << i;
             for (int i = 0; i < 4096; i++) { // [i >> 8][(i & 0xf0) >> 4][i & 0x0f]
-                int32_t block_bytes = (int32_t)((section->bpb == 13 ? blocks[i] : inverse_palette[blocks[i]]) & section->block_mask);
+                int32_t block_bytes = (int32_t)((section->bits_per_block == 13 ? blocks[i] : inverse_palette[blocks[i]]) & section->block_mask);
                 int32_t block_byte_offset = *((int32_t*) (&section->blocks[bi / 8]));
                 int32_t bit_index = bi % 8;
                 block_byte_offset = (block_byte_offset & ~(section->block_mask << bit_index)) | (block_bytes << bit_index);
                 *((int32_t*) &section->blocks[bi / 8]) = block_byte_offset;
-                bi += section->bpb;
+                bi += section->bits_per_block;
             }
             tmp = nbt_get(nbt_section, "BlockLight");
             if (tmp != NULL) {

@@ -18,7 +18,7 @@ struct region {
     char* file;
 };
 
-struct region* region_new(char* path, int16_t x, int16_t z);
+struct region* region_new(struct mempool* parent, char* path, int16_t x, int16_t z);
 
 // WARNING: do not use this function for casual reference to chunks, as region does not track loaded chunks, it only loads them
 

@@ -448,7 +448,7 @@ void onBlockInteract_woodendoor(struct world* world, block blk, int32_t x, int32
 
 void onBlockInteract_workbench(struct world* world, block blk, int32_t x, int32_t y, int32_t z, struct player* player, uint8_t face, float curPosX, float curPosY, float curPosZ) {
 	struct inventory* wb = xmalloc(sizeof(struct inventory));
-	newInventory(wb, INVTYPE_WORKBENCH, 1, 10);
+	inventory_new(wb, INVTYPE_WORKBENCH, 1, 10);
 	wb->title = xstrdup("{\"text\": \"Crafting Table\"}", 0);
 	player_openInventory(player, wb);
 }
@@ -456,11 +456,11 @@ void onBlockInteract_workbench(struct world* world, block blk, int32_t x, int32_
 block onBlockPlaced_chest(struct world* world, block blk, int32_t x, int32_t y, int32_t z, block replaced) {
 	int16_t meta = blk & 0x0f;
 	if (meta < 2 || meta > 5) meta = 2;
-	struct tile_entity* te = newTileEntity("minecraft:chest", x, y, z);
+	struct tile_entity* te = tile_new("minecraft:chest", x, y, z);
 	te->data.chest.lock = NULL;
 	te->data.chest.inv = xmalloc(sizeof(struct inventory));
-	newInventory(te->data.chest.inv, INVTYPE_CHEST, 2, 27);
-	te->data.chest.inv->te = te;
+	inventory_new(te->data.chest.inv, INVTYPE_CHEST, 2, 27);
+	te->data.chest.inv->tile = te;
 	te->data.chest.inv->title = xstrdup("{\"text\": \"Chest\"}", 0);
 	world_set_tile(world, x, y, z, te);
 	return (blk & ~0x0f) | meta;
@@ -470,11 +470,11 @@ block onBlockPlaced_furnace(struct world* world, block blk, int32_t x, int32_t y
 	if ((replaced >> 4) == (BLK_FURNACE_1 >> 4) || (replaced >> 4) == (BLK_FURNACE >> 4)) return blk;
 	int16_t meta = blk & 0x0f;
 	if (meta < 2 || meta > 5) meta = 2;
-	struct tile_entity* te = newTileEntity("minecraft:furnace", x, y, z);
+	struct tile_entity* te = tile_new("minecraft:furnace", x, y, z);
 	te->data.furnace.lock = NULL;
 	te->data.furnace.inv = xmalloc(sizeof(struct inventory));
-	newInventory(te->data.furnace.inv, INVTYPE_FURNACE, 3, 3);
-	te->data.furnace.inv->te = te;
+	inventory_new(te->data.furnace.inv, INVTYPE_FURNACE, 3, 3);
+	te->data.furnace.inv->tile = te;
 	te->data.furnace.inv->title = xstrdup("{\"text\": \"Furnace\"}", 0);
 	world_set_tile(world, x, y, z, te);
 	return (blk & ~0x0f) | meta;
@@ -484,7 +484,7 @@ int onBlockDestroyed_chest(struct world* world, block blk, int32_t x, int32_t y,
 	struct tile_entity* te = world_get_tile(world, x, y, z);
 	if (te == NULL) return 0;
 	for (size_t i = 0; i < te->data.chest.inv->slot_count; i++) {
-		struct slot* sl = getSlot(NULL, te->data.chest.inv, i);
+		struct slot* sl = inventory_get(NULL, te->data.chest.inv, i);
 		dropBlockDrop(world, sl, x, y, z);
 	}
 	world_set_tile(world, x, y, z, NULL);
@@ -506,7 +506,7 @@ void onBlockInteract_chest(struct world* world, block blk, int32_t x, int32_t y,
 	pkt->data.play_client.blockaction.location.y = y;
 	pkt->data.play_client.blockaction.location.z = z;
 	pkt->data.play_client.blockaction.action_id = 1;
-	pkt->data.play_client.blockaction.action_param = te->data.chest.inv->players->entry_count;
+	pkt->data.play_client.blockaction.action_param = te->data.chest.inv->watching_players->entry_count;
 	pkt->data.play_client.blockaction.block_type = blk >> 4;
 	add_queue(bc_player->outgoingPacket, pkt);
 	END_BROADCAST(player->world->players)
@@ -517,7 +517,7 @@ int onBlockDestroyed_furnace(struct world* world, block blk, int32_t x, int32_t 
 	struct tile_entity* te = world_get_tile(world, x, y, z);
 	if (te == NULL) return 0;
 	for (size_t i = 0; i < te->data.furnace.inv->slot_count; i++) {
-		struct slot* sl = getSlot(NULL, te->data.furnace.inv, i);
+		struct slot* sl = inventory_get(NULL, te->data.furnace.inv, i);
 		dropBlockDrop(world, sl, x, y, z);
 	}
 	world_set_tile(world, x, y, z, NULL);
@@ -534,63 +534,63 @@ void onBlockInteract_furnace(struct world* world, block blk, int32_t x, int32_t 
 	player_openInventory(player, te->data.furnace.inv);
 	struct packet* pkt = xmalloc(sizeof(struct packet));
 	pkt->id = PKT_PLAY_CLIENT_WINDOWPROPERTY;
-	pkt->data.play_client.windowproperty.window_id = te->data.furnace.inv->windowID;
+	pkt->data.play_client.windowproperty.window_id = te->data.furnace.inv->window;
 	pkt->data.play_client.windowproperty.property = 1;
 	pkt->data.play_client.windowproperty.value = te->data.furnace.lastBurnMax;
 	add_queue(player->outgoingPacket, pkt);
 	pkt = xmalloc(sizeof(struct packet));
 	pkt->id = PKT_PLAY_CLIENT_WINDOWPROPERTY;
-	pkt->data.play_client.windowproperty.window_id = te->data.furnace.inv->windowID;
+	pkt->data.play_client.windowproperty.window_id = te->data.furnace.inv->window;
 	pkt->data.play_client.windowproperty.property = 3;
 	pkt->data.play_client.windowproperty.value = 200;
 	add_queue(player->outgoingPacket, pkt);
 }
 
 void update_furnace(struct world* world, struct tile_entity* te) {
-	struct slot* si = getSlot(NULL, te->data.furnace.inv, 0);
-	struct slot* fu = getSlot(NULL, te->data.furnace.inv, 1);
-	struct slot* aso = getSlot(NULL, te->data.furnace.inv, 2);
+	struct slot* si = inventory_get(NULL, te->data.furnace.inv, 0);
+	struct slot* fu = inventory_get(NULL, te->data.furnace.inv, 1);
+	struct slot* aso = inventory_get(NULL, te->data.furnace.inv, 2);
 	struct slot* so = smelting_output(si);
 	int16_t st = smelting_burnTime(fu);
 	int burning = 0;
-	if (so != NULL && ((itemsStackable(so, aso) && (aso->itemCount + so->itemCount) <= maxStackSize(so)) || aso == NULL) && (te->data.furnace.burnTime > 0 || st > 0)) {
+	if (so != NULL && ((slot_stackable(so, aso) && (aso->count + so->count) <= slot_max_size(so)) || aso == NULL) && (te->data.furnace.burnTime > 0 || st > 0)) {
 		burning = 1;
 		if (!te->tick) {
 			te->tick = &tetick_furnace;
 			world_tile_set_tickable(world, te);
 			world_set_block(world, BLK_FURNACE_1 | (world_get_block(world, te->x, te->y, te->z) & 0x0f), te->x, te->y, te->z);
 		}
-		//printf("bt = %i\n", te->data.furnace.burn_time);
+		//printf("bt = %i\n", tile->data.furnace.burn_time);
 		if (te->data.furnace.burnTime <= 0 && st > 0 && fu != NULL) {
 			te->data.furnace.burnTime += st + 1;
-			if (--fu->itemCount == 0) fu = NULL;
-			setSlot(NULL, te->data.furnace.inv, 1, fu, 1, 1);
+			if (--fu->count == 0) fu = NULL;
+			inventory_set_slot(NULL, te->data.furnace.inv, 1, fu, 1, 1);
 			te->data.furnace.lastBurnMax = st;
-			BEGIN_BROADCAST(te->data.furnace.inv->players)
+			BEGIN_BROADCAST(te->data.furnace.inv->watching_players)
 			struct packet* pkt = xmalloc(sizeof(struct packet));
 			pkt->id = PKT_PLAY_CLIENT_WINDOWPROPERTY;
-			pkt->data.play_client.windowproperty.window_id = te->data.furnace.inv->windowID;
+			pkt->data.play_client.windowproperty.window_id = te->data.furnace.inv->window;
 			pkt->data.play_client.windowproperty.property = 1;
 			pkt->data.play_client.windowproperty.value = te->data.furnace.lastBurnMax;
 			add_queue(bc_player->outgoingPacket, pkt);
-			END_BROADCAST(te->data.furnace.inv->players)
+			END_BROADCAST(te->data.furnace.inv->watching_players)
 		}
 		if (te->data.furnace.cookTime <= 0) {
 			//printf("start cookin\n");
 			te->data.furnace.cookTime++;
 		} else if (te->data.furnace.cookTime < 200) {
-			//printf("cookin %i/%i\n", te->data.furnace.cookTime, 200);
+			//printf("cookin %i/%i\n", tile->data.furnace.cookTime, 200);
 			te->data.furnace.cookTime++;
 		} else if (te->data.furnace.cookTime == 200) {
 			te->data.furnace.cookTime = 0;
 			//printf("donecookin\n");
-			if (aso == NULL) setSlot(NULL, te->data.furnace.inv, 2, so, 1, 1);
+			if (aso == NULL) inventory_set_slot(NULL, te->data.furnace.inv, 2, so, 1, 1);
 			else {
-				aso->itemCount++;
-				setSlot(NULL, te->data.furnace.inv, 2, aso, 1, 1);
+				aso->count++;
+				inventory_set_slot(NULL, te->data.furnace.inv, 2, aso, 1, 1);
 			}
-			if (--si->itemCount == 0) si = NULL;
-			setSlot(NULL, te->data.furnace.inv, 0, si, 1, 1);
+			if (--si->count == 0) si = NULL;
+			inventory_set_slot(NULL, te->data.furnace.inv, 0, si, 1, 1);
 			te->data.furnace.burnTime++; // freebie for accounting
 		}
 	} else te->data.furnace.cookTime = 0;
@@ -598,20 +598,20 @@ void update_furnace(struct world* world, struct tile_entity* te) {
 		te->data.furnace.burnTime--;
 	} else {
 		if (te->tick) {
-			BEGIN_BROADCAST(te->data.furnace.inv->players)
+			BEGIN_BROADCAST(te->data.furnace.inv->watching_players)
 			struct packet* pkt = xmalloc(sizeof(struct packet));
 			pkt->id = PKT_PLAY_CLIENT_WINDOWPROPERTY;
-			pkt->data.play_client.windowproperty.window_id = te->data.furnace.inv->windowID;
+			pkt->data.play_client.windowproperty.window_id = te->data.furnace.inv->window;
 			pkt->data.play_client.windowproperty.property = 0;
 			pkt->data.play_client.windowproperty.value = 0;
 			add_queue(bc_player->outgoingPacket, pkt);
 			pkt = xmalloc(sizeof(struct packet));
 			pkt->id = PKT_PLAY_CLIENT_WINDOWPROPERTY;
-			pkt->data.play_client.windowproperty.window_id = te->data.furnace.inv->windowID;
+			pkt->data.play_client.windowproperty.window_id = te->data.furnace.inv->window;
 			pkt->data.play_client.windowproperty.property = 2;
 			pkt->data.play_client.windowproperty.value = 0;
 			add_queue(bc_player->outgoingPacket, pkt);
-			END_BROADCAST(te->data.furnace.inv->players)
+			END_BROADCAST(te->data.furnace.inv->watching_players)
 			world_tile_unset_tickable(world, te);
 			te->tick = NULL;
 			world_set_block(world, BLK_FURNACE | (world_get_block(world, te->x, te->y, te->z) & 0x0f), te->x, te->y, te->z);
@@ -619,20 +619,20 @@ void update_furnace(struct world* world, struct tile_entity* te) {
 		te->data.furnace.cookTime = 0;
 	}
 	if (burning && tick_counter % 5 == 0) {
-		BEGIN_BROADCAST(te->data.furnace.inv->players)
+		BEGIN_BROADCAST(te->data.furnace.inv->watching_players)
 		struct packet* pkt = xmalloc(sizeof(struct packet));
 		pkt->id = PKT_PLAY_CLIENT_WINDOWPROPERTY;
-		pkt->data.play_client.windowproperty.window_id = te->data.furnace.inv->windowID;
+		pkt->data.play_client.windowproperty.window_id = te->data.furnace.inv->window;
 		pkt->data.play_client.windowproperty.property = 0;
 		pkt->data.play_client.windowproperty.value = te->data.furnace.burnTime;
 		add_queue(bc_player->outgoingPacket, pkt);
 		pkt = xmalloc(sizeof(struct packet));
 		pkt->id = PKT_PLAY_CLIENT_WINDOWPROPERTY;
-		pkt->data.play_client.windowproperty.window_id = te->data.furnace.inv->windowID;
+		pkt->data.play_client.windowproperty.window_id = te->data.furnace.inv->window;
 		pkt->data.play_client.windowproperty.property = 2;
 		pkt->data.play_client.windowproperty.value = te->data.furnace.cookTime;
 		add_queue(bc_player->outgoingPacket, pkt);
-		END_BROADCAST(te->data.furnace.inv->players)
+		END_BROADCAST(te->data.furnace.inv->watching_players)
 	}
 }
 
@@ -642,14 +642,14 @@ void dropItems_gravel(struct world* world, block blk, int32_t x, int32_t y, int3
 		struct slot drop;
 		drop.item = ITM_FLINT;
 		drop.damage = 0;
-		drop.itemCount = 1;
+		drop.count = 1;
 		drop.nbt = NULL;
 		dropBlockDrop(world, &drop, x, y, z);
 	} else {
 		struct slot drop;
 		drop.item = BLK_GRAVEL >> 4;
 		drop.damage = BLK_GRAVEL & 0x0f;
-		drop.itemCount = 1;
+		drop.count = 1;
 		drop.nbt = NULL;
 		dropBlockDrop(world, &drop, x, y, z);
 	}
@@ -685,7 +685,7 @@ void dropItems_leaves(struct world* world, block blk, int32_t x, int32_t y, int3
 				drop.damage = 5;
 			} else return;
 		} else return;
-		drop.itemCount = 1;
+		drop.count = 1;
 		drop.nbt = NULL;
 		dropBlockDrop(world, &drop, x, y, z);
 	}
@@ -699,7 +699,7 @@ void dropItems_leaves(struct world* world, block blk, int32_t x, int32_t y, int3
 			struct slot drop;
 			drop.item = ITM_APPLE;
 			drop.damage = 0;
-			drop.itemCount = 1;
+			drop.count = 1;
 			drop.nbt = NULL;
 			dropBlockDrop(world, &drop, x, y, z);
 		}
@@ -711,7 +711,7 @@ void dropItems_tallgrass(struct world* world, block blk, int32_t x, int32_t y, i
 		struct slot drop;
 		drop.item = ITM_SEEDS;
 		drop.damage = 0;
-		drop.itemCount = 1 + (rand() % (fortune * 2 + 1));
+		drop.count = 1 + (rand() % (fortune * 2 + 1));
 		drop.nbt = NULL;
 		dropBlockDrop(world, &drop, x, y, z);
 	}
@@ -949,7 +949,7 @@ void dropItems_hugemushroom(struct world* world, block blk, int32_t x, int32_t y
 		struct slot drop;
 		drop.item = ((blk >> 4) == (BLK_MUSHROOM_2 >> 4) ? 39 : 40);
 		drop.damage = 0;
-		drop.itemCount = ct;
+		drop.count = ct;
 		drop.nbt = NULL;
 		dropBlockDrop(world, &drop, x, y, z);
 	}
@@ -964,7 +964,7 @@ void dropItems_crops(struct world* world, block blk, int32_t x, int32_t y, int32
 		maxAge = 7;
 		if (age >= maxAge) {
 			drop.item = ITM_WHEAT;
-			drop.itemCount = 1;
+			drop.count = 1;
 			drop.damage = 0;
 			drop.nbt = NULL;
 			dropBlockDrop(world, &drop, x, y, z);
@@ -972,7 +972,7 @@ void dropItems_crops(struct world* world, block blk, int32_t x, int32_t y, int32
 		seed = ITM_SEEDS;
 	} else if ((blk >> 4) == (BLK_PUMPKINSTEM >> 4)) {
 		drop.item = ITM_SEEDS_PUMPKIN;
-		drop.itemCount = 1;
+		drop.count = 1;
 		drop.damage = 0;
 		drop.nbt = NULL;
 		for (int i = 0; i < 3; i++) {
@@ -984,7 +984,7 @@ void dropItems_crops(struct world* world, block blk, int32_t x, int32_t y, int32
 		maxAge = 7;
 	} else if ((blk >> 4) == (BLK_PUMPKINSTEM_1 >> 4)) {
 		drop.item = ITM_SEEDS_MELON;
-		drop.itemCount = 1;
+		drop.count = 1;
 		drop.damage = 0;
 		drop.nbt = NULL;
 		for (int i = 0; i < 3; i++) {
@@ -998,7 +998,7 @@ void dropItems_crops(struct world* world, block blk, int32_t x, int32_t y, int32
 		maxAge = 7;
 		if (age >= maxAge) {
 			drop.item = ITM_CARROTS;
-			drop.itemCount = 1;
+			drop.count = 1;
 			drop.damage = 0;
 			drop.nbt = NULL;
 			dropBlockDrop(world, &drop, x, y, z);
@@ -1009,13 +1009,13 @@ void dropItems_crops(struct world* world, block blk, int32_t x, int32_t y, int32
 		seed = ITM_POTATO;
 		if (age >= maxAge) {
 			drop.item = ITM_POTATO;
-			drop.itemCount = 1;
+			drop.count = 1;
 			drop.damage = 0;
 			drop.nbt = NULL;
 			dropBlockDrop(world, &drop, x, y, z);
 			if (rand() % 50 == 0) {
 				drop.item = ITM_POTATOPOISONOUS;
-				drop.itemCount = 1;
+				drop.count = 1;
 				drop.damage = 0;
 				drop.nbt = NULL;
 				dropBlockDrop(world, &drop, x, y, z);
@@ -1024,7 +1024,7 @@ void dropItems_crops(struct world* world, block blk, int32_t x, int32_t y, int32
 	} else if ((blk >> 4) == (BLK_NETHERSTALK >> 4)) {
 		int rct = 1;
 		drop.item = ITM_NETHERSTALKSEEDS;
-		drop.itemCount = 1;
+		drop.count = 1;
 		drop.damage = 0;
 		drop.nbt = NULL;
 		if (age >= 3) {
@@ -1038,7 +1038,7 @@ void dropItems_crops(struct world* world, block blk, int32_t x, int32_t y, int32
 		maxAge = 3;
 		if (age >= maxAge) {
 			drop.item = ITM_BEETROOT;
-			drop.itemCount = 1;
+			drop.count = 1;
 			drop.damage = 0;
 			drop.nbt = NULL;
 			dropBlockDrop(world, &drop, x, y, z);
@@ -1048,7 +1048,7 @@ void dropItems_crops(struct world* world, block blk, int32_t x, int32_t y, int32
 		int rc = 1;
 		if (age >= 2) rc = 3;
 		drop.item = ITM_DYEPOWDER_BLACK;
-		drop.itemCount = 1;
+		drop.count = 1;
 		drop.damage = 3;
 		drop.nbt = NULL;
 		for (int i = 0; i < rc; i++)
@@ -1057,7 +1057,7 @@ void dropItems_crops(struct world* world, block blk, int32_t x, int32_t y, int32
 	}
 	if (seed > 0) {
 		drop.item = seed;
-		drop.itemCount = 1;
+		drop.count = 1;
 		drop.damage = 0;
 		drop.nbt = NULL;
 		if (age >= maxAge) {

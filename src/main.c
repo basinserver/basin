@@ -361,7 +361,7 @@ int main(int argc, char* argv[]) {
 	acclog(delog, "Blocks Initialized");
 	init_entities();
 	acclog(delog, "Entities Initialized");
-	init_crafting();
+	crafting_init();
 	acclog(delog, "Crafting Initialized");
     tools_init();
 	acclog(delog, "Tools Initialized");

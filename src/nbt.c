@@ -7,8 +7,10 @@
 
 #include <basin/nbt.h>
 #include <basin/network.h>
+#include <basin/globals.h>
 #include <avuna/string.h>
 #include <avuna/llist.h>
+#include <avuna/log.h>
 #include <stdlib.h>
 #include <zlib.h>
 #include <stdio.h>
@@ -276,39 +278,39 @@ ssize_t __recurReadNBT(struct mempool* pool, struct nbt_tag** root, unsigned cha
 
 #define DECOMPRESS_BUF_SIZE 16384
 ssize_t nbt_decompress(struct mempool* pool, void* data, size_t size, void** dest) {
-	void* rtbuf = pmalloc(pool, DECOMPRESS_BUF_SIZE);
-	size_t rtc = DECOMPRESS_BUF_SIZE;
+	void* out_buf = pmalloc(pool, DECOMPRESS_BUF_SIZE);
+	size_t out_buf_cap = DECOMPRESS_BUF_SIZE;
 	z_stream strm;
 	strm.zalloc = Z_NULL;
 	strm.zfree = Z_NULL;
 	strm.opaque = Z_NULL;
 	strm.avail_in = 0;
 	strm.next_in = Z_NULL;
-	int dr = 0;
-	if ((dr = inflateInit2(&strm, (32 + MAX_WBITS))) != Z_OK) {
-		printf("Compression initialization error!\n");
+	int inflate_result = 0;
+	if ((inflate_result = inflateInit2(&strm, (32 + MAX_WBITS))) != Z_OK) {
+		errlog(delog, "Compression initialization error!\n");
 		return -1;
 	}
 	strm.avail_in = (uInt) size;
 	strm.next_in = data;
-	strm.avail_out = (uInt) rtc;
-	strm.next_out = rtbuf;
+	strm.avail_out = (uInt) out_buf_cap;
+	strm.next_out = out_buf;
 	do {
-		if (rtc - strm.total_out < DECOMPRESS_BUF_SIZE / 2) {
-			rtc *= 2;
-			rtbuf = realloc(rtbuf, rtc);
+		if (out_buf_cap - strm.total_out < DECOMPRESS_BUF_SIZE / 2) {
+			out_buf_cap *= 2;
+			out_buf = realloc(out_buf, out_buf_cap);
 		}
-		strm.avail_out = rtc - strm.total_out;
-		strm.next_out = rtbuf + strm.total_out;
-		dr = inflate(&strm, Z_FINISH);
-		if (dr == Z_STREAM_ERROR) {
-			printf("Compression Read Error!\n");
+		strm.avail_out = out_buf_cap - strm.total_out;
+		strm.next_out = out_buf + strm.total_out;
+		inflate_result = inflate(&strm, Z_FINISH);
+		if (inflate_result == Z_STREAM_ERROR) {
+			errlog(delog, "Compression Read Error!\n");
 			inflateEnd(&strm);
 			return -1;
 		}
 	} while (strm.avail_out == 0);
 	inflateEnd(&strm);
-	*dest = rtbuf;
+	*dest = out_buf;
 	return strm.total_out;
 }
 

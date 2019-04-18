@@ -10,10 +10,6 @@
 
 #include <basin/world.h>
 
-#define NETHER -1
-#define OVERWORLD 0
-#define ENDWORLD 1
-
 struct world* getWorldByID(int32_t id);
 
 #endif /* WORLDMANAGER_H_ */

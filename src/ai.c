@@ -611,7 +611,7 @@ int ai_shouldnearestattackabletarget(struct world* world, struct entity* entity,
 		int zo = hasFlag(getEntityInfo(entity->type), "zombie");
 		int cr = hasFlag(getEntityInfo(entity->type), "creeper");
 		if (sk || zo || cr) {
-			struct slot* hs = getSlot(pl, pl->inventory, 5);
+			struct slot* hs = inventory_get(pl, pl->inventory, 5);
 			if (hs != NULL) {
 				if (sk && hs->damage == 0) dsq *= 2.;
 				else if (zo && hs->damage == 2) dsq *= 2.;

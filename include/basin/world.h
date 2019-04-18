@@ -14,6 +14,7 @@
 #include <basin/region.h>
 #include <basin/boundingbox.h>
 #include <basin/block.h>
+#include <basin/server.h>
 #include <basin/inventory.h>
 #include <basin/perlin.h>
 #include <avuna/hash.h>
@@ -22,21 +23,21 @@
 #include <stdint.h>
 #include <pthread.h>
 
+
+#define NETHER -1
+#define OVERWORLD 0
+#define ENDWORLD 1
+
 struct chunk_request {
-		struct world* world;
-		int32_t cx;
-		int32_t cz;
-		uint8_t load;
+    struct world* world;
+    int32_t chunk_x;
+    int32_t chunk_z;
+    uint8_t load;
+    void (*callback)(void* arg, struct world* world, struct chunk* chunk);
+    void* request_arg;
 };
 
-pthread_cond_t chunk_wake;
-pthread_mutex_t chunk_wake_mut;
-
 struct entity;
-
-struct queue* globalChunkQueue;
-
-void chunkloadthr(size_t b);
 
 struct scheduled_tick {
 		int32_t x;
@@ -44,15 +45,18 @@ struct scheduled_tick {
 		int32_t z;
 		int32_t ticksLeft;
 		float priority;
-		block src; // TODO: this should be checked before activating!
+		block src;
 };
 
 struct world {
-	struct mempool* pool;
+    struct mempool* pool;
+    struct server* server;
 	struct hashmap* entities;
 	struct hashmap* players;
 	struct hashmap* regions;
 	struct hashmap* chunks;
+	pthread_mutex_t tick_mut;
+	pthread_cond_t tick_cond;
 	char* levelType;
 	struct encpos spawnpos;
 	int32_t dimension;
@@ -60,28 +64,26 @@ struct world {
 	uint64_t age;
 	struct nbt_tag* level;
 	char* world_folder;
-	size_t chl_count;
 	uint8_t skylightSubtracted;
 	struct hashmap* scheduledTicks;
 	uint16_t ticksInSecond;
 	float tps;
 	uint64_t seed;
 	struct perlin perlin;
+	struct queue* chunk_requests;
 };
 
 // "*_guess" functions accept a chunk guess and call the proper function if the chunk is a miss. used to optimize chunk lookups in intensive local algorithms. probably overused.
 
+void world_chunkload_thread(struct world* world);
+
 uint16_t world_height_guess(struct world* world, struct chunk* ch, int32_t x, int32_t z);
-
-int world_blockRayTrace(struct boundingbox* bb, int32_t x, int32_t y, int32_t z, double px, double py, double pz, double ex, double ey, double ez, double *qx, double* qy, double* qz);
-
-int world_rayTrace(struct world* world, double x, double y, double z, double ex, double ey, double ez, int stopOnLiquid, int ignoreNonCollidable, int returnLast, double* rx, double* ry, double* rz);
 
 void world_schedule_block_tick(struct world* world, int32_t x, int32_t y, int32_t z, int32_t ticksFromNow, float priority);
 
 int world_set_block_noupdate(struct world* world, block blk, int32_t x, int32_t y, int32_t z);
 
-int world_set_block_guess_noupdate(struct world* world, struct chunk* chunk, block blk, int32_t x, int32_t y, int32_t z);
+int world_set_block_guess_noupdate(struct world* world, struct chunk* chunk, block requested_block, int32_t x, int32_t y, int32_t z);
 
 void world_tick(struct world* world);
 
@@ -97,6 +99,8 @@ int world_save(struct world* world, char* path);
 struct chunk* world_get_chunk(struct world* world, int32_t x, int32_t z);
 
 struct chunk* world_get_chunk_guess(struct world* world, struct chunk* ch, int32_t x, int32_t z);
+
+struct chunk* world_get_entity_chunk(struct entity* entity);
 
 void world_unload_chunk(struct world* world, struct chunk* chunk);
 
@@ -114,11 +118,11 @@ int world_set_block_guess(struct world* world, struct chunk* chunk, block blk, i
 
 struct tile_entity* world_get_tile(struct world* world, int32_t x, int32_t y, int32_t z);
 
-void world_set_tile(struct world* world, int32_t x, int32_t y, int32_t z, struct tile_entity* te);
+void world_set_tile(struct world* world, int32_t x, int32_t y, int32_t z, struct tile_entity* tile);
 
-void world_tile_set_tickable(struct world* world, struct tile_entity* te);
+void world_tile_set_tickable(struct world* world, struct tile_entity* tile);
 
-void world_tile_unset_tickable(struct world* world, struct tile_entity* te);
+void world_tile_unset_tickable(struct world* world, struct tile_entity* tile);
 
 struct world* world_new(size_t chl_count);
 

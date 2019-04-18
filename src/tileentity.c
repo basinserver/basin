@@ -19,7 +19,9 @@ void tetick_furnace(struct world* world, struct tile_entity* te) {
 	update_furnace(world, te);
 }
 
-struct tile_entity* parseTileEntity(struct nbt_tag* tag) {
+//TODO: tile entity type registry for plugins/mods
+
+struct tile_entity* tile_parse(struct mempool* parent, struct nbt_tag* tag) {
 	struct tile_entity* te = xmalloc(sizeof(struct tile_entity));
 	te->id = NULL;
 	struct nbt_tag* tmp = NULL;
@@ -39,8 +41,8 @@ struct tile_entity* parseTileEntity(struct nbt_tag* tag) {
 	if (streq_nocase(te->id, "minecraft:chest")) {
 		tmp = nbt_get(tag, "CustomName");
 		te->data.chest.inv = xmalloc(sizeof(struct inventory));
-		newInventory(te->data.chest.inv, INVTYPE_CHEST, 2, 27);
-		te->data.chest.inv->te = te;
+        inventory_new(te->data.chest.inv, INVTYPE_CHEST, 2, 27);
+		te->data.chest.inv->tile = te;
 		if (tmp == NULL) te->data.chest.inv->title = xstrdup("{\"text\": \"Chest\"}", 0);
 		else {
 			size_t tl = 17 + strlen(tmp->data.nbt_string);
@@ -65,7 +67,7 @@ struct tile_entity* parseTileEntity(struct nbt_tag* tag) {
 			sl->item = getItemFromName(tmp->data.nbt_string);
 			tmp = nbt_get(nitem, "Count");
 			if (tmp == NULL || tmp->id != NBT_TAG_BYTE) continue;
-			sl->itemCount = tmp->data.nbt_byte;
+			sl->count = tmp->data.nbt_byte;
 			tmp = nbt_get(nitem, "Damage");
 			if (tmp == NULL || tmp->id != NBT_TAG_SHORT) continue;
 			sl->damage = tmp->data.nbt_short;
@@ -82,8 +84,8 @@ struct tile_entity* parseTileEntity(struct nbt_tag* tag) {
 		te->tick = tetick_furnace;
 		tmp = nbt_get(tag, "CustomName");
 		te->data.furnace.inv = xmalloc(sizeof(struct inventory));
-		newInventory(te->data.furnace.inv, INVTYPE_CHEST, 2, 27);
-		te->data.furnace.inv->te = te;
+        inventory_new(te->data.furnace.inv, INVTYPE_CHEST, 2, 27);
+		te->data.furnace.inv->tile = te;
 		if (tmp == NULL) te->data.furnace.inv->title = xstrdup("{\"text\": \"Furnace\"}", 0);
 		else {
 			size_t tl = 17 + strlen(tmp->data.nbt_string);
@@ -117,7 +119,7 @@ struct tile_entity* parseTileEntity(struct nbt_tag* tag) {
 			sl->item = getItemFromName(tmp->data.nbt_string);
 			tmp = nbt_get(nitem, "Count");
 			if (tmp == NULL || tmp->id != NBT_TAG_BYTE) continue;
-			sl->itemCount = tmp->data.nbt_byte;
+			sl->count = tmp->data.nbt_byte;
 			tmp = nbt_get(nitem, "Damage");
 			if (tmp == NULL || tmp->id != NBT_TAG_SHORT) continue;
 			sl->damage = tmp->data.nbt_short;
@@ -139,68 +141,61 @@ struct tile_entity* parseTileEntity(struct nbt_tag* tag) {
 	return NULL;
 }
 
-struct tile_entity* newTileEntity(char* id, int32_t x, uint8_t y, int32_t z) {
-	struct tile_entity* te = xmalloc(sizeof(struct tile_entity));
-	te->id = xstrdup(id, 0);
-	te->x = x;
-	te->y = y;
-	te->z = z;
-	te->tick = NULL;
-	memset(&te->data, 0, sizeof(union tile_entity_data));
-	return te;
+struct tile_entity* tile_new(struct mempool* parent, char* id, int32_t x, uint8_t y, int32_t z) {
+	struct mempool* pool = mempool_new();
+	pchild(parent, pool);
+	struct tile_entity* tile = pmalloc(pool, sizeof(struct tile_entity));
+	tile->pool = pool;
+	tile->id = str_dup(id, 0, tile->pool);
+	tile->x = x;
+	tile->y = y;
+	tile->z = z;
+	tile->tick = NULL;
+	memset(&tile->data, 0, sizeof(union tile_entity_data));
+	return tile;
 }
 
-struct nbt_tag* serializeTileEntity(struct tile_entity* te, int forClient) {
+struct nbt_tag* tile_serialize(struct mempool* parent, struct tile_entity* tile, int forClient) {
 	struct nbt_tag* nbt = xmalloc(sizeof(struct nbt_tag));
 	nbt->id = NBT_TAG_COMPOUND;
 	nbt->name = NULL;
 	nbt->children_count = 4;
-	if (streq_nocase(te->id, "minecraft:chest") && !forClient) {
+	if (streq_nocase(tile->id, "minecraft:chest") && !forClient) {
 		nbt->children_count = 5;
 	}
 	nbt->children = xmalloc(sizeof(struct nbt_tag*) * nbt->children_count);
 	nbt->children[0] = xmalloc(sizeof(struct nbt_tag));
 	nbt->children[0]->id = NBT_TAG_STRING;
 	nbt->children[0]->name = xstrdup("id", 0);
-	nbt->children[0]->data.nbt_string = xstrdup(te->id, 0);
+	nbt->children[0]->data.nbt_string = xstrdup(tile->id, 0);
 	nbt->children[0]->children_count = 0;
 	nbt->children[0]->children = NULL;
 	nbt->children[1] = xmalloc(sizeof(struct nbt_tag));
 	nbt->children[1]->id = NBT_TAG_INT;
 	nbt->children[1]->name = xstrdup("x", 0);
-	nbt->children[1]->data.nbt_int = te->x;
+	nbt->children[1]->data.nbt_int = tile->x;
 	nbt->children[1]->children_count = 0;
 	nbt->children[1]->children = NULL;
 	nbt->children[2] = xmalloc(sizeof(struct nbt_tag));
 	nbt->children[2]->id = NBT_TAG_INT;
 	nbt->children[2]->name = xstrdup("y", 0);
-	nbt->children[2]->data.nbt_int = te->y;
+	nbt->children[2]->data.nbt_int = tile->y;
 	nbt->children[2]->children_count = 0;
 	nbt->children[2]->children = NULL;
 	nbt->children[3] = xmalloc(sizeof(struct nbt_tag));
 	nbt->children[3]->id = NBT_TAG_INT;
 	nbt->children[3]->name = xstrdup("z", 0);
-	nbt->children[3]->data.nbt_int = te->z;
+	nbt->children[3]->data.nbt_int = tile->z;
 	nbt->children[3]->children_count = 0;
 	nbt->children[3]->children = NULL;
-	if (streq_nocase(te->id, "minecraft:chest") && !forClient) {
+	if (streq_nocase(tile->id, "minecraft:chest") && !forClient) {
 		/*nbt->children[4] = xmalloc(sizeof(struct nbt_tag));
 		 nbt->children[4]->id = NBT_TAG_INT;
 		 nbt->children[4]->name = xstrdup("z", 0);
-		 nbt->children[4]->data.nbt_int = te->z;
+		 nbt->children[4]->data.nbt_int = tile->z;
 		 nbt->children[4]->children_count = 0;
 		 nbt->children[4]->children = NULL;
 		 */
 	}
 	return nbt;
-}
-
-void freeTileEntity(struct tile_entity* te) {
-	if (streq_nocase(te->id, "minecraft:chest")) {
-		freeInventory(te->data.chest.inv);
-		xfree(te->data.chest.inv);
-		xfree(te->data.chest.lock);
-	}
-	xfree(te->id);
-	xfree(te);
 }

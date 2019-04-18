@@ -50,37 +50,37 @@ void loadPlayer(struct player* to, struct player* from) {
 	pkt->id = PKT_PLAY_CLIENT_ENTITYEQUIPMENT;
 	pkt->data.play_client.entityequipment.entity_id = from->entity->id;
 	pkt->data.play_client.entityequipment.slot = 0;
-	duplicateSlot(from->inventory->slots == NULL ? NULL : from->inventory->slots[from->currentItem + 36], &pkt->data.play_client.entityequipment.item);
+    slot_duplicate(from->inventory->slots == NULL ? NULL : from->inventory->slots[from->currentItem + 36], &pkt->data.play_client.entityequipment.item);
 	add_queue(to->outgoingPacket, pkt);
 	pkt = xmalloc(sizeof(struct packet));
 	pkt->id = PKT_PLAY_CLIENT_ENTITYEQUIPMENT;
 	pkt->data.play_client.entityequipment.entity_id = from->entity->id;
 	pkt->data.play_client.entityequipment.slot = 5;
-	duplicateSlot(from->inventory->slots == NULL ? NULL : from->inventory->slots[5], &pkt->data.play_client.entityequipment.item);
+    slot_duplicate(from->inventory->slots == NULL ? NULL : from->inventory->slots[5], &pkt->data.play_client.entityequipment.item);
 	add_queue(to->outgoingPacket, pkt);
 	pkt = xmalloc(sizeof(struct packet));
 	pkt->id = PKT_PLAY_CLIENT_ENTITYEQUIPMENT;
 	pkt->data.play_client.entityequipment.entity_id = from->entity->id;
 	pkt->data.play_client.entityequipment.slot = 4;
-	duplicateSlot(from->inventory->slots == NULL ? NULL : from->inventory->slots[6], &pkt->data.play_client.entityequipment.item);
+    slot_duplicate(from->inventory->slots == NULL ? NULL : from->inventory->slots[6], &pkt->data.play_client.entityequipment.item);
 	add_queue(to->outgoingPacket, pkt);
 	pkt = xmalloc(sizeof(struct packet));
 	pkt->id = PKT_PLAY_CLIENT_ENTITYEQUIPMENT;
 	pkt->data.play_client.entityequipment.entity_id = from->entity->id;
 	pkt->data.play_client.entityequipment.slot = 3;
-	duplicateSlot(from->inventory->slots == NULL ? NULL : from->inventory->slots[7], &pkt->data.play_client.entityequipment.item);
+    slot_duplicate(from->inventory->slots == NULL ? NULL : from->inventory->slots[7], &pkt->data.play_client.entityequipment.item);
 	add_queue(to->outgoingPacket, pkt);
 	pkt = xmalloc(sizeof(struct packet));
 	pkt->id = PKT_PLAY_CLIENT_ENTITYEQUIPMENT;
 	pkt->data.play_client.entityequipment.entity_id = from->entity->id;
 	pkt->data.play_client.entityequipment.slot = 2;
-	duplicateSlot(from->inventory->slots == NULL ? NULL : from->inventory->slots[8], &pkt->data.play_client.entityequipment.item);
+    slot_duplicate(from->inventory->slots == NULL ? NULL : from->inventory->slots[8], &pkt->data.play_client.entityequipment.item);
 	add_queue(to->outgoingPacket, pkt);
 	pkt = xmalloc(sizeof(struct packet));
 	pkt->id = PKT_PLAY_CLIENT_ENTITYEQUIPMENT;
 	pkt->data.play_client.entityequipment.entity_id = from->entity->id;
 	pkt->data.play_client.entityequipment.slot = 1;
-	duplicateSlot(from->inventory->slots == NULL ? NULL : from->inventory->slots[45], &pkt->data.play_client.entityequipment.item);
+    slot_duplicate(from->inventory->slots == NULL ? NULL : from->inventory->slots[45], &pkt->data.play_client.entityequipment.item);
 	add_queue(to->outgoingPacket, pkt);
 	put_hashmap(to->loadedEntities, from->entity->id, from->entity);
 	put_hashmap(from->entity->loadingPlayers, to->entity->id, to);
@@ -174,7 +174,7 @@ void onInventoryUpdate(struct player* player, struct inventory* inv, int slot) {
 	if (inv->type == INVTYPE_PLAYERINVENTORY) {
 		if (slot == player->currentItem + 36) {
 			if (player->itemUseDuration > 0 && player->itemUseHand == 0) {
-				struct slot* ihs = getSlot(player, player->inventory, player->itemUseHand ? 45 : (36 + player->currentItem));
+				struct slot* ihs = inventory_get(player, player->inventory, player->itemUseHand ? 45 : (36 + player->currentItem));
 				struct item_info* ihi = ihs == NULL ? NULL : getItemInfo(ihs->item);
 				if (ihs == NULL || ihi == NULL) player->itemUseDuration = 0;
 				else {
@@ -187,7 +187,7 @@ void onInventoryUpdate(struct player* player, struct inventory* inv, int slot) {
 			pkt->id = PKT_PLAY_CLIENT_ENTITYEQUIPMENT;
 			pkt->data.play_client.entityequipment.entity_id = player->entity->id;
 			pkt->data.play_client.entityequipment.slot = 0;
-			duplicateSlot(getSlot(player, inv, player->currentItem + 36), &pkt->data.play_client.entityequipment.item);
+                                slot_duplicate(inventory_get(player, inv, player->currentItem + 36), &pkt->data.play_client.entityequipment.item);
 			add_queue(bc_player->outgoingPacket, pkt);
 			END_BROADCAST(player->world->players)
 		} else if (slot >= 5 && slot <= 8) {
@@ -199,7 +199,7 @@ void onInventoryUpdate(struct player* player, struct inventory* inv, int slot) {
 			else if (slot == 6) pkt->data.play_client.entityequipment.slot = 4;
 			else if (slot == 7) pkt->data.play_client.entityequipment.slot = 3;
 			else if (slot == 8) pkt->data.play_client.entityequipment.slot = 2;
-			duplicateSlot(getSlot(player, inv, slot), &pkt->data.play_client.entityequipment.item);
+                                slot_duplicate(inventory_get(player, inv, slot), &pkt->data.play_client.entityequipment.item);
 			add_queue(bc_player->outgoingPacket, pkt);
 			END_BROADCAST(player->world->players)
 		} else if (slot == 45) {
@@ -208,19 +208,19 @@ void onInventoryUpdate(struct player* player, struct inventory* inv, int slot) {
 			pkt->id = PKT_PLAY_CLIENT_ENTITYEQUIPMENT;
 			pkt->data.play_client.entityequipment.entity_id = player->entity->id;
 			pkt->data.play_client.entityequipment.slot = 1;
-			duplicateSlot(getSlot(player, inv, 45), &pkt->data.play_client.entityequipment.item);
+                                slot_duplicate(inventory_get(player, inv, 45), &pkt->data.play_client.entityequipment.item);
 			add_queue(bc_player->outgoingPacket, pkt);
 			END_BROADCAST(player->world->players)
 		} else if (slot >= 1 && slot <= 4) {
-			setSlot(player, inv, 0, getCraftResult(&inv->slots[1], 4), 1, 1);
+			inventory_set_slot(player, inv, 0, crafting_result(&inv->slots[1], 4), 1, 1);
 		}
 	} else if (inv->type == INVTYPE_WORKBENCH) {
 		if (slot >= 1 && slot <= 9) {
-			setSlot(player, inv, 0, getCraftResult(&inv->slots[1], 9), 1, 1);
+			inventory_set_slot(player, inv, 0, crafting_result(&inv->slots[1], 9), 1, 1);
 		}
 	} else if (inv->type == INVTYPE_FURNACE) {
 		if (slot >= 0 && slot <= 2 && player != NULL) {
-			update_furnace(player->world, inv->te);
+			update_furnace(player->world, inv->tile);
 		}
 	}
 }
@@ -237,7 +237,7 @@ void dropBlockDrop(struct world* world, struct slot* slot, int32_t x, int32_t y,
 	item->motY = .2;
 	item->motZ = randFloat() * .2 - .1;
 	item->data.itemstack.delayBeforeCanPickup = 0;
-	duplicateSlot(slot, item->data.itemstack.slot);
+    slot_duplicate(slot, item->data.itemstack.slot);
     world_spawn_entity(world, item);
 	BEGIN_BROADCAST_DIST(item, 128.)
 	loadEntity(bc_player, item);
@@ -257,7 +257,7 @@ void dropPlayerItem(struct player* player, struct slot* drop) {
 	item->motY += (randFloat() - randFloat()) * .1;
 	item->motZ += sin(nos) * mag;
 	item->data.itemstack.delayBeforeCanPickup = 20;
-	duplicateSlot(drop, item->data.itemstack.slot);
+    slot_duplicate(drop, item->data.itemstack.slot);
     world_spawn_entity(player->world, item);
 	BEGIN_BROADCAST_DIST(player->entity, 128.)
 	loadEntity(bc_player, item);
@@ -289,7 +289,7 @@ void dropEntityItem_explode(struct entity* entity, struct slot* drop) {
 	item->motZ = cos(f2) * f1;
 	item->motY = .2;
 	item->data.itemstack.delayBeforeCanPickup = 20;
-	duplicateSlot(drop, item->data.itemstack.slot);
+    slot_duplicate(drop, item->data.itemstack.slot);
     world_spawn_entity(entity->world, item);
 	BEGIN_BROADCAST_DIST(entity, 128.)
 	loadEntity(bc_player, item);
@@ -300,7 +300,7 @@ void dropBlockDrops(struct world* world, block blk, struct player* breaker, int3
 	struct block_info* bi = getBlockInfo(blk);
 	int badtool = !bi->material->requiresnotool && breaker != NULL;
 	if (badtool) {
-		struct slot* ci = getSlot(breaker, breaker->inventory, 36 + breaker->currentItem);
+		struct slot* ci = inventory_get(breaker, breaker->inventory, 36 + breaker->currentItem);
 		if (ci != NULL) {
 			struct item_info* ii = getItemInfo(ci->item);
 			if (ii != NULL) badtool = !tools_proficient(ii->toolType, ii->harvestLevel, blk);
@@ -312,7 +312,7 @@ void dropBlockDrops(struct world* world, block blk, struct player* breaker, int3
 		struct slot dd;
 		dd.item = bi->drop;
 		dd.damage = bi->drop_damage;
-		dd.itemCount = bi->drop_min + ((bi->drop_max == bi->drop_min) ? 0 : (rand() % (bi->drop_max - bi->drop_min)));
+		dd.count = bi->drop_min + ((bi->drop_max == bi->drop_min) ? 0 : (rand() % (bi->drop_max - bi->drop_min)));
 		dd.nbt = NULL;
 		dropBlockDrop(world, &dd, x, y, z);
 	} else (*bi->dropItems)(world, blk, x, y, z, 0);
@@ -321,7 +321,7 @@ void dropBlockDrops(struct world* world, block blk, struct player* breaker, int3
 void player_openInventory(struct player* player, struct inventory* inv) {
 	struct packet* pkt = xmalloc(sizeof(struct packet));
 	pkt->id = PKT_PLAY_CLIENT_OPENWINDOW;
-	pkt->data.play_client.openwindow.window_id = inv->windowID;
+	pkt->data.play_client.openwindow.window_id = inv->window;
 	char* type = "";
 	if (inv->type == INVTYPE_WORKBENCH) {
 		type = "minecraft:crafting_table";
@@ -336,15 +336,15 @@ void player_openInventory(struct player* player, struct inventory* inv) {
 	if (inv->type == INVTYPE_HORSE) pkt->data.play_client.openwindow.entity_id = 0; //TODO
 	add_queue(player->outgoingPacket, pkt);
 	player->openInv = inv;
-	put_hashmap(inv->players, player->entity->id, player);
+	put_hashmap(inv->watching_players, player->entity->id, player);
 	if (inv->slot_count > 0) {
 		pkt = xmalloc(sizeof(struct packet));
 		pkt->id = PKT_PLAY_CLIENT_WINDOWITEMS;
-		pkt->data.play_client.windowitems.window_id = inv->windowID;
+		pkt->data.play_client.windowitems.window_id = inv->window;
 		pkt->data.play_client.windowitems.count = inv->slot_count;
 		pkt->data.play_client.windowitems.slot_data = xmalloc(sizeof(struct slot) * inv->slot_count);
 		for (size_t i = 0; i < inv->slot_count; i++) {
-			duplicateSlot(inv->slots[i], &pkt->data.play_client.windowitems.slot_data[i]);
+            slot_duplicate(inv->slots[i], &pkt->data.play_client.windowitems.slot_data[i]);
 		}
 		add_queue(player->outgoingPacket, pkt);
 	}

@@ -225,7 +225,7 @@ int readSlot(struct mempool* pool, struct slot* slot, unsigned char* buffer, siz
 	swapEndian(&slot->item, 2);
 	if (slot->item == -1) {
 		slot->damage = 0;
-		slot->itemCount = 0;
+		slot->count = 0;
 		slot->nbt = pmalloc(pool, sizeof(struct nbt_tag));
 		slot->nbt->id = NBT_TAG_END;
 		slot->nbt->name = NULL;
@@ -235,7 +235,7 @@ int readSlot(struct mempool* pool, struct slot* slot, unsigned char* buffer, siz
 	buffer += 2;
 	buflen -= 2;
 	if (buflen < 4) return -1;
-	slot->itemCount = *buffer;
+	slot->count = *buffer;
 	buffer++;
 	buflen--;
 	memcpy(&slot->damage, buffer, 2);
@@ -243,18 +243,6 @@ int readSlot(struct mempool* pool, struct slot* slot, unsigned char* buffer, siz
 	buffer += 2;
 	buflen -= 2;
 	return 5 + nbt_read(&slot->nbt, buffer, buflen);
-}
-
-void duplicateSlot(struct mempool* pool, struct slot* slot, struct slot* dup) {
-	if (slot == NULL) {
-		memset(dup, 0, sizeof(struct slot));
-		dup->item = -1;
-		return;
-	}
-	dup->item = slot->item;
-	dup->damage = slot->damage;
-	dup->itemCount = slot->itemCount;
-	dup->nbt = nbt_clone(pool, slot->nbt);
 }
 
 int writeSlot(struct slot* slot, unsigned char* buffer, size_t buflen) {
@@ -265,7 +253,7 @@ int writeSlot(struct slot* slot, unsigned char* buffer, size_t buflen) {
 	buflen -= 2;
 	if (slot->item < 0) return 2;
 	if (buflen < 3) return -1;
-	memcpy(buffer, &slot->itemCount, 1);
+	memcpy(buffer, &slot->count, 1);
 	buffer++;
 	buflen--;
 	memcpy(buffer, &slot->damage, 2);

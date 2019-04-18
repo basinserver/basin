@@ -144,21 +144,22 @@ union tile_entity_data {
 };
 
 struct tile_entity {
-		char* id;
-		int32_t x;
-		uint8_t y;
-		int32_t z;
-		void (*tick)(struct world* world, struct tile_entity* te);
-		union tile_entity_data data;
+	char* id;
+	struct mempool* pool;
+	int32_t x;
+	uint8_t y;
+	int32_t z;
+	void (*tick)(struct world* world, struct tile_entity* te);
+	union tile_entity_data data;
 };
 
 void tetick_furnace(struct world* world, struct tile_entity* te);
 
-struct tile_entity* parseTileEntity(struct nbt_tag* tag);
+struct tile_entity* tile_parse(struct mempool* parent, struct nbt_tag* tag);
 
-struct tile_entity* newTileEntity(char* id, int32_t x, uint8_t y, int32_t z);
+struct tile_entity* tile_new(struct mempool* parent, char* id, int32_t x, uint8_t y, int32_t z);
 
-struct nbt_tag* serializeTileEntity(struct tile_entity* te, int forClient);
+struct nbt_tag* tile_serialize(struct mempool* parent, struct tile_entity* tile, int forClient);
 
 void freeTileEntity(struct tile_entity* te);
 

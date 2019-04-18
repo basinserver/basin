@@ -1149,7 +1149,7 @@ ssize_t packet_write(struct connection* conn, struct packet* packet) {
 			for (int ymj = 0; ymj < 16; ymj++) {
 				if (packet->data.play_client.chunkdata.data->sections[ymj] == NULL) continue;
 				primary_bit_mask |= (uint16_t) pow(2, ymj);
-				ccs += packet->data.play_client.chunkdata.data->sections[ymj]->bpb * 512 + 4 + 2048;
+				ccs += packet->data.play_client.chunkdata.data->sections[ymj]->bits_per_block * 512 + 4 + 2048;
 				if (packet->data.play_client.chunkdata.data->sections[ymj]->skyLight != NULL) ccs += 2048;
 				for (int i = 0; i < packet->data.play_client.chunkdata.data->sections[ymj]->palette_count; i++) {
 					ccs += getVarIntSize(packet->data.play_client.chunkdata.data->sections[ymj]->palette[i]);
@@ -1163,7 +1163,7 @@ ssize_t packet_write(struct connection* conn, struct packet* packet) {
 			//data
 			for (int ymj = 0; ymj < 16; ymj++) {
 				if (packet->data.play_client.chunkdata.data->sections[ymj] == NULL) continue;
-				uint8_t bpb = packet->data.play_client.chunkdata.data->sections[ymj]->bpb;
+				uint8_t bpb = packet->data.play_client.chunkdata.data->sections[ymj]->bits_per_block;
 				ENS(1)
 				memcpy(pktbuf + pi, &bpb, 1);
 				pi += 1;

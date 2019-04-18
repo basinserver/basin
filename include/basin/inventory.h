@@ -8,6 +8,8 @@
 #ifndef INVENTORY_H_
 #define INVENTORY_H_
 
+#include <basin/player.h>
+#include <basin/nbt.h>
 #include <avuna/hash.h>
 #include <stdint.h>
 #include <pthread.h>
@@ -34,55 +36,48 @@ int* itemSizeMap;
 int itemMapLength;
 
 struct slot {
-		int16_t item;
-		unsigned char itemCount;
-		int16_t damage;
-		struct nbt_tag* nbt;
+	int16_t item;
+	unsigned char count;
+	int16_t damage;
+	struct nbt_tag* nbt;
 };
 
 struct inventory {
-		char* title;
-		struct slot** slots;
-		size_t slot_count;
-		int type;
-		int16_t** props;
-		size_t prop_count;
-		int windowID;
-		struct hashmap* players;
-		uint16_t* dragSlot;
-		uint16_t dragSlot_count;
-		struct tile_entity* te;
-		pthread_mutex_t mut;
+	struct mempool* pool;
+	char* title;
+	int type;
+	struct slot** slots;
+	size_t slot_count;
+	int window;
+	struct hashmap* watching_players;
+	struct tile_entity* tile;
+	pthread_rwlock_t rwlock;
 };
 
 struct player;
 
-void setSlot(struct player* player, struct inventory* inv, int index, struct slot* slot, int broadcast, int free);
+struct inventory* inventory_new(struct mempool* pool, int type, int id, size_t slots, char* title);
 
-int validItemForSlot(int invtype, int si, struct slot* slot);
+void slot_duplicate(struct mempool* pool, struct slot* slot, struct slot* dup);
 
-struct slot* getSlot(struct player* player, struct inventory* inv, int index);
+void inventory_set_slot(struct player* player, struct inventory* inv, int index, struct slot* slot, int broadcast);
 
-int maxStackSize(struct slot* slot);
+struct slot* inventory_get(struct player* player, struct inventory* inv, int index);
 
-void copyInventory(struct slot** from, struct slot** to, int size);
+void inventory_duplicate(struct mempool* pool, struct slot** from, struct slot** to, size_t size);
 
-void swapSlots(struct player* player, struct inventory* inv, int i1, int i2, int broadcast);
+int inventory_validate(int invtype, int index, struct slot* slot);
 
-int itemsStackable(struct slot* s1, struct slot* s2);
+int slot_max_size(struct slot* slot);
 
-int itemsStackable2(struct slot* s1, struct slot* s2);
+void inventory_swap(struct player* player, struct inventory* inv, int index1, int index2, int broadcast);
 
-void newInventory(struct inventory* inv, int type, int id, int slots);
+int slot_stackable(struct slot* s1, struct slot* s2);
 
-void freeInventory(struct inventory* inv);
+int slot_stackable_damage_ignore(struct slot* s1, struct slot* s2);
 
-void freeSlot(struct slot* slot);
+int inventory_add_player(struct player* player, struct inventory* inv, struct slot* slot, int broadcast);
 
-int addInventoryItem_PI(struct player* player, struct inventory* inv, struct slot* slot, int broadcast);
-
-int addInventoryItem(struct player* player, struct inventory* inv, struct slot* slot, int start, int end, int broadcast);
-
-void setInventoryProperty(struct inventory* inv, int16_t name, int16_t value);
+int inventory_add(struct player* player, struct inventory* inv, struct slot* slot, int start, int end, int broadcast);
 
 #endif /* INVENTORY_H_ */

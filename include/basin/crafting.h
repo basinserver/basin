@@ -9,8 +9,10 @@
 #define CRAFTING_H_
 
 #include <basin/network.h>
+#include <basin/inventory.h>
+#include <avuna/list.h>
 
-struct collection* crafting_recipies;
+struct list* crafting_recipies;
 
 struct crafting_recipe {
 		struct slot* slot[9];
@@ -19,14 +21,12 @@ struct crafting_recipe {
 		uint8_t width;
 };
 
-void init_crafting();
+void crafting_init();
 
-void craftOnce(struct player* player, struct inventory* inv);
+void crafting_once(struct player* player, struct inventory* inv);
 
-int craftAll(struct player* player, struct inventory* inv);
+int crafting_all(struct player* player, struct inventory* inv);
 
-struct slot* getCraftResult(struct slot** slots, size_t slot_count);
-
-void add_crafting(struct crafting_recipe* recipe);
+struct slot* crafting_result(struct mempool* pool, struct slot** slots, size_t slot_count); // 012/345/678 or 01/23
 
 #endif /* CRAFTING_H_ */

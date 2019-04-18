@@ -81,7 +81,7 @@ void perlin_init(struct perlin* perlin, uint64_t seed) {
 		while ((n = nums[seed % 256]) >= 256) {
 			seed = perlin_rand(seed);
 		}
-		perlin->perm[x] = n;
+		perlin->perm[x] = (uint8_t) n;
 		nums[seed % 256] = 256;
 	}
 	for (uint16_t x = 0; x < 512; x++) {

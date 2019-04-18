@@ -40,13 +40,13 @@ int onItemInteract_bed(struct world* world, struct player* player, uint8_t slot_
 		if (!player_can_place_block(player, b2, x2, y2, z2, face) || world_set_block(player->world, b2, x2, y2, z2)) {
 			world_set_block(player->world, pre, x, y, z);
 			world_set_block(player->world, pre2, x2, y2, z2);
-			setSlot(player, player->inventory, 36 + player->currentItem, slot, 1, 1);
+			inventory_set_slot(player, player->inventory, 36 + player->currentItem, slot, 1, 1);
 			return 0;
 		} else if (player->gamemode != 1) {
-			if (--slot->itemCount <= 0) {
+			if (--slot->count <= 0) {
 				slot = NULL;
 			}
-			setSlot(player, player->inventory, 36 + player->currentItem, slot, 1, 1);
+			inventory_set_slot(player, player->inventory, 36 + player->currentItem, slot, 1, 1);
 		}
 		world_update_block_guess(world, NULL, x, y, z);
 		world_update_block_guess(world, NULL, x + 1, y, z);
@@ -58,7 +58,7 @@ int onItemInteract_bed(struct world* world, struct player* player, uint8_t slot_
 	} else {
 		world_set_block(player->world, pre, x, y, z);
 		world_set_block(player->world, pre2, x2, y2, z2);
-		setSlot(player, player->inventory, 36 + player->currentItem, slot, 1, 1);
+		inventory_set_slot(player, player->inventory, 36 + player->currentItem, slot, 1, 1);
 	}
 	return 0;
 }
@@ -173,7 +173,7 @@ int onItemInteract_painting(struct world* world, struct player* player, uint8_t 
 		else if (p == 24) ent->data.painting.title = "Skeleton";
 		else if (p == 25) ent->data.painting.title = "DonkeyKong";
 		world_spawn_entity(world, ent);
-		if (player->gamemode != 1) setSlot(player, player->inventory, 36 + player->currentItem, NULL, 1, 1);
+		if (player->gamemode != 1) inventory_set_slot(player, player->inventory, 36 + player->currentItem, NULL, 1, 1);
 	}
 	return 0;
 
@@ -192,7 +192,7 @@ int onItemInteract_minecart(struct world* world, struct player* player, uint8_t 
 	else if (slot->item == ITM_MINECARTCOMMANDBLOCK) et = ENT_MINECARTCOMMANDBLOCK;
 	struct entity* ent = newEntity(nextEntityID++, (double) x + .5, (double) y + dy, (double) z + .5, et, 0., 0.);
 	world_spawn_entity(world, ent);
-	if (player->gamemode != 1) setSlot(player, player->inventory, 36 + player->currentItem, NULL, 1, 1);
+	if (player->gamemode != 1) inventory_set_slot(player, player->inventory, 36 + player->currentItem, NULL, 1, 1);
 	return 0;
 
 }
@@ -223,13 +223,13 @@ int onItemInteract_door(struct world* world, struct player* player, uint8_t slot
 		if (!player_can_place_block(player, b2, x, y + 1, z, face) || world_set_block(player->world, b2, x, y + 1, z)) {
 			world_set_block(player->world, pre, x, y, z);
 			world_set_block(player->world, pre2, x, y + 1, z);
-			setSlot(player, player->inventory, 36 + player->currentItem, slot, 1, 1);
+			inventory_set_slot(player, player->inventory, 36 + player->currentItem, slot, 1, 1);
 			return 0;
 		} else if (player->gamemode != 1) {
-			if (--slot->itemCount <= 0) {
+			if (--slot->count <= 0) {
 				slot = NULL;
 			}
-			setSlot(player, player->inventory, 36 + player->currentItem, slot, 1, 1);
+			inventory_set_slot(player, player->inventory, 36 + player->currentItem, slot, 1, 1);
 		}
 		world_update_block_guess(world, NULL, x, y, z);
 		world_update_block_guess(world, NULL, x + 1, y, z);
@@ -241,7 +241,7 @@ int onItemInteract_door(struct world* world, struct player* player, uint8_t slot
 	} else {
 		world_set_block(player->world, pre, x, y, z);
 		world_set_block(player->world, pre2, x, y + 1, z);
-		setSlot(player, player->inventory, 36 + player->currentItem, slot, 1, 1);
+		inventory_set_slot(player, player->inventory, 36 + player->currentItem, slot, 1, 1);
 	}
 	return 0;
 }
@@ -285,16 +285,16 @@ int onItemInteract_itemblock(struct world* world, struct player* player, uint8_t
 	if (player_can_place_block(player, b, x, y, z, face)) {
 		if (world_set_block(player->world, b, x, y, z)) {
 			world_set_block(player->world, pre, x, y, z);
-			setSlot(player, player->inventory, 36 + player->currentItem, slot, 1, 1);
+			inventory_set_slot(player, player->inventory, 36 + player->currentItem, slot, 1, 1);
 		} else if (player->gamemode != 1) {
-			if (--slot->itemCount <= 0) {
+			if (--slot->count <= 0) {
 				slot = NULL;
 			}
-			setSlot(player, player->inventory, 36 + player->currentItem, slot, 1, 1);
+			inventory_set_slot(player, player->inventory, 36 + player->currentItem, slot, 1, 1);
 		}
 	} else {
 		world_set_block(player->world, pre, x, y, z);
-		setSlot(player, player->inventory, 36 + player->currentItem, slot, 1, 1);
+		inventory_set_slot(player, player->inventory, 36 + player->currentItem, slot, 1, 1);
 	}
 	return 0;
 }
@@ -306,7 +306,7 @@ int onItemBreakBlock_tool(struct world* world, struct player* player, uint8_t sl
 	if (player->gamemode != 1 && ++slot->damage >= ii->maxDamage) {
 		slot = NULL;
 	}
-	setSlot(player, player->inventory, slot_index, slot, 1, 1);
+	inventory_set_slot(player, player->inventory, slot_index, slot, 1, 1);
 	return 0;
 }
 
@@ -317,7 +317,7 @@ float onItemAttacked_tool(struct world* world, struct player* player, uint8_t sl
 	if (player->gamemode != 1 && ++slot->damage >= ii->maxDamage) {
 		slot = NULL;
 	}
-	setSlot(player, player->inventory, slot_index, slot, 1, 1);
+	inventory_set_slot(player, player->inventory, slot_index, slot, 1, 1);
 	return ii->damage;
 }
 
@@ -340,7 +340,7 @@ int onItemInteract_flintandsteel(struct world* world, struct player* player, uin
 	if (player->gamemode != 1 && ++slot->damage >= ii->maxDamage) {
 		slot = NULL;
 	}
-	setSlot(player, player->inventory, slot_index, slot, 1, 1);
+	inventory_set_slot(player, player->inventory, slot_index, slot, 1, 1);
 	world_set_block(world, BLK_FIRE, x, y, z);
 	return 0;
 }
@@ -359,10 +359,10 @@ int onItemInteract_spawnegg(struct world* world, struct player* player, uint8_t 
 	uint32_t etx = getIDFromEntityDataName(tmp->data.nbt_string);
 	struct entity* ent = newEntity(nextEntityID++, (float) x + .5, (float) y, (float) z + .5, etx, 0., 0.);
 	world_spawn_entity(world, ent);
-	if (player->gamemode != 1 && --slot->itemCount <= 0) {
+	if (player->gamemode != 1 && --slot->count <= 0) {
 		slot = NULL;
 	}
-	setSlot(player, player->inventory, slot_index, slot, 1, 1);
+	inventory_set_slot(player, player->inventory, slot_index, slot, 1, 1);
 	return 0;
 }
 
@@ -374,10 +374,10 @@ int onItemInteract_reeds(struct world* world, struct player* player, uint8_t slo
 	if (!canBePlaced_reeds(world, BLK_REEDS, x, y, z)) return 0;
 	struct item_info* ii = getItemInfo(slot->item);
 	if (ii == NULL) return 0;
-	if (player->gamemode != 1 && --slot->itemCount <= 0) {
+	if (player->gamemode != 1 && --slot->count <= 0) {
 		slot = NULL;
 	}
-	setSlot(player, player->inventory, slot_index, slot, 1, 1);
+	inventory_set_slot(player, player->inventory, slot_index, slot, 1, 1);
 	world_set_block(world, BLK_REEDS, x, y, z);
 	return 0;
 }
@@ -395,7 +395,7 @@ int onItemInteract_bucket(struct world* world, struct player* player, uint8_t sl
 		world_set_block(world, BLK_WATER_1, x, y, z);
 		if (player->gamemode != 1) {
 			slot->item = ITM_BUCKET;
-			setSlot(player, player->inventory, slot_index, slot, 1, 1);
+			inventory_set_slot(player, player->inventory, slot_index, slot, 1, 1);
 		}
 	} else if (slot->item == ITM_BUCKETLAVA) {
 		if (b != 0 && !bi->material->replacable && ba != BLK_LAVA >> 4 && ba != BLK_LAVA_1 >> 4) return 0;
@@ -403,7 +403,7 @@ int onItemInteract_bucket(struct world* world, struct player* player, uint8_t sl
 		world_set_block(world, BLK_LAVA_1, x, y, z);
 		if (player->gamemode != 1) {
 			slot->item = ITM_BUCKET;
-			setSlot(player, player->inventory, slot_index, slot, 1, 1);
+			inventory_set_slot(player, player->inventory, slot_index, slot, 1, 1);
 		}
 	} else if (slot->item == ITM_BUCKET) {
 		if ((b & 0x0f) != 0) return 0;
@@ -411,13 +411,13 @@ int onItemInteract_bucket(struct world* world, struct player* player, uint8_t sl
 			world_set_block(world, 0, x, y, z);
 			if (player->gamemode != 1) {
 				slot->item = ITM_BUCKETWATER;
-				setSlot(player, player->inventory, slot_index, slot, 1, 1);
+				inventory_set_slot(player, player->inventory, slot_index, slot, 1, 1);
 			}
 		} else if (ba == BLK_LAVA >> 4 || ba == BLK_LAVA_1 >> 4) {
 			world_set_block(world, 0, x, y, z);
 			if (player->gamemode != 1) {
 				slot->item = ITM_BUCKETLAVA;
-				setSlot(player, player->inventory, slot_index, slot, 1, 1);
+				inventory_set_slot(player, player->inventory, slot_index, slot, 1, 1);
 			}
 		}
 	}
@@ -473,10 +473,10 @@ int onItemInteract_bonemeal(struct world* world, struct player* player, uint8_t 
 			}
 		}
 	} else return 0;
-	if (player->gamemode != 1 && --slot->itemCount <= 0) {
+	if (player->gamemode != 1 && --slot->count <= 0) {
 		slot = NULL;
 	}
-	setSlot(player, player->inventory, slot_index, slot, 1, 1);
+	inventory_set_slot(player, player->inventory, slot_index, slot, 1, 1);
 	return 0;
 }
 
@@ -501,10 +501,10 @@ int onItemInteract_seeds(struct world* world, struct player* player, uint8_t slo
 	else if (slot->item == ITM_NETHERSTALKSEEDS) tp = BLK_NETHERSTALK;
 	else if (slot->item == ITM_BEETROOT_SEEDS) tp = BLK_BEETROOTS;
 	else if (slot->item == ITM_DYEPOWDER_BLACK) tp = BLK_COCOA;
-	if (player->gamemode != 1 && --slot->itemCount <= 0) {
+	if (player->gamemode != 1 && --slot->count <= 0) {
 		slot = NULL;
 	}
-	setSlot(player, player->inventory, slot_index, slot, 1, 1);
+	inventory_set_slot(player, player->inventory, slot_index, slot, 1, 1);
 	world_set_block(world, tp, x, y, z);
 	return 0;
 }
@@ -519,7 +519,7 @@ int onItemInteract_hoe(struct world* world, struct player* player, uint8_t slot_
 		if (player->gamemode != 1 && ++slot->damage >= ii->maxDamage) {
 			slot = NULL;
 		}
-		setSlot(player, player->inventory, slot_index, slot, 1, 1);
+		inventory_set_slot(player, player->inventory, slot_index, slot, 1, 1);
 		world_set_block(world, BLK_FARMLAND, x, y, z);
 	}
 	return 0;
@@ -535,7 +535,7 @@ int onItemInteract_shovel(struct world* world, struct player* player, uint8_t sl
 		if (player->gamemode != 1 && ++slot->damage >= ii->maxDamage) {
 			slot = NULL;
 		}
-		setSlot(player, player->inventory, slot_index, slot, 1, 1);
+		inventory_set_slot(player, player->inventory, slot_index, slot, 1, 1);
 		world_set_block(world, BLK_GRASSPATH, x, y, z);
 	}
 	return 0;
@@ -549,9 +549,9 @@ void onItemUse_armor(struct world* world, struct player* player, uint8_t slot_in
 	else if (ii->armorType == ARMOR_CHESTPLATE) sli = 6;
 	else if (ii->armorType == ARMOR_LEGGINGS) sli = 7;
 	else if (ii->armorType == ARMOR_BOOTS) sli = 8;
-	if (getSlot(player, player->inventory, sli) != NULL) return;
-	setSlot(player, player->inventory, sli, slot, 1, 1);
-	setSlot(player, player->inventory, slot_index, NULL, 1, 0);
+	if (inventory_get(player, player->inventory, sli) != NULL) return;
+	inventory_set_slot(player, player->inventory, sli, slot, 1, 1);
+	inventory_set_slot(player, player->inventory, slot_index, NULL, 1, 0);
 }
 
 float onEntityHitWhileWearing_armor(struct world* world, struct player* player, uint8_t slot_index, struct slot* slot, float damage) {
@@ -561,7 +561,7 @@ float onEntityHitWhileWearing_armor(struct world* world, struct player* player, 
 	if (player->gamemode != 1 && ++slot->damage >= ii->maxDamage) {
 		slot = NULL;
 	}
-	setSlot(player, player->inventory, slot_index, slot, 1, 1);
+	inventory_set_slot(player, player->inventory, slot_index, slot, 1, 1);
 	return damage;
 }
 
@@ -571,12 +571,12 @@ int bow_isArrow(struct slot* slot) {
 }
 
 int bow_findAmmo(struct player* player) {
-	struct slot* tmp = getSlot(player, player->inventory, 45);
+	struct slot* tmp = inventory_get(player, player->inventory, 45);
 	if (bow_isArrow(tmp)) return 45;
-	tmp = getSlot(player, player->inventory, 36 + player->currentItem);
+	tmp = inventory_get(player, player->inventory, 36 + player->currentItem);
 	if (bow_isArrow(tmp)) return 36 + player->currentItem;
 	for (int i = 0; i < player->inventory->slot_count; i++) {
-		struct slot* tmp = getSlot(player, player->inventory, i);
+		struct slot* tmp = inventory_get(player, player->inventory, i);
 		if (bow_isArrow(tmp)) return i;
 	}
 	return -1;
@@ -591,7 +591,7 @@ void onItemUse_bow(struct world* world, struct player* player, uint8_t slot_inde
 	if (player->gamemode != 1) {
 		if (bs < 0) return;
 		//TODO: or infinity enchantment
-		ammo = getSlot(player, player->inventory, bs);
+		ammo = inventory_get(player, player->inventory, bs);
 	}
 	float velocity = (float) ticks / 20.;
 	if (velocity > 1.) velocity = 1.;
@@ -633,10 +633,10 @@ void onItemUse_bow(struct world* world, struct player* player, uint8_t slot_inde
 		//TODO: punch enchant
 		//TODO: flame enchant
 		if (ammo != NULL) {
-			if (--ammo->itemCount <= 0) {
+			if (--ammo->count <= 0) {
 				ammo = NULL;
 			}
-			setSlot(player, player->inventory, bs, ammo, 1, 1);
+			inventory_set_slot(player, player->inventory, bs, ammo, 1, 1);
 		}
 		world_spawn_entity(player->world, arrow);
 	}
@@ -670,8 +670,8 @@ void onItemUse_food(struct world* world, struct player* player, uint8_t slot_ind
 		player->saturation += arg->saturation * arg->food * 2.;
 		if (player->saturation > player->food) player->saturation = player->food;
 		player_hungerUpdate(player);
-		if (--slot->itemCount <= 0) slot = NULL;
-		setSlot(player, player->inventory, slot_index, slot, 1, 1);
+		if (--slot->count <= 0) slot = NULL;
+		inventory_set_slot(player, player->inventory, slot_index, slot, 1, 1);
 	}
 }
 

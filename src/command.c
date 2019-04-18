@@ -27,9 +27,9 @@ void command_gamemode(struct player* player, char** args, size_t args_count) {
 		sendMessageToPlayer(player, "[ERROR] No such player found.", "red");
 		return;
 	}
-	if (streq_nocase(args[0], "0") || streq_nocase(args[0], "survival")) {
+	if (str_eq(args[0], "0") || str_eq(args[0], "survival")) {
 		player_set_gamemode(target, 0);
-	} else if (streq_nocase(args[0], "1") || streq_nocase(args[0], "creative")) {
+	} else if (str_eq(args[0], "1") || str_eq(args[0], "creative")) {
 		player_set_gamemode(target, 1);
 	} else {
 		sendMessageToPlayer(target, "[ERROR] No such gamemode found.", "red");

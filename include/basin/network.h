@@ -58,8 +58,6 @@ int readSlot(struct mempool* pool, struct slot* slot, unsigned char* buffer, siz
 
 int writeSlot(struct slot* slot, unsigned char* buffer, size_t buflen);
 
-void duplicateSlot(struct mempool* pool, struct slot* slot, struct slot* dup);
-
 int writeVarInt_stream(int32_t input,
 #ifdef __MINGW32__
 		SOCKET
