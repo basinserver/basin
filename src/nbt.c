@@ -480,3 +480,26 @@ ssize_t nbt_write(struct nbt_tag* root, unsigned char* buffer, size_t buflen) {
 	if (buflen == 0) return 0;
 	return __recurWriteNBT(root, buffer, buflen, 0);
 }
+
+struct nbt_tag* nbt_new(struct mempool* pool, uint8_t type) {
+	struct nbt_tag* tag = pcalloc(pool, sizeof(struct nbt_tag));
+	tag->pool = pool;
+	tag->id = type;
+	if (type == NBT_TAG_LIST || type == NBT_TAG_COMPOUND) {
+		tag->children_list = llist_new(pool);
+	}
+	if (type == NBT_TAG_COMPOUND) {
+		tag->children = hashmap_new(8, pool);
+	}
+}
+
+void nbt_put(struct nbt_tag* parent, struct nbt_tag* child) {
+	if (parent->id == NBT_TAG_COMPOUND || parent->id == NBT_TAG_LIST) {
+		llist_append(parent->children_list, child);
+	}
+	if (parent->id == NBT_TAG_COMPOUND) {
+		hashmap_put(parent->children, child->name, child);
+	}
+}
+
+

@@ -15,6 +15,7 @@
 #include <basin/boundingbox.h>
 #include <basin/block.h>
 #include <basin/server.h>
+#include <basin/player.h>
 #include <basin/inventory.h>
 #include <basin/perlin.h>
 #include <avuna/hash.h>
@@ -124,9 +125,7 @@ void world_tile_set_tickable(struct world* world, struct tile_entity* tile);
 
 void world_tile_unset_tickable(struct world* world, struct tile_entity* tile);
 
-struct world* world_new(size_t chl_count);
-
-void world_free(struct world* world);
+struct world* world_new(struct server* server);
 
 void world_spawn_entity(struct world* world, struct entity* entity);
 
@@ -146,9 +145,9 @@ uint8_t world_get_light_guess(struct world* world, struct chunk* ch, int32_t x, 
 
 uint8_t world_get_light(struct world* world, int32_t x, int32_t y, int32_t z, uint8_t checkNeighbors);
 
-void world_set_light_guess(struct world* world, uint8_t light, int32_t x, int32_t y, int32_t z, uint8_t blocklight);
+void world_set_light(struct world* world, uint8_t light, int32_t x, int32_t y, int32_t z, uint8_t blocklight);
 
-void world_set_light(struct world* world, struct chunk* ch, uint8_t light, int32_t x, int32_t y, int32_t z, uint8_t blocklight);
+void world_set_light_guess(struct world* world, struct chunk* ch, uint8_t light, int32_t x, int32_t y, int32_t z, uint8_t blocklight);
 
 uint8_t world_get_raw_light_guess(struct world* world, struct chunk* ch, int32_t x, int32_t y, int32_t z, uint8_t blocklight);
 

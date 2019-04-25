@@ -72,4 +72,8 @@ ssize_t nbt_read(struct mempool* pool, struct nbt_tag** root, unsigned char* buf
 
 ssize_t nbt_write(struct nbt_tag* root, unsigned char* buffer, size_t buflen);
 
+struct nbt_tag* nbt_new(struct mempool* pool, uint8_t type);
+
+void nbt_put(struct nbt_tag* parent, struct nbt_tag* child);
+
 #endif /* NBT_H_ */
