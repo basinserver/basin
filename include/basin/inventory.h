@@ -49,6 +49,8 @@ struct inventory {
 	struct slot** slots;
 	size_t slot_count;
 	int window;
+	struct mempool* drag_pool;
+	struct llist* drag_slot;
 	struct hashmap* watching_players;
 	struct tile_entity* tile;
 	pthread_mutex_t mutex;

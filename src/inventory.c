@@ -31,6 +31,9 @@ struct inventory* inventory_new(struct mempool* pool, int type, int id, size_t s
 	inv->type = type;
 	inv->window = id;
 	inv->watching_players = hashmap_thread_new(8, inv->pool);
+	inv->drag_pool = mempool_new();
+	pchild(inv->pool, inv->drag_pool);
+	inv->drag_slot = llist_new(inv->drag_pool);
 	pthread_mutex_init(&inv->mutex, NULL);
 	phook(inv->pool, (void (*)(void*)) pthread_mutex_destroy, &inv->mutex);
 	return inv;
