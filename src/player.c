@@ -46,7 +46,7 @@ struct player* player_new(struct mempool* parent, struct server* server, struct 
 	player->loaded_entities = hashmap_thread_new(128, player->pool);
 	player->incoming_packets = queue_new(0, 1);
 	player->outgoing_packets = queue_new(0, 1);
-	player->lastSwing = tick_counter;
+	player->lastSwing = player->server->tick_counter;
 	struct timespec ts;
 	clock_gettime(CLOCK_MONOTONIC, &ts);
 	player->reachDistance = 6.f;
