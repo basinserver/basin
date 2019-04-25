@@ -23,12 +23,13 @@
 #include <avuna/pmem.h>
 #include <math.h>
 
-struct player* player_new(struct mempool* parent, struct conn* conn, struct world* world, struct entity* entity, char* name, struct uuid uuid, uint8_t gamemode) {
+struct player* player_new(struct mempool* parent, struct server* server, struct conn* conn, struct world* world, struct entity* entity, char* name, struct uuid uuid, uint8_t gamemode) {
 	struct mempool* pool = mempool_new();
 	pchild(parent, pool);
 	struct player* player = pcalloc(pool, sizeof(struct player));
 	player->pool = pool;
-	player->conn = conn;
+    player->server = server;
+    player->conn = conn;
 	player->world = world;
 	player->entity = entity;
 	player->name = name;
@@ -53,13 +54,13 @@ struct player* player_new(struct mempool* parent, struct conn* conn, struct worl
 }
 
 void player_send_entity_move(struct player* player, struct entity* ent) {
-	double md = entity_distsq_block(ent, ent->lx, ent->ly, ent->lz);
-	double mp = (ent->yaw - ent->lyaw) * (ent->yaw - ent->lyaw) + (ent->pitch - ent->lpitch) * (ent->pitch - ent->lpitch);
+	double md = entity_distsq_block(ent, ent->last_x, ent->last_y, ent->last_z);
+	double mp = (ent->yaw - ent->last_yaw) * (ent->yaw - ent->last_yaw) + (ent->pitch - ent->last_pitch) * (ent->pitch - ent->last_pitch);
 
 	//printf("mp = %f, md = %f\n", mp, md);
 	if ((md > .001 || mp > .01 || ent->type == ENT_PLAYER)) {
 		struct packet* pkt = xmalloc(sizeof(struct packet));
-		int ft = tick_counter % 200 == 0 || (ent->type == ENT_PLAYER && ent->data.player.player->lastTeleportID != 0);
+		int ft = tick_counter % 200 == 0 || (ent->type == ENT_PLAYER && ent->data.player.player->last_teleport_id != 0);
 		if (!ft && md <= .001 && mp <= .01) {
 			pkt->id = PKT_PLAY_CLIENT_ENTITY;
 			pkt->data.play_client.entity.entity_id = ent->id;
@@ -69,7 +70,7 @@ void player_send_entity_move(struct player* player, struct entity* ent) {
 			pkt->data.play_client.entitylook.entity_id = ent->id;
 			pkt->data.play_client.entitylook.yaw = (uint8_t)((ent->yaw / 360.) * 256.);
 			pkt->data.play_client.entitylook.pitch = (uint8_t)((ent->pitch / 360.) * 256.);
-			pkt->data.play_client.entitylook.on_ground = ent->onGround;
+			pkt->data.play_client.entitylook.on_ground = ent->on_ground;
 			add_queue(player->outgoing_packets, pkt);
 			pkt = xmalloc(sizeof(struct packet));
 			pkt->id = PKT_PLAY_CLIENT_ENTITYHEADLOOK;
@@ -79,20 +80,20 @@ void player_send_entity_move(struct player* player, struct entity* ent) {
 		} else if (!ft && mp <= .01 && md > .001 && md < 64.) {
 			pkt->id = PKT_PLAY_CLIENT_ENTITYRELATIVEMOVE;
 			pkt->data.play_client.entityrelativemove.entity_id = ent->id;
-			pkt->data.play_client.entityrelativemove.delta_x = (int16_t)((ent->x * 32. - ent->lx * 32.) * 128.);
-			pkt->data.play_client.entityrelativemove.delta_y = (int16_t)((ent->y * 32. - ent->ly * 32.) * 128.);
-			pkt->data.play_client.entityrelativemove.delta_z = (int16_t)((ent->z * 32. - ent->lz * 32.) * 128.);
-			pkt->data.play_client.entityrelativemove.on_ground = ent->onGround;
+			pkt->data.play_client.entityrelativemove.delta_x = (int16_t)((ent->x * 32. - ent->last_x * 32.) * 128.);
+			pkt->data.play_client.entityrelativemove.delta_y = (int16_t)((ent->y * 32. - ent->last_y * 32.) * 128.);
+			pkt->data.play_client.entityrelativemove.delta_z = (int16_t)((ent->z * 32. - ent->last_z * 32.) * 128.);
+			pkt->data.play_client.entityrelativemove.on_ground = ent->on_ground;
 			add_queue(player->outgoing_packets, pkt);
 		} else if (!ft && mp > .01 && md > .001 && md < 64.) {
 			pkt->id = PKT_PLAY_CLIENT_ENTITYLOOKANDRELATIVEMOVE;
 			pkt->data.play_client.entitylookandrelativemove.entity_id = ent->id;
-			pkt->data.play_client.entitylookandrelativemove.delta_x = (int16_t)((ent->x * 32. - ent->lx * 32.) * 128.);
-			pkt->data.play_client.entitylookandrelativemove.delta_y = (int16_t)((ent->y * 32. - ent->ly * 32.) * 128.);
-			pkt->data.play_client.entitylookandrelativemove.delta_z = (int16_t)((ent->z * 32. - ent->lz * 32.) * 128.);
+			pkt->data.play_client.entitylookandrelativemove.delta_x = (int16_t)((ent->x * 32. - ent->last_x * 32.) * 128.);
+			pkt->data.play_client.entitylookandrelativemove.delta_y = (int16_t)((ent->y * 32. - ent->last_y * 32.) * 128.);
+			pkt->data.play_client.entitylookandrelativemove.delta_z = (int16_t)((ent->z * 32. - ent->last_z * 32.) * 128.);
 			pkt->data.play_client.entitylookandrelativemove.yaw = (uint8_t)((ent->yaw / 360.) * 256.);
 			pkt->data.play_client.entitylookandrelativemove.pitch = (uint8_t)((ent->pitch / 360.) * 256.);
-			pkt->data.play_client.entitylookandrelativemove.on_ground = ent->onGround;
+			pkt->data.play_client.entitylookandrelativemove.on_ground = ent->on_ground;
 			add_queue(player->outgoing_packets, pkt);
 			pkt = xmalloc(sizeof(struct packet));
 			pkt->id = PKT_PLAY_CLIENT_ENTITYHEADLOOK;
@@ -107,7 +108,7 @@ void player_send_entity_move(struct player* player, struct entity* ent) {
 			pkt->data.play_client.entityteleport.z = ent->z;
 			pkt->data.play_client.entityteleport.yaw = (uint8_t)((ent->yaw / 360.) * 256.);
 			pkt->data.play_client.entityteleport.pitch = (uint8_t)((ent->pitch / 360.) * 256.);
-			pkt->data.play_client.entityteleport.on_ground = ent->onGround;
+			pkt->data.play_client.entityteleport.on_ground = ent->on_ground;
 			add_queue(player->outgoing_packets, pkt);
 			pkt = xmalloc(sizeof(struct packet));
 			pkt->id = PKT_PLAY_CLIENT_ENTITYHEADLOOK;
@@ -161,10 +162,10 @@ void player_tick(struct world* world, struct player* player) {
 		add_queue(player->outgoing_packets, pkt);
 	}
 	if (player->gamemode != 1 && player->gamemode != 3) {
-		float dt = entity_dist_block(player->entity, player->entity->lx, player->entity->ly, player->entity->lz);
+		float dt = entity_dist_block(player->entity, player->entity->last_x, player->entity->last_y, player->entity->last_z);
 		if (dt > 0.) {
 			if (player->entity->inWater) player->foodExhaustion += .01 * dt;
-			else if (player->entity->onGround) {
+			else if (player->entity->on_ground) {
 				if (player->entity->sprinting) player->foodExhaustion += .1 * dt;
 			}
 		}
@@ -205,8 +206,8 @@ void player_tick(struct world* world, struct player* player) {
 	beginProfilerSection("chunks");
 	int32_t pcx = ((int32_t) player->entity->x >> 4);
 	int32_t pcz = ((int32_t) player->entity->z >> 4);
-	int32_t lpcx = ((int32_t) player->entity->lx >> 4);
-	int32_t lpcz = ((int32_t) player->entity->lz >> 4);
+	int32_t lpcx = ((int32_t) player->entity->last_x >> 4);
+	int32_t lpcz = ((int32_t) player->entity->last_z >> 4);
 	if (player->loaded_chunks->entry_count == 0 || player->triggerRechunk) { // || tick_counter % 200 == 0
 		beginProfilerSection("chunkLoading_tick");
 		pthread_mutex_lock(&player->chunkRequests->data_mutex);
@@ -340,7 +341,7 @@ void player_tick(struct world* world, struct player* player) {
 				}
 			}
 			//if in water and not in aqua affintity enchant ds /= 5.;
-			if (!player->entity->onGround) ds /= 5.;
+			if (!player->entity->on_ground) ds /= 5.;
 			digspeed = ds / (bi->hardness * ((hasProperTool || rnt) ? 30. : 100.));
 		}
 		player->digging += (player->digging == 0. ? 2. : 1.) * digspeed;
@@ -468,9 +469,9 @@ void player_teleport(struct player* player, double x, double y, double z) {
 	player->entity->x = x;
 	player->entity->y = y;
 	player->entity->z = z;
-	player->entity->lx = x;
-	player->entity->ly = y;
-	player->entity->lz = z;
+	player->entity->last_x = x;
+	player->entity->last_y = y;
+	player->entity->last_z = z;
 	player->triggerRechunk = 1;
 	player->spawnedIn = 0;
 	struct packet* pkt = xmalloc(sizeof(struct packet));
@@ -489,7 +490,7 @@ void player_teleport(struct player* player, double x, double y, double z) {
 	pkt->data.play_client.playerpositionandlook.pitch = player->entity->pitch;
 	pkt->data.play_client.playerpositionandlook.flags = 0x0;
 	pkt->data.play_client.playerpositionandlook.teleport_id = tick_counter;
-	player->lastTeleportID = pkt->data.play_client.playerpositionandlook.teleport_id;
+	player->last_teleport_id = pkt->data.play_client.playerpositionandlook.teleport_id;
 	add_queue(player->outgoing_packets, pkt);
 	/*BEGIN_HASHMAP_ITERATION(player->entity->loadingPlayers)
 	 struct player* bp = value;

@@ -15,6 +15,6 @@ void init_base_commands();
 
 void registerCommand(char* command, void (*callback)(struct player* player, char** args, size_t args_count));
 
-void callCommand(struct player* player, char* command);
+void callCommand(struct player* player, struct mempool* pool, char* command);
 
 #endif /* COMMAND_H_ */

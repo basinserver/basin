@@ -58,7 +58,7 @@ struct world {
 	struct hashmap* chunks;
 	pthread_mutex_t tick_mut;
 	pthread_cond_t tick_cond;
-	char* levelType;
+	char* level_type;
 	struct encpos spawnpos;
 	int32_t dimension;
 	uint64_t time;

@@ -51,7 +51,7 @@ struct inventory {
 	int window;
 	struct hashmap* watching_players;
 	struct tile_entity* tile;
-	pthread_rwlock_t rwlock;
+	pthread_mutex_t mutex;
 };
 
 struct player;

@@ -23,7 +23,7 @@
 #include <unistd.h>
 
 struct inventory* inventory_new(struct mempool* pool, int type, int id, size_t slots, char* title) {
-	struct inventory* inv = pcalloc(sizeof(struct inventory));
+	struct inventory* inv = pcalloc(pool, sizeof(struct inventory));
 	inv->pool = pool;
 	inv->title = title;
 	inv->slot_count = slots;
@@ -31,8 +31,8 @@ struct inventory* inventory_new(struct mempool* pool, int type, int id, size_t s
 	inv->type = type;
 	inv->window = id;
 	inv->watching_players = hashmap_thread_new(8, inv->pool);
-	pthread_rwlock_init(&inv->rwlock, NULL);
-	phook(inv->pool, (void (*)(void*)) pthread_rwlock_destroy, &inv->rwlock);
+	pthread_mutex_init(&inv->mutex, NULL);
+	phook(inv->pool, (void (*)(void*)) pthread_mutex_destroy, &inv->mutex);
 	return inv;
 }
 

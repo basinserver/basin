@@ -201,7 +201,7 @@ void registerCommand(char* command, command_callback callback) {
 	add_collection(registered_commands, com);
 }
 
-void callCommand(struct player* player, char* command) {
+void callCommand(struct player* player, struct mempool* pool, char* command) {
 	if (registered_commands == NULL) return;
 	size_t sl = strlen(command);
 	size_t arg_count = 0;

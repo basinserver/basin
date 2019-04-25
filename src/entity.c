@@ -69,7 +69,7 @@ int onTick_tnt(struct world* world, struct entity* ent) {
 
 int onTick_fallingblock(struct world* world, struct entity* ent) {
 	// TODO: mc has some methods to prevent dupes here, we should see if basin is afflicted
-	if (ent->onGround && ent->age > 1) {
+	if (ent->on_ground && ent->age > 1) {
 		block b = world_get_block(world, (int32_t) floor(ent->x), (int32_t) floor(ent->y), (int32_t) floor(ent->z));
 		if (!falling_canFallThrough(b)) {
 			struct slot sl;
@@ -221,9 +221,9 @@ int tick_arrow(struct world* world, struct entity* entity) {
 			entity->data.arrow.ticksInGround = 1;
 			entity->data.arrow.isCritical = 0;
 			entity->immovable = 1;
-			entity->lx = 0.;
-			entity->ly = 0.;
-			entity->lz = 0.;
+			entity->last_x = 0.;
+			entity->last_y = 0.;
+			entity->last_z = 0.;
 		}
 	} else {
 		if (entity->data.arrow.ticksInGround == 1) {
@@ -245,21 +245,21 @@ int tick_arrow(struct world* world, struct entity* entity) {
 		entity->yaw = atan2f(entity->motX, entity->motZ) * 180. / M_PI;
 		entity->pitch = atan2f(entity->motY, dhz) * 180. / M_PI;
 		//printf("desired %f, %f, %f\n", entity->pitch, entity->motY, dhz);
-		//printf("yaw = %f, lyaw = %f\npitch = %f, lpitch = %f\n", entity->yaw, entity->lyaw, entity->pitch, entity->lpitch);
-		if ((entity->lyaw == 0. && entity->lpitch == 0.)) {
-			entity->lyaw = entity->yaw;
-			entity->lpitch = entity->pitch;
+		//printf("yaw = %f, last_yaw = %f\npitch = %f, last_pitch = %f\n", entity->yaw, entity->last_yaw, entity->pitch, entity->last_pitch);
+		if ((entity->last_yaw == 0. && entity->last_pitch == 0.)) {
+			entity->last_yaw = entity->yaw;
+			entity->last_pitch = entity->pitch;
 		} else {
-			while (entity->pitch - entity->lpitch < -180.)
-				entity->lpitch -= 360.;
-			while (entity->pitch - entity->lpitch >= 180.)
-				entity->lpitch += 360.;
-			while (entity->yaw - entity->lyaw < -180.)
-				entity->lyaw -= 360.;
-			while (entity->yaw - entity->lyaw >= 180.)
-				entity->lyaw += 360.;
-			entity->pitch = entity->lpitch + (entity->pitch - entity->lpitch) * .2;
-			entity->yaw = entity->lyaw + (entity->yaw - entity->lyaw) * .2;
+			while (entity->pitch - entity->last_pitch < -180.)
+				entity->last_pitch -= 360.;
+			while (entity->pitch - entity->last_pitch >= 180.)
+				entity->last_pitch += 360.;
+			while (entity->yaw - entity->last_yaw < -180.)
+				entity->last_yaw -= 360.;
+			while (entity->yaw - entity->last_yaw >= 180.)
+				entity->last_yaw += 360.;
+			entity->pitch = entity->last_pitch + (entity->pitch - entity->last_pitch) * .2;
+			entity->yaw = entity->last_yaw + (entity->yaw - entity->last_yaw) * .2;
 		}
 	}
 	return 0;
@@ -494,7 +494,7 @@ void getEntityCollision(struct entity* ent, struct boundingbox* bb) {
 
 void jump(struct entity* entity) {
 	if (entity->inWater || entity->inLava) entity->motY += .04;
-	else if (entity->onGround) {
+	else if (entity->on_ground) {
 		entity->motY = .42;
 		//entity sprinting jump?
 	}
@@ -508,16 +508,16 @@ struct entity* newEntity(int32_t id, double x, double y, double z, uint32_t type
 	e->x = x;
 	e->y = y;
 	e->z = z;
-	e->lx = x;
-	e->ly = y;
-	e->lz = z;
+	e->last_x = x;
+	e->last_y = y;
+	e->last_z = z;
 	e->type = type;
 	e->yaw = yaw;
 	e->pitch = pitch;
-	e->lyaw = yaw;
-	e->lpitch = pitch;
+	e->last_yaw = yaw;
+	e->last_pitch = pitch;
 	e->headpitch = 0.;
-	e->onGround = 0;
+	e->on_ground = 0;
 	e->motX = 0.;
 	e->motY = 0.;
 	e->motZ = 0.;
@@ -1052,7 +1052,7 @@ int moveEntity(struct entity* entity, double* mx, double* my, double* mz, float 
 	pbb.maxZ += nz;
 	entity->collidedHorizontally = *mx != nx || *mz != nz;
 	entity->collidedVertically = *my != ny;
-	entity->onGround = entity->collidedVertically && *my < 0.;
+	entity->on_ground = entity->collidedVertically && *my < 0.;
 	int32_t bx = floor(entity->x);
 	int32_t by = floor(entity->y - .20000000298023224);
 	int32_t bz = floor(entity->z);
@@ -1111,7 +1111,7 @@ void applyKnockback(struct entity* entity, float yaw, float strength) {
 		entity->motZ /= 2.;
 		entity->motX -= xr / m * strength;
 		entity->motZ -= zr / m * strength;
-		if (entity->onGround) {
+		if (entity->on_ground) {
 			entity->motY /= 2.;
 			entity->motY += strength;
 			if (entity->motY > .4) entity->motY = .4;
@@ -1143,7 +1143,7 @@ int damageEntityWithItem(struct entity* attacked, struct entity* attacker, uint8
 		damage *= .2 + as * as * .8;
 		knockback_strength *= .2 + as * as * .8;
 	}
-	if (attacker->y > attacked->y && (attacker->ly - attacker->y) > 0 && !attacker->onGround && !attacker->sprinting) { // todo water/ladder
+	if (attacker->y > attacked->y && (attacker->last_y - attacker->y) > 0 && !attacker->on_ground && !attacker->sprinting) { // todo water/ladder
 		damage *= 1.5;
 	}
 	BEGIN_HASHMAP_ITERATION (plugins)
@@ -1371,11 +1371,11 @@ void pushOutOfBlocks(struct entity* ent) {
 
 void tick_entity(struct world* world, struct entity* entity) {
 	if (entity->type != ENT_PLAYER) {
-		entity->lx = entity->x;
-		entity->ly = entity->y;
-		entity->lz = entity->z;
-		entity->lyaw = entity->yaw;
-		entity->lpitch = entity->pitch;
+		entity->last_x = entity->x;
+		entity->last_y = entity->y;
+		entity->last_z = entity->z;
+		entity->last_yaw = entity->yaw;
+		entity->last_pitch = entity->pitch;
 	}
 	entity->age++;
 	if (entity->invincibilityTicks > 0) entity->invincibilityTicks--;
@@ -1428,7 +1428,7 @@ void tick_entity(struct world* world, struct entity* entity) {
 		}
 		if (gravity != 0. && !entity->immovable) entity->motY -= gravity;
 		if (!ar) {
-			if (entity->onGround) {
+			if (entity->on_ground) {
 				struct block_info* bi = getBlockInfo(world_get_block(entity->world, (int32_t) floor(entity->x), (int32_t) floor(entity->y) - 1, (int32_t) floor(entity->z)));
 				if (bi != NULL) friction = bi->slipperiness * .98;
 			}
@@ -1439,7 +1439,7 @@ void tick_entity(struct world* world, struct entity* entity) {
 		if (fabs(entity->motX) < .0001) entity->motX = 0.;
 		if (fabs(entity->motY) < .0001) entity->motY = 0.;
 		if (fabs(entity->motZ) < .0001) entity->motZ = 0.;
-		if (entity->type == ENT_ITEM && entity->onGround && entity->motX == 0. && entity->motY == 0. && entity->motZ == 0.) entity->motY *= -.5;
+		if (entity->type == ENT_ITEM && entity->on_ground && entity->motX == 0. && entity->motY == 0. && entity->motZ == 0.) entity->motY *= -.5;
 	}
 	if (entity->type == ENT_ITEM || entity->type == ENT_XPORB) pushOutOfBlocks(entity);
 	if (hasFlag(getEntityInfo(entity->type), "livingbase")) {
@@ -1452,8 +1452,8 @@ void tick_entity(struct world* world, struct entity* entity) {
 			damageEntity(entity, 4., 1);
 //TODO: fire
 		}
-		if (!entity->onGround) {
-			float dy = entity->ly - entity->y;
+		if (!entity->on_ground) {
+			float dy = entity->last_y - entity->y;
 			if (dy > 0.) {
 				entity->fallDistance += dy;
 			}
@@ -1467,8 +1467,8 @@ void tick_entity(struct world* world, struct entity* entity) {
 		bfd: ;
 	}
 	if (entity->type != ENT_PLAYER) {
-		double md = entity_distsq_block(entity, entity->lx, entity->ly, entity->lz);
-		double mp = (entity->yaw - entity->lyaw) * (entity->yaw - entity->lyaw) + (entity->pitch - entity->lpitch) * (entity->pitch - entity->lpitch);
+		double md = entity_distsq_block(entity, entity->last_x, entity->last_y, entity->last_z);
+		double mp = (entity->yaw - entity->last_yaw) * (entity->yaw - entity->last_yaw) + (entity->pitch - entity->last_pitch) * (entity->pitch - entity->last_pitch);
 		if (md > .001 || mp > .01) {
 			BEGIN_HASHMAP_ITERATION(entity->loadingPlayers);
             player_send_entity_move(value, entity);

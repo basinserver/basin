@@ -800,7 +800,7 @@ int world_load(struct world* world, char* path) {
 	if (nbt_read(world->pool, &world->level, decompressed_level, (size_t) decompressed_size) < 0) return -1;
 	pprefree(world->pool, decompressed_level);
 	struct nbt_tag* data = nbt_get(world->level, "Data");
-	world->levelType = nbt_get(data, "generatorName")->data.nbt_string;
+	world->level_type = nbt_get(data, "generatorName")->data.nbt_string;
 	world->spawnpos.x = nbt_get(data, "SpawnX")->data.nbt_int;
 	world->spawnpos.y = nbt_get(data, "SpawnY")->data.nbt_int;
 	world->spawnpos.z = nbt_get(data, "SpawnZ")->data.nbt_int;

@@ -28,6 +28,7 @@ struct server {
     struct queue* prepared_connections;
     struct hashmap* players_by_entity_id;
     uint32_t next_entity_id;
+    size_t tick_counter;
     //  struct queue* playersToLoad;
 
 };

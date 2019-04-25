@@ -14,7 +14,8 @@
 
 struct player {
 	struct mempool* pool;
-	struct conn* conn;
+    struct server* server;
+    struct conn* conn;
 	struct world* world;
 	struct entity* entity;
 
@@ -25,6 +26,8 @@ struct player {
 	struct hashmap* loaded_entities;
 	struct queue* outgoing_packets;
 	struct queue* incoming_packets;
+	uint32_t next_keep_alive;
+	uint8_t spawned_in;
 
 	struct inventory* inventory;
 	struct inventory* open_inventory;
@@ -43,7 +46,7 @@ struct player {
 	int32_t xptotal;
 	int32_t xplevel;
 	int32_t score;
-	size_t lastTeleportID;
+	size_t last_teleport_id;
 	int8_t sleeping;
 	int16_t fire;
 	//TODO: enderitems inventory
@@ -63,7 +66,7 @@ struct player {
 	float saturation;
 };
 
-struct player* player_new(struct mempool* parent, struct conn* conn, struct world* world, struct entity* entity, char* name, struct uuid uuid, uint8_t gamemode);
+struct player* player_new(struct mempool* parent, struct server* server, struct conn* conn, struct world* world, struct entity* entity, char* name, struct uuid uuid, uint8_t gamemode);
 
 void player_hungerUpdate(struct player* player);
 

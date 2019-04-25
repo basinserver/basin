@@ -66,7 +66,7 @@ int work_joinServer(struct connection* conn, struct mempool* pool, char* usernam
     resp->data.play_client.joingame.dimension = conn->server->overworld->dimension;
     resp->data.play_client.joingame.difficulty = (uint8_t) conn->server->difficulty;
     resp->data.play_client.joingame.max_players = (uint8_t) conn->server->max_players;
-    resp->data.play_client.joingame.level_type = conn->server->overworld->levelType;
+    resp->data.play_client.joingame.level_type = conn->server->overworld->level_type;
     resp->data.play_client.joingame.reduced_debug_info = 0; // TODO
     if (packet_write(conn, resp) < 0) {
         return 1;

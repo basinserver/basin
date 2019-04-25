@@ -619,8 +619,8 @@ void onItemUse_bow(struct world* world, struct player* player, uint8_t slot_inde
 		float sr = sqrtf(x * x + z * z);
 		arrow->yaw = atan2f(x, z) * 180. / M_PI;
 		arrow->pitch = atan2f(y, sr) * 180. / M_PI;
-		arrow->lyaw = arrow->yaw;
-		arrow->lpitch = arrow->pitch;
+		arrow->last_yaw = arrow->yaw;
+		arrow->last_pitch = arrow->pitch;
 		//arrow->motX += player->entity->motX;
 		//arrow->motZ += player->entity->motZ;
 		//if (!player->entity->onGround) arrow->motY += player->entity->motY;

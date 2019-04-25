@@ -49,7 +49,7 @@ void broadcastf(char* color, char* fmt, ...);
 #define BEGIN_BROADCAST_DIST(distfrom, dist) pthread_rwlock_rdlock(&(players)->rwlock); ITER_MAP(distfrom->world->players) { struct player* bc_player = (struct player*)value; if(entity_distsq(bc_player->entity, distfrom) < dist * dist) {
 #define BEGIN_BROADCAST_DISTXYZ(x, y, z, players, dist) pthread_rwlock_rdlock(&(players)->rwlock); ITER_MAP(players) { struct player* bc_player = (struct player*)value; if (entity_distsq_block(bc_player->entity, x, y, z) < dist * dist) {
 #define BEGIN_BROADCAST_EXCEPT(players, except) pthread_rwlock_rdlock(&(players)->rwlock); ITER_MAP(players) { struct player* bc_player = (struct player*)value; if (bc_player != except) {
-#define BEGIN_BROADCAST_EXCEPT_DIST(except, distfrom, dist) pthread_rwlock_rdlock(&(players)->rwlock); ITER_MAP(distfrom->world->players) { struct player* bc_player = (struct player*)value; if (bc_player != except && entity_distsq(bc_player->entity, distfrom) < dist * dist) {
+#define BEGIN_BROADCAST_EXCEPT_DIST(except, distfrom, dist) pthread_rwlock_rdlock(&(distfrom->world->players)->rwlock); ITER_MAP(distfrom->world->players) { struct player* bc_player = (struct player*)value; if (bc_player != except && entity_distsq(bc_player->entity, distfrom) < dist * dist) {
 #define END_BROADCAST(players) } ITER_MAP_END(); pthread_rwlock_unlock(&(players)->rwlock); }
 
 /*

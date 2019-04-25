@@ -19,7 +19,6 @@
 #include <stdlib.h>
 #include <pthread.h>
 
-size_t tick_counter;
 struct config* cfg;
 struct mempool* global_pool;
 struct logsess* delog;

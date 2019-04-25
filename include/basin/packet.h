@@ -1280,6 +1280,4 @@ ssize_t packet_read(struct connection* conn, unsigned char* buf, size_t buflen, 
 
 ssize_t packet_write(struct connection* conn, struct packet* packet);
 
-void freePacket(int state, int dir, struct packet* packet);
-
 #endif
