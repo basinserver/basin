@@ -175,13 +175,13 @@ void world_chunkload_thread(struct world* world) {
 				continue;
 			}
 			player->chunksSent++;
-			if (contains_hashmap(player->loadedChunks, chunk_get_key_direct(chr->chunk_x, chr->chunk_z))) {
+			if (contains_hashmap(player->loaded_chunks, chunk_get_key_direct(chr->chunk_x, chr->chunk_z))) {
 				xfree(chr);
 				continue;
 			}
 			beginProfilerSection("chunkLoading_getChunk");
 			struct chunk* ch = world_load_chunk(player->world, chr->chunk_x, chr->chunk_z, b);
-			if (player->loadedChunks == NULL) {
+			if (player->loaded_chunks == NULL) {
 				xfree(chr);
 				endProfilerSection("chunkLoading_getChunk");
 				continue;
@@ -190,7 +190,7 @@ void world_chunkload_thread(struct world* world) {
 			if (ch != NULL) {
 				ch->playersLoaded++;
 				//beginProfilerSection("chunkLoading_sendChunk_add");
-				put_hashmap(player->loadedChunks, chunk_get_key(ch), ch);
+				put_hashmap(player->loaded_chunks, chunk_get_key(ch), ch);
 				//endProfilerSection("chunkLoading_sendChunk_add");
 				//beginProfilerSection("chunkLoading_sendChunk_malloc");
 				struct packet* pkt = xmalloc(sizeof(struct packet));
@@ -211,7 +211,7 @@ void world_chunkload_thread(struct world* world) {
 				}
 				//endProfilerSection("chunkLoading_sendChunk_tileEntities");
 				//beginProfilerSection("chunkLoading_sendChunk_dispatch");
-				add_queue(player->outgoingPacket, pkt);
+				add_queue(player->outgoing_packets, pkt);
 				flush_outgoing(player);
 				//endProfilerSection("chunkLoading_sendChunk_dispatch");
 			}
@@ -219,11 +219,11 @@ void world_chunkload_thread(struct world* world) {
 			//beginProfilerSection("unchunkLoading");
 			struct chunk* ch = world_get_chunk(player->world, chr->chunk_x, chr->chunk_z);
 			uint64_t ck = chunk_get_key_direct(chr->chunk_x, chr->chunk_z);
-			if (get_hashmap(player->loadedChunks, ck) == NULL) {
+			if (get_hashmap(player->loaded_chunks, ck) == NULL) {
 				xfree(chr);
 				continue;
 			}
-			put_hashmap(player->loadedChunks, ck, NULL);
+			put_hashmap(player->loaded_chunks, ck, NULL);
 			if (ch != NULL && !ch->defunct) {
 				if (--ch->playersLoaded <= 0) {
 					world_unload_chunk(player->world, ch);
@@ -235,7 +235,7 @@ void world_chunkload_thread(struct world* world) {
 				pkt->data.play_client.unloadchunk.chunk_x = chr->chunk_x;
 				pkt->data.play_client.unloadchunk.chunk_z = chr->chunk_z;
 				pkt->data.play_client.unloadchunk.ch = NULL;
-				add_queue(player->outgoingPacket, pkt);
+				add_queue(player->outgoing_packets, pkt);
 				flush_outgoing(player);
 			}
 			//endProfilerSection("unchunkLoading");
@@ -522,7 +522,7 @@ int world_set_block_guess(struct world* world, struct chunk* chunk, block blk, i
 	pkt->data.play_client.blockchange.location.y = y;
 	pkt->data.play_client.blockchange.location.z = z;
 	pkt->data.play_client.blockchange.block_id = blk;
-	queue_push(bc_player->outgoingPacket, pkt);
+	queue_push(bc_player->outgoing_packets, pkt);
 	END_BROADCAST(world->players)
 	beginProfilerSection("block_update");
 	world_update_block_guess(world, chunk, x, y, z);
@@ -758,7 +758,7 @@ int world_set_block_guess_noupdate(struct world* world, struct chunk* chunk, blo
 	pkt->data.play_client.blockchange.location.y = y;
 	pkt->data.play_client.blockchange.location.z = z;
 	pkt->data.play_client.blockchange.block_id = requested_block;
-	queue_push(bc_player->outgoingPacket, pkt);
+	queue_push(bc_player->outgoing_packets, pkt);
 	END_BROADCAST(world->players)
 	return 0;
 }
@@ -870,12 +870,12 @@ void world_tick(struct world* world) {
 		pthread_rwlock_rdlock(&world->players->rwlock);
 		ITER_MAP(world->players) {
 			struct player* player = (struct player*) value;
-			if (player->incomingPacket->size == 0) continue;
-			struct packet* packet = queue_maybepop(player->incomingPacket);
+			if (player->incoming_packets->size == 0) continue;
+			struct packet* packet = queue_maybepop(player->incoming_packets);
 			while (packet != NULL) {
 				player_receive_packet(player, packet);
 				pfree(packet->pool);
-				packet = queue_maybepop(player->incomingPacket);
+				packet = queue_maybepop(player->incoming_packets);
 			}
 			ITER_MAP_END();
 		}
@@ -1040,11 +1040,11 @@ void world_spawn_entity(struct world* world, struct entity* entity) {
 
 void world_spawn_player(struct world* world, struct player* player) {
 	player->world = world;
-	if (player->loadedEntities == NULL) {
-	    player->loadedEntities = hashmap_new(32, player->pool);
+	if (player->loaded_entities == NULL) {
+	    player->loaded_entities = hashmap_new(32, player->pool);
 	}
-	if (player->loadedChunks == NULL) {
-		player->loadedChunks = hashmap_thread_new(32, player->pool);
+	if (player->loaded_chunks == NULL) {
+		player->loaded_chunks = hashmap_thread_new(32, player->pool);
 	}
 	hashmap_putint(world->players, (uint64_t) player->entity->id, player);
 	world_spawn_entity(world, player->entity);
@@ -1056,11 +1056,11 @@ void world_spawn_player(struct world* world, struct player* player) {
 }
 
 void world_despawn_player(struct world* world, struct player* player) {
-	if (player->openInv != NULL) {
-		player_closeWindow(player, (uint16_t) player->openInv->window);
+	if (player->open_inventory != NULL) {
+		player_closeWindow(player, (uint16_t) player->open_inventory->window);
 	}
 	world_despawn_entity(world, player->entity);
-	ITER_MAP(player->loadedEntities) {
+	ITER_MAP(player->loaded_entities) {
 		if (value == NULL || value == player->entity) {
 			continue;
 		}
@@ -1068,16 +1068,16 @@ void world_despawn_player(struct world* world, struct player* player) {
 		hashmap_putint(entity->loadingPlayers, (uint64_t) player->entity->id, NULL);
 		ITER_MAP_END();
 	}
-	pthread_rwlock_wrlock(&player->loadedChunks->rwlock);
-	ITER_MAP(player->loadedChunks) {
+	pthread_rwlock_wrlock(&player->loaded_chunks->rwlock);
+	ITER_MAP(player->loaded_chunks) {
 		struct chunk* chunk = (struct chunk*) value;
 		if (--chunk->playersLoaded <= 0) {
 			world_unload_chunk(world, chunk);
 		}
 		ITER_MAP_END();
 	}
-	pthread_rwlock_unlock(&player->loadedChunks->rwlock);
-	player->loadedChunks = NULL;
+	pthread_rwlock_unlock(&player->loaded_chunks->rwlock);
+	player->loaded_chunks = NULL;
 	hashmap_putint(world->players, (uint64_t) player->entity->id, NULL);
 }
 
@@ -1088,8 +1088,8 @@ void world_despawn_entity(struct world* world, struct entity* entity) {
 	pkt->data.play_client.destroyentities.count = 1;
 	pkt->data.play_client.destroyentities.entity_ids = pmalloc(pkt->pool, sizeof(int32_t));
 	pkt->data.play_client.destroyentities.entity_ids[0] = entity->id;
-	queue_push(bc_player->outgoingPacket, pkt);
-	hashmap_putint(bc_player->loadedEntities, entity->id, NULL);
+	queue_push(bc_player->outgoing_packets, pkt);
+	hashmap_putint(bc_player->loaded_entities, entity->id, NULL);
 	END_BROADCAST(entity->loadingPlayers);
 	entity->loadingPlayers = NULL;
 	ITER_MAP(entity->attackers) {

@@ -46,7 +46,7 @@ void swingArm(struct entity* entity) {
 	pkt->id = PKT_PLAY_CLIENT_ANIMATION;
 	pkt->data.play_client.animation.entity_id = entity->id;
 	pkt->data.play_client.animation.animation = 0;
-	add_queue(bc_player->outgoingPacket, pkt);
+	add_queue(bc_player->outgoing_packets, pkt);
 	END_BROADCAST(entity->world->players)
 }
 
@@ -308,7 +308,7 @@ int tick_itemstack(struct world* world, struct entity* entity) {
 				pkt->data.play_client.collectitem.collected_entity_id = entity->id;
 				pkt->data.play_client.collectitem.collector_entity_id = oe->id;
 				pkt->data.play_client.collectitem.pickup_item_count = os - r;
-				add_queue(bc_player->outgoingPacket, pkt);
+				add_queue(bc_player->outgoing_packets, pkt);
 				END_BROADCAST(entity->world->players)
 				world_despawn_entity(world, entity);
 				freeEntity(entity);
@@ -319,7 +319,7 @@ int tick_itemstack(struct world* world, struct entity* entity) {
 				pkt->id = PKT_PLAY_CLIENT_ENTITYMETADATA;
 				pkt->data.play_client.entitymetadata.entity_id = entity->id;
 				writeMetadata(entity, &pkt->data.play_client.entitymetadata.metadata.metadata, &pkt->data.play_client.entitymetadata.metadata.metadata_size);
-				add_queue(bc_player->outgoingPacket, pkt);
+				add_queue(bc_player->outgoing_packets, pkt);
 				END_BROADCAST(entity->world->players)
 				BREAK_HASHMAP_ITERATION(entity->world->entities)
 			}
@@ -342,7 +342,7 @@ int tick_itemstack(struct world* world, struct entity* entity) {
 				pkt->id = PKT_PLAY_CLIENT_ENTITYMETADATA;
 				pkt->data.play_client.entitymetadata.entity_id = oe->id;
 				writeMetadata(oe, &pkt->data.play_client.entitymetadata.metadata.metadata, &pkt->data.play_client.entitymetadata.metadata.metadata_size);
-				add_queue(bc_player->outgoingPacket, pkt);
+				add_queue(bc_player->outgoing_packets, pkt);
 				END_BROADCAST(oe->world->players)
 				return 1;
 			}
@@ -842,7 +842,7 @@ void updateMetadata(struct entity* ent) {
 	pkt->id = PKT_PLAY_CLIENT_ENTITYMETADATA;
 	pkt->data.play_client.entitymetadata.entity_id = ent->id;
 	writeMetadata(ent, &pkt->data.play_client.entitymetadata.metadata.metadata, &pkt->data.play_client.entitymetadata.metadata.metadata_size);
-	add_queue(bc_player->outgoingPacket, pkt);
+	add_queue(bc_player->outgoing_packets, pkt);
 	END_BROADCAST(ent->loadingPlayers)
 }
 
@@ -1088,7 +1088,7 @@ void applyVelocity(struct entity* entity, double x, double y, double z) {
 	pkt->data.play_client.entityvelocity.velocity_x = (int16_t)(entity->motX * 8000.);
 	pkt->data.play_client.entityvelocity.velocity_y = (int16_t)(entity->motY * 8000.);
 	pkt->data.play_client.entityvelocity.velocity_z = (int16_t)(entity->motZ * 8000.);
-	add_queue(bc_player->outgoingPacket, pkt);
+	add_queue(bc_player->outgoing_packets, pkt);
 	END_BROADCAST(entity->loadingPlayers)
 	if (entity->type == ENT_PLAYER) {
 		struct packet* pkt = xmalloc(sizeof(struct packet));
@@ -1097,7 +1097,7 @@ void applyVelocity(struct entity* entity, double x, double y, double z) {
 		pkt->data.play_client.entityvelocity.velocity_x = (int16_t)(entity->motX * 8000.);
 		pkt->data.play_client.entityvelocity.velocity_y = (int16_t)(entity->motY * 8000.);
 		pkt->data.play_client.entityvelocity.velocity_z = (int16_t)(entity->motZ * 8000.);
-		add_queue(entity->data.player.player->outgoingPacket, pkt);
+		add_queue(entity->data.player.player->outgoing_packets, pkt);
 	}
 }
 
@@ -1204,7 +1204,7 @@ int damageEntity(struct entity* attacked, float damage, int armorable) {
 		pkt->data.play_client.updatehealth.health = attacked->health;
 		pkt->data.play_client.updatehealth.food = attacked->data.player.player->food;
 		pkt->data.play_client.updatehealth.food_saturation = attacked->data.player.player->saturation;
-		add_queue(attacked->data.player.player->outgoingPacket, pkt);
+		add_queue(attacked->data.player.player->outgoing_packets, pkt);
 	}
 	if (attacked->health <= 0.) {
 		if (attacked->type == ENT_PLAYER) {
@@ -1215,13 +1215,13 @@ int damageEntity(struct entity* attacked, float damage, int armorable) {
 				if (slot != NULL) dropEntityItem_explode(player->entity, slot);
 				inventory_set_slot(player, player->inventory, i, 0, 0, 1);
 			}
-			if (player->inHand != NULL) {
-				dropEntityItem_explode(player->entity, player->inHand);
-				freeSlot(player->inHand);
-				xfree(player->inHand);
-				player->inHand = NULL;
+			if (player->inventory_holding != NULL) {
+				dropEntityItem_explode(player->entity, player->inventory_holding);
+				freeSlot(player->inventory_holding);
+				xfree(player->inventory_holding);
+				player->inventory_holding = NULL;
 			}
-			if (player->openInv != NULL) player_closeWindow(player, player->openInv->windowID);
+			if (player->open_inventory != NULL) player_closeWindow(player, player->open_inventory->windowID);
 		} else {
 			struct entity_info* ei = getEntityInfo(attacked->type);
 			if (ei != NULL) for (size_t i = 0; i < ei->loot_count; i++) {
@@ -1242,13 +1242,13 @@ int damageEntity(struct entity* attacked, float damage, int armorable) {
 	pkt->id = PKT_PLAY_CLIENT_ANIMATION;
 	pkt->data.play_client.animation.entity_id = attacked->id;
 	pkt->data.play_client.animation.animation = 1;
-	add_queue(bc_player->outgoingPacket, pkt);
+	add_queue(bc_player->outgoing_packets, pkt);
 	if (attacked->health <= 0.) {
 		pkt = xmalloc(sizeof(struct packet));
 		pkt->id = PKT_PLAY_CLIENT_ENTITYMETADATA;
 		pkt->data.play_client.entitymetadata.entity_id = attacked->id;
 		writeMetadata(attacked, &pkt->data.play_client.entitymetadata.metadata.metadata, &pkt->data.play_client.entitymetadata.metadata.metadata_size);
-		add_queue(bc_player->outgoingPacket, pkt);
+		add_queue(bc_player->outgoing_packets, pkt);
 	}
 	END_BROADCAST(attacked->world->players)
 	if (attacked->type == ENT_PLAYER) playSound(attacked->world, 316, 8, attacked->x, attacked->y, attacked->z, 1., 1.);
@@ -1266,7 +1266,7 @@ void healEntity(struct entity* healed, float amount) {
 		pkt->data.play_client.updatehealth.health = healed->health;
 		pkt->data.play_client.updatehealth.food = healed->data.player.player->food;
 		pkt->data.play_client.updatehealth.food_saturation = healed->data.player.player->saturation;
-		add_queue(healed->data.player.player->outgoingPacket, pkt);
+		add_queue(healed->data.player.player->outgoing_packets, pkt);
 	}
 }
 

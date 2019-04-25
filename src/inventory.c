@@ -76,7 +76,7 @@ void inventory_set_slot(struct player* player, struct inventory* inv, int index,
 		pkt->data.play_client.setslot.window_id = (int8_t) inv->window;
 		pkt->data.play_client.setslot.slot = (int16_t) index;
 		slot_duplicate(pkt->pool, inv->slots[index], &pkt->data.play_client.setslot.slot_data);
-		queue_push(bc_player->outgoingPacket, pkt);
+		queue_push(bc_player->outgoing_packets, pkt);
 		END_BROADCAST(inv->watching_players)
 	} else {
 		BEGIN_BROADCAST_EXCEPT(inv->watching_players, player)
@@ -84,7 +84,7 @@ void inventory_set_slot(struct player* player, struct inventory* inv, int index,
 		pkt->data.play_client.setslot.window_id = (int8_t) inv->window;
 		pkt->data.play_client.setslot.slot = (int16_t) index;
 		slot_duplicate(pkt->pool, inv->slots[index], &pkt->data.play_client.setslot.slot_data);
-        queue_push(bc_player->outgoingPacket, pkt);
+        queue_push(bc_player->outgoing_packets, pkt);
 		END_BROADCAST(inv->watching_players)
 	}
 }

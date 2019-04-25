@@ -140,7 +140,7 @@ int work_joinServer(struct connection* conn, struct mempool* pool, char* usernam
         pkt->data.play_client.playerlistitem.players->action.addplayer.ping = 0; // TODO
         pkt->data.play_client.playerlistitem.players->action.addplayer.has_display_name = 0;
         pkt->data.play_client.playerlistitem.players->action.addplayer.display_name = NULL;
-        queue_push(iter_player->outgoingPacket, pkt);
+        queue_push(iter_player->outgoing_packets, pkt);
         flush_outgoing(iter_player);
         ITER_MAP_END();
     }

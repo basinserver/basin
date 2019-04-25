@@ -137,7 +137,7 @@ struct chunk* region_load_chunk(struct region* region, int8_t local_chunk_x, int
     ITER_LLIST(tmp->children_list, value) {
         struct nbt_tag* child = value;
         if (child == NULL || child->id != NBT_TAG_COMPOUND) continue;
-        struct tile_entity* tile = tile_parse(child);
+        struct tile_entity* tile = tile_parse(chunk->pool, child);
         uint64_t key = (uint64_t) (tile->x & 0x0f) << 16 | (uint64_t) tile->y << 8 | (uint64_t) (tile->z & 0x0f);
         hashmap_putint(chunk->tileEntities, key, tile);
         ITER_LLIST_END();

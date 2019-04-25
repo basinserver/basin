@@ -95,7 +95,7 @@ int connection_read(struct netmgr_connection* netmgr_conn, uint8_t* read_buf, si
 				goto ret_error;
 			}
 		} else if (conn->protocol_state == STATE_PLAY) {
-			queue_push(conn->player->incomingPacket, packet);
+			queue_push(conn->player->incoming_packets, packet);
 		} else {
 			goto ret_error;
 		}

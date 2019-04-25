@@ -508,7 +508,7 @@ void onBlockInteract_chest(struct world* world, block blk, int32_t x, int32_t y,
 	pkt->data.play_client.blockaction.action_id = 1;
 	pkt->data.play_client.blockaction.action_param = te->data.chest.inv->watching_players->entry_count;
 	pkt->data.play_client.blockaction.block_type = blk >> 4;
-	add_queue(bc_player->outgoingPacket, pkt);
+	add_queue(bc_player->outgoing_packets, pkt);
 	END_BROADCAST(player->world->players)
 }
 
@@ -537,13 +537,13 @@ void onBlockInteract_furnace(struct world* world, block blk, int32_t x, int32_t 
 	pkt->data.play_client.windowproperty.window_id = te->data.furnace.inv->window;
 	pkt->data.play_client.windowproperty.property = 1;
 	pkt->data.play_client.windowproperty.value = te->data.furnace.lastBurnMax;
-	add_queue(player->outgoingPacket, pkt);
+	add_queue(player->outgoing_packets, pkt);
 	pkt = xmalloc(sizeof(struct packet));
 	pkt->id = PKT_PLAY_CLIENT_WINDOWPROPERTY;
 	pkt->data.play_client.windowproperty.window_id = te->data.furnace.inv->window;
 	pkt->data.play_client.windowproperty.property = 3;
 	pkt->data.play_client.windowproperty.value = 200;
-	add_queue(player->outgoingPacket, pkt);
+	add_queue(player->outgoing_packets, pkt);
 }
 
 void update_furnace(struct world* world, struct tile_entity* te) {
@@ -572,7 +572,7 @@ void update_furnace(struct world* world, struct tile_entity* te) {
 			pkt->data.play_client.windowproperty.window_id = te->data.furnace.inv->window;
 			pkt->data.play_client.windowproperty.property = 1;
 			pkt->data.play_client.windowproperty.value = te->data.furnace.lastBurnMax;
-			add_queue(bc_player->outgoingPacket, pkt);
+			add_queue(bc_player->outgoing_packets, pkt);
 			END_BROADCAST(te->data.furnace.inv->watching_players)
 		}
 		if (te->data.furnace.cookTime <= 0) {
@@ -604,13 +604,13 @@ void update_furnace(struct world* world, struct tile_entity* te) {
 			pkt->data.play_client.windowproperty.window_id = te->data.furnace.inv->window;
 			pkt->data.play_client.windowproperty.property = 0;
 			pkt->data.play_client.windowproperty.value = 0;
-			add_queue(bc_player->outgoingPacket, pkt);
+			add_queue(bc_player->outgoing_packets, pkt);
 			pkt = xmalloc(sizeof(struct packet));
 			pkt->id = PKT_PLAY_CLIENT_WINDOWPROPERTY;
 			pkt->data.play_client.windowproperty.window_id = te->data.furnace.inv->window;
 			pkt->data.play_client.windowproperty.property = 2;
 			pkt->data.play_client.windowproperty.value = 0;
-			add_queue(bc_player->outgoingPacket, pkt);
+			add_queue(bc_player->outgoing_packets, pkt);
 			END_BROADCAST(te->data.furnace.inv->watching_players)
 			world_tile_unset_tickable(world, te);
 			te->tick = NULL;
@@ -625,13 +625,13 @@ void update_furnace(struct world* world, struct tile_entity* te) {
 		pkt->data.play_client.windowproperty.window_id = te->data.furnace.inv->window;
 		pkt->data.play_client.windowproperty.property = 0;
 		pkt->data.play_client.windowproperty.value = te->data.furnace.burnTime;
-		add_queue(bc_player->outgoingPacket, pkt);
+		add_queue(bc_player->outgoing_packets, pkt);
 		pkt = xmalloc(sizeof(struct packet));
 		pkt->id = PKT_PLAY_CLIENT_WINDOWPROPERTY;
 		pkt->data.play_client.windowproperty.window_id = te->data.furnace.inv->window;
 		pkt->data.play_client.windowproperty.property = 2;
 		pkt->data.play_client.windowproperty.value = te->data.furnace.cookTime;
-		add_queue(bc_player->outgoingPacket, pkt);
+		add_queue(bc_player->outgoing_packets, pkt);
 		END_BROADCAST(te->data.furnace.inv->watching_players)
 	}
 }
