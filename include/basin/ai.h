@@ -7,35 +7,35 @@
 #include <stdint.h>
 
 struct ai_attackmelee_data {
-		int32_t delayCounter;
-		double targetX;
-		double targetY;
-		double targetZ;
-		int32_t attackInterval;
-		double speed;
-		int32_t attackTick;
-		uint8_t longMemory;
+    int32_t delayCounter;
+    double targetX;
+    double targetY;
+    double targetZ;
+    int32_t attackInterval;
+    double speed;
+    int32_t attackTick;
+    uint8_t longMemory;
 };
 
 struct ai_nearestattackabletarget_data {
-		int32_t type;
-		int32_t chance;
-		uint8_t checkSight;
-		int32_t targetSearchDelay;
-		int32_t unseenTicks;
-		double targetDist;
+    int32_t type;
+    int32_t chance;
+    uint8_t checkSight;
+    int32_t targetSearchDelay;
+    int32_t unseenTicks;
+    double targetDist;
 };
 
 void initai_zombie(struct world* world, struct entity* entity);
 
 struct aitask {
-		int32_t (*ai_tick)(struct world* world, struct entity* entity, struct aitask* ai);
-		int (*ai_should)(struct world* world, struct entity* entity, struct aitask* ai);
-		void (*ai_cancel)(struct world* world, struct entity* entity, struct aitask* ai);
-		uint8_t ai_running;
-		int32_t ai_waiting;
-		uint16_t mutex;
-		void* data;
+    int32_t (*ai_tick)(struct world* world, struct entity* entity, struct aitask* ai);
+    int (*ai_should)(struct world* world, struct entity* entity, struct aitask* ai);
+    void (*ai_cancel)(struct world* world, struct entity* entity, struct aitask* ai);
+    uint8_t ai_running;
+    int32_t ai_waiting;
+    uint16_t mutex;
+    void* data;
 };
 
 void ai_stdcancel(struct world* world, struct entity* entity, struct aitask* ai);
@@ -61,23 +61,23 @@ struct aitask* ai_initTask(struct entity* entity, uint16_t mutex, int32_t (*ai_t
 #define AIPATH_DOOR_IRON_CLOSED -1.0
 
 struct aipath_point {
-		int32_t x;
-		int32_t y;
-		int32_t z;
-		int32_t index;
-		float total_dist;
-		float next_dist;
-		float target_dist;
-		struct aipath_point* previous;
-		float cost;
-		uint8_t visited;
-		float priority;
+    int32_t x;
+    int32_t y;
+    int32_t z;
+    int32_t index;
+    float total_dist;
+    float next_dist;
+    float target_dist;
+    struct aipath_point* previous;
+    float cost;
+    uint8_t visited;
+    float priority;
 };
 
 struct aipath {
-		struct aipath_point** points;
-		size_t points_size;
-		size_t points_count;
+    struct aipath_point** points;
+    size_t points_size;
+    size_t points_count;
 };
 
 struct aipath* findPath(int32_t sx, int32_t sy, int32_t sz, int32_t ex, int32_t ey, int32_t ez);
@@ -85,14 +85,14 @@ struct aipath* findPath(int32_t sx, int32_t sy, int32_t sz, int32_t ex, int32_t 
 void freePath(struct aipath* path);
 
 struct aicontext {
-		struct hashmap* tasks;
-		uint32_t ai_waiting;
-		uint16_t mutex;
-		double lookHelper_x;
-		double lookHelper_y;
-		double lookHelper_z;
-		float lookHelper_speedYaw; // 0. to disable.
-		float lookHelper_speedPitch; // 0. to disable.
+    struct hashmap* tasks;
+    uint32_t ai_waiting;
+    uint16_t mutex;
+    double lookHelper_x;
+    double lookHelper_y;
+    double lookHelper_z;
+    float lookHelper_speedYaw; // 0. to disable.
+    float lookHelper_speedPitch; // 0. to disable.
 };
 
 void lookHelper_tick(struct entity* entity);

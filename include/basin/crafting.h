@@ -15,10 +15,10 @@
 struct list* crafting_recipies;
 
 struct crafting_recipe {
-		struct slot* slot[9];
-		struct slot output;
-		uint8_t shapeless;
-		uint8_t width;
+    struct slot* slot[9];
+    struct slot output;
+    uint8_t shapeless;
+    uint8_t width;
 };
 
 void crafting_init();

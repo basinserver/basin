@@ -12,14 +12,14 @@
 #include <basin/world.h>
 
 struct tool_proficiency {
-		uint16_t* proficient;
-		size_t proficient_size;
+    uint16_t* proficient;
+    size_t proficient_size;
 };
 
 struct tool_info {
-		char* name;
-		struct tool_proficiency* proficiencies;
-		size_t proficient_size;
+    char* name;
+    struct tool_proficiency* proficiencies;
+    size_t proficient_size;
 };
 
 void tools_init();

@@ -4,8 +4,8 @@
 #include <stdint.h>
 
 struct perlin {
-		uint8_t perm[256];
-		uint8_t perm2[512];
+        uint8_t perm[256];
+        uint8_t perm2[512];
 };
 
 uint64_t perlin_rand(uint64_t seed);

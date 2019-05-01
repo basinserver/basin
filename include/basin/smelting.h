@@ -14,14 +14,14 @@
 #include <stdint.h>
 
 struct smelting_fuel {
-		int16_t id;
-		int16_t damage;
-		int16_t burn_time;
+    int16_t id;
+    int16_t damage;
+    int16_t burn_time;
 };
 
 struct smelting_recipe {
-		struct slot input;
-		struct slot output;
+    struct slot input;
+    struct slot output;
 };
 
 int16_t smelting_burnTime(struct slot* slot);

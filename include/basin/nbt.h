@@ -28,38 +28,38 @@
 #define NBT_TAG_LONGARRAY 12
 
 union nbt_data {
-	signed char nbt_byte;
-	int16_t nbt_short;
-	int32_t nbt_int;
-	int64_t nbt_long;
-	float nbt_float;
-	double nbt_double;
-	struct {
-		int32_t len;
-		unsigned char* data;
-	} nbt_bytearray;
-	char* nbt_string;
-	struct {
-		unsigned char type;
-		int32_t count;
-	} nbt_list;
-	struct {
-		int32_t count;
-		int32_t* ints;
-	} nbt_intarray;
-	struct {
-		int32_t count;
-		int64_t* longs;
-	} nbt_longarray;
+    signed char nbt_byte;
+    int16_t nbt_short;
+    int32_t nbt_int;
+    int64_t nbt_long;
+    float nbt_float;
+    double nbt_double;
+    struct {
+        int32_t len;
+        unsigned char* data;
+    } nbt_bytearray;
+    char* nbt_string;
+    struct {
+        unsigned char type;
+        int32_t count;
+    } nbt_list;
+    struct {
+        int32_t count;
+        int32_t* ints;
+    } nbt_intarray;
+    struct {
+        int32_t count;
+        int64_t* longs;
+    } nbt_longarray;
 };
 
 struct nbt_tag {
-	unsigned char id;
-	char* name;
-	struct hashmap* children;
-	struct llist* children_list;
-	union nbt_data data;
-	struct mempool* pool;
+    unsigned char id;
+    char* name;
+    struct hashmap* children;
+    struct llist* children_list;
+    union nbt_data data;
+    struct mempool* pool;
 };
 
 ssize_t nbt_decompress(struct mempool* pool, void* data, size_t size, void** dest);
