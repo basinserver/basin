@@ -14,8 +14,8 @@
 
 struct player {
 	struct mempool* pool;
-    struct server* server;
-    struct conn* conn;
+	struct server* server;
+	struct conn* conn;
 	struct world* world;
 	struct entity* entity;
 
@@ -35,7 +35,7 @@ struct player {
 
 	uint16_t currentItem;
 	uint8_t gamemode;
-    float reachDistance;
+	float reachDistance;
 	uint8_t invulnerable;
 
 	uint8_t ping;
