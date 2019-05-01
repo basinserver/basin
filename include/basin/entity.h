@@ -126,32 +126,32 @@
 #define POT_UNLUCK 27
 
 struct entity_loot {
-		item id;
-		uint8_t amountMax;
-		uint8_t amountMin;
-		uint8_t metaMin;
-		uint8_t metaMax;
+        item id;
+        uint8_t amountMax;
+        uint8_t amountMin;
+        uint8_t metaMin;
+        uint8_t metaMax;
 };
 
 struct entity_info {
-		char* name;
-		float maxHealth;
-		float width;
-		float height;
-		char** flags;
-		size_t flag_count;
-		uint32_t spawn_packet;
-		int32_t spawn_packet_id;
-		struct entity_loot* loots;
-		size_t loot_count;
-		char* dataname;
-		void (*onDeath)(struct world* world, struct entity* entity, struct entity* causer); // causer may be NULL
-		void (*onAttacked)(struct world* world, struct entity* entity, struct entity* attacker); // attacker may be NULL
-		uint32_t (*onAITick)(struct world* world, struct entity* entity); // returns a tick delay before next AI tick, 0 = never tick again, 1 = 1 tick
-		int (*onTick)(struct world* world, struct entity* entity); // if return != 0, then the tick is cancelled (for when the entity has been despawned)
-		uint32_t (*initAI)(struct world* world, struct entity* entity); // returns a tick delay before next AI tick, 0 = never tick again, 1 = 1 tick
-		void (*onSpawned)(struct world* world, struct entity* entity);
-		void (*onInteract)(struct world* world, struct entity* entity, struct player* interacter, struct slot* item, int16_t slot_index);
+    char* name;
+    float maxHealth;
+    float width;
+    float height;
+    char** flags;
+    size_t flag_count;
+    uint32_t spawn_packet;
+    int32_t spawn_packet_id;
+    struct entity_loot* loots;
+    size_t loot_count;
+    char* dataname;
+    void (*onDeath)(struct world* world, struct entity* entity, struct entity* causer); // causer may be NULL
+    void (*onAttacked)(struct world* world, struct entity* entity, struct entity* attacker); // attacker may be NULL
+    uint32_t (*onAITick)(struct world* world, struct entity* entity); // returns a tick delay before next AI tick, 0 = never tick again, 1 = 1 tick
+    int (*onTick)(struct world* world, struct entity* entity); // if return != 0, then the tick is cancelled (for when the entity has been despawned)
+    uint32_t (*initAI)(struct world* world, struct entity* entity); // returns a tick delay before next AI tick, 0 = never tick again, 1 = 1 tick
+    void (*onSpawned)(struct world* world, struct entity* entity);
+    void (*onInteract)(struct world* world, struct entity* entity, struct player* interacter, struct slot* item, int16_t slot_index);
 };
 
 void swingArm(struct entity* entity);
@@ -167,282 +167,282 @@ struct entity_info* getEntityInfo(uint32_t id);
 void add_entity_info(uint32_t eid, struct entity_info* bm);
 
 struct potioneffect {
-		char effectID;
-		char amplifier;
-		int32_t duration;
-		char particles;
+    char effectID;
+    char amplifier;
+    int32_t duration;
+    char particles;
 };
 
 int hasFlag(struct entity_info* ei, char* flag);
 
 union entity_data {
-		struct entity_player {
-				struct player* player;
-		} player;
-		struct entity_creeper {
+    struct entity_player {
+        struct player* player;
+    } player;
+    struct entity_creeper {
+    
+    } creeper;
+    struct entity_skeleton {
+    
+    } skeleton;
+    struct entity_spider {
+    
+    } spider;
+    struct entity_giant {
+    
+    } giant;
+    struct entity_zombie {
+    
+    } zombie;
+    struct entity_slime {
+        uint8_t size;
+    } slime;
+    struct entity_ghast {
+    
+    } ghast;
+    struct entity_zpigman {
+    
+    } zpigman;
+    struct entity_enderman {
+    
+    } enderman;
+    struct entity_cavespider {
+    
+    } cavespider;
+    struct entity_silverfish {
+    
+    } silverfish;
+    struct entity_blaze {
 
-		} creeper;
-		struct entity_skeleton {
+    } blaze;
+    struct entity_magmacube {
+        uint8_t size;
+    } magmacube;
+    struct entity_enderdragon {
 
-		} skeleton;
-		struct entity_spider {
+    } enderdragon;
+    struct entity_wither {
 
-		} spider;
-		struct entity_giant {
+    } wither;
+    struct entity_bat {
 
-		} giant;
-		struct entity_zombie {
+    } bat;
+    struct entity_witch {
 
-		} zombie;
-		struct entity_slime {
-				uint8_t size;
-		} slime;
-		struct entity_ghast {
+    } witch;
+    struct entity_endermite {
 
-		} ghast;
-		struct entity_zpigman {
+    } endermite;
+    struct entity_guardian {
 
-		} zpigman;
-		struct entity_enderman {
+    } guardian;
+    struct entity_shulker {
 
-		} enderman;
-		struct entity_cavespider {
+    } shulker;
+    struct entity_pig {
 
-		} cavespider;
-		struct entity_silverfish {
+    } pig;
+    struct entity_sheep {
 
-		} silverfish;
-		struct entity_blaze {
+    } sheep;
+    struct entity_cow {
 
-		} blaze;
-		struct entity_magmacube {
-				uint8_t size;
-		} magmacube;
-		struct entity_enderdragon {
+    } cow;
+    struct entity_chicken {
 
-		} enderdragon;
-		struct entity_wither {
+    } chicken;
+    struct entity_squid {
 
-		} wither;
-		struct entity_bat {
+    } squid;
+    struct entity_wolf {
 
-		} bat;
-		struct entity_witch {
+    } wolf;
+    struct entity_mooshroom {
 
-		} witch;
-		struct entity_endermite {
+    } mooshroom;
+    struct entity_snowman {
 
-		} endermite;
-		struct entity_guardian {
+    } snowman;
+    struct entity_ocelot {
 
-		} guardian;
-		struct entity_shulker {
+    } ocelot;
+    struct entity_irongolem {
 
-		} shulker;
-		struct entity_pig {
+    } irongolem;
+    struct entity_horse {
 
-		} pig;
-		struct entity_sheep {
+    } horse;
+    struct entity_rabbit {
 
-		} sheep;
-		struct entity_cow {
+    } rabbit;
+    struct entity_villager {
 
-		} cow;
-		struct entity_chicken {
+    } villager;
+    struct entity_boat {
 
-		} chicken;
-		struct entity_squid {
+    } boat;
+    struct entity_itemstack {
+        struct slot* slot;
+        int16_t delayBeforeCanPickup;
+    } itemstack;
+    struct entity_areaeffect {
 
-		} squid;
-		struct entity_wolf {
+    } areaeffect;
+    struct entity_minecart {
 
-		} wolf;
-		struct entity_mooshroom {
+    } minecart;
+    struct entity_tnt {
+        uint16_t fuse;
+    } tnt;
+    struct entity_endercrystal {
 
-		} mooshroom;
-		struct entity_snowman {
+    } endercrystal;
+    struct entity_arrow {
+        uint32_t ticksInGround;
+        uint8_t isCritical;
+        uint8_t pickupFlags;
+        float damage;
+        float knockback;
+    } arrow;
+    struct entity_snowball {
 
-		} snowman;
-		struct entity_ocelot {
+    } snowball;
+    struct entity_egg {
 
-		} ocelot;
-		struct entity_irongolem {
+    } egg;
+    struct entity_fireball {
 
-		} irongolem;
-		struct entity_horse {
+    } fireball;
+    struct entity_firecharge {
 
-		} horse;
-		struct entity_rabbit {
+    } firecharge;
+    struct entity_enderpearl {
 
-		} rabbit;
-		struct entity_villager {
+    } enderpearl;
+    struct entity_witherskull {
 
-		} villager;
-		struct entity_boat {
+    } witherskull;
+    struct entity_shulkerbullet {
 
-		} boat;
-		struct entity_itemstack {
-				struct slot* slot;
-				int16_t delayBeforeCanPickup;
-		} itemstack;
-		struct entity_areaeffect {
+    } shulkerbullet;
+    struct entity_fallingblock {
+        block b;
+    } fallingblock;
+    struct entity_itemframe {
 
-		} areaeffect;
-		struct entity_minecart {
+    } itemframe;
+    struct entity_eyeender {
 
-		} minecart;
-		struct entity_tnt {
-				uint16_t fuse;
-		} tnt;
-		struct entity_endercrystal {
+    } eyeender;
+    struct entity_thrownpotion {
 
-		} endercrystal;
-		struct entity_arrow {
-				uint32_t ticksInGround;
-				uint8_t isCritical;
-				uint8_t pickupFlags;
-				float damage;
-				float knockback;
-		} arrow;
-		struct entity_snowball {
+    } thrownpotion;
+    struct entity_husk {
 
-		} snowball;
-		struct entity_egg {
+    } husk;
+    struct entity_fallingegg {
 
-		} egg;
-		struct entity_fireball {
+    } fallingegg;
+    struct entity_expbottle {
 
-		} fireball;
-		struct entity_firecharge {
+    } expbottle;
+    struct entity_firework {
 
-		} firecharge;
-		struct entity_enderpearl {
+    } firework;
+    struct entity_leashknot {
 
-		} enderpearl;
-		struct entity_witherskull {
+    } leashknot;
+    struct entity_armorstand {
 
-		} witherskull;
-		struct entity_shulkerbullet {
+    } armorstand;
+    struct entity_fishingfloat {
 
-		} shulkerbullet;
-		struct entity_fallingblock {
-				block b;
-		} fallingblock;
-		struct entity_itemframe {
+    } fishingfloat;
+    struct entity_evocationfangs {
 
-		} itemframe;
-		struct entity_eyeender {
+    } evocationfangs;
+    struct entity_elderguardian {
 
-		} eyeender;
-		struct entity_thrownpotion {
+    } elderguardian;
+    struct entity_dragonfireball {
 
-		} thrownpotion;
-		struct entity_husk {
+    } dragonfireball;
+    struct entity_experienceorb {
+        uint16_t count;
+    } experienceorb;
+    struct entity_polarbear {
 
-		} husk;
-		struct entity_fallingegg {
+    } polarbear;
+    struct entity_llama {
 
-		} fallingegg;
-		struct entity_expbottle {
+    } llama;
+    struct entity_llamaspit {
 
-		} expbottle;
-		struct entity_firework {
+    } llamaspit;
+    struct entity_stray {
 
-		} firework;
-		struct entity_leashknot {
+    } stray;
+    struct entity_painting {
+        char* title;
+        uint8_t direction;
+    } painting;
+    struct entity_evocationillager {
 
-		} leashknot;
-		struct entity_armorstand {
+    } evocationillager;
+    struct entity_vex {
 
-		} armorstand;
-		struct entity_fishingfloat {
+    } vex;
+    struct entity_vindicationillager {
 
-		} fishingfloat;
-		struct entity_evocationfangs {
-
-		} evocationfangs;
-		struct entity_elderguardian {
-
-		} elderguardian;
-		struct entity_dragonfireball {
-
-		} dragonfireball;
-		struct entity_experienceorb {
-				uint16_t count;
-		} experienceorb;
-		struct entity_polarbear {
-
-		} polarbear;
-		struct entity_llama {
-
-		} llama;
-		struct entity_llamaspit {
-
-		} llamaspit;
-		struct entity_stray {
-
-		} stray;
-		struct entity_painting {
-				char* title;
-				uint8_t direction;
-		} painting;
-		struct entity_evocationillager {
-
-		} evocationillager;
-		struct entity_vex {
-
-		} vex;
-		struct entity_vindicationillager {
-
-		} vindicationillager;
+    } vindicationillager;
 };
 
 struct entity {
-	struct mempool* pool;
-	int32_t id;
-	double x;
-	double y;
-	double z;
-	double last_x;
-	double last_y;
-	double last_z;
-	uint32_t type;
-	float yaw;
-	float pitch;
-	float last_yaw;
-	float last_pitch;
-	float headpitch;
-	int on_ground;
-	int collidedVertically;
-	int collidedHorizontally;
-	double motX;
-	double motY;
-	double motZ;
-	float health;
-	float maxHealth;
-	int32_t objectData;
-	int markedKill;
-	struct potioneffect* effects;
-	size_t effect_count;
-	int sneaking;
-	int usingItemMain;
-	int usingItemOff;
-	int sprinting;
-	int portalCooldown;
-	size_t ticksExisted;
-	int32_t subtype;
-	float fallDistance;
-	union entity_data data;
-	struct world* world;
-	struct hashmap* loadingPlayers;
-	uint64_t age;
-	uint8_t invincibilityTicks;
-	uint8_t inWater;
-	uint8_t inLava;
-	uint8_t immovable;
-	struct aicontext* ai;
-	struct entity* attacking;
-	struct hashmap* attackers;
+    struct mempool* pool;
+    int32_t id;
+    double x;
+    double y;
+    double z;
+    double last_x;
+    double last_y;
+    double last_z;
+    uint32_t type;
+    float yaw;
+    float pitch;
+    float last_yaw;
+    float last_pitch;
+    float headpitch;
+    int on_ground;
+    int collidedVertically;
+    int collidedHorizontally;
+    double motX;
+    double motY;
+    double motZ;
+    float health;
+    float maxHealth;
+    int32_t objectData;
+    int markedKill;
+    struct potioneffect* effects;
+    size_t effect_count;
+    int sneaking;
+    int usingItemMain;
+    int usingItemOff;
+    int sprinting;
+    int portalCooldown;
+    size_t ticksExisted;
+    int32_t subtype;
+    float fallDistance;
+    union entity_data data;
+    struct world* world;
+    struct hashmap* loadingPlayers;
+    uint64_t age;
+    uint8_t invincibilityTicks;
+    uint8_t inWater;
+    uint8_t inLava;
+    uint8_t immovable;
+    struct aicontext* ai;
+    struct entity* attacking;
+    struct hashmap* attackers;
 };
 
 int damageEntityWithItem(struct entity* attacked, struct entity* attacker, uint8_t slot_index, struct slot* item);

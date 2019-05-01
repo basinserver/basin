@@ -13,57 +13,57 @@
 #include <avuna/pmem.h>
 
 struct player {
-	struct mempool* pool;
-	struct server* server;
-	struct conn* conn;
-	struct world* world;
-	struct entity* entity;
+    struct mempool* pool;
+    struct server* server;
+    struct conn* conn;
+    struct world* world;
+    struct entity* entity;
 
-	char* name;
-	struct uuid uuid;
+    char* name;
+    struct uuid uuid;
 
-	struct hashmap* loaded_chunks;
-	struct hashmap* loaded_entities;
-	struct queue* outgoing_packets;
-	struct queue* incoming_packets;
-	uint32_t next_keep_alive;
-	uint8_t spawned_in;
+    struct hashmap* loaded_chunks;
+    struct hashmap* loaded_entities;
+    struct queue* outgoing_packets;
+    struct queue* incoming_packets;
+    uint32_t next_keep_alive;
+    uint8_t spawned_in;
 
-	struct inventory* inventory;
-	struct inventory* open_inventory;
-	struct slot* inventory_holding;
+    struct inventory* inventory;
+    struct inventory* open_inventory;
+    struct slot* inventory_holding;
 
-	uint16_t currentItem;
-	uint8_t gamemode;
-	float reachDistance;
-	uint8_t invulnerable;
+    uint16_t currentItem;
+    uint8_t gamemode;
+    float reachDistance;
+    uint8_t invulnerable;
 
-	uint8_t ping;
-	float walkSpeed;
-	float flySpeed;
-	uint8_t flying;
-	int32_t xpseed;
-	int32_t xptotal;
-	int32_t xplevel;
-	int32_t score;
-	size_t last_teleport_id;
-	int8_t sleeping;
-	int16_t fire;
-	//TODO: enderitems inventory
+    uint8_t ping;
+    float walkSpeed;
+    float flySpeed;
+    uint8_t flying;
+    int32_t xpseed;
+    int32_t xptotal;
+    int32_t xplevel;
+    int32_t score;
+    size_t last_teleport_id;
+    int8_t sleeping;
+    int16_t fire;
+    //TODO: enderitems inventory
 
-	struct encpos digging_position;
-	float digging;
-	float digspeed;
+    struct encpos digging_position;
+    float digging;
+    float digspeed;
 
-	uint32_t itemUseDuration;
-	uint8_t itemUseHand;
-	size_t lastSwing;
+    uint32_t itemUseDuration;
+    uint8_t itemUseHand;
+    size_t lastSwing;
 
-	int32_t food;
-	int32_t foodTick;
-	uint8_t foodTimer;
-	float foodExhaustion;
-	float saturation;
+    int32_t food;
+    int32_t foodTick;
+    uint8_t foodTimer;
+    float foodExhaustion;
+    float saturation;
 };
 
 struct player* player_new(struct mempool* parent, struct server* server, struct conn* conn, struct world* world, struct entity* entity, char* name, struct uuid uuid, uint8_t gamemode);

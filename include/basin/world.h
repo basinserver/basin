@@ -41,37 +41,37 @@ struct chunk_request {
 struct entity;
 
 struct scheduled_tick {
-		int32_t x;
-		int32_t y;
-		int32_t z;
-		int32_t ticksLeft;
-		float priority;
-		block src;
+	int32_t x;
+	int32_t y;
+	int32_t z;
+	int32_t ticksLeft;
+    float priority;
+    block src;
 };
 
 struct world {
     struct mempool* pool;
     struct server* server;
-	struct hashmap* entities;
-	struct hashmap* players;
-	struct hashmap* regions;
-	struct hashmap* chunks;
-	pthread_mutex_t tick_mut;
-	pthread_cond_t tick_cond;
-	char* level_type;
-	struct encpos spawnpos;
-	int32_t dimension;
-	uint64_t time;
-	uint64_t age;
-	struct nbt_tag* level;
-	char* world_folder;
-	uint8_t skylightSubtracted;
-	struct hashmap* scheduledTicks;
-	uint16_t ticksInSecond;
-	float tps;
-	uint64_t seed;
-	struct perlin perlin;
-	struct queue* chunk_requests;
+    struct hashmap* entities;
+    struct hashmap* players;
+    struct hashmap* regions;
+    struct hashmap* chunks;
+    pthread_mutex_t tick_mut;
+    pthread_cond_t tick_cond;
+    char* level_type;
+    struct encpos spawnpos;
+    int32_t dimension;
+    uint64_t time;
+    uint64_t age;
+    struct nbt_tag* level;
+    char* world_folder;
+    uint8_t skylightSubtracted;
+    struct hashmap* scheduledTicks;
+    uint16_t ticksInSecond;
+    float tps;
+    uint64_t seed;
+    struct perlin perlin;
+    struct queue* chunk_requests;
 };
 
 // "*_guess" functions accept a chunk guess and call the proper function if the chunk is a miss. used to optimize chunk lookups in intensive local algorithms. probably overused.
