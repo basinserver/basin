@@ -5,8 +5,8 @@
  *      Author: root
  */
 
-#ifndef CRAFTING_H_
-#define CRAFTING_H_
+#ifndef BASIN_CRAFTING_H_
+#define BASIN_CRAFTING_H_
 
 #include <basin/network.h>
 #include <basin/inventory.h>
@@ -29,4 +29,4 @@ int crafting_all(struct player* player, struct inventory* inv);
 
 struct slot* crafting_result(struct mempool* pool, struct slot** slots, size_t slot_count); // 012/345/678 or 01/23
 
-#endif /* CRAFTING_H_ */
+#endif /* BASIN_CRAFTING_H_ */

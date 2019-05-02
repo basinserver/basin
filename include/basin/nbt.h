@@ -5,8 +5,8 @@
  *      Author: root
  */
 
-#ifndef NBT_H_
-#define NBT_H_
+#ifndef BASIN_NBT_H_
+#define BASIN_NBT_H_
 
 #include <avuna/hash.h>
 #include <avuna/pmem.h>
@@ -76,4 +76,4 @@ struct nbt_tag* nbt_new(struct mempool* pool, uint8_t type);
 
 void nbt_put(struct nbt_tag* parent, struct nbt_tag* child);
 
-#endif /* NBT_H_ */
+#endif /* BASIN_NBT_H_ */

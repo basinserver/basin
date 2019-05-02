@@ -12,4 +12,4 @@ struct chunk* worldgen_gen_chunk_standard(struct world* world, struct chunk* chu
 
 struct chunk* worldgen_gen_chunk(struct world* world, struct chunk* chunk);
 
-#endif //BASIN_WORLDGEN_H
+#endif /* BASIN_WORLDGEN_H */

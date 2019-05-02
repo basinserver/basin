@@ -26,4 +26,4 @@ struct region* region_new(struct mempool* parent, char* path, int16_t x, int16_t
 
 struct chunk* region_load_chunk(struct region* region, int8_t local_chunk_x, int8_t local_chunk_z);
 
-#endif //BASIN_REGION_H
+#endif /* BASIN_REGION_H */

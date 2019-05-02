@@ -1,5 +1,5 @@
-#ifndef AI_H_
-#define AI_H_
+#ifndef BASIN_AI_H_
+#define BASIN_AI_H_
 
 #include <avuna/hash.h>
 #include <basin/world.h>
@@ -313,4 +313,4 @@ int ai_shouldwatchclosest(struct world* world, struct entity* entity, struct ait
 
 int ai_shouldzombieattack(struct world* world, struct entity* entity, struct aitask* ai);
 
-#endif /* AI_H_ */
+#endif /* BASIN_AI_H_ */

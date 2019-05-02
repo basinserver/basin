@@ -5,8 +5,8 @@
  *      Author: root
  */
 
-#ifndef ITEM_H_
-#define ITEM_H_
+#ifndef BASIN_ITEM_H_
+#define BASIN_ITEM_H_
 
 #include <stdint.h>
 
@@ -277,4 +277,4 @@ void init_items();
 
 void add_item(item id, struct item_info* info);
 
-#endif /* ITEM_H_ */
+#endif /* BASIN_ITEM_H_ */

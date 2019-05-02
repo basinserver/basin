@@ -326,15 +326,15 @@ int main(int argc, char* argv[]) {
                 return 1;
             }
             if (freopen("/dev/null", "r", stdin) < 0) {
-                printf("reopening of STDIN to /dev/null failed: %s\n", strerror(errno));
+                printf("Reopening of STDIN to /dev/null failed: %s\n", strerror(errno));
                 return 1;
             }
             if (freopen("/dev/null", "w", stderr) < 0) {
-                printf("reopening of STDERR to /dev/null failed: %s\n", strerror(errno));
+                printf("Reopening of STDERR to /dev/null failed: %s\n", strerror(errno));
                 return 1;
             }
             if (freopen("/dev/null", "w", stdout) < 0) {
-                printf("reopening of STDOUT to /dev/null failed: %s\n", strerror(errno));
+                printf("Reopening of STDOUT to /dev/null failed: %s\n", strerror(errno));
                 return 1;
             }
         }

@@ -34,4 +34,4 @@ struct connection {
     struct server* server;
 };
 
-#endif //BASIN_CONNECTION_H
+#endif /* BASIN_CONNECTION_H */

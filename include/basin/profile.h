@@ -5,8 +5,8 @@
  *      Author: root
  */
 
-#ifndef PROFILE_H_
-#define PROFILE_H_
+#ifndef BASIN_PROFILE_H_
+#define BASIN_PROFILE_H_
 
 void beginProfilerSection(char* name);
 
@@ -16,4 +16,4 @@ void printProfiler();
 
 void clearProfiler();
 
-#endif /* PROFILE_H_ */
+#endif /* BASIN_PROFILE_H_ */

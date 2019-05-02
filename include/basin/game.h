@@ -5,8 +5,8 @@
  *      Author: root
  */
 
-#ifndef GAME_H_
-#define GAME_H_
+#ifndef BASIN_GAME_H_
+#define BASIN_GAME_H_
 
 #include <basin/world.h>
 #include <basin/entity.h>
@@ -62,4 +62,4 @@ void broadcastf(char* color, char* fmt, ...);
  #define END_BROADCAST }}
  */
 
-#endif /* GAME_H_ */
+#endif /* BASIN_GAME_H_ */

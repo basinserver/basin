@@ -13,4 +13,4 @@ int raytrace_block(struct boundingbox* bb, int32_t x, int32_t y, int32_t z, doub
 
 int raytrace(struct world* world, double x, double y, double z, double ex, double ey, double ez, int stopOnLiquid, int ignoreNonCollidable, int returnLast, double* rx, double* ry, double* rz);
 
-#endif //BASIN_RAYTRACE_H
+#endif /* BASIN_RAYTRACE_H */

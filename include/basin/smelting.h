@@ -5,8 +5,8 @@
  *      Author: root
  */
 
-#ifndef SMELTING_H_
-#define SMELTING_H_
+#ifndef BASIN_SMELTING_H_
+#define BASIN_SMELTING_H_
 
 #include <basin/world.h>
 #include <basin/entity.h>
@@ -34,4 +34,4 @@ void add_smelting_fuel(struct smelting_fuel* fuel);
 
 void add_smelting_recipe(struct smelting_recipe* recipe);
 
-#endif /* SMELTING_H_ */
+#endif /* BASIN_SMELTING_H_ */

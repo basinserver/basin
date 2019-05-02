@@ -5,8 +5,8 @@
  *      Author: root
  */
 
-#ifndef COMMAND_H_
-#define COMMAND_H_
+#ifndef BASIN_COMMAND_H_
+#define BASIN_COMMAND_H_
 
 #include <basin/player.h>
 #include <stdlib.h>
@@ -17,4 +17,4 @@ void registerCommand(char* command, void (*callback)(struct player* player, char
 
 void callCommand(struct player* player, struct mempool* pool, char* command);
 
-#endif /* COMMAND_H_ */
+#endif /* BASIN_COMMAND_H_ */

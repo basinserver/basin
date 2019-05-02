@@ -1,5 +1,5 @@
-#ifndef PACKET_H_
-#define PACKET_H_
+#ifndef BASIN_PACKET_H_
+#define BASIN_PACKET_H_
 
 #include <basin/connection.h>
 #include <basin/network.h>
@@ -1280,4 +1280,4 @@ ssize_t packet_read(struct connection* conn, unsigned char* buf, size_t buflen, 
 
 ssize_t packet_write(struct connection* conn, struct packet* packet);
 
-#endif
+#endif /* BASIN_PACKET */

@@ -16,7 +16,7 @@
 #include <basin/network.h>
 #include <basin/perlin.h>
 #include <basin/player.h>
-#include <basin/plugin.h>
+// #include <basin/plugin.h>
 #include <basin/profile.h>
 #include <basin/server.h>
 #include <basin/smelting.h>
@@ -26,4 +26,4 @@
 #include <basin/world.h>
 #include <basin/worldmanager.h>
 
-#endif //BASIN_BASIN_H_
+#endif /* BASIN_BASIN_H_ */
