@@ -5,17 +5,19 @@
  *      Author: root
  */
 
-#ifndef PLAYER_H_
-#define PLAYER_H_
+#ifndef BASIN_PLAYER_H_
+#define BASIN_PLAYER_H_
 
 #include <basin/network.h>
 #include <basin/block.h>
 #include <avuna/pmem.h>
 
 struct player {
+
     struct mempool* pool;
     struct server* server;
     struct conn* conn;
+    struct protocol_version* protocol_version;
     struct world* world;
     struct entity* entity;
 
@@ -72,7 +74,6 @@ void player_hungerUpdate(struct player* player);
 
 void player_send_entity_move(struct player* player, struct entity* ent);
 
-
 void player_receive_packet(struct player* player, struct packet* inp);
 
 void player_tick(struct world* world, struct player* player);
@@ -93,4 +94,4 @@ void player_set_gamemode(struct player* player, int gamemode);
 
 block player_can_place_block(struct player* player, uint16_t blk, int32_t x, int32_t y, int32_t z, uint8_t face);
 
-#endif /* PLAYER_H_ */
+#endif /* BASIN_PLAYER_H_ */

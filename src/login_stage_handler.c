@@ -390,13 +390,13 @@ int handle_login_start(struct connection* conn, struct packet* packet) {
         size_t trimmed_length = strlen(name_trimmed);
         if (trimmed_length > 16 || trimmed_length < 2) bad_name = 2;
         if (!bad_name) {
-            BEGIN_HASHMAP_ITERATION (players)
+            BEGIN_HASHMAP_ITERATION (players);
             struct player* player = (struct player*) value;
             if (streq_nocase(name_trimmed, player->name)) {
                 bad_name = 1;
                 goto pbn;
             }
-            END_HASHMAP_ITERATION (players)
+            END_HASHMAP_ITERATION (players);
             pbn: ;
         }
         if (bad_name) {
@@ -422,4 +422,3 @@ int handle_packet_login(struct connection* conn, struct packet* packet) {
     } else return 1;
     return 0;
 }
-

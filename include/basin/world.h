@@ -5,8 +5,8 @@
  *      Author: root
  */
 
-#ifndef WORLD_H_
-#define WORLD_H_
+#ifndef BASIN_WORLD_H_
+#define BASIN_WORLD_H_
 
 #include <basin/network.h>
 #include <basin/biome.h>
@@ -153,4 +153,4 @@ uint8_t world_get_raw_light_guess(struct world* world, struct chunk* ch, int32_t
 
 uint8_t world_get_raw_light(struct world* world, int32_t x, int32_t y, int32_t z, uint8_t blocklight);
 
-#endif /* WORLD_H_ */
+#endif /* BASIN_WORLD_H_ */

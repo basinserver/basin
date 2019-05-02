@@ -1,5 +1,5 @@
-#ifndef PERLIN_H_
-#define PERLIN_H_
+#ifndef BASIN_PERLIN_H_
+#define BASIN_PERLIN_H_
 
 #include <stdint.h>
 
@@ -18,4 +18,4 @@ double perlin(struct perlin* perlin, double x, double y, double z);
 
 void perlin_init(struct perlin* perlin, uint64_t seed);
 
-#endif /* PERLIN_H_ */
+#endif /* BASIN_PERLIN_H_ */

@@ -5,8 +5,8 @@
  *      Author: root
  */
 
-#ifndef TILEENTITY_H_
-#define TILEENTITY_H_
+#ifndef BASIN_TILEENTITY_H_
+#define BASIN_TILEENTITY_H_
 
 #include <basin/nbt.h>
 #include <basin/inventory.h>
@@ -163,4 +163,4 @@ struct nbt_tag* tile_serialize(struct mempool* parent, struct tile_entity* tile,
 
 void freeTileEntity(struct tile_entity* te);
 
-#endif /* TILEENTITY_H_ */
+#endif /* BASIN_TILEENTITY_H_ */

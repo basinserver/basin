@@ -5,8 +5,8 @@
  *      Author: root
  */
 
-#ifndef NETWORK_H_
-#define NETWORK_H_
+#ifndef BASIN_NETWORK_H_
+#define BASIN_NETWORK_H_
 
 #include <basin/inventory.h>
 #include <avuna/pmem.h>
@@ -15,19 +15,19 @@
 struct packet;
 
 struct __attribute__((__packed__)) encpos {
-        int32_t z :26;
-        int32_t y :12;
-        int32_t x :26;
+    int32_t z :26;
+    int32_t y :12;
+    int32_t x :26;
 };
 
 struct __attribute__((__packed__)) uuid {
-        uint64_t uuid1;
-        uint64_t uuid2;
+    uint64_t uuid1;
+    uint64_t uuid2;
 };
 
 struct entity_metadata {
-        uint8_t* metadata;
-        size_t metadata_size;
+    uint8_t* metadata;
+    size_t metadata_size;
 };
 
 RSA* public_rsa;
@@ -60,17 +60,17 @@ int writeSlot(struct slot* slot, unsigned char* buffer, size_t buflen);
 
 int writeVarInt_stream(int32_t input,
 #ifdef __MINGW32__
-        SOCKET
+    SOCKET
 #else
-        int
+    int
 #endif
-        fd);
+    fd);
 
 int readVarInt_stream(int32_t* output,
 #ifdef __MINGW32__
-        SOCKET
+    SOCKET
 #else
-        int
+    int
 #endif
-        fd);
-#endif /* NETWORK_H_ */
+    fd);
+#endif /* BASIN_NETWORK_H_ */

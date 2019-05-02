@@ -5,8 +5,8 @@
  *      Author: root
  */
 
-#ifndef SERVER_H_
-#define SERVER_H_
+#ifndef BASIN_SERVER_H_
+#define BASIN_SERVER_H_
 
 #include <avuna/pmem.h>
 #include <avuna/log.h>
@@ -36,4 +36,4 @@ struct server {
 //TODO: make this an option
 #define RANDOM_TICK_SPEED 3
 
-#endif /* SERVER_H_ */
+#endif /* BASIN_SERVER_H_ */

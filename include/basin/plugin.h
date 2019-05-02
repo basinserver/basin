@@ -5,8 +5,8 @@
  *      Author: root
  */
 
-#ifndef PLUGIN_H_
-#define PLUGIN_H_
+#ifndef BASIN_PLUGIN_H_
+#define BASIN_PLUGIN_H_
 
 #include <basin/world.h>
 #include <basin/block.h>
@@ -61,4 +61,4 @@ struct plugin {
 
 void init_plugins();
 
-#endif /* PLUGIN_H_ */
+#endif /* BASIN_PLUGIN_H_ */

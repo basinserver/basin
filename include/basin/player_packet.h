@@ -74,4 +74,4 @@ packet_handler player_packet_handlers[256] = {
     (packet_handler) player_packet_handle_useitem,
 };
 
-#endif //BASIN_PLAYER_PACKET_H
+#endif /* BASIN_PLAYER_PACKET_H */

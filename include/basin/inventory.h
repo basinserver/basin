@@ -5,8 +5,8 @@
  *      Author: root
  */
 
-#ifndef INVENTORY_H_
-#define INVENTORY_H_
+#ifndef BASIN_INVENTORY_H_
+#define BASIN_INVENTORY_H_
 
 #include <basin/player.h>
 #include <basin/nbt.h>
@@ -82,4 +82,4 @@ int inventory_add_player(struct player* player, struct inventory* inv, struct sl
 
 int inventory_add(struct player* player, struct inventory* inv, struct slot* slot, int start, int end, int broadcast);
 
-#endif /* INVENTORY_H_ */
+#endif /* BASIN_INVENTORY_H_ */

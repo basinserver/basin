@@ -5,11 +5,11 @@
  *      Author: root
  */
 
-#ifndef VERSION_H_
-#define VERSION_H_
+#ifndef BASIN_VERSION_H_
+#define BASIN_VERSION_H_
 
 #define VERSION "1.0.0"
 #define DAEMON_NAME "basin"
 #define DEBUG
 
-#endif /* VERSION_H_ */
+#endif /* BASIN_VERSION_H_ */

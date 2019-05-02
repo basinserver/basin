@@ -5,8 +5,8 @@
  *      Author: root
  */
 
-#ifndef TOOLS_H_
-#define TOOLS_H_
+#ifndef BASIN_TOOLS_H_
+#define BASIN_TOOLS_H_
 
 #include <basin/item.h>
 #include <basin/world.h>
@@ -30,4 +30,4 @@ int tools_proficient(struct tool_info* info, uint8_t harvest_level, uint16_t b);
 
 void tools_add(struct tool_info* tool);
 
-#endif /* TOOLS_H_ */
+#endif /* BASIN_TOOLS_H_ */

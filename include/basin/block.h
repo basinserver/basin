@@ -5,8 +5,8 @@
  *      Author: root
  */
 
-#ifndef BLOCK_H_
-#define BLOCK_H_
+#ifndef BASIN_BLOCK_H_
+#define BASIN_BLOCK_H_
 
 #include <stdint.h>
 

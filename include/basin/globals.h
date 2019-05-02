@@ -5,8 +5,8 @@
  *      Author: root
  */
 
-#ifndef GLOBALS_H_
-#define GLOBALS_H_
+#ifndef BASIN_GLOBALS_H_
+#define BASIN_GLOBALS_H_
 
 #define MC_PROTOCOL_VERSION_MIN 210
 #define MC_PROTOCOL_VERSION_MAX 316
@@ -24,4 +24,4 @@ struct mempool* global_pool;
 struct logsess* delog;
 struct hashmap* server_map;
 
-#endif /* GLOBALS_H_ */
+#endif /* BASIN_GLOBALS_H_ */

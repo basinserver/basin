@@ -5,8 +5,8 @@
  *      Author: root
  */
 
-#ifndef ENTITY_H_
-#define ENTITY_H_
+#ifndef BASIN_ENTITY_H_
+#define BASIN_ENTITY_H_
 
 #include <basin/world.h>
 #include <basin/item.h>
@@ -481,4 +481,4 @@ void tick_entity(struct world* world, struct entity* entity);
 
 void freeEntity(struct entity* entity);
 
-#endif /* ENTITY_H_ */
+#endif /* BASIN_ENTITY_H_ */

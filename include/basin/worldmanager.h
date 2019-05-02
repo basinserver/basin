@@ -5,11 +5,11 @@
  *      Author: root
  */
 
-#ifndef WORLDMANAGER_H_
-#define WORLDMANAGER_H_
+#ifndef BASIN_WORLDMANAGER_H_
+#define BASIN_WORLDMANAGER_H_
 
 #include <basin/world.h>
 
 struct world* getWorldByID(int32_t id);
 
-#endif /* WORLDMANAGER_H_ */
+#endif /* BASIN_WORLDMANAGER_H_ */
