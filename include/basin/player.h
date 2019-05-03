@@ -10,14 +10,14 @@
 
 #include <basin/network.h>
 #include <basin/block.h>
+#include <basin/connection.h>
 #include <avuna/pmem.h>
 
 struct player {
 
     struct mempool* pool;
     struct server* server;
-    struct conn* conn;
-    struct protocol_version* protocol_version;
+    struct connection* conn;
     struct world* world;
     struct entity* entity;
 
@@ -30,6 +30,8 @@ struct player {
     struct queue* incoming_packets;
     uint32_t next_keep_alive;
     uint8_t spawned_in;
+    uint32_t chunks_sent
+    uint8_t trigger_rechunk;
 
     struct inventory* inventory;
     struct inventory* open_inventory;
@@ -68,15 +70,19 @@ struct player {
     float saturation;
 };
 
-struct player* player_new(struct mempool* parent, struct server* server, struct conn* conn, struct world* world, struct entity* entity, char* name, struct uuid uuid, uint8_t gamemode);
+struct player* player_new(struct mempool* parent, struct server* server, struct connection* conn, struct world* world, struct entity* entity, char* name, struct uuid uuid, uint8_t gamemode);
 
 void player_hungerUpdate(struct player* player);
 
-void player_send_entity_move(struct player* player, struct entity* ent);
+void player_send_entity_move(struct player* player, struct entity* entity);
 
+<<<<<<< HEAD
 void player_receive_packet(struct player* player, struct packet* inp);
 
 void player_tick(struct world* world, struct player* player);
+=======
+void player_tick(struct player* player);
+>>>>>>> 0a05322... tweaks
 
 void player_kick(struct player* player, char* message);
 
