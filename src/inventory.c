@@ -8,6 +8,7 @@
 #include "basin/packet.h"
 #include <basin/network.h>
 #include <basin/globals.h>
+#include <basin/player.h>
 #include <basin/item.h>
 #include <basin/game.h>
 #include <basin/player.h>
@@ -176,7 +177,8 @@ int inventory_add(struct player* player, struct inventory* inv, struct slot* slo
         struct slot* sub_slot = inventory_get(player, inv, i);
         if (sub_slot == NULL) {
             sub_slot = pmalloc(inv->pool, sizeof(struct slot));
-            slot_duplicate(slot, sub_slot);
+            struct mempool* pool = mempool_new();
+            slot_duplicate(pool, slot, sub_slot);
             inventory_set_slot(player, inv, i, sub_slot, broadcast);
             return 0;
         }
