@@ -21,6 +21,7 @@ struct player {
     struct connection* conn;
     struct world* world;
     struct entity* entity;
+    uint32_t protocol_version; 
 
     char* name;
     struct uuid uuid;
@@ -76,8 +77,6 @@ struct player* player_new(struct mempool* parent, struct server* server, struct 
 void player_hungerUpdate(struct player* player);
 
 void player_send_entity_move(struct player* player, struct entity* entity);
-
-void player_receive_packet(struct player* player, struct packet* inp);
 
 void player_tick(struct player* player);
 

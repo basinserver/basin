@@ -113,7 +113,7 @@ void command_list(struct server* server, struct player* player, char** args, siz
     }
     struct player* player = (struct player*) value;
     cptr = xstrncat(cptr, 16, player->name);
-    END_HASHMAP_ITERATION (players)
+    END_HASHMAP_ITERATION (players);
     snprintf(cptr, 32, " (%lu players_by_entity_id total)", players->entry_count);
     sendMessageToPlayer(player, plist, "gray");
     xfree(plist);
