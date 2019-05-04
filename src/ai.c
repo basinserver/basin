@@ -623,7 +623,7 @@ int ai_shouldnearestattackabletarget(struct world* world, struct entity* entity,
         cd = dsq;
         ce = value;
     }
-    END_HASHMAP_ITERATION(world->entities)/;
+    END_HASHMAP_ITERATION(world->entities);
     if (entity->attacking != NULL && ce != entity->attacking) put_hashmap(entity->attacking->attackers, entity->id, NULL);
     if (ce != NULL && entity->attacking != ce) {
         put_hashmap(ce->attackers, entity->id, entity);
