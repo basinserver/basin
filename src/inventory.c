@@ -140,8 +140,8 @@ void inventory_swap(struct player* player, struct inventory* inv, int index1, in
     struct slot* slot1 = inventory_get(player, inv, index1);
     struct slot* slot2 = inventory_get(player, inv, index2);
     if (!inventory_validate(inv->type, index2, slot1) || !inventory_validate(inv->type, index1, slot2)) return;
-    inventory_set_slot(player, inv, index1, slot2, broadcast, 0);
-    inventory_set_slot(player, inv, index2, slot1, broadcast, 0);
+    inventory_set_slot(player, inv, index1, slot2, broadcast);
+    inventory_set_slot(player, inv, index2, slot1, broadcast);
 }
 
 int slot_max_size(struct slot* slot) {
