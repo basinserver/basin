@@ -5,6 +5,7 @@
 #include "login_stage_handler.h"
 #include <basin/connection.h>
 #include <basin/network.h>
+#include <basin/player.h>
 #include <basin/packet.h>
 #include <basin/globals.h>
 #include <basin/version.h>
