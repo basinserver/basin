@@ -1206,7 +1206,7 @@ void randomTick_sapling(struct world* world, struct chunk* chunk, block blk, int
                 leaf = BLK_LEAVES_BIG_OAK_2;
             }
             uint8_t biome = world_get_biome(world, x, z);
-            uint8_t vines = type == 0 && (biome == BIOME_SWAMPLAND || biome == BIOME_SWAMPLANDM);
+            uint8_t vines = type == 0 && (biome == BIOME_SWAMPLAND || biome == BIOME_SWAMPLAND_M);
             uint8_t cocoa = type == 3;
             int big = type == 0 && rand() % 10 == 0;
             if (!big) {

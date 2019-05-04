@@ -20,6 +20,7 @@ struct player {
     struct connection* conn;
     struct world* world;
     struct entity* entity;
+    uint32_t protocol_version; 
 
     char* name;
     struct uuid uuid;
@@ -30,7 +31,7 @@ struct player {
     struct queue* incoming_packets;
     uint32_t next_keep_alive;
     uint8_t spawned_in;
-    uint32_t chunks_sent
+    uint32_t chunks_sent;
     uint8_t trigger_rechunk;
 
     struct inventory* inventory;
@@ -76,13 +77,7 @@ void player_hungerUpdate(struct player* player);
 
 void player_send_entity_move(struct player* player, struct entity* entity);
 
-<<<<<<< HEAD
-void player_receive_packet(struct player* player, struct packet* inp);
-
-void player_tick(struct world* world, struct player* player);
-=======
 void player_tick(struct player* player);
->>>>>>> 0a05322... tweaks
 
 void player_kick(struct player* player, char* message);
 
