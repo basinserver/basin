@@ -1,10 +1,3 @@
-/*
- * tileentity.h
- *
- *  Created on: Dec 27, 2016
- *      Author: root
- */
-
 #ifndef BASIN_TILEENTITY_H_
 #define BASIN_TILEENTITY_H_
 

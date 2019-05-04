@@ -1,10 +1,3 @@
-/*
- * work.c
- *
- *  Created on: Nov 18, 2015
- *      Author: root
- */
-
 #include "work.h"
 #include "accept.h"
 #include "basin/packet.h"

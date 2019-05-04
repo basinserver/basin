@@ -1,10 +1,3 @@
-/*
- * network.h
- *
- *  Created on: Feb 22, 2016
- *      Author: root
- */
-
 #ifndef BASIN_NETWORK_H_
 #define BASIN_NETWORK_H_
 

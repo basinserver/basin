@@ -1,10 +1,3 @@
-/*
- * item.h
- *
- *  Created on: Mar 25, 2016
- *      Author: root
- */
-
 #ifndef BASIN_ITEM_H_
 #define BASIN_ITEM_H_
 

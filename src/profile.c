@@ -1,10 +1,3 @@
-/*
- * profile.c
- *
- *  Created on: Dec 30, 2016
- *      Author: root
- */
-
 #include <avuna/string.h>
 #include <avuna/hash.h>
 #include <avuna/pmem.h>

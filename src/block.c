@@ -1,17 +1,9 @@
-/*
- * block.c
- *
- *  Created on: Dec 24, 2016
- *      Author: root
- */
-
 #include "basin/packet.h"
 #include <basin/inventory.h>
 #include <basin/globals.h>
 #include "basin/network.h"
 #include <basin/world.h>
 #include <basin/game.h>
-// #include <basin/queue.h>
 #include <basin/smelting.h>
 #include <basin/tileentity.h>
 #include <basin/smelting.h>
@@ -499,7 +491,7 @@ void onBlockInteract_chest(struct world* world, block blk, int32_t x, int32_t y,
     }
 //TODO: impl locks, loot
     player_openInventory(player, te->data.chest.inv);
-    BEGIN_BROADCAST_DIST(player->entity, 128.)
+    BEGIN_BROADCAST_DIST(player->entity, 128.);
     struct packet* pkt = xmalloc(sizeof(struct packet));
     pkt->id = PKT_PLAY_CLIENT_BLOCKACTION;
     pkt->data.play_client.blockaction.location.x = x;
@@ -564,7 +556,7 @@ void update_furnace(struct world* world, struct tile_entity* te) {
         if (te->data.furnace.burnTime <= 0 && st > 0 && fu != NULL) {
             te->data.furnace.burnTime += st + 1;
             if (--fu->count == 0) fu = NULL;
-            inventory_set_slot(NULL, te->data.furnace.inv, 1, fu, 1, 1);
+            inventory_set_slot(NULL, te->data.furnace.inv, 1, fu, 1);
             te->data.furnace.lastBurnMax = st;
             BEGIN_BROADCAST(te->data.furnace.inv->watching_players)
             struct packet* pkt = xmalloc(sizeof(struct packet));
@@ -584,13 +576,13 @@ void update_furnace(struct world* world, struct tile_entity* te) {
         } else if (te->data.furnace.cookTime == 200) {
             te->data.furnace.cookTime = 0;
             //printf("donecookin\n");
-            if (aso == NULL) inventory_set_slot(NULL, te->data.furnace.inv, 2, so, 1, 1);
+            if (aso == NULL) inventory_set_slot(NULL, te->data.furnace.inv, 2, so, 1);
             else {
                 aso->count++;
-                inventory_set_slot(NULL, te->data.furnace.inv, 2, aso, 1, 1);
+                inventory_set_slot(NULL, te->data.furnace.inv, 2, aso, 1);
             }
             if (--si->count == 0) si = NULL;
-            inventory_set_slot(NULL, te->data.furnace.inv, 0, si, 1, 1);
+            inventory_set_slot(NULL, te->data.furnace.inv, 0, si, 1);
             te->data.furnace.burnTime++; // freebie for accounting
         }
     } else te->data.furnace.cookTime = 0;

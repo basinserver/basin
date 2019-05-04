@@ -1,7 +1,3 @@
-//
-// Created by p on 4/17/19.
-//
-
 #include <basin/globals.h>
 #include <basin/region.h>
 #include <basin/chunk.h>

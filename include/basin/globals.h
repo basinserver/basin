@@ -1,10 +1,3 @@
-/*
- * globals.h
- *
- *  Created on: Nov 19, 2015
- *      Author: root
- */
-
 #ifndef BASIN_GLOBALS_H_
 #define BASIN_GLOBALS_H_
 

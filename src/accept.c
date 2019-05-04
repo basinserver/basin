@@ -1,9 +1,3 @@
-/*
- * accept.c
- *
- *  Created on: Nov 18, 2015
- *      Author: root
- */
 #include "accept.h"
 #include "work.h"
 #include <basin/connection.h>
@@ -21,6 +15,7 @@
 #include <poll.h>
 #include <netinet/tcp.h>
 #include <netinet/in.h>
+
 
 void run_accept(struct server* server) {
     static int one = 1;

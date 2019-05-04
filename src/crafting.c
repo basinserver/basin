@@ -1,10 +1,3 @@
-/*
- * craft.c
- *
- *  Created on: Dec 26, 2016
- *      Author: root
- */
-
 #include <basin/crafting.h>
 #include <basin/network.h>
 #include <basin/item.h>

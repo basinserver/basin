@@ -1,10 +1,3 @@
-/*
- * nbt.c
- *
- *  Created on: Mar 25, 2016
- *      Author: root
- */
-
 #include <basin/nbt.h>
 #include <basin/network.h>
 #include <basin/globals.h>

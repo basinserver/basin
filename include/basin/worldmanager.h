@@ -1,10 +1,3 @@
-/*
- * worldmanager.h
- *
- *  Created on: Dec 23, 2016
- *      Author: root
- */
-
 #ifndef BASIN_WORLDMANAGER_H_
 #define BASIN_WORLDMANAGER_H_
 

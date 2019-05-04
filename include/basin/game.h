@@ -1,10 +1,3 @@
-/*
- * game.h
- *
- *  Created on: Dec 23, 2016
- *      Author: root
- */
-
 #ifndef BASIN_GAME_H_
 #define BASIN_GAME_H_
 

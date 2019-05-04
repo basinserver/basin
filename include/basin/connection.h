@@ -1,7 +1,3 @@
-//
-// Created by p on 4/14/19.
-//
-
 #ifndef BASIN_CONNECTION_H
 #define BASIN_CONNECTION_H
 

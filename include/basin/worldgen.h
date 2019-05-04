@@ -1,7 +1,3 @@
-//
-// Created by p on 4/17/19.
-//
-
 #ifndef BASIN_WORLDGEN_H
 #define BASIN_WORLDGEN_H
 

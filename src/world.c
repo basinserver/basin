@@ -1,10 +1,3 @@
-/*
- * world.c
- *
- *  Created on: Feb 22, 2016
- *      Author: root
- */
-
 #include "light.h"
 #include <basin/network.h>
 #include <basin/packet.h>

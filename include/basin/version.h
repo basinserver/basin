@@ -1,10 +1,3 @@
-/*
- * version.h
- *
- *  Created on: Nov 18, 2015
- *      Author: root
- */
-
 #ifndef BASIN_VERSION_H_
 #define BASIN_VERSION_H_
 
