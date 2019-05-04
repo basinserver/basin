@@ -1,7 +1,3 @@
-//
-// Created by p on 4/17/19.
-//
-
 #include <basin/boundingbox.h>
 
 

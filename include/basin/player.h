@@ -1,10 +1,3 @@
-/*
- * player.h
- *
- *  Created on: Jun 24, 2016
- *      Author: root
- */
-
 #ifndef BASIN_PLAYER_H_
 #define BASIN_PLAYER_H_
 

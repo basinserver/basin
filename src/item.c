@@ -1,10 +1,3 @@
-/*
- * item.c
- *
- *  Created on: Dec 27, 2016
- *      Author: root
- */
-
 #include <basin/item.h>
 #include <basin/block.h>
 #include <basin/nbt.h>
@@ -14,7 +7,6 @@
 #include <avuna/string.h>
 #include <fcntl.h>
 #include <errno.h>
-#include "util.h"
 #include <unistd.h>
 #include <math.h>
 
@@ -40,13 +32,13 @@ int onItemInteract_bed(struct world* world, struct player* player, uint8_t slot_
         if (!player_can_place_block(player, b2, x2, y2, z2, face) || world_set_block(player->world, b2, x2, y2, z2)) {
             world_set_block(player->world, pre, x, y, z);
             world_set_block(player->world, pre2, x2, y2, z2);
-            inventory_set_slot(player, player->inventory, 36 + player->currentItem, slot, 1, 1);
+            inventory_set_slot(player, player->inventory, 36 + player->currentItem, slot, 1);
             return 0;
         } else if (player->gamemode != 1) {
             if (--slot->count <= 0) {
                 slot = NULL;
             }
-            inventory_set_slot(player, player->inventory, 36 + player->currentItem, slot, 1, 1);
+            inventory_set_slot(player, player->inventory, 36 + player->currentItem, slot, 1);
         }
         world_update_block_guess(world, NULL, x, y, z);
         world_update_block_guess(world, NULL, x + 1, y, z);
@@ -58,7 +50,7 @@ int onItemInteract_bed(struct world* world, struct player* player, uint8_t slot_
     } else {
         world_set_block(player->world, pre, x, y, z);
         world_set_block(player->world, pre2, x2, y2, z2);
-        inventory_set_slot(player, player->inventory, 36 + player->currentItem, slot, 1, 1);
+        inventory_set_slot(player, player->inventory, 36 + player->currentItem, slot, 1);
     }
     return 0;
 }
@@ -223,13 +215,13 @@ int onItemInteract_door(struct world* world, struct player* player, uint8_t slot
         if (!player_can_place_block(player, b2, x, y + 1, z, face) || world_set_block(player->world, b2, x, y + 1, z)) {
             world_set_block(player->world, pre, x, y, z);
             world_set_block(player->world, pre2, x, y + 1, z);
-            inventory_set_slot(player, player->inventory, 36 + player->currentItem, slot, 1, 1);
+            inventory_set_slot(player, player->inventory, 36 + player->currentItem, slot, 1);
             return 0;
         } else if (player->gamemode != 1) {
             if (--slot->count <= 0) {
                 slot = NULL;
             }
-            inventory_set_slot(player, player->inventory, 36 + player->currentItem, slot, 1, 1);
+            inventory_set_slot(player, player->inventory, 36 + player->currentItem, slot, 1);
         }
         world_update_block_guess(world, NULL, x, y, z);
         world_update_block_guess(world, NULL, x + 1, y, z);
@@ -241,7 +233,7 @@ int onItemInteract_door(struct world* world, struct player* player, uint8_t slot
     } else {
         world_set_block(player->world, pre, x, y, z);
         world_set_block(player->world, pre2, x, y + 1, z);
-        inventory_set_slot(player, player->inventory, 36 + player->currentItem, slot, 1, 1);
+        inventory_set_slot(player, player->inventory, 36 + player->currentItem, slot, 1);
     }
     return 0;
 }
@@ -285,16 +277,16 @@ int onItemInteract_itemblock(struct world* world, struct player* player, uint8_t
     if (player_can_place_block(player, b, x, y, z, face)) {
         if (world_set_block(player->world, b, x, y, z)) {
             world_set_block(player->world, pre, x, y, z);
-            inventory_set_slot(player, player->inventory, 36 + player->currentItem, slot, 1, 1);
+            inventory_set_slot(player, player->inventory, 36 + player->currentItem, slot, 1);
         } else if (player->gamemode != 1) {
             if (--slot->count <= 0) {
                 slot = NULL;
             }
-            inventory_set_slot(player, player->inventory, 36 + player->currentItem, slot, 1, 1);
+            inventory_set_slot(player, player->inventory, 36 + player->currentItem, slot, 1);
         }
     } else {
         world_set_block(player->world, pre, x, y, z);
-        inventory_set_slot(player, player->inventory, 36 + player->currentItem, slot, 1, 1);
+        inventory_set_slot(player, player->inventory, 36 + player->currentItem, slot, 1);
     }
     return 0;
 }
@@ -306,7 +298,7 @@ int onItemBreakBlock_tool(struct world* world, struct player* player, uint8_t sl
     if (player->gamemode != 1 && ++slot->damage >= ii->maxDamage) {
         slot = NULL;
     }
-    inventory_set_slot(player, player->inventory, slot_index, slot, 1, 1);
+    inventory_set_slot(player, player->inventory, slot_index, slot, 1);
     return 0;
 }
 
@@ -317,7 +309,7 @@ float onItemAttacked_tool(struct world* world, struct player* player, uint8_t sl
     if (player->gamemode != 1 && ++slot->damage >= ii->maxDamage) {
         slot = NULL;
     }
-    inventory_set_slot(player, player->inventory, slot_index, slot, 1, 1);
+    inventory_set_slot(player, player->inventory, slot_index, slot, 1);
     return ii->damage;
 }
 
@@ -340,7 +332,7 @@ int onItemInteract_flintandsteel(struct world* world, struct player* player, uin
     if (player->gamemode != 1 && ++slot->damage >= ii->maxDamage) {
         slot = NULL;
     }
-    inventory_set_slot(player, player->inventory, slot_index, slot, 1, 1);
+    inventory_set_slot(player, player->inventory, slot_index, slot, 1);
     world_set_block(world, BLK_FIRE, x, y, z);
     return 0;
 }
@@ -362,7 +354,7 @@ int onItemInteract_spawnegg(struct world* world, struct player* player, uint8_t 
     if (player->gamemode != 1 && --slot->count <= 0) {
         slot = NULL;
     }
-    inventory_set_slot(player, player->inventory, slot_index, slot, 1, 1);
+    inventory_set_slot(player, player->inventory, slot_index, slot, 1);
     return 0;
 }
 
@@ -377,7 +369,7 @@ int onItemInteract_reeds(struct world* world, struct player* player, uint8_t slo
     if (player->gamemode != 1 && --slot->count <= 0) {
         slot = NULL;
     }
-    inventory_set_slot(player, player->inventory, slot_index, slot, 1, 1);
+    inventory_set_slot(player, player->inventory, slot_index, slot, 1);
     world_set_block(world, BLK_REEDS, x, y, z);
     return 0;
 }
@@ -395,7 +387,7 @@ int onItemInteract_bucket(struct world* world, struct player* player, uint8_t sl
         world_set_block(world, BLK_WATER_1, x, y, z);
         if (player->gamemode != 1) {
             slot->item = ITM_BUCKET;
-            inventory_set_slot(player, player->inventory, slot_index, slot, 1, 1);
+            inventory_set_slot(player, player->inventory, slot_index, slot, 1);
         }
     } else if (slot->item == ITM_BUCKETLAVA) {
         if (b != 0 && !bi->material->replacable && ba != BLK_LAVA >> 4 && ba != BLK_LAVA_1 >> 4) return 0;
@@ -403,7 +395,7 @@ int onItemInteract_bucket(struct world* world, struct player* player, uint8_t sl
         world_set_block(world, BLK_LAVA_1, x, y, z);
         if (player->gamemode != 1) {
             slot->item = ITM_BUCKET;
-            inventory_set_slot(player, player->inventory, slot_index, slot, 1, 1);
+            inventory_set_slot(player, player->inventory, slot_index, slot, 1);
         }
     } else if (slot->item == ITM_BUCKET) {
         if ((b & 0x0f) != 0) return 0;
@@ -411,13 +403,13 @@ int onItemInteract_bucket(struct world* world, struct player* player, uint8_t sl
             world_set_block(world, 0, x, y, z);
             if (player->gamemode != 1) {
                 slot->item = ITM_BUCKETWATER;
-                inventory_set_slot(player, player->inventory, slot_index, slot, 1, 1);
+                inventory_set_slot(player, player->inventory, slot_index, slot, 1);
             }
         } else if (ba == BLK_LAVA >> 4 || ba == BLK_LAVA_1 >> 4) {
             world_set_block(world, 0, x, y, z);
             if (player->gamemode != 1) {
                 slot->item = ITM_BUCKETLAVA;
-                inventory_set_slot(player, player->inventory, slot_index, slot, 1, 1);
+                inventory_set_slot(player, player->inventory, slot_index, slot, 1);
             }
         }
     }
@@ -476,7 +468,7 @@ int onItemInteract_bonemeal(struct world* world, struct player* player, uint8_t 
     if (player->gamemode != 1 && --slot->count <= 0) {
         slot = NULL;
     }
-    inventory_set_slot(player, player->inventory, slot_index, slot, 1, 1);
+    inventory_set_slot(player, player->inventory, slot_index, slot, 1);
     return 0;
 }
 
@@ -504,7 +496,7 @@ int onItemInteract_seeds(struct world* world, struct player* player, uint8_t slo
     if (player->gamemode != 1 && --slot->count <= 0) {
         slot = NULL;
     }
-    inventory_set_slot(player, player->inventory, slot_index, slot, 1, 1);
+    inventory_set_slot(player, player->inventory, slot_index, slot, 1);
     world_set_block(world, tp, x, y, z);
     return 0;
 }
@@ -519,7 +511,7 @@ int onItemInteract_hoe(struct world* world, struct player* player, uint8_t slot_
         if (player->gamemode != 1 && ++slot->damage >= ii->maxDamage) {
             slot = NULL;
         }
-        inventory_set_slot(player, player->inventory, slot_index, slot, 1, 1);
+        inventory_set_slot(player, player->inventory, slot_index, slot, 1);
         world_set_block(world, BLK_FARMLAND, x, y, z);
     }
     return 0;
@@ -535,7 +527,7 @@ int onItemInteract_shovel(struct world* world, struct player* player, uint8_t sl
         if (player->gamemode != 1 && ++slot->damage >= ii->maxDamage) {
             slot = NULL;
         }
-        inventory_set_slot(player, player->inventory, slot_index, slot, 1, 1);
+        inventory_set_slot(player, player->inventory, slot_index, slot, 1);
         world_set_block(world, BLK_GRASSPATH, x, y, z);
     }
     return 0;
@@ -550,7 +542,7 @@ void onItemUse_armor(struct world* world, struct player* player, uint8_t slot_in
     else if (ii->armorType == ARMOR_LEGGINGS) sli = 7;
     else if (ii->armorType == ARMOR_BOOTS) sli = 8;
     if (inventory_get(player, player->inventory, sli) != NULL) return;
-    inventory_set_slot(player, player->inventory, sli, slot, 1, 1);
+    inventory_set_slot(player, player->inventory, sli, slot, 1);
     inventory_set_slot(player, player->inventory, slot_index, NULL, 1, 0);
 }
 
@@ -561,7 +553,7 @@ float onEntityHitWhileWearing_armor(struct world* world, struct player* player, 
     if (player->gamemode != 1 && ++slot->damage >= ii->maxDamage) {
         slot = NULL;
     }
-    inventory_set_slot(player, player->inventory, slot_index, slot, 1, 1);
+    inventory_set_slot(player, player->inventory, slot_index, slot, 1);
     return damage;
 }
 
@@ -671,7 +663,7 @@ void onItemUse_food(struct world* world, struct player* player, uint8_t slot_ind
         if (player->saturation > player->food) player->saturation = player->food;
         player_hungerUpdate(player);
         if (--slot->count <= 0) slot = NULL;
-        inventory_set_slot(player, player->inventory, slot_index, slot, 1, 1);
+        inventory_set_slot(player, player->inventory, slot_index, slot, 1);
     }
 }
 

@@ -1,7 +1,3 @@
-//
-// Created by p on 4/19/19.
-//
-
 #ifndef BASIN_LIGHT_H
 #define BASIN_LIGHT_H
 

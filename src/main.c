@@ -1,10 +1,3 @@
-/*
- * main.c
- *
- *  Created on: Nov 17, 2015
- *      Author: root
- */
-
 #include "accept.h"
 #include "work.h"
 #include <basin/world.h>

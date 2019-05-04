@@ -1,10 +1,3 @@
-/*
- * inventory.h
- *
- *  Created on: Mar 25, 2016
- *      Author: root
- */
-
 #ifndef BASIN_INVENTORY_H_
 #define BASIN_INVENTORY_H_
 

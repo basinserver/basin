@@ -1,10 +1,3 @@
-/*
- * entity.h
- *
- *  Created on: Feb 22, 2016
- *      Author: root
- */
-
 #ifndef BASIN_ENTITY_H_
 #define BASIN_ENTITY_H_
 

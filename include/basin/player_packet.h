@@ -1,7 +1,3 @@
-//
-// Created by p on 4/24/19.
-//
-
 #ifndef BASIN_PLAYER_PACKET_H
 #define BASIN_PLAYER_PACKET_H
 

@@ -1,7 +1,3 @@
-//
-// Created by p on 4/14/19.
-//
-
 #include "login_stage_handler.h"
 #include <basin/connection.h>
 #include <basin/network.h>

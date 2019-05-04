@@ -1,7 +1,3 @@
-//
-// Created by p on 4/17/19.
-//
-
 #include <avuna/util.h>
 #include "light.h"
 
@@ -13,6 +9,7 @@ void light_proc(struct world* world, struct chunk* chunk, int32_t x, int32_t y, 
 */
 // a layer-buffered BFS could do this a good bit faster due to re-iteration of nodes in this DFS at the cost of more memory overhead
 // `avoid` is a low overhead way to prevent direct back-recursion, but ofc is not perfect to avoid overhead of a set
+
 void light_check_floodfill_positive(struct world* world, struct chunk* chunk, int32_t x, int32_t y, int32_t z, uint8_t blocklight, uint8_t new_level, uint8_t avoid) {
     int current_light = world_get_raw_light_guess(world, chunk, x, y, z, blocklight);
     if (new_level <= current_light) {

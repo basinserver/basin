@@ -1,10 +1,3 @@
-/*
- * accept.h
- *
- *  Created on: Nov 18, 2015
- *      Author: root
- */
-
 #ifndef ACCEPT_H_
 #define ACCEPT_H_
 

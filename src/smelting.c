@@ -1,10 +1,3 @@
-/*
- * item.c
- *
- *  Created on: Dec 27, 2016
- *      Author: root
- */
-
 #include <basin/smelting.h>
 #include <basin/item.h>
 #include <basin/globals.h>

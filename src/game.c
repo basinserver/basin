@@ -1,10 +1,3 @@
-/*
- * game.c
- *
- *  Created on: Dec 23, 2016
- *      Author: root
- */
-
 #include "basin/packet.h"
 #include <basin/basin.h>
 #include <basin/queue.h>

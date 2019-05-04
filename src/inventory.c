@@ -1,10 +1,3 @@
-/*
- * inventory.c
- *
- *  Created on: Mar 25, 2016
- *      Author: root
- */
-
 #include "basin/packet.h"
 #include <basin/network.h>
 #include <basin/globals.h>

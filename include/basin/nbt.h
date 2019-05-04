@@ -1,10 +1,3 @@
-/*
- * nbt.h
- *
- *  Created on: Feb 27, 2016
- *      Author: root
- */
-
 #ifndef BASIN_NBT_H_
 #define BASIN_NBT_H_
 

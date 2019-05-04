@@ -1,10 +1,3 @@
-/*
- * command.c
- *
- *  Created on: Dec 29, 2016
- *      Author: root
- */
-
 #include <basin/game.h>
 #include <basin/player.h>
 #include <basin/globals.h>
@@ -105,7 +98,7 @@ void command_motd(struct player* player, char** args, size_t args_count) {
 void command_list(struct player* player, char** args, size_t args_count) {
     char* plist = xmalloc(players->entry_count * 18 + 30);
     char* cptr = plist;
-    BEGIN_HASHMAP_ITERATION (players)
+    BEGIN_HASHMAP_ITERATION (players);
     if (cptr > plist) {
         *cptr++ = ',';
         *cptr++ = ' ';
