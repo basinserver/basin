@@ -1,10 +1,3 @@
-/*
- * worldmanager.c
- *
- *  Created on: Dec 23, 2016
- *      Author: root
- */
-
 #include <basin/world.h>
 #include <basin/worldmanager.h>
 

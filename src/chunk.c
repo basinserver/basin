@@ -1,7 +1,3 @@
-//
-// Created by p on 4/17/19.
-//
-
 #include <basin/chunk.h>
 #include <basin/tileentity.h>
 #include <avuna/list.h>

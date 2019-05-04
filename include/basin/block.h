@@ -1,9 +1,3 @@
-/*
- * block.h
- *
- *  Created on: Dec 22, 2016u
- *      Author: root
- */
 
 #ifndef BASIN_BLOCK_H_
 #define BASIN_BLOCK_H_

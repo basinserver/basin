@@ -1,10 +1,3 @@
-/*
- * tools.h
- *
- *  Created on: Dec 26, 2016
- *      Author: root
- */
-
 #ifndef BASIN_TOOLS_H_
 #define BASIN_TOOLS_H_
 

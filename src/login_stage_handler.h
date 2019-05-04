@@ -1,7 +1,3 @@
-//
-// Created by p on 4/14/19.
-//
-
 #ifndef BASIN_LOGIN_STAGE_HANDLER_H
 #define BASIN_LOGIN_STAGE_HANDLER_H
 

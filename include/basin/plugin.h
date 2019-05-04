@@ -1,10 +1,3 @@
-/*
- * plugin.h
- *
- *  Created on: Jan 3, 2017
- *      Author: root
- */
-
 #ifndef BASIN_PLUGIN_H_
 #define BASIN_PLUGIN_H_
 

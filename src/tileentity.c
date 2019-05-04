@@ -1,10 +1,3 @@
-/*
- * tileentity.c
- *
- *  Created on: Dec 27, 2016
- *      Author: root
- */
-
 #include <basin/nbt.h>
 #include <basin/network.h>
 #include <basin/block.h>

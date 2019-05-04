@@ -1,6 +1,3 @@
-
-
-
 #include "basin/packet.h"
 #include <basin/globals.h>
 #include <basin/inventory.h>

@@ -1,10 +1,3 @@
-/*
- * plugin.c
- *
- *  Created on: Jan 3, 2017
- *      Author: root
- */
-
 #include <basin/plugin.h>
 #include <avuna/hash.h>
 #include <avuna/string.h>

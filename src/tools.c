@@ -1,10 +1,3 @@
-/*
- * craft.c
- *
- *  Created on: Dec 26, 2016
- *      Author: root
- */
-
 #include <basin/globals.h>
 #include <basin/network.h>
 #include <basin/tools.h>

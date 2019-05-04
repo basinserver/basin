@@ -1,7 +1,3 @@
-//
-// Created by p on 3/23/19.
-//
-
 #ifndef AVUNA_HTTPD_WAKE_THREAD_H
 #define AVUNA_HTTPD_WAKE_THREAD_H
 

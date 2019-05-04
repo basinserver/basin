@@ -1,7 +1,3 @@
-//
-// Created by p on 4/24/19.
-//
-
 #include <basin/player_packet.h>
 #include <basin/player.h>
 #include <basin/world.h>

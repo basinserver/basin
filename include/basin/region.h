@@ -1,7 +1,3 @@
-//
-// Created by p on 4/17/19.
-//
-
 #ifndef BASIN_REGION_H
 #define BASIN_REGION_H
 

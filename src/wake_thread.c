@@ -1,7 +1,3 @@
-//
-// Created by p on 3/23/19.
-//
-
 #include "wake_thread.h"
 #include <basin/connection.h>
 #include <avuna/netmgr.h>

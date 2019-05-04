@@ -1,10 +1,3 @@
-/*
- * command.h
- *
- *  Created on: Dec 29, 2016
- *      Author: root
- */
-
 #ifndef BASIN_COMMAND_H_
 #define BASIN_COMMAND_H_
 

@@ -1,9 +1,3 @@
-/*
- * entity.c
- *
- *  Created on: Feb 22, 2016
- *      Author: root
- */
 
 #include <basin/packet.h>
 #include <basin/basin.h>

@@ -1,10 +1,3 @@
-/*
- * work.h
- *
- *  Created on: Nov 18, 2015
- *      Author: root
- */
-
 #ifndef WORK_H_
 #define WORK_H_
 
