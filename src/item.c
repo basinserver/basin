@@ -10,11 +10,11 @@
 #include <basin/nbt.h>
 #include <basin/game.h>
 #include <basin/player.h>
+#include <basin/item.h>
 #include <avuna/json.h>
 #include <avuna/string.h>
 #include <fcntl.h>
 #include <errno.h>
-#include "util.h"
 #include <unistd.h>
 #include <math.h>
 

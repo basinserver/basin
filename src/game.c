@@ -27,10 +27,11 @@
 
 void flush_outgoing(struct player* player) {
     if (player->conn == NULL) return;
-    uint8_t onec = 1;
-    if (write(player->conn->work->pipes[1], &onec, 1) < 1) {
-        printf("Failed to write to wakeup pipe! Things may slow down. %s\n", strerror(errno));
+    struct packet* packet;
+    while (packet = queue_maybepop(player->outgoing_packets) != NULL) {
+        packet_write(player->conn, player);
     }
+    netmgr_trigger_write(player->conn->managed_conn);
 }
 
 void loadPlayer(struct player* to, struct player* from) {

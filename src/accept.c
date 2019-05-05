@@ -62,6 +62,8 @@ void run_accept(struct server* server) {
             continue;
         }
         conn->managed_conn->fd = fd;
+        conn->managed_conn->read = connection_read;
+        conn->managed_conn->on_closed = connection_on_closed;
         if (setsockopt(fd, SOL_SOCKET, SO_RCVTIMEO, (char *) &timeout, sizeof(timeout))) printf("Setting recv timeout failed! %s\n", strerror(errno));
         if (setsockopt(fd, SOL_SOCKET, SO_SNDTIMEO, (char *) &timeout, sizeof(timeout))) printf("Setting send timeout failed! %s\n", strerror(errno));
         if (setsockopt(fd, IPPROTO_TCP, TCP_NODELAY, (void *) &one, sizeof(one))) printf("Setting TCP_NODELAY failed! %s\n", strerror(errno));

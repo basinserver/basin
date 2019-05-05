@@ -114,7 +114,6 @@ void connection_on_closed(struct netmgr_connection* netmgr_conn) {
     struct connection* conn = netmgr_conn->extra;
     if (conn->player != NULL) {
         broadcastf("yellow", "%s has left the server!", conn->player->name);
-        conn->player->defunct = 1;
         conn->player->conn = NULL;
     }
     pfree(conn->pool);

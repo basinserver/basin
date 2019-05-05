@@ -19,7 +19,7 @@
 #include <arpa/inet.h>
 
 
-int work_joinServer(struct connection* conn, struct mempool* pool, char* username, char* uuid_string) {
+int work_joinServer(struct connection* conn, char* username, char* uuid_string) {
     struct uuid uuid;
     unsigned char* uuidx = (unsigned char*) &uuid;
     if (uuid_string == NULL) {
@@ -41,6 +41,8 @@ int work_joinServer(struct connection* conn, struct mempool* pool, char* usernam
         memcpy(ups, uuid_string + 24, 8);
         uuid.uuid2 |= ((uint64_t) strtoll(ups, NULL, 16)) & 0xFFFFFFFF;
     }
+    struct mempool* pool = mempool_new();
+    pchild(conn->pool, pool);
     struct packet* resp = packet_new(pool, PKT_LOGIN_CLIENT_LOGINSUCCESS);
     resp->data.login_client.loginsuccess.username = username;
     resp->data.login_client.loginsuccess.uuid = pmalloc(pool, 38);
@@ -54,10 +56,8 @@ int work_joinServer(struct connection* conn, struct mempool* pool, char* usernam
         return 1;
     }
     conn->protocol_state = STATE_PLAY;
-    struct entity* ep = newEntity(nextEntityID++, (double) conn->server->overworld->spawnpos.x + .5, (double) conn->server->overworld->spawnpos.y, (double) conn->server->overworld->spawnpos.z + .5, ENT_PLAYER, 0., 0.);
-    struct player* player = player_new(ep, str_dup(resp->data.login_client.loginsuccess.username, 1, pool), uuid, conn,
-                                       0); // TODO default gamemode
-    player->protocol_version = conn->protocol_version;
+    struct entity* ep = newEntity(conn->server->next_entity_id++, (double) conn->server->overworld->spawnpos.x + .5, (double) conn->server->overworld->spawnpos.y, (double) conn->server->overworld->spawnpos.z + .5, ENT_PLAYER, 0f, 0f);
+    struct player* player = player_new(conn->pool, conn->server, conn, conn->server->overworld, ep, str_dup(resp->data.login_client.loginsuccess.username, 1, conn->pool), uuid, 1); // TODO default gamemode
     conn->player = player;
     hashmap_putint(conn->server->players_by_entity_id, (uint64_t) player->entity->id, player);
     resp->id = PKT_PLAY_CLIENT_JOINGAME;
@@ -108,6 +108,7 @@ int work_joinServer(struct connection* conn, struct mempool* pool, char* usernam
     if (packet_write(conn, resp) < 0) {
         return 1;
     }
+    netmgr_trigger_write(conn->managed_conn);
     resp->id = PKT_PLAY_CLIENT_PLAYERLISTITEM;
     pthread_rwlock_rdlock(&conn->server->players_by_entity_id->rwlock);
     resp->data.play_client.playerlistitem.action_id = 0;
@@ -163,6 +164,7 @@ int work_joinServer(struct connection* conn, struct mempool* pool, char* usernam
     if (packet_write(conn, resp) < 0) {
         return 1;
     }
+    netmgr_trigger_write(conn->managed_conn);
     add_collection(playersToLoad, player);
     broadcastf("yellow", "%s has joined the server!", player->name);
     const char* ip_string = NULL;
@@ -177,6 +179,7 @@ int work_joinServer(struct connection* conn, struct mempool* pool, char* usernam
         ip_string = "UNKNOWN";
     }
     printf("Player '%s' has joined with IP '%s'\n", player->name, ip_string);
+    pfree(pool);
     return 0;
 }
 
@@ -237,7 +240,9 @@ int handle_encryption_response(struct connection* conn, struct packet* packet) {
         return 1;
     }
     uint32_t verify_token_int = *((uint32_t*) verify_token);
-    if (verify_token_int != conn->verifyToken) goto rete;
+    if (verify_token_int != conn->verifyToken) {
+        return 1;
+    }
     memcpy(conn->shared_secret, shared_secret, 16);
     uint8_t public_key[162];
     memcpy(public_key, public_rsa_publickey, 162);
@@ -335,7 +340,9 @@ int handle_encryption_response(struct connection* conn, struct packet* packet) {
     post_map_iteration:;
     pthread_rwlock_unlock(&conn->server->players_by_entity_id->rwlock);
     conn->aes_ctx_enc = EVP_CIPHER_CTX_new();
-    if (conn->aes_ctx_enc == NULL) goto rete;
+    if (conn->aes_ctx_enc == NULL) {
+        goto ssl_error;
+    }
     if (EVP_EncryptInit_ex(conn->aes_ctx_enc, EVP_aes_128_cfb8(), NULL, conn->shared_secret, conn->shared_secret) != 1) {
         goto ssl_error;
     }
@@ -344,7 +351,9 @@ int handle_encryption_response(struct connection* conn, struct packet* packet) {
     }
 
     conn->aes_ctx_dec = EVP_CIPHER_CTX_new();
-    if (conn->aes_ctx_dec == NULL) goto rete;
+    if (conn->aes_ctx_dec == NULL) {
+        goto ssl_error;
+    }
     if (EVP_DecryptInit_ex(conn->aes_ctx_dec, EVP_aes_128_cfb8(), NULL, conn->shared_secret, conn->shared_secret) != 1) {
         goto ssl_error;
     }
@@ -352,7 +361,7 @@ int handle_encryption_response(struct connection* conn, struct packet* packet) {
         phook(conn->pool, (void (*)(void*)) decrypt_free, conn->aes_ctx_dec);
     }
 
-    if (work_joinServer(conn, packet->pool, name, id)) {
+    if (work_joinServer(conn, name, id)) {
         pfree(ssl_pool);
         return 1;
     }
@@ -390,14 +399,17 @@ int handle_login_start(struct connection* conn, struct packet* packet) {
         size_t trimmed_length = strlen(name_trimmed);
         if (trimmed_length > 16 || trimmed_length < 2) bad_name = 2;
         if (!bad_name) {
-            BEGIN_HASHMAP_ITERATION (players);
-            struct player* player = (struct player*) value;
-            if (streq_nocase(name_trimmed, player->name)) {
-                bad_name = 1;
-                goto pbn;
+            pthread_rwlock_rdlock(&conn->server->players_by_entity_id->rwlock);
+            ITER_MAP(conn->server->players_by_entity_id) { // TODO: name mapping
+                struct player* player = (struct player*) value;
+                if (str_eq(name_trimmed, player->name)) {
+                    bad_name = 1;
+                    goto post_check;
+                }
+                ITER_MAP_END();
             }
-            END_HASHMAP_ITERATION (players);
-            pbn: ;
+            post_check: ;
+            pthread_rwlock_unlock(&conn->server->players_by_entity_id->rwlock);
         }
         if (bad_name) {
             struct packet* resp = packet_new(packet->pool, PKT_LOGIN_CLIENT_DISCONNECT);
@@ -409,7 +421,9 @@ int handle_login_start(struct connection* conn, struct packet* packet) {
             conn->disconnect = 1;
             return 0;
         }
-        if (work_joinServer(conn, name_trimmed, NULL)) goto rete;
+        if (work_joinServer(conn, name_trimmed, NULL)) {
+            return 1;
+        }
     }
 }
 
