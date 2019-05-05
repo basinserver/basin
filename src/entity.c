@@ -541,7 +541,7 @@ struct entity* newEntity(int32_t id, double x, double y, double z, uint32_t type
     e->inWater = 0;
     e->inLava = 0;
     e->invincibilityTicks = 0;
-    e->loadingPlayers = new_hashmap(1, 1);
+    e->loadingPlayers = hashmap_thread_new(16, e->pool);
     e->attacking = NULL;
     e->attackers = new_hashmap(1, 0);
     e->immovable = 0;

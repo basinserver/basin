@@ -25,140 +25,107 @@
 #include <stdint.h>
 #include <stdio.h>
 
-void loadPlayer(struct player* to, struct player* from) {
-    struct packet* pkt = xmalloc(sizeof(struct packet));
-    pkt->id = PKT_PLAY_CLIENT_SPAWNPLAYER;
-    pkt->data.play_client.spawnplayer.entity_id = from->entity->id;
-    memcpy(&pkt->data.play_client.spawnplayer.player_uuid, &from->entity->data.player.player->uuid, sizeof(struct uuid));
-    pkt->data.play_client.spawnplayer.x = from->entity->x;
-    pkt->data.play_client.spawnplayer.y = from->entity->y;
-    pkt->data.play_client.spawnplayer.z = from->entity->z;
-    pkt->data.play_client.spawnplayer.yaw = (from->entity->yaw / 360.) * 256.;
-    pkt->data.play_client.spawnplayer.pitch = (from->entity->pitch / 360.) * 256.;
-    writeMetadata(from->entity, &pkt->data.play_client.spawnplayer.metadata.metadata, &pkt->data.play_client.spawnplayer.metadata.metadata_size);
-    add_queue(to->outgoing_packets, pkt);
-    pkt = xmalloc(sizeof(struct packet));
-    pkt->id = PKT_PLAY_CLIENT_ENTITYEQUIPMENT;
-    pkt->data.play_client.entityequipment.entity_id = from->entity->id;
-    pkt->data.play_client.entityequipment.slot = 0;
-    slot_duplicate(from->inventory->slots == NULL ? NULL : from->inventory->slots[from->currentItem + 36], &pkt->data.play_client.entityequipment.item);
-    add_queue(to->outgoing_packets, pkt);
-    pkt = xmalloc(sizeof(struct packet));
-    pkt->id = PKT_PLAY_CLIENT_ENTITYEQUIPMENT;
-    pkt->data.play_client.entityequipment.entity_id = from->entity->id;
-    pkt->data.play_client.entityequipment.slot = 5;
-    slot_duplicate(from->inventory->slots == NULL ? NULL : from->inventory->slots[5], &pkt->data.play_client.entityequipment.item);
-    add_queue(to->outgoing_packets, pkt);
-    pkt = xmalloc(sizeof(struct packet));
-    pkt->id = PKT_PLAY_CLIENT_ENTITYEQUIPMENT;
-    pkt->data.play_client.entityequipment.entity_id = from->entity->id;
-    pkt->data.play_client.entityequipment.slot = 4;
-    slot_duplicate(from->inventory->slots == NULL ? NULL : from->inventory->slots[6], &pkt->data.play_client.entityequipment.item);
-    add_queue(to->outgoing_packets, pkt);
-    pkt = xmalloc(sizeof(struct packet));
-    pkt->id = PKT_PLAY_CLIENT_ENTITYEQUIPMENT;
-    pkt->data.play_client.entityequipment.entity_id = from->entity->id;
-    pkt->data.play_client.entityequipment.slot = 3;
-    slot_duplicate(from->inventory->slots == NULL ? NULL : from->inventory->slots[7], &pkt->data.play_client.entityequipment.item);
-    add_queue(to->outgoing_packets, pkt);
-    pkt = xmalloc(sizeof(struct packet));
-    pkt->id = PKT_PLAY_CLIENT_ENTITYEQUIPMENT;
-    pkt->data.play_client.entityequipment.entity_id = from->entity->id;
-    pkt->data.play_client.entityequipment.slot = 2;
-    slot_duplicate(from->inventory->slots == NULL ? NULL : from->inventory->slots[8], &pkt->data.play_client.entityequipment.item);
-    add_queue(to->outgoing_packets, pkt);
-    pkt = xmalloc(sizeof(struct packet));
-    pkt->id = PKT_PLAY_CLIENT_ENTITYEQUIPMENT;
-    pkt->data.play_client.entityequipment.entity_id = from->entity->id;
-    pkt->data.play_client.entityequipment.slot = 1;
-    slot_duplicate(from->inventory->slots == NULL ? NULL : from->inventory->slots[45], &pkt->data.play_client.entityequipment.item);
-    add_queue(to->outgoing_packets, pkt);
-    put_hashmap(to->loaded_entities, from->entity->id, from->entity);
-    put_hashmap(from->entity->loadingPlayers, to->entity->id, to);
+void game_entity_equipment(struct player* to, struct entity* of, int slot, struct slot* item) {
+    struct packet* packet = packet_new(mempool_new(), PKT_PLAY_CLIENT_ENTITYEQUIPMENT);
+    packet->data.play_client.entityequipment.entity_id = of->id;
+    packet->data.play_client.entityequipment.slot = slot;
+    slot_duplicate(packet->pool, item, &packet->data.play_client.entityequipment.item);
+    queue_push(to->outgoing_packets, packet);
 }
 
-void loadEntity(struct player* to, struct entity* from) {
-    struct entity_info* ei = getEntityInfo(from->type);
-    uint32_t pt = ei->spawn_packet;
-    uint32_t pid = ei->spawn_packet_id;
-    if (pt == PKT_PLAY_CLIENT_SPAWNOBJECT) {
-        struct packet* pkt = xmalloc(sizeof(struct packet));
-        pkt->id = PKT_PLAY_CLIENT_SPAWNOBJECT;
-        pkt->data.play_client.spawnobject.entity_id = from->id;
+void game_load_player(struct player* to, struct player* from) {
+    struct packet* packet = packet_new(mempool_new(), PKT_PLAY_CLIENT_SPAWNPLAYER);
+    packet->data.play_client.spawnplayer.entity_id = from->entity->id;
+    memcpy(&packet->data.play_client.spawnplayer.player_uuid, &from->entity->data.player.player->uuid, sizeof(struct uuid));
+    packet->data.play_client.spawnplayer.x = from->entity->x;
+    packet->data.play_client.spawnplayer.y = from->entity->y;
+    packet->data.play_client.spawnplayer.z = from->entity->z;
+    packet->data.play_client.spawnplayer.yaw = (uint8_t) ((from->entity->yaw / 360.) * 256.);
+    packet->data.play_client.spawnplayer.pitch = (uint8_t) ((from->entity->pitch / 360.) * 256.);
+    writeMetadata(from->entity, &packet->data.play_client.spawnplayer.metadata.metadata, &packet->data.play_client.spawnplayer.metadata.metadata_size);
+    queue_push(to->outgoing_packets, packet);
+    game_entity_equipment(to, from->entity, 0, from->inventory->slots[from->currentItem + 36]);
+    game_entity_equipment(to, from->entity, 5, from->inventory->slots[5]);
+    game_entity_equipment(to, from->entity, 4, from->inventory->slots[6]);
+    game_entity_equipment(to, from->entity, 3, from->inventory->slots[7]);
+    game_entity_equipment(to, from->entity, 2, from->inventory->slots[8]);
+    game_entity_equipment(to, from->entity, 1, from->inventory->slots[45]);
+    hashmap_putint(to->loaded_entities, (uint64_t) from->entity->id, from->entity);
+    hashmap_putint(from->entity->loadingPlayers, (uint64_t) to->entity->id, to);
+}
+
+
+void game_load_entity(struct player* to, struct entity* from) {
+    struct entity_info* info = getEntityInfo(from->type);
+    uint32_t packet_type = info->spawn_packet;
+    int8_t entitity_type_id = (int8_t) info->spawn_packet_id;
+    if (packet_type == PKT_PLAY_CLIENT_SPAWNOBJECT) {
+        struct packet* packet = packet_new(mempool_new(), PKT_PLAY_CLIENT_SPAWNOBJECT);
+        packet->data.play_client.spawnobject.entity_id = from->id;
         struct uuid uuid;
         for (int i = 0; i < 4; i++)
             memcpy((void*) &uuid + 4 * i, &from->id, 4);
-        memcpy(&pkt->data.play_client.spawnobject.object_uuid, &uuid, sizeof(struct uuid));
-        pkt->data.play_client.spawnobject.type = pid;
-        pkt->data.play_client.spawnobject.x = from->x;
-        pkt->data.play_client.spawnobject.y = from->y;
-        pkt->data.play_client.spawnobject.z = from->z;
-        pkt->data.play_client.spawnobject.yaw = (from->yaw / 360.) * 256.;
-        pkt->data.play_client.spawnobject.pitch = (from->pitch / 360.) * 256.;
-        pkt->data.play_client.spawnobject.data = from->objectData;
-        pkt->data.play_client.spawnobject.velocity_x = (int16_t)(from->motX * 8000.);
-        pkt->data.play_client.spawnobject.velocity_y = (int16_t)(from->motY * 8000.);
-        pkt->data.play_client.spawnobject.velocity_z = (int16_t)(from->motZ * 8000.);
-        add_queue(to->outgoing_packets, pkt);
-        pkt = xmalloc(sizeof(struct packet));
-        pkt->id = PKT_PLAY_CLIENT_ENTITYMETADATA;
-        pkt->data.play_client.entitymetadata.entity_id = from->id;
-        writeMetadata(from, &pkt->data.play_client.entitymetadata.metadata.metadata, &pkt->data.play_client.entitymetadata.metadata.metadata_size);
-        add_queue(to->outgoing_packets, pkt);
-        put_hashmap(to->loaded_entities, from->id, from);
-        put_hashmap(from->loadingPlayers, to->entity->id, to);
+        memcpy(&packet->data.play_client.spawnobject.object_uuid, &uuid, sizeof(struct uuid));
+        packet->data.play_client.spawnobject.type = entitity_type_id;
+        packet->data.play_client.spawnobject.x = from->x;
+        packet->data.play_client.spawnobject.y = from->y;
+        packet->data.play_client.spawnobject.z = from->z;
+        packet->data.play_client.spawnobject.yaw = (uint8_t) ((from->yaw / 360.) * 256.);
+        packet->data.play_client.spawnobject.pitch = (uint8_t) ((from->pitch / 360.) * 256.);
+        packet->data.play_client.spawnobject.data = from->objectData;
+        packet->data.play_client.spawnobject.velocity_x = (int16_t)(from->motX * 8000.);
+        packet->data.play_client.spawnobject.velocity_y = (int16_t)(from->motY * 8000.);
+        packet->data.play_client.spawnobject.velocity_z = (int16_t)(from->motZ * 8000.);
+        queue_push(to->outgoing_packets, packet);
+        packet = packet_new(mempool_new(), PKT_PLAY_CLIENT_ENTITYMETADATA);
+        packet->data.play_client.entitymetadata.entity_id = from->id;
+        writeMetadata(from, &packet->data.play_client.entitymetadata.metadata.metadata, &packet->data.play_client.entitymetadata.metadata.metadata_size);
+        queue_push(to->outgoing_packets, packet);
     } else if (from->type == ENT_PLAYER) {
         return;
-    } else if (pt == PKT_PLAY_CLIENT_SPAWNPAINTING) {
-        struct packet* pkt = xmalloc(sizeof(struct packet));
-        pkt->id = PKT_PLAY_CLIENT_SPAWNPAINTING;
-        pkt->data.play_client.spawnpainting.entity_id = from->id;
+    } else if (packet_type == PKT_PLAY_CLIENT_SPAWNPAINTING) {
+        struct packet* packet = packet_new(mempool_new(), PKT_PLAY_CLIENT_SPAWNPAINTING);
+        packet->data.play_client.spawnpainting.entity_id = from->id;
         struct uuid uuid;
         for (int i = 0; i < 4; i++)
             memcpy((void*) &uuid + 4 * i, &from->id, 4);
-        memcpy(&pkt->data.play_client.spawnpainting.entity_uuid, &uuid, sizeof(struct uuid));
-        pkt->data.play_client.spawnpainting.location.x = (int32_t) from->x;
-        pkt->data.play_client.spawnpainting.location.y = (int32_t) from->y;
-        pkt->data.play_client.spawnpainting.location.z = (int32_t) from->z;
-        pkt->data.play_client.spawnpainting.title = xstrdup(from->data.painting.title, 0);
-        pkt->data.play_client.spawnpainting.direction = from->data.painting.direction;
-        add_queue(to->outgoing_packets, pkt);
-        put_hashmap(to->loaded_entities, from->id, from);
-        put_hashmap(from->loadingPlayers, to->entity->id, to);
-    } else if (pt == PKT_PLAY_CLIENT_SPAWNEXPERIENCEORB) {
-        struct packet* pkt = xmalloc(sizeof(struct packet));
-        pkt->id = PKT_PLAY_CLIENT_SPAWNEXPERIENCEORB;
-        pkt->data.play_client.spawnexperienceorb.entity_id = from->id;
-        pkt->data.play_client.spawnexperienceorb.x = from->x;
-        pkt->data.play_client.spawnexperienceorb.y = from->y;
-        pkt->data.play_client.spawnexperienceorb.z = from->z;
-        pkt->data.play_client.spawnexperienceorb.count = from->data.experienceorb.count;
-        add_queue(to->outgoing_packets, pkt);
-        put_hashmap(to->loaded_entities, from->id, from);
-        put_hashmap(from->loadingPlayers, to->entity->id, to);
-    } else if (pt == PKT_PLAY_CLIENT_SPAWNMOB) {
-        struct packet* pkt = xmalloc(sizeof(struct packet));
-        pkt->id = PKT_PLAY_CLIENT_SPAWNMOB;
-        pkt->data.play_client.spawnmob.entity_id = from->id;
+        memcpy(&packet->data.play_client.spawnpainting.entity_uuid, &uuid, sizeof(struct uuid));
+        packet->data.play_client.spawnpainting.location.x = (int32_t) from->x;
+        packet->data.play_client.spawnpainting.location.y = (int32_t) from->y;
+        packet->data.play_client.spawnpainting.location.z = (int32_t) from->z;
+        packet->data.play_client.spawnpainting.title = from->data.painting.title;
+        packet->data.play_client.spawnpainting.direction = from->data.painting.direction;
+        queue_push(to->outgoing_packets, packet);
+    } else if (packet_type == PKT_PLAY_CLIENT_SPAWNEXPERIENCEORB) {
+        struct packet* packet = packet_new(mempool_new(), PKT_PLAY_CLIENT_SPAWNEXPERIENCEORB);
+        packet->data.play_client.spawnexperienceorb.entity_id = from->id;
+        packet->data.play_client.spawnexperienceorb.x = from->x;
+        packet->data.play_client.spawnexperienceorb.y = from->y;
+        packet->data.play_client.spawnexperienceorb.z = from->z;
+        packet->data.play_client.spawnexperienceorb.count = from->data.experienceorb.count;
+        queue_push(to->outgoing_packets, packet);
+    } else if (packet_type == PKT_PLAY_CLIENT_SPAWNMOB) {
+        struct packet* packet = packet_new(mempool_new(), PKT_PLAY_CLIENT_SPAWNMOB);
+        packet->data.play_client.spawnmob.entity_id = from->id;
         struct uuid uuid;
         for (int i = 0; i < 4; i++)
             memcpy((void*) &uuid + 4 * i, &from->id, 4);
-        memcpy(&pkt->data.play_client.spawnmob.entity_uuid, &uuid, sizeof(struct uuid));
-        pkt->data.play_client.spawnmob.type = pid;
-        pkt->data.play_client.spawnmob.x = from->x;
-        pkt->data.play_client.spawnmob.y = from->y;
-        pkt->data.play_client.spawnmob.z = from->z;
-        pkt->data.play_client.spawnmob.yaw = (from->yaw / 360.) * 256.;
-        pkt->data.play_client.spawnmob.pitch = (from->pitch / 360.) * 256.;
-        pkt->data.play_client.spawnmob.head_pitch = (from->pitch / 360.) * 256.;
-        pkt->data.play_client.spawnmob.velocity_x = (int16_t)(from->motX * 8000.);
-        pkt->data.play_client.spawnmob.velocity_y = (int16_t)(from->motY * 8000.);
-        pkt->data.play_client.spawnmob.velocity_z = (int16_t)(from->motZ * 8000.);
-        writeMetadata(from, &pkt->data.play_client.spawnmob.metadata.metadata, &pkt->data.play_client.spawnmob.metadata.metadata_size);
-        add_queue(to->outgoing_packets, pkt);
-        put_hashmap(to->loaded_entities, from->id, from);
-        put_hashmap(from->loadingPlayers, to->entity->id, to);
+        memcpy(&packet->data.play_client.spawnmob.entity_uuid, &uuid, sizeof(struct uuid));
+        packet->data.play_client.spawnmob.type = entitity_type_id;
+        packet->data.play_client.spawnmob.x = from->x;
+        packet->data.play_client.spawnmob.y = from->y;
+        packet->data.play_client.spawnmob.z = from->z;
+        packet->data.play_client.spawnmob.yaw = (uint8_t) ((from->yaw / 360.) * 256.);
+        packet->data.play_client.spawnmob.pitch = (uint8_t) ((from->pitch / 360.) * 256.);
+        packet->data.play_client.spawnmob.head_pitch = (uint8_t) ((from->pitch / 360.) * 256.);
+        packet->data.play_client.spawnmob.velocity_x = (int16_t)(from->motX * 8000.);
+        packet->data.play_client.spawnmob.velocity_y = (int16_t)(from->motY * 8000.);
+        packet->data.play_client.spawnmob.velocity_z = (int16_t)(from->motZ * 8000.);
+        writeMetadata(from, &packet->data.play_client.spawnmob.metadata.metadata, &packet->data.play_client.spawnmob.metadata.metadata_size);
+        queue_push(to->outgoing_packets, packet);
     }
+    hashmap_putint(to->loaded_entities, (uint64_t) from->id, from);
+    hashmap_putint(from->loadingPlayers, (uint64_t) to->entity->id, to);
 }
 
 void onInventoryUpdate(struct player* player, struct inventory* inv, int slot) {
@@ -231,7 +198,7 @@ void dropBlockDrop(struct world* world, struct slot* slot, int32_t x, int32_t y,
     slot_duplicate(slot, item->data.itemstack.slot);
     world_spawn_entity(world, item);
     BEGIN_BROADCAST_DIST(item, 128.)
-    loadEntity(bc_player, item);
+                        game_load_entity(bc_player, item);
     END_BROADCAST(item->world->players)
 }
 
@@ -251,7 +218,7 @@ void dropPlayerItem(struct player* player, struct slot* drop) {
     slot_duplicate(drop, item->data.itemstack.slot);
     world_spawn_entity(player->world, item);
     BEGIN_BROADCAST_DIST(player->entity, 128.)
-    loadEntity(bc_player, item);
+                        game_load_entity(bc_player, item);
     END_BROADCAST(player->world->players)
 }
 
@@ -283,7 +250,7 @@ void dropEntityItem_explode(struct entity* entity, struct slot* drop) {
     slot_duplicate(drop, item->data.itemstack.slot);
     world_spawn_entity(entity->world, item);
     BEGIN_BROADCAST_DIST(entity, 128.)
-    loadEntity(bc_player, item);
+                        game_load_entity(bc_player, item);
     END_BROADCAST(entity->world->players)
 }
 

@@ -381,8 +381,8 @@ void player_tick(struct player* player) {
     ITER_MAP(player->world->entities) {
         struct entity* ent = (struct entity*) value;
         if (ent == player->entity || hashmap_getint(player->loaded_entities, (uint64_t) ent->id) || entity_distsq(player->entity, ent) > (CHUNK_VIEW_DISTANCE * 16.) * (CHUNK_VIEW_DISTANCE * 16.)) continue;
-        if (ent->type == ENT_PLAYER) loadPlayer(player, ent->data.player.player);
-        else loadEntity(player, ent);
+        if (ent->type == ENT_PLAYER) game_load_player(player, ent->data.player.player);
+        else game_load_entity(player, ent);
         ITER_MAP_END();
     }
     endProfilerSection("player_transmission");

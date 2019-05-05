@@ -27,9 +27,9 @@ void dropBlockDrop(struct world* world, struct slot* slot, int32_t x, int32_t y,
 
 void dropBlockDrops(struct world* world, block blk, struct player* breaker, int32_t x, int32_t y, int32_t z);
 
-void loadPlayer(struct player* to, struct player* from);
+void game_load_player(struct player* to, struct player* from);
 
-void loadEntity(struct player* to, struct entity* from);
+void game_load_entity(struct player* to, struct entity* from);
 
 void onInventoryUpdate(struct player* player, struct inventory* inv, int slot);
 

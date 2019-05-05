@@ -12,6 +12,7 @@ void connection_flush(struct player* player) {
             player->conn->disconnect = 1;
             break;
         }
+        pfree(packet->pool);
     }
     netmgr_trigger_write(player->conn->managed_conn);
 }
