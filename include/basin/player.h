@@ -14,7 +14,6 @@ struct player {
     struct connection* conn;
     struct world* world;
     struct entity* entity;
-    uint32_t protocol_version; 
 
     char* name;
     struct uuid uuid;
