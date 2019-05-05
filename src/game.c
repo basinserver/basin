@@ -209,7 +209,7 @@ void dropPlayerItem(struct player* player, struct slot* drop) {
     END_BROADCAST(player->world->players)
 }
 
-void playSound(struct world* world, int32_t soundID, int32_t soundCategory, float x, float y, float z, float volume, float pitch) {
+void playSound(struct world* world, int32_t soundID, int32_t soundCategory, double x, double y, double z, float volume, float pitch) {
     BEGIN_BROADCAST_DISTXYZ(x, y, z, world->players, 64.)
     struct packet* pkt = xmalloc(sizeof(struct packet));
     pkt->id = PKT_PLAY_CLIENT_SOUNDEFFECT;

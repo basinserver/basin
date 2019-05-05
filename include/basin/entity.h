@@ -455,7 +455,7 @@ void entitymeta_read(struct entity* ent, uint8_t* meta, size_t size);
 
 void entitymeta_write(struct entity* entity, uint8_t** data, size_t* size, struct mempool* pool);
 
-void updateMetadata(struct entity* ent);
+void entity_broadcast_metadata(struct entity* entity);
 
 void entity_jump(struct entity* entity);
 
@@ -471,12 +471,8 @@ double entity_dist_block(struct entity* ent1, double x, double y, double z);
 
 void entity_collision_bounding_box(struct entity* entity, struct boundingbox* bb);
 
-int moveEntity(struct entity* entity, double* mx, double* my, double* mz, float shrink);
-
-int tick_itemstack(struct world* world, struct entity* entity);
+int entity_move(struct entity* entity, double* motionX, double* motionY, double* motionZ, float shrink);
 
 void tick_entity(struct world* world, struct entity* entity);
-
-void freeEntity(struct entity* entity);
 
 #endif /* BASIN_ENTITY_H_ */

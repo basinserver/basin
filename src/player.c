@@ -303,13 +303,13 @@ void player_tick(struct player* player) {
             player->itemUseDuration = 0;
             player->entity->usingItemMain = 0;
             player->entity->usingItemOff = 0;
-            updateMetadata(player->entity);
+            entity_broadcast_metadata(player->entity);
         } else if (ihi->maxUseDuration <= player->itemUseDuration) {
             if (ihi->onItemUse != NULL) (*ihi->onItemUse)(player->world, player, (uint8_t) (player->itemUseHand ? 45 : (36 + player->currentItem)), ihs, player->itemUseDuration);
             player->itemUseDuration = 0;
             player->entity->usingItemMain = 0;
             player->entity->usingItemOff = 0;
-            updateMetadata(player->entity);
+            entity_broadcast_metadata(player->entity);
         } else {
             if (ihi->onItemUseTick != NULL) (*ihi->onItemUseTick)(player->world, player, (uint8_t) (player->itemUseHand ? 45 : (36 + player->currentItem)), ihs, player->itemUseDuration);
             player->itemUseDuration++;

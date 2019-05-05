@@ -624,7 +624,7 @@ void player_packet_handle_playerposition(struct player* player, struct mempool* 
     double moveX = packet->x - lastX;
     double moveY = packet->feet_y - lastY;
     double moveZ = packet->z - lastZ;
-    if (moveEntity(player->entity, &moveX, &moveY, &moveZ, .05)) {
+    if (entity_move(player->entity, &moveX, &moveY, &moveZ, .05)) {
         player_teleport(player, lastX, lastY, lastZ);
     } else {
         player->entity->last_x = lastX;
@@ -660,7 +660,7 @@ void player_packet_handle_playerpositionandlook(struct player* player, struct me
     double moveX = packet->x - lastX;
     double moveY = packet->feet_y - lastY;
     double moveZ = packet->z - lastZ;
-    if (moveEntity(player->entity, &moveX, &moveY, &moveZ, .05)) {
+    if (entity_move(player->entity, &moveX, &moveY, &moveZ, .05)) {
         player_teleport(player, lastX, lastY, lastZ);
     } else {
         player->entity->last_x = lastX;
@@ -861,13 +861,13 @@ void player_packet_handle_playerdigging(struct player* player, struct mempool* p
                 player->itemUseDuration = 0;
                 player->entity->usingItemMain = 0;
                 player->entity->usingItemOff = 0;
-                updateMetadata(player->entity);
+                entity_broadcast_metadata(player->entity);
             }
             if (item_info != NULL && item_info->onItemUse != NULL) (*item_info->onItemUse)(player->world, player, player->itemUseHand ? 45 : (36 + player->currentItem), item_in_hand, player->itemUseDuration);
             player->entity->usingItemMain = 0;
             player->entity->usingItemOff = 0;
             player->itemUseDuration = 0;
-            updateMetadata(player->entity);
+            entity_broadcast_metadata(player->entity);
         }
         pthread_mutex_unlock(&player->inventory->mutex);
     } else if (packet->status == 6) {
@@ -881,7 +881,7 @@ void player_packet_handle_entityaction(struct player* player, struct mempool* po
     else if (packet->action_id == 1) player->entity->sneaking = 0;
     else if (packet->action_id == 3) player->entity->sprinting = 1;
     else if (packet->action_id == 4) player->entity->sprinting = 0;
-    updateMetadata(player->entity);
+    entity_broadcast_metadata(player->entity);
 }
 
 void player_packet_handle_steervehicle(struct player* player, struct mempool* pool, struct pkt_play_server_steervehicle* packet) {
@@ -1061,7 +1061,7 @@ void player_packet_handle_useitem(struct player* player, struct mempool* pool, s
                 player->itemUseHand = (uint8_t) (packet->hand ? 1 : 0);
                 player->entity->usingItemMain = !player->itemUseHand;
                 player->entity->usingItemOff = player->itemUseHand;
-                updateMetadata(player->entity);
+                entity_broadcast_metadata(player->entity);
             }
         }
     }

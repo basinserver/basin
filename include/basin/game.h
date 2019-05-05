@@ -17,7 +17,7 @@ void player_openInventory(struct player* player, struct inventory* inv);
 
 float game_rand_float();
 
-void playSound(struct world* world, int32_t soundID, int32_t soundCategory, float x, float y, float z, float volume, float pitch);
+void playSound(struct world* world, int32_t soundID, int32_t soundCategory, double x, double y, double z, float volume, float pitch);
 
 void dropPlayerItem(struct player* player, struct slot* drop);
 

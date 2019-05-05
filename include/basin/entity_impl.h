@@ -1,7 +1,11 @@
 #ifndef BASIN_ENTITY_IMPL_H
 #define BASIN_ENTITY_IMPL_H
 
-#include "entity_impl.h"
+#include <basin/world.h>
+#include <basin/entity.h>
+#include <basin/player.h>
+#include <basin/inventory.h>
+#include <stdint.h>
 
 void onSpawned_minecart(struct world* world, struct entity* entity);
 
