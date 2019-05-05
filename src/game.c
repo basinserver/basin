@@ -28,8 +28,8 @@
 void flush_outgoing(struct player* player) {
     if (player->conn == NULL) return;
     struct packet* packet;
-    while (packet = queue_maybepop(player->outgoing_packets) != NULL) {
-        packet_write(player->conn, player);
+    while ((packet = queue_maybepop(player->outgoing_packets)) != NULL) {
+        packet_write(player->conn, packet);
     }
     netmgr_trigger_write(player->conn->managed_conn);
 }
