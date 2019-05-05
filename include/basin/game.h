@@ -15,8 +15,6 @@
 
 void player_openInventory(struct player* player, struct inventory* inv);
 
-void flush_outgoing(struct player* player);
-
 float randFloat();
 
 void playSound(struct world* world, int32_t soundID, int32_t soundCategory, float x, float y, float z, float volume, float pitch);

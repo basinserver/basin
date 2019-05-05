@@ -34,4 +34,6 @@ struct connection {
     struct server* server;
 };
 
+void connection_flush(struct player* player);
+
 #endif /* BASIN_CONNECTION_H */

@@ -57,7 +57,7 @@ void main_tick() {
     pthread_rwlock_unlock(&playersToLoad->data_mutex);
     pthread_cond_broadcast (&chunk_wake);
     BEGIN_HASHMAP_ITERATION (players)
-    flush_outgoing (value);
+    connection_flush (value);
     END_HASHMAP_ITERATION (players)
     if (tick_counter % 20 == 0) {
         pthread_rwlock_wrlock(&defunctPlayers->data_mutex);

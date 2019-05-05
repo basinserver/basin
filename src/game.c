@@ -25,15 +25,6 @@
 #include <stdint.h>
 #include <stdio.h>
 
-void flush_outgoing(struct player* player) {
-    if (player->conn == NULL) return;
-    struct packet* packet;
-    while ((packet = queue_maybepop(player->outgoing_packets)) != NULL) {
-        packet_write(player->conn, packet);
-    }
-    netmgr_trigger_write(player->conn->managed_conn);
-}
-
 void loadPlayer(struct player* to, struct player* from) {
     struct packet* pkt = xmalloc(sizeof(struct packet));
     pkt->id = PKT_PLAY_CLIENT_SPAWNPLAYER;

@@ -142,7 +142,7 @@ int work_joinServer(struct connection* conn, char* username, char* uuid_string) 
         pkt->data.play_client.playerlistitem.players->action.addplayer.has_display_name = 0;
         pkt->data.play_client.playerlistitem.players->action.addplayer.display_name = NULL;
         queue_push(iter_player->outgoing_packets, pkt);
-        flush_outgoing(iter_player);
+        connection_flush(iter_player);
         ITER_MAP_END();
     }
     pthread_rwlock_unlock(&conn->server->players_by_entity_id->rwlock);
