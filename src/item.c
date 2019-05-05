@@ -166,7 +166,7 @@ int onItemInteract_painting(struct world* world, struct player* player, uint8_t 
         else if (p == 24) ent->data.painting.title = "Skeleton";
         else if (p == 25) ent->data.painting.title = "DonkeyKong";
         world_spawn_entity(world, ent);
-        if (player->gamemode != 1) inventory_set_slot(player, player->inventory, 36 + player->currentItem, NULL, 1, 1);
+        if (player->gamemode != 1) inventory_set_slot(player, player->inventory, 36 + player->currentItem, NULL, 1);
     }
     return 0;
 
@@ -185,7 +185,7 @@ int onItemInteract_minecart(struct world* world, struct player* player, uint8_t 
     else if (slot->item == ITM_MINECARTCOMMANDBLOCK) et = ENT_MINECARTCOMMANDBLOCK;
     struct entity* ent = entity_new(nextEntityID++, (double) x + .5, (double) y + dy, (double) z + .5, et, 0., 0.);
     world_spawn_entity(world, ent);
-    if (player->gamemode != 1) inventory_set_slot(player, player->inventory, 36 + player->currentItem, NULL, 1, 1);
+    if (player->gamemode != 1) inventory_set_slot(player, player->inventory, 36 + player->currentItem, NULL, 1);
     return 0;
 
 }
@@ -544,7 +544,7 @@ void onItemUse_armor(struct world* world, struct player* player, uint8_t slot_in
     else if (ii->armorType == ARMOR_BOOTS) sli = 8;
     if (inventory_get(player, player->inventory, sli) != NULL) return;
     inventory_set_slot(player, player->inventory, sli, slot, 1);
-    inventory_set_slot(player, player->inventory, slot_index, NULL, 1, 0);
+    inventory_set_slot(player, player->inventory, slot_index, NULL, 1);
 }
 
 float onEntityHitWhileWearing_armor(struct world* world, struct player* player, uint8_t slot_index, struct slot* slot, float damage) {
@@ -629,7 +629,7 @@ void onItemUse_bow(struct world* world, struct player* player, uint8_t slot_inde
             if (--ammo->count <= 0) {
                 ammo = NULL;
             }
-            inventory_set_slot(player, player->inventory, bs, ammo, 1, 1);
+            inventory_set_slot(player, player->inventory, bs, ammo, 1);
         }
         world_spawn_entity(player->world, arrow);
     }

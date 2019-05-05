@@ -109,7 +109,7 @@ void tick_arrow(struct world* world, struct entity* entity) {
         struct entity* ehit = NULL;
         struct entity* shooter = world_get_entity(world, entity->objectData - 1);
         double bd = 999.;
-        BEGIN_HASHMAP_ITERATION(world->entities)
+        BEGIN_HASHMAP_ITERATION(world->entities);
         struct entity* e2 = value;
         double rd = entity_distsq_block(e2, entity->x + entity->motX, entity->y + entity->motY, entity->z + entity->motZ);
         if (rd > 4) continue;
