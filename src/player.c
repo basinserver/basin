@@ -396,13 +396,13 @@ void player_tick(struct player* player) {
 int player_onGround(struct player* player) {
     struct entity* entity = player->entity;
     struct boundingbox obb;
-    getEntityCollision(entity, &obb);
+    entity_collision_bounding_box(entity, &obb);
     if (obb.minX == obb.maxX || obb.minZ == obb.maxZ || obb.minY == obb.maxY) {
         return 0;
     }
     obb.minY += -.08;
     struct boundingbox pbb;
-    getEntityCollision(entity, &pbb);
+    entity_collision_bounding_box(entity, &pbb);
     double ny = -.08;
     for (int32_t x = floor(obb.minX); x < floor(obb.maxX + 1.); x++) {
         for (int32_t z = floor(obb.minZ); z < floor(obb.maxZ + 1.); z++) {

@@ -56,7 +56,7 @@ void game_load_player(struct player* to, struct player* from) {
 
 
 void game_load_entity(struct player* to, struct entity* from) {
-    struct entity_info* info = getEntityInfo(from->type);
+    struct entity_info* info = entity_get_info(from->type);
     uint32_t packet_type = info->spawn_packet;
     int8_t entitity_type_id = (int8_t) info->spawn_packet_id;
     if (packet_type == PKT_PLAY_CLIENT_SPAWNOBJECT) {

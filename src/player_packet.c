@@ -591,7 +591,7 @@ void player_packet_handle_useentity(struct player* player, struct mempool* pool,
     struct entity* entity = world_get_entity(player->world, packet->target);
     if (packet->type == 0) {
         if (entity != NULL && entity != player->entity && entity->health > 0. && entity->world == player->world && entity_dist(entity, player->entity) < 4.) {
-            struct entity_info* info = getEntityInfo(entity->type);
+            struct entity_info* info = entity_get_info(entity->type);
             if (info != NULL && info->onInteract != NULL) {
                 pthread_mutex_lock(&player->inventory->mutex);
                 (*info->onInteract)(player->world, entity, player, inventory_get(player, player->inventory, 36 + player->currentItem), (int16_t) (36 + player->currentItem));
@@ -995,8 +995,8 @@ void player_packet_handle_playerblockplacement(struct player* player, struct mem
             // TODO: localize entity information!
             ITER_MAP (player->world->entities) {
                 struct entity* ent = (struct entity*) value;
-                if (ent == NULL || entity_distsq_block(ent, x, y, z) > 8. * 8. || !hasFlag(getEntityInfo(ent->type), "livingbase")) continue;
-                getEntityCollision(ent, &entity_bounds);
+                if (ent == NULL || entity_distsq_block(ent, x, y, z) > 8. * 8. || !entity_has_flag(entity_get_info(ent->type), "livingbase")) continue;
+                            entity_collision_bounding_box(ent, &entity_bounds);
                 entity_bounds.minX += .01;
                 entity_bounds.minY += .01;
                 entity_bounds.minZ += .01;

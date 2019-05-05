@@ -27,26 +27,15 @@
 #include <unistd.h>
 #include <math.h>
 
-struct entity_info* getEntityInfo(uint32_t id) {
+struct entity_info* entity_get_info(uint32_t id) {
     if (id < 0 || id > entity_infos->size) return NULL;
     return entity_infos->data[id];
 }
 
-void swingArm(struct entity* entity) {
-    BEGIN_BROADCAST_DIST(entity, CHUNK_VIEW_DISTANCE * 16.)
-    struct packet* pkt = xmalloc(sizeof(struct packet));
-    pkt->id = PKT_PLAY_CLIENT_ANIMATION;
-    pkt->data.play_client.animation.entity_id = entity->id;
-    pkt->data.play_client.animation.animation = 0;
-    add_queue(bc_player->outgoing_packets, pkt);
-    END_BROADCAST(entity->world->players)
-}
-
-struct mempool* entities_pool;
-
 void init_entities() {
     entities_pool = mempool_new();
-    entity_infos = list_thread_new(64, entities_pool);
+    entity_infos = list_new(64, entities_pool);
+    entity_infos_by_name = hashmap_thread_new(64, entities_pool);
     char* json_file = (char*) read_file_fully(entities_pool, "smelting.json", NULL);
     if (json_file == NULL) {
         errlog(delog, "Error reading entity information: %s\n", strerror(errno));
@@ -120,15 +109,14 @@ void init_entities() {
         if (tmp == NULL || tmp->type != JSON_ARRAY) {
             goto entity_error;
         }
-        info->flag_count = tmp->children_list->size;
-        info->flags = pmalloc(entities_pool, info->flag_count * sizeof(char*));
+        info->flags = hashset_new(8, entities_pool);
         size_t flag_index = 0;
         ITER_LLIST(tmp->children_list, flag_value) {
             struct json_object* flag_json = flag_value;
             if (flag_json == NULL || flag_json->type != JSON_STRING) {
                 goto entity_error;
             }
-            info->flags[flag_index] = str_dup(str_tolower(str_trim(flag_json->data.string)), 0, entities_pool);
+            hashset_add(info->flags, str_dup(str_tolower(str_trim(flag_json->data.string)), 0, entities_pool));
             ++flag_index;
             ITER_LLIST_END();
         }
@@ -150,54 +138,57 @@ void init_entities() {
         if (tmp == NULL || tmp->type != JSON_STRING) goto entity_error;
         info->dataname = str_dup(tmp->data.string, 0, entities_pool);
         list_set(entity_infos, id, info);
+        hashmap_put(entity_infos_by_name, str_tolower(str_dup(info->dataname, 0, entities_pool)), info);
         continue;
         entity_error: ;
         printf("[WARNING] Error Loading Entity \"%s\"! Skipped.\n", child_json->name);
         ITER_LLIST_END();
     }
     pfree(json->pool);
-    getEntityInfo(ENT_ZOMBIE)->onAITick = &ai_handletasks;
-    getEntityInfo(ENT_ZOMBIE)->initAI = &initai_zombie;
-    getEntityInfo(ENT_FALLINGBLOCK)->onTick = &onTick_fallingblock;
-    getEntityInfo(ENT_PRIMEDTNT)->onTick = &onTick_tnt;
-    getEntityInfo(ENT_ITEM)->onTick = &tick_itemstack;
-    getEntityInfo(ENT_ARROW)->onTick = &tick_arrow;
-    getEntityInfo(ENT_SPECTRALARROW)->onTick = &tick_arrow;
-    getEntityInfo(ENT_COW)->onInteract = &onInteract_cow;
-    getEntityInfo(ENT_MUSHROOMCOW)->onInteract = &onInteract_mooshroom;
-    getEntityInfo(ENT_MINECARTRIDEABLE)->onSpawned = &onSpawned_minecart;
-    getEntityInfo(ENT_MINECARTCHEST)->onSpawned = &onSpawned_minecart;
-    getEntityInfo(ENT_MINECARTFURNACE)->onSpawned = &onSpawned_minecart;
-    getEntityInfo(ENT_MINECARTTNT)->onSpawned = &onSpawned_minecart;
-    getEntityInfo(ENT_MINECARTSPAWNER)->onSpawned = &onSpawned_minecart;
-    getEntityInfo(ENT_MINECARTHOPPER)->onSpawned = &onSpawned_minecart;
-    getEntityInfo(ENT_MINECARTCOMMANDBLOCK)->onSpawned = &onSpawned_minecart;
+    entity_get_info(ENT_ZOMBIE)->onAITick = &ai_handletasks;
+    entity_get_info(ENT_ZOMBIE)->initAI = &initai_zombie;
+    entity_get_info(ENT_FALLINGBLOCK)->onTick = &onTick_fallingblock;
+    entity_get_info(ENT_PRIMEDTNT)->onTick = &onTick_tnt;
+    entity_get_info(ENT_ITEM)->onTick = &tick_itemstack;
+    entity_get_info(ENT_ARROW)->onTick = &tick_arrow;
+    entity_get_info(ENT_SPECTRALARROW)->onTick = &tick_arrow;
+    entity_get_info(ENT_COW)->onInteract = &onInteract_cow;
+    entity_get_info(ENT_MUSHROOMCOW)->onInteract = &onInteract_mooshroom;
+    entity_get_info(ENT_MINECARTRIDEABLE)->onSpawned = &onSpawned_minecart;
+    entity_get_info(ENT_MINECARTCHEST)->onSpawned = &onSpawned_minecart;
+    entity_get_info(ENT_MINECARTFURNACE)->onSpawned = &onSpawned_minecart;
+    entity_get_info(ENT_MINECARTTNT)->onSpawned = &onSpawned_minecart;
+    entity_get_info(ENT_MINECARTSPAWNER)->onSpawned = &onSpawned_minecart;
+    entity_get_info(ENT_MINECARTHOPPER)->onSpawned = &onSpawned_minecart;
+    entity_get_info(ENT_MINECARTCOMMANDBLOCK)->onSpawned = &onSpawned_minecart;
 }
 
-uint32_t getIDFromEntityDataName(const char* dataname) {
-    for (size_t i = 0; i < entity_infos->size; i++) {
-        struct entity_info* ei = entity_infos->data[i];
-        if (ei == NULL) continue;
-        if (streq_nocase(ei->dataname, dataname)) return i;
+void entity_animation(struct entity* entity, int animation_id) { // 0 to swing arm
+    BEGIN_BROADCAST_DIST(entity, CHUNK_VIEW_DISTANCE * 16.) {
+        struct packet* packet = packet_new(mempool_new(), PKT_PLAY_CLIENT_ANIMATION);
+        packet->data.play_client.animation.entity_id = entity->id;
+        packet->data.play_client.animation.animation = animation_id;
+        queue_push(bc_player->outgoing_packets, packet);
+        END_BROADCAST(entity->world->players);
     }
-    return -1;
 }
 
-void getEntityCollision(struct entity* ent, struct boundingbox* bb) {
-    struct entity_info* ei = getEntityInfo(ent->type);
-    bb->minX = ent->x - ei->width / 2;
-    bb->maxX = ent->x + ei->width / 2;
-    bb->minZ = ent->z - ei->width / 2;
-    bb->maxZ = ent->z + ei->width / 2;
-    bb->minY = ent->y;
-    bb->maxY = ent->y + ei->height;
+void entity_collision_bounding_box(struct entity* entity, struct boundingbox* bb) {
+    //TODO: plugin hook here?
+    bb->minX = entity->x - entity->info->width / 2;
+    bb->maxX = entity->x + entity->info->width / 2;
+    bb->minZ = entity->z - entity->info->width / 2;
+    bb->maxZ = entity->z + entity->info->width / 2;
+    bb->minY = entity->y;
+    bb->maxY = entity->y + entity->info->height;
 }
 
-void jump(struct entity* entity) {
+void entity_jump(struct entity* entity) {
+    //TODO: plugin hook here?
+    //TODO: some entities may jump/swim diferently
     if (entity->inWater || entity->inLava) entity->motY += .04;
     else if (entity->on_ground) {
         entity->motY = .42;
-        //entity sprinting jump?
     }
 }
 
@@ -207,7 +198,8 @@ struct entity* entity_new(struct world* world, int32_t id, double x, double y, d
     struct entity* entity = pcalloc(pool, sizeof(struct entity));
     entity->pool = pool;
     entity->world = world;
-    struct entity_info* info = getEntityInfo(type);
+    struct entity_info* info = entity_get_info(type);
+    entity->info = info;
     entity->id = id;
     entity->type = type;
     entity->last_x = entity->x = x;
@@ -238,71 +230,153 @@ double entity_dist_block(struct entity* ent1, double x, double y, double z) {
     return sqrt((ent1->x - x) * (ent1->x - x) + (ent1->y - y) * (ent1->y - y) + (ent1->z - z) * (ent1->z - z));
 }
 
-struct packet* getEntityPropertiesPacket(struct entity* entity) {
-    struct packet* pkt = xmalloc(sizeof(struct packet));
-    pkt->id = PKT_PLAY_CLIENT_ENTITYPROPERTIES;
-    pkt->data.play_client.entityproperties.entity_id = entity->id;
-    pkt->data.play_client.entityproperties.number_of_properties = 0;
-    if (entity->type == ENT_PLAYER) {
-
-    }
-    return pkt;
-}
-
-void handleMetaByte(struct entity* ent, int index, signed char b) {
+void entitymeta_handle_byte(struct entity* ent, int index, uint8_t b) {
     if (index == 0) {
         ent->sneaking = b & 0x02 ? 1 : 0;
         ent->sprinting = b & 0x08 ? 1 : 0;
         ent->usingItemMain = b & 0x10 ? 1 : 0;
         ent->usingItemOff = 0;
-    } else if (hasFlag(getEntityInfo(ent->type), "living") && index == 6) {
+    } else if (hashset_has(ent->info->flags, "living") && index == 6) {
         ent->usingItemMain = b & 0x01;
         ent->usingItemOff = (b & 0x02) ? 1 : 0;
     }
 }
 
-void handleMetaVarInt(struct entity* ent, int index, int32_t i) {
+void entitymeta_handle_varint(struct entity* ent, int index, int32_t i) {
     if ((ent->type == ENT_SKELETON || ent->type == ENT_SLIME || ent->type == ENT_LAVASLIME || ent->type == ENT_GUARDIAN) && index == 11) {
         ent->subtype = i;
     }
 }
 
-void handleMetaFloat(struct entity* ent, int index, float f) {
+void entitymeta_handle_float(struct entity* ent, int index, float f) {
 
 }
 
-void handleMetaString(struct entity* ent, int index, char* str) {
+void entitymeta_handle_string(struct entity* ent, int index, char* str) {
 
-    xfree(str);
 }
 
-void handleMetaSlot(struct entity* ent, int index, struct slot* slot) {
+void entitymeta_handle_slot(struct entity* ent, int index, struct slot* slot) {
     if (ent->type == ENT_ITEM && index == 6) {
         ent->data.itemstack.slot = slot;
     }
 }
 
-void handleMetaVector(struct entity* ent, int index, float f1, float f2, float f3) {
+void entitymeta_handle_vector(struct entity* ent, int index, float f1, float f2, float f3) {
 
 }
 
-void handleMetaPosition(struct entity* ent, int index, struct encpos* pos) {
+void entitymeta_handle_encpos(struct entity* ent, int index, struct encpos* pos) {
 
 }
 
-void handleMetaUUID(struct entity* ent, int index, struct uuid* pos) {
+void entitymeta_handle_uuid(struct entity* ent, int index, struct uuid* pos) {
 
 }
 
-int hasFlag(struct entity_info* ei, char* flag) {
-    for (size_t i = 0; i < ei->flag_count; i++)
-        if (streq_nocase(ei->flags[i], flag)) return 1;
-    return 0;
+
+void entitymeta_read(struct entity* ent, uint8_t* meta, size_t size) {
+    struct mempool* pool = mempool_new();
+    while (size > 0) {
+        uint8_t index = meta[0];
+        meta++;
+        size--;
+        if (index == 0xff || size == 0) break;
+        uint8_t type = meta[0];
+        meta++;
+        size--;
+        if (type == 0 || type == 6) {
+            if (size == 0) break;
+            uint8_t b = meta[0];
+            meta++;
+            size--;
+            entitymeta_handle_byte(ent, index, b);
+        } else if (type == 1 || type == 10 || type == 12) {
+            if ((type == 10 || type == 12) && size == 0) break;
+            int32_t vi = 0;
+            int r = readVarInt(&vi, meta, size);
+            meta += r;
+            size -= r;
+            entitymeta_handle_varint(ent, index, vi);
+        } else if (type == 2) {
+            if (size < 4) break;
+            float f = 0.;
+            memcpy(&f, meta, 4);
+            meta += 4;
+            size -= 4;
+            swapEndian(&f, 4);
+            entitymeta_handle_float(ent, index, f);
+        } else if (type == 3 || type == 4) {
+            char* str = NULL;
+            int r = readString(pool, &str, meta, size);
+            meta += r;
+            size -= r;
+            entitymeta_handle_string(ent, index, str);
+        } else if (type == 5) {
+            struct slot slot;
+            int r = readSlot(pool, &slot, meta, size);
+            meta += r;
+            size -= r;
+            entitymeta_handle_slot(ent, index, &slot);
+        } else if (type == 7) {
+            if (size < 12) break;
+            float f1 = 0.;
+            float f2 = 0.;
+            float f3 = 0.;
+            memcpy(&f1, meta, 4);
+            meta += 4;
+            size -= 4;
+            memcpy(&f2, meta, 4);
+            meta += 4;
+            size -= 4;
+            memcpy(&f3, meta, 4);
+            meta += 4;
+            size -= 4;
+            swapEndian(&f1, 4);
+            swapEndian(&f2, 4);
+            swapEndian(&f3, 4);
+            entitymeta_handle_vector(ent, index, f1, f2, f3);
+        } else if (type == 8) {
+            struct encpos pos;
+            if (size < sizeof(struct encpos)) break;
+            memcpy(&pos, meta, sizeof(struct encpos));
+            meta += sizeof(struct encpos);
+            size -= sizeof(struct encpos);
+            entitymeta_handle_encpos(ent, index, &pos);
+        } else if (type == 9) {
+            if (size == 0) break;
+            signed char b = meta[0];
+            meta++;
+            size--;
+            if (b) {
+                struct encpos pos;
+                if (size < sizeof(struct encpos)) break;
+                memcpy(&pos, meta, sizeof(struct encpos));
+                meta += sizeof(struct encpos);
+                size -= sizeof(struct encpos);
+                entitymeta_handle_encpos(ent, index, &pos);
+            }
+        } else if (type == 11) {
+            if (size == 0) break;
+            signed char b = meta[0];
+            meta++;
+            size--;
+            if (b) {
+                struct uuid uuid;
+                if (size < sizeof(struct uuid)) break;
+                memcpy(&uuid, meta, sizeof(struct uuid));
+                meta += sizeof(struct uuid);
+                size -= sizeof(struct uuid);
+                entitymeta_handle_uuid(ent, index, &uuid);
+            }
+        }
+    }
+    pfree(pool);
 }
 
 int entity_inFluid(struct entity* entity, uint16_t blk, float ydown, int meta_check) {
     struct boundingbox pbb;
-    getEntityCollision(entity, &pbb);
+    entity_collision_bounding_box(entity, &pbb);
     if (pbb.minX == pbb.maxX || pbb.minZ == pbb.maxZ || pbb.minY == pbb.maxY) return 0;
     pbb.minX += .001;
     pbb.minY += .001;
@@ -342,7 +416,7 @@ void outputMetaByte(struct entity* ent, unsigned char** loc, size_t* size) {
     (*loc)[*size] = ent->sneaking ? 0x02 : 0;
     (*loc)[*size] |= ent->sprinting ? 0x08 : 0;
     (*loc)[(*size)++] |= (ent->usingItemMain || ent->usingItemOff) ? 0x08 : 0;
-    if (hasFlag(getEntityInfo(ent->type), "livingbase")) {
+    if (entity_has_flag(entity_get_info(ent->type), "livingbase")) {
         (*loc)[(*size)++] = 6;
         (*loc)[(*size)++] = 0;
         (*loc)[*size] = ent->usingItemMain ? 0x01 : 0;
@@ -361,7 +435,7 @@ void outputMetaVarInt(struct entity* ent, unsigned char** loc, size_t* size) {
 }
 
 void outputMetaFloat(struct entity* ent, unsigned char** loc, size_t* size) {
-    if (hasFlag(getEntityInfo(ent->type), "livingbase")) {
+    if (entity_has_flag(entity_get_info(ent->type), "livingbase")) {
         *loc = xrealloc(*loc, *size + 6);
         (*loc)[(*size)++] = 7;
         (*loc)[(*size)++] = 2;
@@ -394,103 +468,6 @@ void outputMetaPosition(struct entity* ent, unsigned char** loc, size_t* size) {
 
 void outputMetaUUID(struct entity* ent, unsigned char** loc, size_t* size) {
 
-}
-
-void readMetadata(struct entity* ent, unsigned char* meta, size_t size) {
-    while (size > 0) {
-        unsigned char index = meta[0];
-        meta++;
-        size--;
-        if (index == 0xff || size == 0) break;
-        unsigned char type = meta[0];
-        meta++;
-        size--;
-        if (type == 0 || type == 6) {
-            if (size == 0) break;
-            signed char b = meta[0];
-            meta++;
-            size--;
-            handleMetaByte(ent, index, b);
-        } else if (type == 1 || type == 10 || type == 12) {
-            if ((type == 10 || type == 12) && size == 0) break;
-            int32_t vi = 0;
-            int r = readVarInt(&vi, meta, size);
-            meta += r;
-            size -= r;
-            handleMetaVarInt(ent, index, vi);
-        } else if (type == 2) {
-            if (size < 4) break;
-            float f = 0.;
-            memcpy(&f, meta, 4);
-            meta += 4;
-            size -= 4;
-            swapEndian(&f, 4);
-            handleMetaFloat(ent, index, f);
-        } else if (type == 3 || type == 4) {
-            char* str = NULL;
-            int r = readString(&str, meta, size);
-            meta += r;
-            size -= r;
-            handleMetaString(ent, index, str);
-        } else if (type == 5) {
-            struct slot slot;
-            int r = readSlot(&slot, meta, size);
-            meta += r;
-            size -= r;
-            handleMetaSlot(ent, index, &slot);
-        } else if (type == 7) {
-            if (size < 12) break;
-            float f1 = 0.;
-            float f2 = 0.;
-            float f3 = 0.;
-            memcpy(&f1, meta, 4);
-            meta += 4;
-            size -= 4;
-            memcpy(&f2, meta, 4);
-            meta += 4;
-            size -= 4;
-            memcpy(&f3, meta, 4);
-            meta += 4;
-            size -= 4;
-            swapEndian(&f1, 4);
-            swapEndian(&f2, 4);
-            swapEndian(&f3, 4);
-            handleMetaVector(ent, index, f1, f2, f3);
-        } else if (type == 8) {
-            struct encpos pos;
-            if (size < sizeof(struct encpos)) break;
-            memcpy(&pos, meta, sizeof(struct encpos));
-            meta += sizeof(struct encpos);
-            size -= sizeof(struct encpos);
-            handleMetaPosition(ent, index, &pos);
-        } else if (type == 9) {
-            if (size == 0) break;
-            signed char b = meta[0];
-            meta++;
-            size--;
-            if (b) {
-                struct encpos pos;
-                if (size < sizeof(struct encpos)) break;
-                memcpy(&pos, meta, sizeof(struct encpos));
-                meta += sizeof(struct encpos);
-                size -= sizeof(struct encpos);
-                handleMetaPosition(ent, index, &pos);
-            }
-        } else if (type == 11) {
-            if (size == 0) break;
-            signed char b = meta[0];
-            meta++;
-            size--;
-            if (b) {
-                struct uuid uuid;
-                if (size < sizeof(struct uuid)) break;
-                memcpy(&uuid, meta, sizeof(struct uuid));
-                meta += sizeof(struct uuid);
-                size -= sizeof(struct uuid);
-                handleMetaUUID(ent, index, &uuid);
-            }
-        }
-    }
 }
 
 void writeMetadata(struct entity* ent, unsigned char** data, size_t* size) {
@@ -562,7 +539,7 @@ void entity_adjustBoundingBox(struct world* world, struct entity* ent, struct ch
 int moveEntity(struct entity* entity, double* mx, double* my, double* mz, float shrink) {
     if (entity->immovable) return 0;
     struct boundingbox obb;
-    getEntityCollision(entity, &obb);
+    entity_collision_bounding_box(entity, &obb);
     if (entity->type == ENT_ARROW || entity->type == ENT_SPECTRALARROW || obb.minX == obb.maxX || obb.minZ == obb.maxZ || obb.minY == obb.maxY) {
         entity->x += *mx;
         entity->y += *my;
@@ -591,7 +568,7 @@ int moveEntity(struct entity* entity, double* mx, double* my, double* mz, float 
         obb.maxZ += *mz;
     }
     struct boundingbox pbb;
-    getEntityCollision(entity, &pbb);
+    entity_collision_bounding_box(entity, &pbb);
     pbb.minX += shrink;
     pbb.maxX -= shrink;
     pbb.minY += shrink;
@@ -788,7 +765,7 @@ void applyKnockback(struct entity* entity, float yaw, float strength) {
 }
 
 int damageEntityWithItem(struct entity* attacked, struct entity* attacker, uint8_t slot_index, struct slot* item) {
-    if (attacked == NULL || attacked->invincibilityTicks > 0 || !hasFlag(getEntityInfo(attacked->type), "livingbase") || attacked->health <= 0.) return 0;
+    if (attacked == NULL || attacked->invincibilityTicks > 0 || !entity_has_flag(entity_get_info(attacked->type), "livingbase") || attacked->health <= 0.) return 0;
     if (attacked->type == ENT_PLAYER && attacked->data.player.player->gamemode == 1) return 0;
     float damage = 1.;
     if (item != NULL) {
@@ -829,7 +806,7 @@ int damageEntityWithItem(struct entity* attacked, struct entity* attacker, uint8
 }
 
 int damageEntity(struct entity* attacked, float damage, int armorable) {
-    if (attacked == NULL || damage <= 0. || attacked->invincibilityTicks > 0 || !hasFlag(getEntityInfo(attacked->type), "livingbase") || attacked->health <= 0.) return 0;
+    if (attacked == NULL || damage <= 0. || attacked->invincibilityTicks > 0 || !entity_has_flag(entity_get_info(attacked->type), "livingbase") || attacked->health <= 0.) return 0;
     float armor = 0;
     if (attacked->type == ENT_PLAYER) {
         struct player* player = attacked->data.player.player;
@@ -890,7 +867,7 @@ int damageEntity(struct entity* attacked, float damage, int armorable) {
             }
             if (player->open_inventory != NULL) player_closeWindow(player, player->open_inventory->windowID);
         } else {
-            struct entity_info* ei = getEntityInfo(attacked->type);
+            struct entity_info* ei = entity_get_info(attacked->type);
             if (ei != NULL) for (size_t i = 0; i < ei->loot_count; i++) {
                 struct entity_loot* el = &ei->loots[i];
                 int amt = el->amountMax == el->amountMin ? el->amountMax : (rand() % (el->amountMax - el->amountMin) + el->amountMin);
@@ -923,7 +900,7 @@ int damageEntity(struct entity* attacked, float damage, int armorable) {
 }
 
 void healEntity(struct entity* healed, float amount) {
-    if (healed == NULL || amount <= 0. || healed->health <= 0. || !hasFlag(getEntityInfo(healed->type), "livingbase")) return;
+    if (healed == NULL || amount <= 0. || healed->health <= 0. || !entity_has_flag(entity_get_info(healed->type), "livingbase")) return;
     float oh = healed->health;
     healed->health += amount;
     if (healed->health > healed->maxHealth) healed->health = 20.;
@@ -939,7 +916,7 @@ void healEntity(struct entity* healed, float amount) {
 
 int entity_inBlock(struct entity* ent, block blk) { // blk = 0 for any block
     struct boundingbox obb;
-    getEntityCollision(ent, &obb);
+    entity_collision_bounding_box(ent, &obb);
     if (obb.minX == obb.maxX || obb.minY == obb.maxY || obb.minZ == obb.maxZ) return 0;
     obb.minX += .01;
     obb.minY += .01;
@@ -976,7 +953,7 @@ int entity_inBlock(struct entity* ent, block blk) { // blk = 0 for any block
 void pushOutOfBlocks(struct entity* ent) {
     if (!entity_inBlock(ent, 0)) return;
     struct boundingbox ebb;
-    getEntityCollision(ent, &ebb);
+    entity_collision_bounding_box(ent, &ebb);
     double x = ent->x;
     double y = (ebb.maxY + ebb.minY) / 2.;
     double z = ent->z;
@@ -1046,7 +1023,7 @@ void tick_entity(struct world* world, struct entity* entity) {
     }
     entity->age++;
     if (entity->invincibilityTicks > 0) entity->invincibilityTicks--;
-    struct entity_info* ei = getEntityInfo(entity->type);
+    struct entity_info* ei = entity_get_info(entity->type);
     if (entity->ai != NULL) {
         if (ei != NULL && ei->onAITick != NULL) ei->onAITick(world, entity);
         lookHelper_tick(entity);
@@ -1075,7 +1052,7 @@ void tick_entity(struct world* world, struct entity* entity) {
         }
         if (entity->type == ENT_ITEM) gravity = .04;
         else if (ar) gravity = .05;
-        else if (hasFlag(getEntityInfo(entity->type), "livingbase")) {
+        else if (entity_has_flag(entity_get_info(entity->type), "livingbase")) {
             if (entity->inLava) {
                 entity->motX *= .5;
                 entity->motY *= .5;
@@ -1109,7 +1086,7 @@ void tick_entity(struct world* world, struct entity* entity) {
         if (entity->type == ENT_ITEM && entity->on_ground && entity->motX == 0. && entity->motY == 0. && entity->motZ == 0.) entity->motY *= -.5;
     }
     if (entity->type == ENT_ITEM || entity->type == ENT_XPORB) pushOutOfBlocks(entity);
-    if (hasFlag(getEntityInfo(entity->type), "livingbase")) {
+    if (entity_has_flag(entity_get_info(entity->type), "livingbase")) {
         entity->inWater = entity_inFluid(entity, BLK_WATER, .2, 0) || entity_inFluid(entity, BLK_WATER_1, .2, 0);
         entity->inLava = entity_inFluid(entity, BLK_LAVA, .2, 0) || entity_inFluid(entity, BLK_LAVA_1, .2, 0);
         if ((entity->inWater || entity->inLava) && entity->type == ENT_PLAYER) entity->data.player.player->llTick = tick_counter;

@@ -1025,7 +1025,7 @@ void world_spawn_entity(struct world* world, struct entity* entity) {
         entity->attackers = hashmap_new(4, entity->pool);
     }
     hashmap_putint(world->entities, entity->id, entity);
-    struct entity_info* info = getEntityInfo(entity->type);
+    struct entity_info* info = entity_get_info(entity->type);
     if (info != NULL) {
         if (info->initAI != NULL) {
             entity->ai = pcalloc(entity->pool, sizeof(struct aicontext));
