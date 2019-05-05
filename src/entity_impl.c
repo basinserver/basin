@@ -1,7 +1,6 @@
-
+#include <basin/server.h>
 #include <basin/entity_impl.h>
 #include <basin/entity.h>
-#include <basin/server.h>
 #include <basin/game.h>
 #include <basin/packet.h>
 #include <avuna/pmem.h>
@@ -218,14 +217,18 @@ void tick_arrow(struct world* world, struct entity* entity) {
 void tick_itemstack(struct world* world, struct entity* entity) {
     if (entity->data.itemstack.delayBeforeCanPickup > 0) {
         entity->data.itemstack.delayBeforeCanPickup--;
-        return 0;
     }
     if (entity->age >= 6000) {
-        world_despawn_entity(world, entity);
+        world_despawn_entity(world, entity); 
+        /* 
+        TODO: Make this a configurable option and improve the mechanics of despawning.
+        All nametagged entities (as well as wolves) must be excluded.
+        */
         freeEntity(entity);
-        return 1;
     }
-    if (tick_counter % 10 != 0) return 0;
+    if (world->tick_counter % 10 != 0) {
+        
+    }
     struct boundingbox cebb;
     getEntityCollision(entity, &cebb);
     cebb.minX -= .625;
