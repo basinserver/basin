@@ -1102,6 +1102,7 @@ void world_despawn_entity(struct world* world, struct entity* entity) {
     }
     entity->attackers = NULL;
     entity->attacking = NULL;
+    entity->despawn = 1;
     //TODO: do we need remove ourselves from entity->attacking->attackers?
 }
 

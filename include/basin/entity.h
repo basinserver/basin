@@ -149,7 +149,7 @@ struct entity_info {
     void (*onDeath)(struct world* world, struct entity* entity, struct entity* causer); // causer may be NULL
     void (*onAttacked)(struct world* world, struct entity* entity, struct entity* attacker); // attacker may be NULL
     uint32_t (*onAITick)(struct world* world, struct entity* entity); // returns a tick delay before next AI tick, 0 = never tick again, 1 = 1 tick
-    int (*onTick)(struct world* world, struct entity* entity); // if return != 0, then the tick is cancelled (for when the entity has been despawned)
+    void (*onTick)(struct world* world, struct entity* entity);
     uint32_t (*initAI)(struct world* world, struct entity* entity); // returns a tick delay before next AI tick, 0 = never tick again, 1 = 1 tick
     void (*onSpawned)(struct world* world, struct entity* entity);
     void (*onInteract)(struct world* world, struct entity* entity, struct player* interacter, struct slot* item, int16_t slot_index);
@@ -439,6 +439,7 @@ struct entity {
     struct aicontext* ai;
     struct entity* attacking;
     struct hashmap* attackers;
+    uint8_t despawn;
 };
 
 struct entity* entity_new(struct world* world, int32_t id, double x, double y, double z, uint32_t type, float yaw, float pitch);

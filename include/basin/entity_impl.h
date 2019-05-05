@@ -9,16 +9,16 @@
 
 void onSpawned_minecart(struct world* world, struct entity* entity);
 
-int onTick_tnt(struct world* world, struct entity* ent);
+void onTick_tnt(struct world* world, struct entity* entity);
 
-int onTick_fallingblock(struct world* world, struct entity* ent);
+void onTick_fallingblock(struct world* world, struct entity* entity);
 
 void onInteract_cow(struct world* world, struct entity* entity, struct player* interacter, struct slot* item, int16_t slot_index);
 
 void onInteract_mooshroom(struct world* world, struct entity* entity, struct player* interacter, struct slot* item, int16_t slot_index);
 
-int tick_arrow(struct world* world, struct entity* entity);
+void tick_arrow(struct world* world, struct entity* entity);
 
-int tick_itemstack(struct world* world, struct entity* entity);
+void tick_itemstack(struct world* world, struct entity* entity);
 
 #endif //BASIN_ENTITY_IMPL_H

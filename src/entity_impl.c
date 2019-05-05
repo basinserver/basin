@@ -1,4 +1,10 @@
-#include "basin/entity_impl.h"
+
+#include <basin/entity_impl.h>
+#include <basin/entity.h>
+#include <basin/game.h>
+#include <avuna/pmem.h>
+#include <math.h>
+#include <string.h>
 
 
 void onSpawned_minecart(struct world* world, struct entity* entity) {
@@ -12,48 +18,40 @@ void onSpawned_minecart(struct world* world, struct entity* entity) {
 }
 
 
-int onTick_tnt(struct world* world, struct entity* ent) {
-    if (ent->data.tnt.fuse-- <= 0) {
-        world_despawn_entity(world, ent);
-        world_explode(world, NULL, ent->x, ent->y + .5, ent->z, 4.);
-        freeEntity(ent);
-        return 1;
+void onTick_tnt(struct world* world, struct entity* entity) {
+    if (entity->data.tnt.fuse-- <= 0) {
+        world_despawn_entity(world, entity);
+        world_explode(world, NULL, entity->x, entity->y + .5, entity->z, 4f);
     }
-    return 0;
 }
 
-int onTick_fallingblock(struct world* world, struct entity* ent) {
+void onTick_fallingblock(struct world* world, struct entity* entity) {
     // TODO: mc has some methods to prevent dupes here, we should see if basin is afflicted
-    if (ent->on_ground && ent->age > 1) {
-        block b = world_get_block(world, (int32_t) floor(ent->x), (int32_t) floor(ent->y), (int32_t) floor(ent->z));
+    if (entity->on_ground && entity->age > 1) {
+        block b = world_get_block(world, (int32_t) floor(entity->x), (int32_t) floor(entity->y), (int32_t) floor(entity->z));
         if (!falling_canFallThrough(b)) {
             struct slot sl;
-            sl.item = ent->data.fallingblock.b >> 4;
-            sl.damage = ent->data.fallingblock.b & 0x0f;
+            sl.item = entity->data.fallingblock.b >> 4;
+            sl.damage = (int16_t) (entity->data.fallingblock.b & 0x0f);
             sl.count = 1;
             sl.nbt = NULL;
-            game_drop_block(world, &sl, (int32_t) floor(ent->x), (int32_t) floor(ent->y - .01), (int32_t) floor(ent->z));
-            //ent->onGround = 0;
-            //return 0;
+            game_drop_block(world, &sl, (int32_t) floor(entity->x), (int32_t) floor(entity->y - .01), (int32_t) floor(entity->z));
         } else {
-            world_set_block(world, ent->data.fallingblock.b, (int32_t) floor(ent->x), (int32_t) floor(ent->y), (int32_t) floor(ent->z));
+            world_set_block(world, entity->data.fallingblock.b, (int32_t) floor(entity->x), (int32_t) floor(entity->y), (int32_t) floor(entity->z));
         }
         //TODO: tile entities
-        world_despawn_entity(world, ent);
-        freeEntity(ent);
-        return 1;
+        world_despawn_entity(world, entity);
     }
-    return 0;
 }
 
 void onInteract_cow(struct world* world, struct entity* entity, struct player* interacter, struct slot* item, int16_t slot_index) {
     if (item->item == ITM_BUCKET && interacter->gamemode != 1) { // TODO: not child
         if (item->count == 1) {
             item->item = ITM_MILK;
-            inventory_set_slot(interacter, interacter->inventory, slot_index, item, 1, 0);
+            inventory_set_slot(interacter, interacter->inventory, slot_index, item, 1);
         } else {
             item->count--;
-            inventory_set_slot(interacter, interacter->inventory, slot_index, item, 1, 0);
+            inventory_set_slot(interacter, interacter->inventory, slot_index, item, 1);
             struct slot slot;
             slot.item = ITM_MILK;
             slot.count = 1;
@@ -70,10 +68,10 @@ void onInteract_mooshroom(struct world* world, struct entity* entity, struct pla
     if (item->item == ITM_BOWL && interacter->gamemode != 1) { // TODO: not child
         if (item->count == 1) {
             item->item = ITM_MUSHROOMSTEW;
-            inventory_set_slot(interacter, interacter->inventory, slot_index, item, 1, 0);
+            inventory_set_slot(interacter, interacter->inventory, slot_index, item, 1);
         } else {
             item->count--;
-            inventory_set_slot(interacter, interacter->inventory, slot_index, item, 1, 0);
+            inventory_set_slot(interacter, interacter->inventory, slot_index, item, 1);
             struct slot slot;
             slot.item = ITM_MUSHROOMSTEW;
             slot.count = 1;
@@ -85,14 +83,13 @@ void onInteract_mooshroom(struct world* world, struct entity* entity, struct pla
         }
     } else if (item->item == ITM_SHEARS && interacter->gamemode != 1) { // TODO: not child
         //TODO: explosion
-        struct entity* ent = entity_new(nextEntityID++, entity->x, entity->y, entity->z, ENT_COW, entity->yaw, entity->pitch);
+        struct entity* ent = entity_new(world, world->server->next_entity_id++, entity->x, entity->y, entity->z, ENT_COW, entity->yaw, entity->pitch);
         ent->health = entity->health;
         memcpy(&ent->data, &entity->data, sizeof(union entity_data));
         world_spawn_entity(world, ent);
         world_despawn_entity(world, entity);
-        freeEntity(entity);
-        struct item_info* ii = getItemInfo(ITM_SHEARS);
-        if (ii != NULL && ii->onItemAttacked != NULL) (*ii->onItemAttacked)(world, interacter, slot_index, item, ent);
+        struct item_info* info = getItemInfo(ITM_SHEARS);
+        if (info != NULL && info->onItemAttacked != NULL) (*info->onItemAttacked)(world, interacter, slot_index, item, ent);
         struct slot slot;
         slot.item = BLK_MUSHROOM_1;
         slot.count = 5;
@@ -102,14 +99,12 @@ void onInteract_mooshroom(struct world* world, struct entity* entity, struct pla
     } else onInteract_cow(world, entity, interacter, item, slot_index);
 }
 
-int tick_arrow(struct world* world, struct entity* entity) {
+void tick_arrow(struct world* world, struct entity* entity) {
     if (entity->data.arrow.ticksInGround == 0) {
         double hx = 0.;
         double hy = 0.;
         double hz = 0.;
         int hf = world_rayTrace(entity->world, entity->x, entity->y, entity->z, entity->x + entity->motX, entity->y + entity->motY, entity->z + entity->motZ, 0, 1, 0, &hx, &hy, &hz);
-        //printf("hf = %i -- %f, %f, %f\n", hf, entity->x, entity->y, entity->z);
-        //printf("hf = %i -- %f, %f\n", hf, entity->yaw, entity->pitch);
         struct entity* ehit = NULL;
         struct entity* shooter = world_get_entity(world, entity->objectData - 1);
         double bd = 999.;
