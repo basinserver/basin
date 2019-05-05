@@ -42,7 +42,7 @@ void game_load_player(struct player* to, struct player* from) {
     packet->data.play_client.spawnplayer.z = from->entity->z;
     packet->data.play_client.spawnplayer.yaw = (uint8_t) ((from->entity->yaw / 360.) * 256.);
     packet->data.play_client.spawnplayer.pitch = (uint8_t) ((from->entity->pitch / 360.) * 256.);
-    writeMetadata(from->entity, &packet->data.play_client.spawnplayer.metadata.metadata, &packet->data.play_client.spawnplayer.metadata.metadata_size);
+    entitymeta_write(from->entity, &packet->data.play_client.spawnplayer.metadata.metadata, &packet->data.play_client.spawnplayer.metadata.metadata_size);
     queue_push(to->outgoing_packets, packet);
     game_entity_equipment(to, from->entity, 0, from->inventory->slots[from->currentItem + 36]);
     game_entity_equipment(to, from->entity, 5, from->inventory->slots[5]);
@@ -79,7 +79,7 @@ void game_load_entity(struct player* to, struct entity* from) {
         queue_push(to->outgoing_packets, packet);
         packet = packet_new(mempool_new(), PKT_PLAY_CLIENT_ENTITYMETADATA);
         packet->data.play_client.entitymetadata.entity_id = from->id;
-        writeMetadata(from, &packet->data.play_client.entitymetadata.metadata.metadata, &packet->data.play_client.entitymetadata.metadata.metadata_size);
+        entitymeta_write(from, &packet->data.play_client.entitymetadata.metadata.metadata, &packet->data.play_client.entitymetadata.metadata.metadata_size);
         queue_push(to->outgoing_packets, packet);
     } else if (from->type == ENT_PLAYER) {
         return;
@@ -121,7 +121,7 @@ void game_load_entity(struct player* to, struct entity* from) {
         packet->data.play_client.spawnmob.velocity_x = (int16_t)(from->motX * 8000.);
         packet->data.play_client.spawnmob.velocity_y = (int16_t)(from->motY * 8000.);
         packet->data.play_client.spawnmob.velocity_z = (int16_t)(from->motZ * 8000.);
-        writeMetadata(from, &packet->data.play_client.spawnmob.metadata.metadata, &packet->data.play_client.spawnmob.metadata.metadata_size);
+        entitymeta_write(from, &packet->data.play_client.spawnmob.metadata.metadata, &packet->data.play_client.spawnmob.metadata.metadata_size);
         queue_push(to->outgoing_packets, packet);
     }
     hashmap_putint(to->loaded_entities, (uint64_t) from->id, from);

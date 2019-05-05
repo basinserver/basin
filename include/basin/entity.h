@@ -451,9 +451,9 @@ int damageEntity(struct entity* attacked, float damage, int armorable);
 
 void healEntity(struct entity* healed, float amount);
 
-void entitymeta_read(struct entity* ent, unsigned char* meta, size_t size);
+void entitymeta_read(struct entity* ent, uint8_t* meta, size_t size);
 
-void writeMetadata(struct entity* ent, unsigned char** data, size_t* size);
+void entitymeta_write(struct entity* entity, uint8_t** data, size_t* size, struct mempool* pool);
 
 void updateMetadata(struct entity* ent);
 

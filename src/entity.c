@@ -320,9 +320,9 @@ void entitymeta_read(struct entity* ent, uint8_t* meta, size_t size) {
             entitymeta_handle_slot(ent, index, &slot);
         } else if (type == 7) {
             if (size < 12) break;
-            float f1 = 0.;
-            float f2 = 0.;
-            float f3 = 0.;
+            float f1 = 0f;
+            float f2 = 0f;
+            float f3 = 0f;
             memcpy(&f1, meta, 4);
             meta += 4;
             size -= 4;
@@ -374,114 +374,79 @@ void entitymeta_read(struct entity* ent, uint8_t* meta, size_t size) {
     pfree(pool);
 }
 
-int entity_inFluid(struct entity* entity, uint16_t blk, float ydown, int meta_check) {
-    struct boundingbox pbb;
-    entity_collision_bounding_box(entity, &pbb);
-    if (pbb.minX == pbb.maxX || pbb.minZ == pbb.maxZ || pbb.minY == pbb.maxY) return 0;
-    pbb.minX += .001;
-    pbb.minY += .001;
-    pbb.minY += ydown;
-    pbb.minZ += .001;
-    pbb.maxX -= .001;
-    pbb.maxY -= .001;
-    pbb.maxZ -= .001;
-    for (int32_t x = floor(pbb.minX); x < floor(pbb.maxX + 1.); x++) {
-        for (int32_t z = floor(pbb.minZ); z < floor(pbb.maxZ + 1.); z++) {
-            for (int32_t y = floor(pbb.minY); y < floor(pbb.maxY + 1.); y++) {
-                block b = world_get_block(entity->world, x, y, z);
-                if (meta_check ? (b != blk) : ((b >> 4) != (blk >> 4))) continue;
-                struct block_info* bi = getBlockInfo(b);
-                if (bi == NULL) continue;
-                struct boundingbox bb2;
-                bb2.minX = 0. + (double) x;
-                bb2.maxX = 1. + (double) x;
-                bb2.minY = 0. + (double) y;
-                bb2.maxY = 1. + (double) y;
-                bb2.minZ = 0. + (double) z;
-                bb2.maxZ = 1. + (double) z;
-                //printf("X: %f->%f vs %f->%f, Y: %f->%f vs %f->%f, Z: %f->%f vs %f->%f\n", bb2.minX, bb2.maxX, pbb.minX, pbb.maxX, bb2.minY, bb2.maxY, pbb.minY, pbb.maxY, bb2.minZ, bb2.maxZ, pbb.minZ, pbb.maxZ);
-                if (boundingbox_intersects(&bb2, &pbb)) {
-                    return 1;
-                }
-            }
-        }
-    }
-    return 0;
-}
-
-void outputMetaByte(struct entity* ent, unsigned char** loc, size_t* size) {
-    *loc = xrealloc(*loc, (*size) + 10);
+void entitymeta_write_byte(struct entity* entity, uint8_t** loc, size_t* size, struct mempool* pool) {
+    *loc = prealloc(pool, *loc, (*size) + 10);
     (*loc)[(*size)++] = 0;
     (*loc)[(*size)++] = 0;
-    (*loc)[*size] = ent->sneaking ? 0x02 : 0;
-    (*loc)[*size] |= ent->sprinting ? 0x08 : 0;
-    (*loc)[(*size)++] |= (ent->usingItemMain || ent->usingItemOff) ? 0x08 : 0;
-    if (entity_has_flag(entity_get_info(ent->type), "livingbase")) {
+    (*loc)[*size] = entity->sneaking ? 0x02 : 0;
+    (*loc)[*size] |= entity->sprinting ? 0x08 : 0;
+    (*loc)[(*size)++] |= (entity->usingItemMain || entity->usingItemOff) ? 0x08 : 0;
+    if (hashset_has(entity->info->flags, "livingbase")) {
         (*loc)[(*size)++] = 6;
         (*loc)[(*size)++] = 0;
-        (*loc)[*size] = ent->usingItemMain ? 0x01 : 0;
-        (*loc)[(*size)++] |= ent->usingItemOff ? 0x02 : 0;
+        (*loc)[*size] = entity->usingItemMain ? 0x01 : 0;
+        (*loc)[(*size)++] |= entity->usingItemOff ? 0x02 : 0;
     }
 
 }
 
-void outputMetaVarInt(struct entity* ent, unsigned char** loc, size_t* size) {
-    if ((ent->type == ENT_SKELETON || ent->type == ENT_SLIME || ent->type == ENT_LAVASLIME || ent->type == ENT_GUARDIAN)) {
-        *loc = xrealloc(*loc, *size + 2 + getVarIntSize(ent->subtype));
+void entitymeta_write_varint(struct entity* entity, uint8_t** loc, size_t* size, struct mempool* pool) {
+    if ((entity->type == ENT_SKELETON || entity->type == ENT_SLIME || entity->type == ENT_LAVASLIME || entity->type == ENT_GUARDIAN)) {
+        *loc = prealloc(pool, *loc, *size + 2 + getVarIntSize(entity->subtype));
         (*loc)[(*size)++] = 11;
         (*loc)[(*size)++] = 1;
-        *size += writeVarInt(ent->subtype, *loc + *size);
+        *size += writeVarInt(entity->subtype, *loc + *size);
     }
 }
 
-void outputMetaFloat(struct entity* ent, unsigned char** loc, size_t* size) {
-    if (entity_has_flag(entity_get_info(ent->type), "livingbase")) {
-        *loc = xrealloc(*loc, *size + 6);
+void entitymeta_write_float(struct entity* entity, uint8_t** loc, size_t* size, struct mempool* pool) {
+    if (hashset_has(entity->info->flags, "livingbase")) {
+        *loc = prealloc(pool, *loc, *size + 6);
         (*loc)[(*size)++] = 7;
         (*loc)[(*size)++] = 2;
-        memcpy(*loc + *size, &ent->health, 4);
+        memcpy(*loc + *size, &entity->health, 4);
         swapEndian(*loc + *size, 4);
         *size += 4;
     }
 }
 
-void outputMetaString(struct entity* ent, unsigned char** loc, size_t* size) {
+void entitymeta_write_string(struct entity* entity, uint8_t** loc, size_t* size, struct mempool* pool) {
 
 }
 
-void outputMetaSlot(struct entity* ent, unsigned char** loc, size_t* size) {
-    if (ent->type == ENT_ITEM) {
-        *loc = xrealloc(*loc, *size + 1024);
+void entitymeta_write_slot(struct entity* entity, uint8_t** loc, size_t* size, struct mempool* pool) {
+    if (entity->type == ENT_ITEM) {
+        *loc = prealloc(pool, *loc, *size + 1024);
         (*loc)[(*size)++] = 6;
         (*loc)[(*size)++] = 5;
-        *size += writeSlot(ent->data.itemstack.slot, *loc + *size, *size + 1022);
+        *size += writeSlot(entity->data.itemstack.slot, *loc + *size, *size + 1022);
     }
 }
 
-void outputMetaVector(struct entity* ent, unsigned char** loc, size_t* size) {
+void entitymeta_write_vector(struct entity* entity, uint8_t** loc, size_t* size, struct mempool* pool) {
 
 }
 
-void outputMetaPosition(struct entity* ent, unsigned char** loc, size_t* size) {
+void entitymeta_write_encpos(struct entity* entity, uint8_t** loc, size_t* size, struct mempool* pool) {
 
 }
 
-void outputMetaUUID(struct entity* ent, unsigned char** loc, size_t* size) {
+void entitymeta_write_uuid(struct entity* entity, uint8_t** loc, size_t* size, struct mempool* pool) {
 
 }
 
-void writeMetadata(struct entity* ent, unsigned char** data, size_t* size) {
+void entitymeta_write(struct entity* entity, uint8_t** data, size_t* size, struct mempool* pool) {
     *data = NULL;
     *size = 0;
-    outputMetaByte(ent, data, size);
-    outputMetaVarInt(ent, data, size);
-    outputMetaFloat(ent, data, size);
-    outputMetaString(ent, data, size);
-    outputMetaSlot(ent, data, size);
-    outputMetaVector(ent, data, size);
-    outputMetaPosition(ent, data, size);
-    outputMetaUUID(ent, data, size);
-    *data = xrealloc(*data, *size + 1);
+    entitymeta_write_byte(entity, data, size, pool);
+    entitymeta_write_varint(entity, data, size, pool);
+    entitymeta_write_float(entity, data, size, pool);
+    entitymeta_write_string(entity, data, size, pool);
+    entitymeta_write_slot(entity, data, size, pool);
+    entitymeta_write_vector(entity, data, size, pool);
+    entitymeta_write_encpos(entity, data, size, pool);
+    entitymeta_write_uuid(entity, data, size, pool);
+    *data = prealloc(pool, *data, *size + 1);
     (*data)[(*size)++] = 0xFF;
 }
 
@@ -490,7 +455,7 @@ void updateMetadata(struct entity* ent) {
     struct packet* pkt = xmalloc(sizeof(struct packet));
     pkt->id = PKT_PLAY_CLIENT_ENTITYMETADATA;
     pkt->data.play_client.entitymetadata.entity_id = ent->id;
-    writeMetadata(ent, &pkt->data.play_client.entitymetadata.metadata.metadata, &pkt->data.play_client.entitymetadata.metadata.metadata_size);
+                        entitymeta_write(ent, &pkt->data.play_client.entitymetadata.metadata.metadata, &pkt->data.play_client.entitymetadata.metadata.metadata_size);
     add_queue(bc_player->outgoing_packets, pkt);
     END_BROADCAST(ent->loadingPlayers)
 }
@@ -891,7 +856,7 @@ int damageEntity(struct entity* attacked, float damage, int armorable) {
         pkt = xmalloc(sizeof(struct packet));
         pkt->id = PKT_PLAY_CLIENT_ENTITYMETADATA;
         pkt->data.play_client.entitymetadata.entity_id = attacked->id;
-        writeMetadata(attacked, &pkt->data.play_client.entitymetadata.metadata.metadata, &pkt->data.play_client.entitymetadata.metadata.metadata_size);
+        entitymeta_write(attacked, &pkt->data.play_client.entitymetadata.metadata.metadata, &pkt->data.play_client.entitymetadata.metadata.metadata_size);
         add_queue(bc_player->outgoing_packets, pkt);
     }
     END_BROADCAST(attacked->world->players)
@@ -913,6 +878,42 @@ void healEntity(struct entity* healed, float amount) {
         add_queue(healed->data.player.player->outgoing_packets, pkt);
     }
 }
+
+
+int entity_inFluid(struct entity* entity, uint16_t blk, float ydown, int meta_check) {
+    struct boundingbox pbb;
+    entity_collision_bounding_box(entity, &pbb);
+    if (pbb.minX == pbb.maxX || pbb.minZ == pbb.maxZ || pbb.minY == pbb.maxY) return 0;
+    pbb.minX += .001;
+    pbb.minY += .001;
+    pbb.minY += ydown;
+    pbb.minZ += .001;
+    pbb.maxX -= .001;
+    pbb.maxY -= .001;
+    pbb.maxZ -= .001;
+    for (int32_t x = (int32_t) floor(pbb.minX); x < floor(pbb.maxX + 1.); x++) {
+        for (int32_t z = (int32_t) floor(pbb.minZ); z < floor(pbb.maxZ + 1.); z++) {
+            for (int32_t y = (int32_t) floor(pbb.minY); y < floor(pbb.maxY + 1.); y++) {
+                block b = world_get_block(entity->world, x, y, z);
+                if (meta_check ? (b != blk) : ((b >> 4) != (blk >> 4))) continue;
+                struct block_info* bi = getBlockInfo(b);
+                if (bi == NULL) continue;
+                struct boundingbox bb2;
+                bb2.minX = 0. + (double) x;
+                bb2.maxX = 1. + (double) x;
+                bb2.minY = 0. + (double) y;
+                bb2.maxY = 1. + (double) y;
+                bb2.minZ = 0. + (double) z;
+                bb2.maxZ = 1. + (double) z;
+                if (boundingbox_intersects(&bb2, &pbb)) {
+                    return 1;
+                }
+            }
+        }
+    }
+    return 0;
+}
+
 
 int entity_inBlock(struct entity* ent, block blk) { // blk = 0 for any block
     struct boundingbox obb;
