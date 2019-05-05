@@ -354,7 +354,6 @@ int main(int argc, char* argv[]) {
         errlog(delog, "Only one server block is supported at this time.");
         return -1;
     }
-    globalChunkQueue = queue_new(0, 1, global_pool);
     init_materials();
     acclog(delog, "Materials Initialized");
     init_blocks();

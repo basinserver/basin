@@ -5,9 +5,7 @@
  *      Author: root
  */
 
-#include "basin/packet.h"
-#include <basin/basin.h>
-#include <basin/queue.h>
+#include <basin/packet.h>
 #include <basin/game.h>
 #include <basin/crafting.h>
 #include <basin/smelting.h>
@@ -18,6 +16,7 @@
 #include <basin/profile.h>
 #include <basin/anticheat.h>
 #include <avuna/hash.h>
+#include <avuna/queue.h>
 #include <avuna/string.h>
 #include <unistd.h>
 #include <stdarg.h>

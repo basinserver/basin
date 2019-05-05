@@ -11,6 +11,7 @@
 #include <basin/network.h>
 #include <basin/block.h>
 #include <basin/connection.h>
+#include <basin/world.h>
 #include <avuna/pmem.h>
 
 struct player {
@@ -30,7 +31,7 @@ struct player {
     struct queue* incoming_packets;
     uint32_t next_keep_alive;
     uint8_t spawned_in;
-    uint32_t chunks_sent
+    uint32_t chunks_sent;
     uint8_t trigger_rechunk;
 
     struct inventory* inventory;
@@ -50,7 +51,7 @@ struct player {
     int32_t xptotal;
     int32_t xplevel;
     int32_t score;
-    size_t last_teleport_id;
+    int32_t last_teleport_id;
     int8_t sleeping;
     int16_t fire;
     //TODO: enderitems inventory
@@ -76,13 +77,9 @@ void player_hungerUpdate(struct player* player);
 
 void player_send_entity_move(struct player* player, struct entity* entity);
 
-<<<<<<< HEAD
 void player_receive_packet(struct player* player, struct packet* inp);
 
-void player_tick(struct world* world, struct player* player);
-=======
 void player_tick(struct player* player);
->>>>>>> 0a05322... tweaks
 
 void player_kick(struct player* player, char* message);
 
@@ -94,7 +91,7 @@ float player_getAttackStrength(struct player* player, float adjust);
 
 void player_teleport(struct player* player, double x, double y, double z);
 
-struct player* player_get_by_name(char* name);
+struct player* player_get_by_name(struct server* server, char* name);
 
 void player_set_gamemode(struct player* player, int gamemode);
 

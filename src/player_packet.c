@@ -599,12 +599,12 @@ void player_packet_handle_useentity(struct player* player, struct mempool* pool,
             }
         }
     } else if (packet->type == 1) {
-        if (entity != NULL && entity != player->entity && entity->health > 0. && entity->world == player->world && entity_dist(entity, player->entity) < 4. && (player->server->tick_counter - player->lastSwing) >= 3) {
+        if (entity != NULL && entity != player->entity && entity->health > 0. && entity->world == player->world && entity_dist(entity, player->entity) < 4. && (player->world->tick_counter - player->lastSwing) >= 3) {
             pthread_mutex_lock(&player->inventory->mutex);
             damageEntityWithItem(entity, player->entity, (uint8_t) (36 + player->currentItem), inventory_get(player, player->inventory, 36 + player->currentItem));
             pthread_mutex_unlock(&player->inventory->mutex);
         }
-        player->lastSwing = player->server->tick_counter;
+        player->lastSwing = player->world->tick_counter;
     }
 }
 
@@ -926,7 +926,7 @@ void player_packet_handle_updatesign(struct player* player, struct mempool* pool
 }
 
 void player_packet_handle_animation(struct player* player, struct mempool* pool, struct pkt_play_server_animation* packet) {
-    player->lastSwing = player->server->tick_counter;
+    player->lastSwing = player->world->tick_counter;
     BEGIN_BROADCAST_EXCEPT_DIST(player, player->entity, CHUNK_VIEW_DISTANCE * 16.){
         struct packet* pkt = packet_new(mempool_new(), PKT_PLAY_CLIENT_ANIMATION);
         pkt->data.play_client.animation.entity_id = player->entity->id;

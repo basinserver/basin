@@ -8,10 +8,10 @@
 #ifndef BASIN_NETWORK_H_
 #define BASIN_NETWORK_H_
 
-#include <basin/inventory.h>
 #include <avuna/pmem.h>
 #include <openssl/rsa.h>
 
+struct slot;
 struct packet;
 
 struct __attribute__((__packed__)) encpos {

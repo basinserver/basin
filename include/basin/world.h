@@ -11,6 +11,7 @@
 #include <basin/network.h>
 #include <basin/biome.h>
 #include <basin/chunk.h>
+#include <basin/network.h>
 #include <basin/region.h>
 #include <basin/boundingbox.h>
 #include <basin/block.h>
@@ -72,6 +73,9 @@ struct world {
     uint64_t seed;
     struct perlin perlin;
     struct queue* chunk_requests;
+    // locked under chunk_requests mutex
+    struct mempool* chunk_request_pool;
+    size_t tick_counter;
 };
 
 // "*_guess" functions accept a chunk guess and call the proper function if the chunk is a miss. used to optimize chunk lookups in intensive local algorithms. probably overused.
