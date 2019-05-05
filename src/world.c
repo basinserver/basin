@@ -888,7 +888,7 @@ void world_tick(struct world* world) {
         pthread_rwlock_rdlock(&world->players->rwlock);
         ITER_MAP(world->players) {
             struct player* player = (struct player*) value;
-            player_tick(world, player);
+            player_tick(player);
             tick_entity(world, player->entity); // might need to be moved into separate loop later
             ITER_MAP_END();
         }
@@ -899,6 +899,9 @@ void world_tick(struct world* world) {
         ITER_MAP(world->entities) {
             struct entity* entity = (struct entity*) value;
             if (entity->type != ENT_PLAYER) tick_entity(world, entity);
+            if (entity->despawn) {
+                pfree(entity->pool);
+            }
             ITER_MAP_END();
         }
         pthread_rwlock_unlock(&world->entities->rwlock);

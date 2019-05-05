@@ -188,14 +188,11 @@ void tick_arrow(struct world* world, struct entity* entity) {
             return 1;
         }
     }
-//printf("hf2c = %f, %f, %f\n", entity->x, entity->y, entity->z);
 
     if (entity->data.arrow.ticksInGround == 0) {
         float dhz = sqrtf(entity->motX * entity->motX + entity->motZ * entity->motZ);
         entity->yaw = atan2f(entity->motX, entity->motZ) * 180. / M_PI;
         entity->pitch = atan2f(entity->motY, dhz) * 180. / M_PI;
-        //printf("desired %f, %f, %f\n", entity->pitch, entity->motY, dhz);
-        //printf("yaw = %f, last_yaw = %f\npitch = %f, last_pitch = %f\n", entity->yaw, entity->last_yaw, entity->pitch, entity->last_pitch);
         if ((entity->last_yaw == 0. && entity->last_pitch == 0.)) {
             entity->last_yaw = entity->yaw;
             entity->last_pitch = entity->pitch;
@@ -215,7 +212,7 @@ void tick_arrow(struct world* world, struct entity* entity) {
     return 0;
 }
 
-int tick_itemstack(struct world* world, struct entity* entity) {
+void tick_itemstack(struct world* world, struct entity* entity) {
     if (entity->data.itemstack.delayBeforeCanPickup > 0) {
         entity->data.itemstack.delayBeforeCanPickup--;
         return 0;

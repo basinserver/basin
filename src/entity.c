@@ -1033,7 +1033,8 @@ void tick_entity(struct world* world, struct entity* entity) {
         damageEntity(entity, 1., 0);
     }
     if (ei != NULL && ei->onTick != NULL) {
-        if ((*ei->onTick)(world, entity)) {
+        (*ei->onTick)(world, entity);
+        if (entity->despawn) {
             return;
         }
     }

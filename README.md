@@ -1,6 +1,10 @@
 # Basin
 A high performance Minecraft server implementation written in C.
 
+## Discord Server
+
+Join the Discord server [here](https://discord.gg/3uW2QQV).
+
 # Goals
 * Pure performance: minimum resource usage for a full Minecraft server implementation
 * Drop-in replacement: compatible with Spigot API plugins via JNI, standard Minecraft world format (Anvil)
