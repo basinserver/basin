@@ -37,7 +37,8 @@ void game_load_player(struct player* to, struct player* from) {
     packet->data.play_client.spawnplayer.z = from->entity->z;
     packet->data.play_client.spawnplayer.yaw = (uint8_t) ((from->entity->yaw / 360.) * 256.);
     packet->data.play_client.spawnplayer.pitch = (uint8_t) ((from->entity->pitch / 360.) * 256.);
-    entitymeta_write(from->entity, &packet->data.play_client.spawnplayer.metadata.metadata, &packet->data.play_client.spawnplayer.metadata.metadata_size);
+    struct mempool* pool = mempool_new();
+    entitymeta_write(from->entity, &packet->data.play_client.spawnplayer.metadata.metadata, &packet->data.play_client.spawnplayer.metadata.metadata_size, pool);
     queue_push(to->outgoing_packets, packet);
     game_entity_equipment(to, from->entity, 0, from->inventory->slots[from->currentItem + 36]);
     game_entity_equipment(to, from->entity, 5, from->inventory->slots[5]);
@@ -74,7 +75,8 @@ void game_load_entity(struct player* to, struct entity* from) {
         queue_push(to->outgoing_packets, packet);
         packet = packet_new(mempool_new(), PKT_PLAY_CLIENT_ENTITYMETADATA);
         packet->data.play_client.entitymetadata.entity_id = from->id;
-        entitymeta_write(from, &packet->data.play_client.entitymetadata.metadata.metadata, &packet->data.play_client.entitymetadata.metadata.metadata_size);
+        struct mempool* pool = mempool_new();
+        entitymeta_write(from, &packet->data.play_client.entitymetadata.metadata.metadata, &packet->data.play_client.entitymetadata.metadata.metadata_size, pool);
         queue_push(to->outgoing_packets, packet);
     } else if (from->type == ENT_PLAYER) {
         return;
@@ -116,7 +118,8 @@ void game_load_entity(struct player* to, struct entity* from) {
         packet->data.play_client.spawnmob.velocity_x = (int16_t)(from->motX * 8000.);
         packet->data.play_client.spawnmob.velocity_y = (int16_t)(from->motY * 8000.);
         packet->data.play_client.spawnmob.velocity_z = (int16_t)(from->motZ * 8000.);
-        entitymeta_write(from, &packet->data.play_client.spawnmob.metadata.metadata, &packet->data.play_client.spawnmob.metadata.metadata_size);
+        struct mempool* pool = mempool_new();
+        entitymeta_write(from, &packet->data.play_client.spawnmob.metadata.metadata, &packet->data.play_client.spawnmob.metadata.metadata_size, pool);
         queue_push(to->outgoing_packets, packet);
     }
     hashmap_putint(to->loaded_entities, (uint64_t) from->id, from);
@@ -177,10 +180,11 @@ void game_drop_block(struct world* world, struct slot* slot, int32_t x, int32_t 
     item->motY = .2;
     item->motZ = game_rand_float() * .2 - .1;
     item->data.itemstack.delayBeforeCanPickup = 0;
-    slot_duplicate(slot, item->data.itemstack.slot);
+    struct mempool* pool = mempool_new();
+    slot_duplicate(pool, slot, item->data.itemstack.slot);
     world_spawn_entity(world, item);
-    BEGIN_BROADCAST_DIST(item, 128.)
-                        game_load_entity(bc_player, item);
+    BEGIN_BROADCAST_DIST(item, 128.);
+    game_load_entity(bc_player, item);
     END_BROADCAST(item->world->players)
 }
 
@@ -197,10 +201,11 @@ void dropPlayerItem(struct player* player, struct slot* drop) {
     item->motY += (game_rand_float() - game_rand_float()) * .1;
     item->motZ += sin(nos) * mag;
     item->data.itemstack.delayBeforeCanPickup = 20;
-    slot_duplicate(drop, item->data.itemstack.slot);
+    struct mempool* pool = mempool_new();
+    slot_duplicate(pool, drop, item->data.itemstack.slot);
     world_spawn_entity(player->world, item);
-    BEGIN_BROADCAST_DIST(player->entity, 128.)
-                        game_load_entity(bc_player, item);
+    BEGIN_BROADCAST_DIST(player->entity, 128.);
+    game_load_entity(bc_player, item);
     END_BROADCAST(player->world->players)
 }
 
@@ -229,10 +234,11 @@ void dropEntityItem_explode(struct entity* entity, struct slot* drop) {
     item->motZ = cos(f2) * f1;
     item->motY = .2;
     item->data.itemstack.delayBeforeCanPickup = 20;
-    slot_duplicate(drop, item->data.itemstack.slot);
+    struct mempool* pool = mempool_new();
+    slot_duplicate(pool, drop, item->data.itemstack.slot);
     world_spawn_entity(entity->world, item);
-    BEGIN_BROADCAST_DIST(entity, 128.)
-                        game_load_entity(bc_player, item);
+    BEGIN_BROADCAST_DIST(entity, 128.);
+    game_load_entity(bc_player, item);
     END_BROADCAST(entity->world->players)
 }
 
@@ -284,7 +290,8 @@ void player_openInventory(struct player* player, struct inventory* inv) {
         pkt->data.play_client.windowitems.count = inv->slot_count;
         pkt->data.play_client.windowitems.slot_data = xmalloc(sizeof(struct slot) * inv->slot_count);
         for (size_t i = 0; i < inv->slot_count; i++) {
-            slot_duplicate(inv->slots[i], &pkt->data.play_client.windowitems.slot_data[i]);
+            struct mempool* pool = mempool_new();
+            slot_duplicate(pool, inv->slots[i], &pkt->data.play_client.windowitems.slot_data[i]);
         }
         add_queue(player->outgoing_packets, pkt);
     }

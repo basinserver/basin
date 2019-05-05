@@ -537,7 +537,7 @@ void player_closeWindow(struct player* player, uint16_t windowID) {
             inventory = NULL;
         } else if (inventory->type == INVTYPE_CHEST) {
             if (inventory->tile != NULL) {
-                BEGIN_BROADCAST_DIST(player->entity, 128.){
+                BEGIN_BROADCAST_DIST(player->entity, 128.) {
                     struct packet* pkt = packet_new(mempool_new(), PKT_PLAY_CLIENT_BLOCKACTION);
                     pkt->data.play_client.blockaction.location.x = inventory->tile->x;
                     pkt->data.play_client.blockaction.location.y = inventory->tile->y;
