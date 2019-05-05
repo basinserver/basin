@@ -28,7 +28,7 @@ void run_accept(struct server* server) {
     spfd.fd = server->fd;
     while (1) {
         struct mempool* pool = mempool_new();
-        struct connection* conn = pcalloc(mempool_new(), sizeof(struct connection));
+        struct connection* conn = pcalloc(pool, sizeof(struct connection));
         conn->pool = pool;
         conn->addrlen = sizeof(struct sockaddr_in6);
         conn->managed_conn = pcalloc(conn->pool, sizeof(struct netmgr_connection));

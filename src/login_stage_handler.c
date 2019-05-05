@@ -293,7 +293,12 @@ int handle_encryption_response(struct connection* conn, struct packet* packet) {
     SSL_set_fd(ssl, session_tls_fd);
     if (SSL_connect(ssl) != 1) goto ssl_error;
     char write_buf[4096];
-    int write_length = snprintf(write_buf, 1024, "GET /session/minecraft/hasJoined?username=%s&serverId=%s HTTP/1.1\r\nHost: sessionserver.mojang.com\r\nUser-Agent: Basin " VERSION "\r\nConnection: close\r\n\r\n", conn->online_username, hex_hash_signed);
+    int write_length = snprintf(write_buf, 1024, "\
+    GET /session/minecraft/hasJoined?username=%s&serverId=%s \
+    HTTP/1.1\r\nHost: sessionserver.mojang.com\r\n\
+    User-Agent: Basin " VERSION "\r\n\
+    Connection: close\r\n\r\n\
+    ", conn->online_username, hex_hash_signed);
     int written = 0;
     while (written < write_length) {
         int r = SSL_write(ssl, write_buf, write_length);
