@@ -77,7 +77,7 @@ int onTick_fallingblock(struct world* world, struct entity* ent) {
             sl.damage = ent->data.fallingblock.b & 0x0f;
             sl.count = 1;
             sl.nbt = NULL;
-            dropBlockDrop(world, &sl, (int32_t) floor(ent->x), (int32_t) floor(ent->y - .01), (int32_t) floor(ent->z));
+            game_drop_block(world, &sl, (int32_t) floor(ent->x), (int32_t) floor(ent->y - .01), (int32_t) floor(ent->z));
             //ent->onGround = 0;
             //return 0;
         } else {
@@ -130,7 +130,7 @@ void onInteract_mooshroom(struct world* world, struct entity* entity, struct pla
         }
     } else if (item->item == ITM_SHEARS && interacter->gamemode != 1) { // TODO: not child
     //TODO: explosion
-        struct entity* ent = newEntity(nextEntityID++, entity->x, entity->y, entity->z, ENT_COW, entity->yaw, entity->pitch);
+        struct entity* ent = entity_new(nextEntityID++, entity->x, entity->y, entity->z, ENT_COW, entity->yaw, entity->pitch);
         ent->health = entity->health;
         memcpy(&ent->data, &entity->data, sizeof(union entity_data));
         world_spawn_entity(world, ent);
@@ -500,54 +500,25 @@ void jump(struct entity* entity) {
     }
 }
 
-struct entity* newEntity(int32_t id, double x, double y, double z, uint32_t type, float yaw, float pitch) {
-    struct entity* e = malloc(sizeof(struct entity));
-    struct entity_info* ei = getEntityInfo(type);
-    e->id = id;
-    e->age = 0;
-    e->x = x;
-    e->y = y;
-    e->z = z;
-    e->last_x = x;
-    e->last_y = y;
-    e->last_z = z;
-    e->type = type;
-    e->yaw = yaw;
-    e->pitch = pitch;
-    e->last_yaw = yaw;
-    e->last_pitch = pitch;
-    e->headpitch = 0.;
-    e->on_ground = 0;
-    e->motX = 0.;
-    e->motY = 0.;
-    e->motZ = 0.;
-    e->objectData = 0;
-    e->markedKill = 0;
-    e->effects = NULL;
-    e->effect_count = 0;
-    e->collidedVertically = 0;
-    e->collidedHorizontally = 0;
-    e->sneaking = 0;
-    e->sprinting = 0;
-    e->usingItemMain = 0;
-    e->usingItemOff = 0;
-    e->portalCooldown = 0;
-    e->ticksExisted = 0;
-    e->subtype = 0;
-    e->fallDistance = 0.;
-    e->maxHealth = ei == NULL ? 20. : ei->maxHealth;
-    e->health = e->maxHealth;
-    e->world = NULL;
-    e->inWater = 0;
-    e->inLava = 0;
-    e->invincibilityTicks = 0;
-    e->loadingPlayers = hashmap_thread_new(16, e->pool);
-    e->attacking = NULL;
-    e->attackers = new_hashmap(1, 0);
-    e->immovable = 0;
-    memset(&e->data, 0, sizeof(union entity_data));
-    e->ai = NULL;
-    return e;
+struct entity* entity_new(struct world* world, int32_t id, double x, double y, double z, uint32_t type, float yaw, float pitch) {
+    struct mempool* pool = mempool_new();
+    pchild(world->pool, pool);
+    struct entity* entity = pcalloc(pool, sizeof(struct entity));
+    entity->pool = pool;
+    entity->world = world;
+    struct entity_info* info = getEntityInfo(type);
+    entity->id = id;
+    entity->type = type;
+    entity->last_x = entity->x = x;
+    entity->last_y = entity->y = y;
+    entity->last_z = entity->z = z;
+    entity->last_yaw = entity->yaw = yaw;
+    entity->last_pitch = entity->pitch = pitch;
+    entity->maxHealth = info == NULL ? 20f : info->maxHealth;
+    entity->health = entity->maxHealth;
+    entity->loadingPlayers = hashmap_thread_new(16, entity->pool);
+    // entity->attackers = new_hashmap(1, 0);
+    return entity;
 }
 
 double entity_dist(struct entity* ent1, struct entity* ent2) {
@@ -1103,7 +1074,7 @@ void applyVelocity(struct entity* entity, double x, double y, double z) {
 
 void applyKnockback(struct entity* entity, float yaw, float strength) {
     float kb_resistance = 0.;
-    if (randFloat() > kb_resistance) {
+    if (game_rand_float() > kb_resistance) {
         float xr = sinf(yaw / 360. * 2 * M_PI);
         float zr = -cosf(yaw / 360. * 2 * M_PI);
         float m = sqrtf(xr * xr + zr * zr);
@@ -1353,7 +1324,7 @@ void pushOutOfBlocks(struct entity* ent) {
         fby = 1.;
         fbz = 0.;
     }
-    float mag = randFloat() * .2 + .1;
+    float mag = game_rand_float() * .2 + .1;
     if (fbx == 0. && fbz == 0.) {
         ent->motX *= .75;
         ent->motY = mag * fby;

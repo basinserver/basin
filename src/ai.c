@@ -240,7 +240,7 @@ int32_t ai_attackmelee(struct world* world, struct entity* entity, struct aitask
     double dist = entity_distsq(entity->attacking, entity);
     amd->delayCounter--;
 //TODO: cansee
-    if ((amd->longMemory || 1) && amd->delayCounter <= 0 && ((amd->targetX == 0. && amd->targetY == 0. && amd->targetZ == 0.) || entity_distsq_block(entity->attacking, amd->targetX, amd->targetY, amd->targetZ) >= 1. || randFloat() < .05)) {
+    if ((amd->longMemory || 1) && amd->delayCounter <= 0 && ((amd->targetX == 0. && amd->targetY == 0. && amd->targetZ == 0.) || entity_distsq_block(entity->attacking, amd->targetX, amd->targetY, amd->targetZ) >= 1. || game_rand_float() < .05)) {
         amd->targetX = entity->attacking->x;
         amd->targetY = entity->attacking->y;
         amd->targetZ = entity->attacking->z;
@@ -425,7 +425,7 @@ int32_t ai_skeletonriders(struct world* world, struct entity* entity, struct ait
 }
 
 int32_t ai_swimming(struct world* world, struct entity* entity, struct aitask* ai) {
-//if (randFloat() < .8) {
+//if (game_rand_float() < .8) {
     jump(entity);
 //}
     return 0;

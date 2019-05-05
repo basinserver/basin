@@ -357,7 +357,7 @@ void world_explode(struct world* world, struct chunk* ch, double x, double y, do
                 dx /= d;
                 dy /= d;
                 dz /= d;
-                float modified_strength = strength * (.7f + randFloat() * .6f);
+                float modified_strength = strength * (.7f + game_rand_float() * .6f);
                 double x2 = x;
                 double y2 = y;
                 double z2 = z;

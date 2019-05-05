@@ -72,7 +72,7 @@ void inventory_set_slot(struct player* player, struct inventory* inv, int index,
         inv->slots[index] = pmalloc(inv->pool, sizeof(struct slot));
         slot_duplicate(inv->pool, slot, inv->slots[index]);
     }
-    onInventoryUpdate(player, inv, index);
+    game_update_inventory(player, inv, index);
     if (broadcast) {
         BEGIN_BROADCAST(inv->watching_players)
         struct packet* pkt = packet_new(mempool_new(), PKT_PLAY_CLIENT_SETSLOT);

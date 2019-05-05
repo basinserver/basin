@@ -15,7 +15,7 @@
 
 void player_openInventory(struct player* player, struct inventory* inv);
 
-float randFloat();
+float game_rand_float();
 
 void playSound(struct world* world, int32_t soundID, int32_t soundCategory, float x, float y, float z, float volume, float pitch);
 
@@ -23,7 +23,7 @@ void dropPlayerItem(struct player* player, struct slot* drop);
 
 void dropEntityItem_explode(struct entity* entity, struct slot* drop);
 
-void dropBlockDrop(struct world* world, struct slot* slot, int32_t x, int32_t y, int32_t z);
+void game_drop_block(struct world* world, struct slot* slot, int32_t x, int32_t y, int32_t z);
 
 void dropBlockDrops(struct world* world, block blk, struct player* breaker, int32_t x, int32_t y, int32_t z);
 
@@ -31,7 +31,7 @@ void game_load_player(struct player* to, struct player* from);
 
 void game_load_entity(struct player* to, struct entity* from);
 
-void onInventoryUpdate(struct player* player, struct inventory* inv, int slot);
+void game_update_inventory(struct player* player, struct inventory* inventory, int slot);
 
 void world_tick(struct world* world);
 

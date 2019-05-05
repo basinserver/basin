@@ -128,72 +128,59 @@ void game_load_entity(struct player* to, struct entity* from) {
     hashmap_putint(from->loadingPlayers, (uint64_t) to->entity->id, to);
 }
 
-void onInventoryUpdate(struct player* player, struct inventory* inv, int slot) {
-    if (inv->type == INVTYPE_PLAYERINVENTORY) {
+void game_update_inventory(struct player* player, struct inventory* inventory, int slot) {
+    if (inventory->type == INVTYPE_PLAYERINVENTORY) {
         if (slot == player->currentItem + 36) {
             if (player->itemUseDuration > 0 && player->itemUseHand == 0) {
-                struct slot* ihs = inventory_get(player, player->inventory, player->itemUseHand ? 45 : (36 + player->currentItem));
-                struct item_info* ihi = ihs == NULL ? NULL : getItemInfo(ihs->item);
-                if (ihs == NULL || ihi == NULL) player->itemUseDuration = 0;
+                struct slot* in_hand_slot = inventory_get(player, player->inventory, player->itemUseHand ? 45 : (36 + player->currentItem));
+                struct item_info* info = in_hand_slot == NULL ? NULL : getItemInfo(in_hand_slot->item);
+                if (in_hand_slot == NULL || info == NULL) player->itemUseDuration = 0;
                 else {
-                    if (ihi->onItemUseTick != NULL) (*ihi->onItemUseTick)(player->world, player, player->itemUseHand ? 45 : (36 + player->currentItem), ihs, -1);
+                    if (info->onItemUseTick != NULL) (*info->onItemUseTick)(player->world, player, player->itemUseHand ? 45 : (36 + player->currentItem), in_hand_slot, -1);
                     player->itemUseDuration = 0;
                 }
             }
-            BEGIN_BROADCAST_EXCEPT_DIST(player, player->entity, 128.)
-            struct packet* pkt = xmalloc(sizeof(struct packet));
-            pkt->id = PKT_PLAY_CLIENT_ENTITYEQUIPMENT;
-            pkt->data.play_client.entityequipment.entity_id = player->entity->id;
-            pkt->data.play_client.entityequipment.slot = 0;
-                                slot_duplicate(inventory_get(player, inv, player->currentItem + 36), &pkt->data.play_client.entityequipment.item);
-            add_queue(bc_player->outgoing_packets, pkt);
-            END_BROADCAST(player->world->players)
+            BEGIN_BROADCAST_EXCEPT_DIST(player, player->entity, 128.){
+                game_entity_equipment(bc_player, player->entity, 0, inventory_get(player, inventory, player->currentItem + 36));
+                END_BROADCAST(player->world->players);
+            }
         } else if (slot >= 5 && slot <= 8) {
-            BEGIN_BROADCAST_EXCEPT_DIST(player, player->entity, 128.)
-            struct packet* pkt = xmalloc(sizeof(struct packet));
-            pkt->id = PKT_PLAY_CLIENT_ENTITYEQUIPMENT;
-            pkt->data.play_client.entityequipment.entity_id = player->entity->id;
-            if (slot == 5) pkt->data.play_client.entityequipment.slot = 5;
-            else if (slot == 6) pkt->data.play_client.entityequipment.slot = 4;
-            else if (slot == 7) pkt->data.play_client.entityequipment.slot = 3;
-            else if (slot == 8) pkt->data.play_client.entityequipment.slot = 2;
-                                slot_duplicate(inventory_get(player, inv, slot), &pkt->data.play_client.entityequipment.item);
-            add_queue(bc_player->outgoing_packets, pkt);
-            END_BROADCAST(player->world->players)
+            BEGIN_BROADCAST_EXCEPT_DIST(player, player->entity, 128.) {
+                int packet_slot = (8 - slot) + 2;
+                game_entity_equipment(bc_player, player->entity, packet_slot, inventory_get(player, inventory, slot));
+                END_BROADCAST(player->world->players);
+            }
         } else if (slot == 45) {
-            BEGIN_BROADCAST_EXCEPT_DIST(player, player->entity, 128.)
-            struct packet* pkt = xmalloc(sizeof(struct packet));
-            pkt->id = PKT_PLAY_CLIENT_ENTITYEQUIPMENT;
-            pkt->data.play_client.entityequipment.entity_id = player->entity->id;
-            pkt->data.play_client.entityequipment.slot = 1;
-                                slot_duplicate(inventory_get(player, inv, 45), &pkt->data.play_client.entityequipment.item);
-            add_queue(bc_player->outgoing_packets, pkt);
-            END_BROADCAST(player->world->players)
+            BEGIN_BROADCAST_EXCEPT_DIST(player, player->entity, 128.) {
+                game_entity_equipment(bc_player, player->entity, 1, inventory_get(player, inventory, 45));
+                END_BROADCAST(player->world->players);
+            }
         } else if (slot >= 1 && slot <= 4) {
-            inventory_set_slot(player, inv, 0, crafting_result(&inv->slots[1], 4), 1, 1);
+            // TODO: adjust pools here properly
+            inventory_set_slot(player, inventory, 0, crafting_result(inventory->pool, &inventory->slots[1], 4), 1);
         }
-    } else if (inv->type == INVTYPE_WORKBENCH) {
+    } else if (inventory->type == INVTYPE_WORKBENCH) {
         if (slot >= 1 && slot <= 9) {
-            inventory_set_slot(player, inv, 0, crafting_result(&inv->slots[1], 9), 1, 1);
+            inventory_set_slot(player, inventory, 0, crafting_result(inventory->pool, &inventory->slots[1], 9), 1);
         }
-    } else if (inv->type == INVTYPE_FURNACE) {
+    } else if (inventory->type == INVTYPE_FURNACE) {
         if (slot >= 0 && slot <= 2 && player != NULL) {
-            update_furnace(player->world, inv->tile);
+            update_furnace(player->world, inventory->tile);
         }
     }
 }
 
-float randFloat() {
+float game_rand_float() {
     return ((float) rand() / (float) RAND_MAX);
 }
 
-void dropBlockDrop(struct world* world, struct slot* slot, int32_t x, int32_t y, int32_t z) {
-    struct entity* item = newEntity(nextEntityID++, (double) x + .5, (double) y + .5, (double) z + .5, ENT_ITEM, randFloat() * 360., 0.);
+void game_drop_block(struct world* world, struct slot* slot, int32_t x, int32_t y, int32_t z) {
+    struct entity* item = entity_new(world->server->next_entity_id++, (double) x + .5, (double) y + .5, (double) z + .5, ENT_ITEM, game_rand_float() * 360., 0.);
     item->data.itemstack.slot = xmalloc(sizeof(struct slot));
     item->objectData = 1;
-    item->motX = randFloat() * .2 - .1;
+    item->motX = game_rand_float() * .2 - .1;
     item->motY = .2;
-    item->motZ = randFloat() * .2 - .1;
+    item->motZ = game_rand_float() * .2 - .1;
     item->data.itemstack.delayBeforeCanPickup = 0;
     slot_duplicate(slot, item->data.itemstack.slot);
     world_spawn_entity(world, item);
@@ -203,16 +190,16 @@ void dropBlockDrop(struct world* world, struct slot* slot, int32_t x, int32_t y,
 }
 
 void dropPlayerItem(struct player* player, struct slot* drop) {
-    struct entity* item = newEntity(nextEntityID++, player->entity->x, player->entity->y + 1.32, player->entity->z, ENT_ITEM, 0., 0.);
+    struct entity* item = entity_new(nextEntityID++, player->entity->x, player->entity->y + 1.32, player->entity->z, ENT_ITEM, 0., 0.);
     item->data.itemstack.slot = xmalloc(sizeof(struct slot));
     item->objectData = 1;
     item->motX = -sin(player->entity->yaw * M_PI / 180.) * cos(player->entity->pitch * M_PI / 180.) * .3;
     item->motZ = cos(player->entity->yaw * M_PI / 180.) * cos(player->entity->pitch * M_PI / 180.) * .3;
     item->motY = -sin(player->entity->pitch * M_PI / 180.) * .3 + .1;
-    float nos = randFloat() * M_PI * 2.;
-    float mag = .02 * randFloat();
+    float nos = game_rand_float() * M_PI * 2.;
+    float mag = .02 * game_rand_float();
     item->motX += cos(nos) * mag;
-    item->motY += (randFloat() - randFloat()) * .1;
+    item->motY += (game_rand_float() - game_rand_float()) * .1;
     item->motZ += sin(nos) * mag;
     item->data.itemstack.delayBeforeCanPickup = 20;
     slot_duplicate(drop, item->data.itemstack.slot);
@@ -238,11 +225,11 @@ void playSound(struct world* world, int32_t soundID, int32_t soundCategory, floa
 }
 
 void dropEntityItem_explode(struct entity* entity, struct slot* drop) {
-    struct entity* item = newEntity(nextEntityID++, entity->x, entity->y + 1.32, entity->z, ENT_ITEM, 0., 0.);
+    struct entity* item = entity_new(nextEntityID++, entity->x, entity->y + 1.32, entity->z, ENT_ITEM, 0., 0.);
     item->data.itemstack.slot = xmalloc(sizeof(struct slot));
     item->objectData = 1;
-    float f1 = randFloat() * .5;
-    float f2 = randFloat() * M_PI * 2.;
+    float f1 = game_rand_float() * .5;
+    float f2 = game_rand_float() * M_PI * 2.;
     item->motX = -sin(f2) * f1;
     item->motZ = cos(f2) * f1;
     item->motY = .2;
@@ -272,7 +259,7 @@ void dropBlockDrops(struct world* world, block blk, struct player* breaker, int3
         dd.damage = bi->drop_damage;
         dd.count = bi->drop_min + ((bi->drop_max == bi->drop_min) ? 0 : (rand() % (bi->drop_max - bi->drop_min)));
         dd.nbt = NULL;
-        dropBlockDrop(world, &dd, x, y, z);
+        game_drop_block(world, &dd, x, y, z);
     } else (*bi->dropItems)(world, blk, x, y, z, 0);
 }
 

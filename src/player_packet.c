@@ -239,7 +239,7 @@ void player_packet_handle_clickwindow(struct player* player, struct mempool* poo
                         int amt = crafting_all(player, inventory);
                         for (int i = 0; i < amt; i++)
                             inventory_add(player, inventory, item, 44, 8, 0);
-                        onInventoryUpdate(player, inventory, 1); // 2-4 would just repeat the calculation
+                        game_update_inventory(player, inventory, 1); // 2-4 would just repeat the calculation
                     } else if (slot != 45 && it == ITM_SHIELD && inventory->slots[45] == NULL) {
                         inventory_swap(player, inventory, 45, slot, 0);
                     } else if (slot != 5 && inventory->slots[5] == NULL && (it == BLK_PUMPKIN || it == ITM_HELMETCLOTH || it == ITM_HELMETCHAIN || it == ITM_HELMETIRON || it == ITM_HELMETDIAMOND || it == ITM_HELMETGOLD)) {
@@ -269,7 +269,7 @@ void player_packet_handle_clickwindow(struct player* player, struct mempool* poo
                         int amt = crafting_all(player, inventory);
                         for (int i = 0; i < amt; i++)
                             inventory_add(player, inventory, inventory->slots[0], 45, 9, 0);
-                        onInventoryUpdate(player, inventory, 1); // 2-4 would just repeat the calculation
+                        game_update_inventory(player, inventory, 1); // 2-4 would just repeat the calculation
                     } else if (slot <= 9) {
                         int r = inventory_add(player, inventory, item, 10, 46, 0);
                         if (r <= 0) inventory_set_slot(player, inventory, slot, NULL, 0);
@@ -898,7 +898,7 @@ void player_packet_handle_helditemchange(struct player* player, struct mempool* 
     }
     pthread_mutex_lock(&player->inventory->mutex);
     player->currentItem = (uint16_t) packet->slot;
-    onInventoryUpdate(player, player->inventory, player->currentItem + 36);
+    game_update_inventory(player, player->inventory, player->currentItem + 36);
     pthread_mutex_unlock(&player->inventory->mutex);
 }
 

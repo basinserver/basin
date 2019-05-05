@@ -445,6 +445,8 @@ struct entity {
     struct hashmap* attackers;
 };
 
+struct entity* entity_new(struct world* world, int32_t id, double x, double y, double z, uint32_t type, float yaw, float pitch);
+
 int damageEntityWithItem(struct entity* attacked, struct entity* attacker, uint8_t slot_index, struct slot* item);
 
 int damageEntity(struct entity* attacked, float damage, int armorable);
@@ -468,8 +470,6 @@ double entity_distsq(struct entity* ent1, struct entity* ent2);
 double entity_distsq_block(struct entity* ent1, double x, double y, double z);
 
 double entity_dist_block(struct entity* ent1, double x, double y, double z);
-
-struct entity* newEntity(int32_t id, double x, double y, double z, uint32_t type, float yaw, float pitch);
 
 void getEntityCollision(struct entity* ent, struct boundingbox* bb);
 

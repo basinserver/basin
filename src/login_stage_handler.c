@@ -56,7 +56,7 @@ int work_joinServer(struct connection* conn, char* username, char* uuid_string) 
         return 1;
     }
     conn->protocol_state = STATE_PLAY;
-    struct entity* ep = newEntity(conn->server->next_entity_id++, (double) conn->server->overworld->spawnpos.x + .5, (double) conn->server->overworld->spawnpos.y, (double) conn->server->overworld->spawnpos.z + .5, ENT_PLAYER, 0f, 0f);
+    struct entity* ep = entity_new(conn->server->next_entity_id++, (double) conn->server->overworld->spawnpos.x + .5, (double) conn->server->overworld->spawnpos.y, (double) conn->server->overworld->spawnpos.z + .5, ENT_PLAYER, 0f, 0f);
     struct player* player = player_new(conn->pool, conn->server, conn, conn->server->overworld, ep, str_dup(resp->data.login_client.loginsuccess.username, 1, conn->pool), uuid, 1); // TODO default gamemode
     conn->player = player;
     hashmap_putint(conn->server->players_by_entity_id, (uint64_t) player->entity->id, player);

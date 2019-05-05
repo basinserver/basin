@@ -110,7 +110,7 @@ void crafting_once(struct player* player, struct inventory* inv) {
         }
         inv->slots[i] = slot;
     }
-    onInventoryUpdate(player, inv, 1);
+    game_update_inventory(player, inv, 1);
 }
 
 int crafting_all(struct player* player, struct inventory* inv) {
