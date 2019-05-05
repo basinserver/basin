@@ -325,7 +325,7 @@ void broadcast(char* text, char* color) {
     char* rs = xmalloc(s);
     snprintf(rs, s, "{\"text\": \"%s\", \"color\": \"%s\"}", replace(replace(rsx, "\\", "\\\\"), "\"", "\\\""), color);
     printf("<CHAT> %s\n", text);
-    BEGIN_BROADCAST (players)
+    BEGIN_BROADCAST (players);
     struct packet* pkt = xmalloc(sizeof(struct packet));
     pkt->id = PKT_PLAY_CLIENT_CHATMESSAGE;
     pkt->data.play_client.chatmessage.position = 0;

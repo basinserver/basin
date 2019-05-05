@@ -2,6 +2,7 @@
 #include <basin/entity_impl.h>
 #include <basin/entity.h>
 #include <basin/game.h>
+#include <basin/packet.h>
 #include <avuna/pmem.h>
 #include <math.h>
 #include <string.h>
@@ -135,7 +136,7 @@ void tick_arrow(struct world* world, struct entity* entity) {
                 }
             }
         }
-        END_HASHMAP_ITERATION(world->entities)
+        END_HASHMAP_ITERATION(world->entities);
         if (ehit != NULL) {
             float speed = sqrtf(entity->motX * entity->motX + entity->motY * entity->motY + entity->motZ * entity->motZ);
             int damage = ceil(speed * entity->data.arrow.damage);
@@ -237,7 +238,7 @@ void tick_itemstack(struct world* world, struct entity* entity) {
 //for (int32_t icz = chunk_z - 1; icz <= chunk_z + 1; icz++) {
 //struct chunk* ch = world_get_chunk(entity->world, icx, icz);
 //if (ch != NULL) {
-    BEGIN_HASHMAP_ITERATION(entity->world->entities)
+    BEGIN_HASHMAP_ITERATION(entity->world->entities);
     struct entity* oe = (struct entity*) value;
     if (oe == entity || entity_distsq(entity, oe) > 16. * 16.) continue;
     if (oe->type == ENT_PLAYER && oe->health > 0.) {
@@ -259,7 +260,6 @@ void tick_itemstack(struct world* world, struct entity* entity) {
                 END_BROADCAST(entity->world->players)
                 world_despawn_entity(world, entity);
                 freeEntity(entity);
-                return 1;
             } else {
                 BEGIN_BROADCAST_DIST(entity, 128.)
                 struct packet* pkt = xmalloc(sizeof(struct packet));
@@ -268,9 +268,8 @@ void tick_itemstack(struct world* world, struct entity* entity) {
                 writeMetadata(entity, &pkt->data.play_client.entitymetadata.metadata.metadata, &pkt->data.play_client.entitymetadata.metadata.metadata_size);
                 add_queue(bc_player->outgoing_packets, pkt);
                 END_BROADCAST(entity->world->players)
-                BREAK_HASHMAP_ITERATION(entity->world->entities)
+                BREAK_HASHMAP_ITERATION(entity->world->entities);
             }
-            break;
         }
     } else if (oe->type == ENT_ITEM) {
         if (oe->data.itemstack.slot->item == entity->data.itemstack.slot->item && oe->data.itemstack.slot->damage == entity->data.itemstack.slot->damage && oe->data.itemstack.slot->count + entity->data.itemstack.slot->count <= slot_max_size(entity->data.itemstack.slot)) {
@@ -295,6 +294,6 @@ void tick_itemstack(struct world* world, struct entity* entity) {
             }
         }
     }
-    END_HASHMAP_ITERATION(entity->world->entities)
+    END_HASHMAP_ITERATION(entity->world->entities);
     return 0;
 }
