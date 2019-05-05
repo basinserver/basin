@@ -164,8 +164,6 @@ uint32_t getIDFromEntityDataName(const char* dataname);
 
 struct entity_info* getEntityInfo(uint32_t id);
 
-void add_entity_info(uint32_t eid, struct entity_info* bm);
-
 struct potioneffect {
     char effectID;
     char amplifier;
