@@ -109,7 +109,7 @@ void tick_arrow(struct world* world, struct entity* entity) {
         struct entity* ehit = NULL;
         struct entity* shooter = world_get_entity(world, entity->objectData - 1);
         double bd = 999.;
-        BEGIN_HASHMAP_ITERATION(world->entities)
+        BEGIN_HASHMAP_ITERATION(world->entities);
         struct entity* e2 = value;
         double rd = entity_distsq_block(e2, entity->x + entity->motX, entity->y + entity->motY, entity->z + entity->motZ);
         if (rd > 4) {
@@ -154,7 +154,7 @@ void tick_arrow(struct world* world, struct entity* entity) {
             if (ehit->type != ENT_ENDERMAN) {
                 world_despawn_entity(world, entity);
                 freeEntity(entity);
-                return 1;
+                return;
             }
         } else if (hf >= 0) {
             entity->x = hx;
@@ -187,7 +187,7 @@ void tick_arrow(struct world* world, struct entity* entity) {
         if (entity->data.arrow.ticksInGround == 1200) {
             world_despawn_entity(world, entity);
             freeEntity(entity);
-            return 1;
+            return;
         }
     }
 
@@ -211,7 +211,7 @@ void tick_arrow(struct world* world, struct entity* entity) {
             entity->yaw = entity->last_yaw + (entity->yaw - entity->last_yaw) * .2;
         }
     }
-    return 0;
+    return;
 }
 
 void tick_itemstack(struct world* world, struct entity* entity) {
@@ -303,5 +303,5 @@ void tick_itemstack(struct world* world, struct entity* entity) {
         }
     }
     END_HASHMAP_ITERATION(entity->world->entities);
-    return 0;
+    return;
 }

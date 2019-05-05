@@ -133,7 +133,6 @@ void init_entities() {
         info->dataname = str_dup(tmp->data.string, 0, entities_pool);
         list_set(entity_infos, id, info);
         hashmap_put(entity_infos_by_name, str_tolower(str_dup(info->dataname, 0, entities_pool)), info);
-        continue;
         entity_error: ;
         printf("[WARNING] Error Loading Entity \"%s\"! Skipped.\n", child_json->name);
         ITER_LLIST_END();
@@ -539,10 +538,14 @@ int entity_move(struct entity* entity, double* motionX, double* motionY, double*
         for (int32_t z = (int32_t) floor(obb.minZ); z < floor(obb.maxZ + 1.); z++) {
             for (int32_t y = (int32_t) floor(obb.minY); y < floor(obb.maxY + 1.); y++) {
                 block b = world_get_block_guess(entity->world, ch, x, y, z);
-                if (b == 0) continue;
+                if (b == 0) {
+
+                }
                 b = entity_adjustCollision(entity->world, entity, ch, b, x, y, z);
                 struct block_info* bi = getBlockInfo(b);
-                if (bi == NULL) continue;
+                if (bi == NULL) {
+
+                }
                 for (size_t i = 0; i < bi->boundingBox_count; i++) {
                     struct boundingbox* bbx = &bi->boundingBoxes[i];
                     struct boundingbox bbd;
@@ -578,10 +581,14 @@ int entity_move(struct entity* entity, double* motionX, double* motionY, double*
         for (int32_t z = (int32_t) floor(obb.minZ); z < floor(obb.maxZ + 1.); z++) {
             for (int32_t y = (int32_t) floor(obb.minY); y < floor(obb.maxY + 1.); y++) {
                 block b = world_get_block_guess(entity->world, ch, x, y, z);
-                if (b == 0) continue;
+                if (b == 0) {
+
+                }
                 b = entity_adjustCollision(entity->world, entity, ch, b, x, y, z);
                 struct block_info* bi = getBlockInfo(b);
-                if (bi == NULL) continue;
+                if (bi == NULL) {
+
+                }
                 for (size_t i = 0; i < bi->boundingBox_count; i++) {
                     struct boundingbox* bbx = &bi->boundingBoxes[i];
                     struct boundingbox bbd;
@@ -617,10 +624,14 @@ int entity_move(struct entity* entity, double* motionX, double* motionY, double*
         for (int32_t z = (int32_t) floor(obb.minZ); z < floor(obb.maxZ + 1.); z++) {
             for (int32_t y = (int32_t) floor(obb.minY); y < floor(obb.maxY + 1.); y++) {
                 block b = world_get_block_guess(entity->world, ch, x, y, z);
-                if (b == 0) continue;
+                if (b == 0) {
+
+                }
                 b = entity_adjustCollision(entity->world, entity, ch, b, x, y, z);
                 struct block_info* bi = getBlockInfo(b);
-                if (bi == NULL) continue;
+                if (bi == NULL) {
+
+                }
                 for (size_t i = 0; i < bi->boundingBox_count; i++) {
                     struct boundingbox* bbx = &bi->boundingBoxes[i];
                     struct boundingbox bbd;
@@ -835,7 +846,9 @@ int damageEntity(struct entity* attacked, float damage, int armorable) {
                 for (size_t i = 0; i < info->loot_count; i++) {
                     struct entity_loot* el = &info->loots[i];
                     int amt = el->amountMax == el->amountMin ? el->amountMax : (rand() % (el->amountMax - el->amountMin) + el->amountMin);
-                    if (amt <= 0) continue;
+                    if (amt <= 0) {
+
+                    }
                     struct slot it;
                     it.item = el->id;
                     it.count = (unsigned char) amt;
@@ -888,9 +901,13 @@ int entity_inFluid(struct entity* entity, uint16_t blk, float ydown, int meta_ch
         for (int32_t z = (int32_t) floor(pbb.minZ); z < floor(pbb.maxZ + 1.); z++) {
             for (int32_t y = (int32_t) floor(pbb.minY); y < floor(pbb.maxY + 1.); y++) {
                 block b = world_get_block(entity->world, x, y, z);
-                if (meta_check ? (b != blk) : ((b >> 4) != (blk >> 4))) continue;
+                if (meta_check ? (b != blk) : ((b >> 4) != (blk >> 4))) {
+
+                }
                 struct block_info* bi = getBlockInfo(b);
-                if (bi == NULL) continue;
+                if (bi == NULL) {
+
+                }
                 struct boundingbox bb2;
                 bb2.minX = 0. + (double) x;
                 bb2.maxX = 1. + (double) x;
@@ -921,9 +938,13 @@ int entity_inBlock(struct entity* ent, block blk) { // blk = 0 for any block
         for (int32_t z = floor(obb.minZ); z < floor(obb.maxZ + 1.); z++) {
             for (int32_t y = floor(obb.minY); y < floor(obb.maxY + 1.); y++) {
                 block b = world_get_block(ent->world, x, y, z);
-                if (b == 0 || (blk != 0 && blk != b)) continue;
+                if (b == 0 || (blk != 0 && blk != b)) {
+
+                }
                 struct block_info* bi = getBlockInfo(b);
-                if (bi == NULL) continue;
+                if (bi == NULL) {
+                    
+                }
                 for (size_t i = 0; i < bi->boundingBox_count; i++) {
                     struct boundingbox* bb = &bi->boundingBoxes[i];
                     struct boundingbox nbb;

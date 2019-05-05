@@ -290,8 +290,7 @@ void player_openInventory(struct player* player, struct inventory* inv) {
         pkt->data.play_client.windowitems.count = inv->slot_count;
         pkt->data.play_client.windowitems.slot_data = xmalloc(sizeof(struct slot) * inv->slot_count);
         for (size_t i = 0; i < inv->slot_count; i++) {
-            struct mempool* pool = mempool_new();
-            slot_duplicate(pool, inv->slots[i], &pkt->data.play_client.windowitems.slot_data[i]);
+            slot_duplicate(pkt->pool, inv->slots[i], &pkt->data.play_client.windowitems.slot_data[i]);
         }
         add_queue(player->outgoing_packets, pkt);
     }

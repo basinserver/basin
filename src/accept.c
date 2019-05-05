@@ -46,7 +46,6 @@ void run_accept(struct server* server) {
         if ((spfd.revents ^ POLLIN) != 0) {
             printf("Error after polling server: %i (poll revents)!\n", spfd.revents);
             pfree(pool);
-            break;
         }
         spfd.revents = 0;
         int fd = accept(server->fd, (struct sockaddr*) &conn->addr, &conn->addrlen);

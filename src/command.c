@@ -234,7 +234,9 @@ void callCommand(struct player* player, struct mempool* pool, char* command) {
     }
     for (size_t i3 = 0; i3 < registered_commands->size; i3++) {
         struct command* com = (struct command*) registered_commands->data[i3];
-        if (com == NULL) continue;
+        if (com == NULL) {
+            
+        }
         if (streq_nocase(com->command, rc)) {
             (*com->callback)(player, args, arg_count);
             return;
