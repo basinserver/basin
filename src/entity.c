@@ -24,6 +24,7 @@
 #include <time.h>
 #include <unistd.h>
 #include <math.h>
+#include <avuna/util.h>
 
 void onSpawned_minecart(struct world* world, struct entity* entity) {
     if (entity->type == ENT_MINECARTRIDEABLE) entity->objectData = 0;
@@ -352,109 +353,120 @@ int tick_itemstack(struct world* world, struct entity* entity) {
     return 0;
 }
 
+struct mempool* entities_pool;
+
 void init_entities() {
-    entity_infos = new_collection(128, 0);
-    char* jsf = xmalloc(4097);
-    size_t jsfs = 4096;
-    size_t jsr = 0;
-    int fd = open("entities.json", O_RDONLY);
-    ssize_t r = 0;
-    while ((r = read(fd, jsf + jsr, jsfs - jsr)) > 0) {
-        jsr += r;
-        if (jsfs - jsr < 512) {
-            jsfs += 4096;
-            jsf = xrealloc(jsf, jsfs + 1);
+    entities_pool = mempool_new();
+    entity_infos = list_thread_new(64, entities_pool);
+    char* json_file = (char*) read_file_fully(entities_pool, "smelting.json", NULL);
+    if (json_file == NULL) {
+        errlog(delog, "Error reading entity information: %s\n", strerror(errno));
+        return;
+    }
+    struct json_object* json = NULL;
+    json_parse(entities_pool, &json, json_file);
+    pprefree(entities_pool, json_file);
+    ITER_LLIST(json->children_list, value) {
+        struct json_object* child_json = value;
+        struct entity_info* info = pcalloc(entities_pool, sizeof(struct entity_info));
+        struct json_object* tmp = json_get(child_json, "id");
+        if (tmp == NULL || tmp->type != JSON_NUMBER) {
+            goto entity_error;
         }
-    }
-    jsf[jsr] = 0;
-    if (r < 0) {
-        printf("Error reading entity information: %s\n", strerror(errno));
-    }
-    close(fd);
-    struct json_object json;
-    json_parse(&json, jsf);
-    for (size_t i = 0; i < json.child_count; i++) {
-        struct json_object* ur = json.children[i];
-        struct entity_info* ei = xcalloc(sizeof(struct entity_info));
-        struct json_object* tmp = json_get(ur, "id");
-        if (tmp == NULL || tmp->type != JSON_NUMBER) goto cerr;
         uint32_t id = (block) tmp->data.number;
-        if (id < 0) goto cerr;
-        tmp = json_get(ur, "maxHealth");
-        if (tmp == NULL || tmp->type != JSON_NUMBER) goto cerr;
-        ei->maxHealth = (float) tmp->data.number;
-        tmp = json_get(ur, "width");
-        if (tmp == NULL || tmp->type != JSON_NUMBER) goto cerr;
-        ei->width = (float) tmp->data.number;
-        tmp = json_get(ur, "height");
-        if (tmp == NULL || tmp->type != JSON_NUMBER) goto cerr;
-        ei->height = (float) tmp->data.number;
-        tmp = json_get(ur, "loot");
+        if (id < 0) goto entity_error;
+        tmp = json_get(child_json, "maxHealth");
+        if (tmp == NULL || tmp->type != JSON_NUMBER) {
+            goto entity_error;
+        }
+        info->maxHealth = (float) tmp->data.number;
+        tmp = json_get(child_json, "width");
+        if (tmp == NULL || tmp->type != JSON_NUMBER) {
+            goto entity_error;
+        }
+        info->width = (float) tmp->data.number;
+        tmp = json_get(child_json, "height");
+        if (tmp == NULL || tmp->type != JSON_NUMBER) {
+            goto entity_error;
+        }
+        info->height = (float) tmp->data.number;
+        tmp = json_get(child_json, "loot");
         if (tmp != NULL && tmp->type == JSON_ARRAY) {
-            ei->loot_count = tmp->child_count;
-            ei->loots = xcalloc(tmp->child_count * sizeof(struct entity_loot));
-            for (size_t i = 0; i < tmp->child_count; i++) {
-                struct json_object* fj = tmp->children[i];
-                if (fj == NULL || fj->type != JSON_OBJECT) {
-                    xfree(ei->loots);
-                    goto cerr;
+            info->loot_count = tmp->children_list->size;
+            info->loots = pcalloc(entities_pool, info->loot_count * sizeof(struct entity_loot));
+            size_t loot_index = 0;
+            ITER_LLIST(tmp->children_list, loot_value) {
+                struct json_object* loot_entry = loot_value;
+                if (loot_entry == NULL || loot_entry->type != JSON_OBJECT) {
+                    goto entity_error;
                 }
-                struct json_object* emp = json_get(fj, "id");
-                if (emp == NULL || emp->type != JSON_NUMBER) {
-                    xfree(ei->loots);
-                    goto cerr;
+                struct json_object* id_json = json_get(loot_entry, "id");
+                if (id_json == NULL || id_json->type != JSON_NUMBER) {
+                    goto entity_error;
                 }
-                ei->loots[i].id = (item) emp->data.number;
-                struct json_object* amin = json_get(fj, "amountMin");
-                struct json_object* amax = json_get(fj, "amountMax");
+                info->loots[loot_index].id = (item) id_json->data.number;
+                struct json_object* amin = json_get(loot_entry, "amountMin");
+                struct json_object* amax = json_get(loot_entry, "amountMax");
                 if ((amin == NULL) != (amax == NULL) || (amin != NULL && (amin->type != JSON_NUMBER || amax->type != JSON_NUMBER))) {
-                    xfree(ei->loots);
-                    goto cerr;
+                    goto entity_error;
                 }
                 if (amin != NULL) {
-                    ei->loots[i].amountMin = (uint8_t) amin->data.number;
-                    ei->loots[i].amountMax = (uint8_t) amax->data.number;
+                    info->loots[loot_index].amountMin = (uint8_t) amin->data.number;
+                    info->loots[loot_index].amountMax = (uint8_t) amax->data.number;
                 }
-                amin = json_get(fj, "metaMin");
-                amax = json_get(fj, "metaMax");
+                amin = json_get(loot_entry, "metaMin");
+                amax = json_get(loot_entry, "metaMax");
                 if ((amin == NULL) != (amax == NULL) || (amin != NULL && (amin->type != JSON_NUMBER || amax->type != JSON_NUMBER))) {
-                    xfree(ei->loots);
-                    goto cerr;
+                    goto entity_error;
                 }
                 if (amin != NULL) {
-                    ei->loots[i].metaMin = (uint8_t) amin->data.number;
-                    ei->loots[i].metaMax = (uint8_t) amax->data.number;
+                    info->loots[loot_index].metaMin = (uint8_t) amin->data.number;
+                    info->loots[loot_index].metaMax = (uint8_t) amax->data.number;
                 }
+                ++loot_index;
+                ITER_LLIST_END();
             }
         }
-        tmp = json_get(ur, "flags");
-        if (tmp == NULL || tmp->type != JSON_ARRAY) goto cerr;
-        ei->flag_count = tmp->child_count;
-        ei->flags = xmalloc(tmp->child_count * sizeof(char*));
-        for (size_t i = 0; i < tmp->child_count; i++) {
-            struct json_object* fj = tmp->children[i];
-            if (fj == NULL || fj->type != JSON_STRING) goto cerr;
-            ei->flags[i] = toLowerCase(xstrdup(trim(fj->data.string), 0));
+        tmp = json_get(child_json, "flags");
+        if (tmp == NULL || tmp->type != JSON_ARRAY) {
+            goto entity_error;
         }
-        tmp = json_get(ur, "packetType");
-        if (tmp == NULL || tmp->type != JSON_STRING) goto cerr;
-        if (streq_nocase(tmp->data.string, "mob")) ei->spawn_packet = PKT_PLAY_CLIENT_SPAWNMOB;
-        else if (streq_nocase(tmp->data.string, "object")) ei->spawn_packet = PKT_PLAY_CLIENT_SPAWNOBJECT;
-        else if (streq_nocase(tmp->data.string, "exp")) ei->spawn_packet = PKT_PLAY_CLIENT_SPAWNEXPERIENCEORB;
-        else if (streq_nocase(tmp->data.string, "painting")) ei->spawn_packet = PKT_PLAY_CLIENT_SPAWNPAINTING;
-        tmp = json_get(ur, "packetID");
-        if (tmp == NULL || tmp->type != JSON_NUMBER) goto cerr;
-        ei->spawn_packet_id = (int32_t) tmp->data.number;
-        tmp = json_get(ur, "dataname");
-        if (tmp == NULL || tmp->type != JSON_STRING) goto cerr;
-        ei->dataname = xstrdup(tmp->data.string, 0);
-        add_entity_info(id, ei);
+        info->flag_count = tmp->children_list->size;
+        info->flags = pmalloc(entities_pool, info->flag_count * sizeof(char*));
+        size_t flag_index = 0;
+        ITER_LLIST(tmp->children_list, flag_value) {
+            struct json_object* flag_json = flag_value;
+            if (flag_json == NULL || flag_json->type != JSON_STRING) {
+                goto entity_error;
+            }
+            info->flags[flag_index] = str_dup(str_tolower(str_trim(flag_json->data.string)), 0, entities_pool);
+            ++flag_index;
+            ITER_LLIST_END();
+        }
+        tmp = json_get(child_json, "packetType");
+        if (tmp == NULL || tmp->type != JSON_STRING) goto entity_error;
+        if (str_eq(tmp->data.string, "mob")) {
+            info->spawn_packet = PKT_PLAY_CLIENT_SPAWNMOB;
+        } else if (str_eq(tmp->data.string, "object")) {
+            info->spawn_packet = PKT_PLAY_CLIENT_SPAWNOBJECT;
+        } else if (str_eq(tmp->data.string, "exp")) {
+            info->spawn_packet = PKT_PLAY_CLIENT_SPAWNEXPERIENCEORB;
+        } else if (str_eq(tmp->data.string, "painting")) {
+            info->spawn_packet = PKT_PLAY_CLIENT_SPAWNPAINTING;
+        }
+        tmp = json_get(child_json, "packetID");
+        if (tmp == NULL || tmp->type != JSON_NUMBER) goto entity_error;
+        info->spawn_packet_id = (int32_t) tmp->data.number;
+        tmp = json_get(child_json, "dataname");
+        if (tmp == NULL || tmp->type != JSON_STRING) goto entity_error;
+        info->dataname = str_dup(tmp->data.string, 0, entities_pool);
+        add_entity_info(id, info);
         continue;
-        cerr: ;
-        printf("[WARNING] Error Loading Entity \"%s\"! Skipped.\n", ur->name);
+        entity_error: ;
+        printf("[WARNING] Error Loading Entity \"%s\"! Skipped.\n", child_json->name);
+        ITER_LLIST_END();
     }
-    freeJSON(&json);
-    xfree(jsf);
+    pfree(json->pool);
     getEntityInfo(ENT_ZOMBIE)->onAITick = &ai_handletasks;
     getEntityInfo(ENT_ZOMBIE)->initAI = &initai_zombie;
     getEntityInfo(ENT_FALLINGBLOCK)->onTick = &onTick_fallingblock;

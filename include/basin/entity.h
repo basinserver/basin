@@ -156,7 +156,7 @@ struct entity_info {
 
 void swingArm(struct entity* entity);
 
-struct collection* entity_infos;
+struct list* entity_infos;
 
 void init_entities();
 
