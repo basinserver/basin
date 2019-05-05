@@ -1,5 +1,5 @@
 #include "accept.h"
-#include "work.h"
+#include <basin/work.h>
 #include <basin/world.h>
 #include <basin/worldmanager.h>
 #include <basin/server.h>

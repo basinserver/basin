@@ -1,5 +1,5 @@
-#include "accept.h"
-#include "work.h"
+#include <basin/accept.h>
+#include <basin/work.h>
 #include <basin/connection.h>
 #include <avuna/queue.h>
 #include <avuna/string.h>

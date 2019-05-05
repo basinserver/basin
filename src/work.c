@@ -1,7 +1,7 @@
-#include "work.h"
-#include "accept.h"
-#include "basin/packet.h"
-#include "login_stage_handler.h"
+#include <basin/work.h>
+#include <basin/accept.h>
+#include <basin/packet.h>
+#include <basin/login_stage_handler.h>
 #include <basin/network.h>
 #include <basin/globals.h>
 #include <basin/connection.h>
