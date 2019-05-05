@@ -911,9 +911,9 @@ int moveEntity(struct entity* entity, double* mx, double* my, double* mz, float 
     pbb.maxZ -= shrink;
     double ny = *my;
     struct chunk* ch = world_get_chunk(entity->world, (int32_t) entity->x / 16, (int32_t) entity->z / 16);
-    for (int32_t x = floor(obb.minX); x < floor(obb.maxX + 1.); x++) {
-        for (int32_t z = floor(obb.minZ); z < floor(obb.maxZ + 1.); z++) {
-            for (int32_t y = floor(obb.minY); y < floor(obb.maxY + 1.); y++) {
+    for (int32_t x = (int32_t) floor(obb.minX); x < floor(obb.maxX + 1.); x++) {
+        for (int32_t z = (int32_t) floor(obb.minZ); z < floor(obb.maxZ + 1.); z++) {
+            for (int32_t y = (int32_t) floor(obb.minY); y < floor(obb.maxY + 1.); y++) {
                 block b = world_get_block_guess(entity->world, ch, x, y, z);
                 if (b == 0) continue;
                 b = entity_adjustCollision(entity->world, entity, ch, b, x, y, z);
@@ -924,11 +924,6 @@ int moveEntity(struct entity* entity, double* mx, double* my, double* mz, float 
                     struct boundingbox bbd;
                     struct boundingbox* bb = &bbd;
                     entity_adjustBoundingBox(entity->world, entity, ch, b, x, y, z, bbx, &bbd);
-//					if (!bi->fullCube) {
-//						for (double *d = (double *) &bi->boundingBoxes[0], idx = 0; idx < 6; idx++, d++)
-//							printf("%f ", *d);
-//						printf("\n");
-//					}
                     if (bb != NULL && bb->minX != bb->maxX && bb->minY != bb->maxY && bb->minZ != bb->maxZ) {
                         if (bb->maxX + x > obb.minX && bb->minX + x < obb.maxX ? (bb->maxY + y > obb.minY && bb->minY + y < obb.maxY ? bb->maxZ + z > obb.minZ && bb->minZ + z < obb.maxZ : 0) : 0) {
                             if (pbb.maxX > bb->minX + x && pbb.minX < bb->maxX + x && pbb.maxZ > bb->minZ + z && pbb.minZ < bb->maxZ + z) {
@@ -955,9 +950,9 @@ int moveEntity(struct entity* entity, double* mx, double* my, double* mz, float 
     pbb.minY += ny;
     pbb.maxY += ny;
     double nx = *mx;
-    for (int32_t x = floor(obb.minX); x < floor(obb.maxX + 1.); x++) {
-        for (int32_t z = floor(obb.minZ); z < floor(obb.maxZ + 1.); z++) {
-            for (int32_t y = floor(obb.minY); y < floor(obb.maxY + 1.); y++) {
+    for (int32_t x = (int32_t) floor(obb.minX); x < floor(obb.maxX + 1.); x++) {
+        for (int32_t z = (int32_t) floor(obb.minZ); z < floor(obb.maxZ + 1.); z++) {
+            for (int32_t y = (int32_t) floor(obb.minY); y < floor(obb.maxY + 1.); y++) {
                 block b = world_get_block_guess(entity->world, ch, x, y, z);
                 if (b == 0) continue;
                 b = entity_adjustCollision(entity->world, entity, ch, b, x, y, z);
@@ -994,9 +989,9 @@ int moveEntity(struct entity* entity, double* mx, double* my, double* mz, float 
     pbb.minX += nx;
     pbb.maxX += nx;
     double nz = *mz;
-    for (int32_t x = floor(obb.minX); x < floor(obb.maxX + 1.); x++) {
-        for (int32_t z = floor(obb.minZ); z < floor(obb.maxZ + 1.); z++) {
-            for (int32_t y = floor(obb.minY); y < floor(obb.maxY + 1.); y++) {
+    for (int32_t x = (int32_t) floor(obb.minX); x < floor(obb.maxX + 1.); x++) {
+        for (int32_t z = (int32_t) floor(obb.minZ); z < floor(obb.maxZ + 1.); z++) {
+            for (int32_t y = (int32_t) floor(obb.minY); y < floor(obb.maxY + 1.); y++) {
                 block b = world_get_block_guess(entity->world, ch, x, y, z);
                 if (b == 0) continue;
                 b = entity_adjustCollision(entity->world, entity, ch, b, x, y, z);
@@ -1036,9 +1031,9 @@ int moveEntity(struct entity* entity, double* mx, double* my, double* mz, float 
     entity->collidedHorizontally = *mx != nx || *mz != nz;
     entity->collidedVertically = *my != ny;
     entity->on_ground = entity->collidedVertically && *my < 0.;
-    int32_t bx = floor(entity->x);
-    int32_t by = floor(entity->y - .20000000298023224);
-    int32_t bz = floor(entity->z);
+    int32_t bx = (int32_t) floor(entity->x);
+    int32_t by = (int32_t) floor(entity->y - .20000000298023224);
+    int32_t bz = (int32_t) floor(entity->z);
     block lb = world_get_block_guess(entity->world, ch, bx, by, bz);
     if (lb == BLK_AIR) {
         block lbb = world_get_block_guess(entity->world, ch, bx, by - 1, bz);
