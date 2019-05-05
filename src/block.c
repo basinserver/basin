@@ -216,10 +216,10 @@ void onBlockUpdate_tnt(struct world* world, block blk, int32_t x, int32_t y, int
     uint8_t maxPower = getPropogatedPower_block(world, world_get_chunk(world, x >> 4, z >> 4), x, y, z, -1);
     if (maxPower > 0) {
         world_set_block(world, 0, x, y, z);
-        struct entity* e = newEntity(nextEntityID++, (double) x + .5, (double) y, (double) z + .5, ENT_PRIMEDTNT, 0., 0.);
+        struct entity* e = entity_new(nextEntityID++, (double) x + .5, (double) y, (double) z + .5, ENT_PRIMEDTNT, 0., 0.);
         e->data.tnt.fuse = 80;
         e->objectData = blk >> 4;
-        float ra = randFloat() * M_PI * 2.;
+        float ra = game_rand_float() * M_PI * 2.;
         e->motX = -sinf(ra) * .02;
         e->motY = .2;
         e->motZ = -cosf(ra) * .02;
@@ -477,7 +477,7 @@ int onBlockDestroyed_chest(struct world* world, block blk, int32_t x, int32_t y,
     if (te == NULL) return 0;
     for (size_t i = 0; i < te->data.chest.inv->slot_count; i++) {
         struct slot* sl = inventory_get(NULL, te->data.chest.inv, i);
-        dropBlockDrop(world, sl, x, y, z);
+        game_drop_block(world, sl, x, y, z);
     }
     world_set_tile(world, x, y, z, NULL);
     return 0;
@@ -510,7 +510,7 @@ int onBlockDestroyed_furnace(struct world* world, block blk, int32_t x, int32_t 
     if (te == NULL) return 0;
     for (size_t i = 0; i < te->data.furnace.inv->slot_count; i++) {
         struct slot* sl = inventory_get(NULL, te->data.furnace.inv, i);
-        dropBlockDrop(world, sl, x, y, z);
+        game_drop_block(world, sl, x, y, z);
     }
     world_set_tile(world, x, y, z, NULL);
     return 0;
@@ -636,14 +636,14 @@ void dropItems_gravel(struct world* world, block blk, int32_t x, int32_t y, int3
         drop.damage = 0;
         drop.count = 1;
         drop.nbt = NULL;
-        dropBlockDrop(world, &drop, x, y, z);
+        game_drop_block(world, &drop, x, y, z);
     } else {
         struct slot drop;
         drop.item = BLK_GRAVEL >> 4;
         drop.damage = BLK_GRAVEL & 0x0f;
         drop.count = 1;
         drop.nbt = NULL;
-        dropBlockDrop(world, &drop, x, y, z);
+        game_drop_block(world, &drop, x, y, z);
     }
 }
 
@@ -679,7 +679,7 @@ void dropItems_leaves(struct world* world, block blk, int32_t x, int32_t y, int3
         } else return;
         drop.count = 1;
         drop.nbt = NULL;
-        dropBlockDrop(world, &drop, x, y, z);
+        game_drop_block(world, &drop, x, y, z);
     }
     if (blk == BLK_LEAVES_OAK || blk == BLK_LEAVES_BIG_OAK) {
         chance = 200;
@@ -693,7 +693,7 @@ void dropItems_leaves(struct world* world, block blk, int32_t x, int32_t y, int3
             drop.damage = 0;
             drop.count = 1;
             drop.nbt = NULL;
-            dropBlockDrop(world, &drop, x, y, z);
+            game_drop_block(world, &drop, x, y, z);
         }
     }
 }
@@ -705,7 +705,7 @@ void dropItems_tallgrass(struct world* world, block blk, int32_t x, int32_t y, i
         drop.damage = 0;
         drop.count = 1 + (rand() % (fortune * 2 + 1));
         drop.nbt = NULL;
-        dropBlockDrop(world, &drop, x, y, z);
+        game_drop_block(world, &drop, x, y, z);
     }
 }
 
@@ -723,7 +723,7 @@ void onBlockUpdate_falling(struct world* world, block blk, int32_t x, int32_t y,
 int scheduledTick_falling(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
     if (y > 0 && falling_canFallThrough(world_get_block(world, x, y - 1, z))) {
         world_set_block(world, 0, x, y, z);
-        struct entity* e = newEntity(nextEntityID++, (double) x + .5, (double) y, (double) z + .5, ENT_FALLINGBLOCK, 0., 0.);
+        struct entity* e = entity_new(nextEntityID++, (double) x + .5, (double) y, (double) z + .5, ENT_FALLINGBLOCK, 0., 0.);
         e->data.fallingblock.b = blk;
         e->objectData = blk >> 4;
         world_spawn_entity(world, e);
@@ -943,7 +943,7 @@ void dropItems_hugemushroom(struct world* world, block blk, int32_t x, int32_t y
         drop.damage = 0;
         drop.count = ct;
         drop.nbt = NULL;
-        dropBlockDrop(world, &drop, x, y, z);
+        game_drop_block(world, &drop, x, y, z);
     }
 }
 
@@ -959,7 +959,7 @@ void dropItems_crops(struct world* world, block blk, int32_t x, int32_t y, int32
             drop.count = 1;
             drop.damage = 0;
             drop.nbt = NULL;
-            dropBlockDrop(world, &drop, x, y, z);
+            game_drop_block(world, &drop, x, y, z);
         }
         seed = ITM_SEEDS;
     } else if ((blk >> 4) == (BLK_PUMPKINSTEM >> 4)) {
@@ -969,7 +969,7 @@ void dropItems_crops(struct world* world, block blk, int32_t x, int32_t y, int32
         drop.nbt = NULL;
         for (int i = 0; i < 3; i++) {
             if (rand() % 15 <= age) {
-                dropBlockDrop(world, &drop, x, y, z);
+                game_drop_block(world, &drop, x, y, z);
             }
         }
         seed = ITM_SEEDS_PUMPKIN;
@@ -981,7 +981,7 @@ void dropItems_crops(struct world* world, block blk, int32_t x, int32_t y, int32
         drop.nbt = NULL;
         for (int i = 0; i < 3; i++) {
             if (rand() % 15 <= age) {
-                dropBlockDrop(world, &drop, x, y, z);
+                game_drop_block(world, &drop, x, y, z);
             }
         }
         seed = ITM_SEEDS_PUMPKIN;
@@ -993,7 +993,7 @@ void dropItems_crops(struct world* world, block blk, int32_t x, int32_t y, int32
             drop.count = 1;
             drop.damage = 0;
             drop.nbt = NULL;
-            dropBlockDrop(world, &drop, x, y, z);
+            game_drop_block(world, &drop, x, y, z);
         }
         seed = ITM_CARROTS;
     } else if ((blk >> 4) == (BLK_POTATOES >> 4)) {
@@ -1004,13 +1004,13 @@ void dropItems_crops(struct world* world, block blk, int32_t x, int32_t y, int32
             drop.count = 1;
             drop.damage = 0;
             drop.nbt = NULL;
-            dropBlockDrop(world, &drop, x, y, z);
+            game_drop_block(world, &drop, x, y, z);
             if (rand() % 50 == 0) {
                 drop.item = ITM_POTATOPOISONOUS;
                 drop.count = 1;
                 drop.damage = 0;
                 drop.nbt = NULL;
-                dropBlockDrop(world, &drop, x, y, z);
+                game_drop_block(world, &drop, x, y, z);
             }
         }
     } else if ((blk >> 4) == (BLK_NETHERSTALK >> 4)) {
@@ -1024,7 +1024,7 @@ void dropItems_crops(struct world* world, block blk, int32_t x, int32_t y, int32
             if (fortune > 0) rct += rand() % (fortune + 1);
         }
         for (int i = 0; i < rct; i++)
-            dropBlockDrop(world, &drop, x, y, z);
+            game_drop_block(world, &drop, x, y, z);
         return;
     } else if ((blk >> 4) == (BLK_BEETROOTS >> 4)) {
         maxAge = 3;
@@ -1033,7 +1033,7 @@ void dropItems_crops(struct world* world, block blk, int32_t x, int32_t y, int32
             drop.count = 1;
             drop.damage = 0;
             drop.nbt = NULL;
-            dropBlockDrop(world, &drop, x, y, z);
+            game_drop_block(world, &drop, x, y, z);
         }
         seed = ITM_BEETROOT_SEEDS;
     } else if ((blk >> 4) == (BLK_COCOA >> 4)) {
@@ -1044,7 +1044,7 @@ void dropItems_crops(struct world* world, block blk, int32_t x, int32_t y, int32
         drop.damage = 3;
         drop.nbt = NULL;
         for (int i = 0; i < rc; i++)
-            dropBlockDrop(world, &drop, x, y, z);
+            game_drop_block(world, &drop, x, y, z);
         return;
     }
     if (seed > 0) {
@@ -1055,10 +1055,10 @@ void dropItems_crops(struct world* world, block blk, int32_t x, int32_t y, int32
         if (age >= maxAge) {
             int rct = 3 + fortune;
             for (int i = 0; i < rct; i++) {
-                if (rand() % (2 * maxAge) <= age) dropBlockDrop(world, &drop, x, y, z);
+                if (rand() % (2 * maxAge) <= age) game_drop_block(world, &drop, x, y, z);
             }
         }
-        dropBlockDrop(world, &drop, x, y, z);
+        game_drop_block(world, &drop, x, y, z);
     }
 }
 

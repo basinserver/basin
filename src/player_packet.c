@@ -235,7 +235,7 @@ void player_packet_handle_clickwindow(struct player* player, struct mempool* poo
                         int amt = crafting_all(player, inventory);
                         for (int i = 0; i < amt; i++)
                             inventory_add(player, inventory, item, 44, 8, 0);
-                        onInventoryUpdate(player, inventory, 1); // 2-4 would just repeat the calculation
+                        game_update_inventory(player, inventory, 1); // 2-4 would just repeat the calculation
                     } else if (slot != 45 && it == ITM_SHIELD && inventory->slots[45] == NULL) {
                         inventory_swap(player, inventory, 45, slot, 0);
                     } else if (slot != 5 && inventory->slots[5] == NULL && (it == BLK_PUMPKIN || it == ITM_HELMETCLOTH || it == ITM_HELMETCHAIN || it == ITM_HELMETIRON || it == ITM_HELMETDIAMOND || it == ITM_HELMETGOLD)) {
@@ -265,7 +265,7 @@ void player_packet_handle_clickwindow(struct player* player, struct mempool* poo
                         int amt = crafting_all(player, inventory);
                         for (int i = 0; i < amt; i++)
                             inventory_add(player, inventory, inventory->slots[0], 45, 9, 0);
-                        onInventoryUpdate(player, inventory, 1); // 2-4 would just repeat the calculation
+                        game_update_inventory(player, inventory, 1); // 2-4 would just repeat the calculation
                     } else if (slot <= 9) {
                         int r = inventory_add(player, inventory, item, 10, 46, 0);
                         if (r <= 0) inventory_set_slot(player, inventory, slot, NULL, 0);
@@ -587,7 +587,7 @@ void player_packet_handle_useentity(struct player* player, struct mempool* pool,
     struct entity* entity = world_get_entity(player->world, packet->target);
     if (packet->type == 0) {
         if (entity != NULL && entity != player->entity && entity->health > 0. && entity->world == player->world && entity_dist(entity, player->entity) < 4.) {
-            struct entity_info* info = getEntityInfo(entity->type);
+            struct entity_info* info = entity_get_info(entity->type);
             if (info != NULL && info->onInteract != NULL) {
                 pthread_mutex_lock(&player->inventory->mutex);
                 (*info->onInteract)(player->world, entity, player, inventory_get(player, player->inventory, 36 + player->currentItem), (int16_t) (36 + player->currentItem));
@@ -595,12 +595,12 @@ void player_packet_handle_useentity(struct player* player, struct mempool* pool,
             }
         }
     } else if (packet->type == 1) {
-        if (entity != NULL && entity != player->entity && entity->health > 0. && entity->world == player->world && entity_dist(entity, player->entity) < 4. && (player->server->tick_counter - player->lastSwing) >= 3) {
+        if (entity != NULL && entity != player->entity && entity->health > 0. && entity->world == player->world && entity_dist(entity, player->entity) < 4. && (player->world->tick_counter - player->lastSwing) >= 3) {
             pthread_mutex_lock(&player->inventory->mutex);
             damageEntityWithItem(entity, player->entity, (uint8_t) (36 + player->currentItem), inventory_get(player, player->inventory, 36 + player->currentItem));
             pthread_mutex_unlock(&player->inventory->mutex);
         }
-        player->lastSwing = player->server->tick_counter;
+        player->lastSwing = player->world->tick_counter;
     }
 }
 
@@ -620,7 +620,7 @@ void player_packet_handle_playerposition(struct player* player, struct mempool* 
     double moveX = packet->x - lastX;
     double moveY = packet->feet_y - lastY;
     double moveZ = packet->z - lastZ;
-    if (moveEntity(player->entity, &moveX, &moveY, &moveZ, .05)) {
+    if (entity_move(player->entity, &moveX, &moveY, &moveZ, .05)) {
         player_teleport(player, lastX, lastY, lastZ);
     } else {
         player->entity->last_x = lastX;
@@ -656,7 +656,7 @@ void player_packet_handle_playerpositionandlook(struct player* player, struct me
     double moveX = packet->x - lastX;
     double moveY = packet->feet_y - lastY;
     double moveZ = packet->z - lastZ;
-    if (moveEntity(player->entity, &moveX, &moveY, &moveZ, .05)) {
+    if (entity_move(player->entity, &moveX, &moveY, &moveZ, .05)) {
         player_teleport(player, lastX, lastY, lastZ);
     } else {
         player->entity->last_x = lastX;
@@ -857,13 +857,13 @@ void player_packet_handle_playerdigging(struct player* player, struct mempool* p
                 player->itemUseDuration = 0;
                 player->entity->usingItemMain = 0;
                 player->entity->usingItemOff = 0;
-                updateMetadata(player->entity);
+                entity_broadcast_metadata(player->entity);
             }
             if (item_info != NULL && item_info->onItemUse != NULL) (*item_info->onItemUse)(player->world, player, player->itemUseHand ? 45 : (36 + player->currentItem), item_in_hand, player->itemUseDuration);
             player->entity->usingItemMain = 0;
             player->entity->usingItemOff = 0;
             player->itemUseDuration = 0;
-            updateMetadata(player->entity);
+            entity_broadcast_metadata(player->entity);
         }
         pthread_mutex_unlock(&player->inventory->mutex);
     } else if (packet->status == 6) {
@@ -877,7 +877,7 @@ void player_packet_handle_entityaction(struct player* player, struct mempool* po
     else if (packet->action_id == 1) player->entity->sneaking = 0;
     else if (packet->action_id == 3) player->entity->sprinting = 1;
     else if (packet->action_id == 4) player->entity->sprinting = 0;
-    updateMetadata(player->entity);
+    entity_broadcast_metadata(player->entity);
 }
 
 void player_packet_handle_steervehicle(struct player* player, struct mempool* pool, struct pkt_play_server_steervehicle* packet) {
@@ -894,7 +894,7 @@ void player_packet_handle_helditemchange(struct player* player, struct mempool* 
     }
     pthread_mutex_lock(&player->inventory->mutex);
     player->currentItem = (uint16_t) packet->slot;
-    onInventoryUpdate(player, player->inventory, player->currentItem + 36);
+    game_update_inventory(player, player->inventory, player->currentItem + 36);
     pthread_mutex_unlock(&player->inventory->mutex);
 }
 
@@ -922,7 +922,7 @@ void player_packet_handle_updatesign(struct player* player, struct mempool* pool
 }
 
 void player_packet_handle_animation(struct player* player, struct mempool* pool, struct pkt_play_server_animation* packet) {
-    player->lastSwing = player->server->tick_counter;
+    player->lastSwing = player->world->tick_counter;
     BEGIN_BROADCAST_EXCEPT_DIST(player, player->entity, CHUNK_VIEW_DISTANCE * 16.){
         struct packet* pkt = packet_new(mempool_new(), PKT_PLAY_CLIENT_ANIMATION);
         pkt->data.play_client.animation.entity_id = player->entity->id;
@@ -991,8 +991,8 @@ void player_packet_handle_playerblockplacement(struct player* player, struct mem
             // TODO: localize entity information!
             ITER_MAP (player->world->entities) {
                 struct entity* ent = (struct entity*) value;
-                if (ent == NULL || entity_distsq_block(ent, x, y, z) > 8. * 8. || !hasFlag(getEntityInfo(ent->type), "livingbase")) continue;
-                getEntityCollision(ent, &entity_bounds);
+                if (ent == NULL || entity_distsq_block(ent, x, y, z) > 8. * 8. || !entity_has_flag(entity_get_info(ent->type), "livingbase")) continue;
+                            entity_collision_bounding_box(ent, &entity_bounds);
                 entity_bounds.minX += .01;
                 entity_bounds.minY += .01;
                 entity_bounds.minZ += .01;
@@ -1057,7 +1057,7 @@ void player_packet_handle_useitem(struct player* player, struct mempool* pool, s
                 player->itemUseHand = (uint8_t) (packet->hand ? 1 : 0);
                 player->entity->usingItemMain = !player->itemUseHand;
                 player->entity->usingItemOff = player->itemUseHand;
-                updateMetadata(player->entity);
+                entity_broadcast_metadata(player->entity);
             }
         }
     }

@@ -3,6 +3,7 @@
 #include <basin/nbt.h>
 #include <basin/game.h>
 #include <basin/player.h>
+#include <basin/item.h>
 #include <avuna/json.h>
 #include <avuna/string.h>
 #include <fcntl.h>
@@ -61,7 +62,7 @@ int onItemInteract_painting(struct world* world, struct player* player, uint8_t 
     int32_t oz = z;
     offsetCoordByFace(&ox, &oy, &oz, face);
     if (face != YP && face != YN && player_can_place_block(player, ITM_PAINTING, ox, oy, oz, face)) {
-        struct entity* ent = newEntity(nextEntityID++, (double) ox, (double) oy, (double) oz, ENT_PAINTING, 0., 0.);
+        struct entity* ent = entity_new(nextEntityID++, (double) ox, (double) oy, (double) oz, ENT_PAINTING, 0., 0.);
         if (face == NORTH) ent->data.painting.direction = 2;
         if (face == SOUTH) ent->data.painting.direction = 0;
         if (face == WEST) ent->data.painting.direction = 1;
@@ -182,7 +183,7 @@ int onItemInteract_minecart(struct world* world, struct player* player, uint8_t 
     else if (slot->item == ITM_MINECARTTNT) et = ENT_MINECARTTNT;
     else if (slot->item == ITM_MINECARTHOPPER) et = ENT_MINECARTHOPPER;
     else if (slot->item == ITM_MINECARTCOMMANDBLOCK) et = ENT_MINECARTCOMMANDBLOCK;
-    struct entity* ent = newEntity(nextEntityID++, (double) x + .5, (double) y + dy, (double) z + .5, et, 0., 0.);
+    struct entity* ent = entity_new(nextEntityID++, (double) x + .5, (double) y + dy, (double) z + .5, et, 0., 0.);
     world_spawn_entity(world, ent);
     if (player->gamemode != 1) inventory_set_slot(player, player->inventory, 36 + player->currentItem, NULL, 1, 1);
     return 0;
@@ -349,7 +350,7 @@ int onItemInteract_spawnegg(struct world* world, struct player* player, uint8_t 
     struct nbt_tag* tmp = nbt_get(et, "id");
     if (tmp == NULL || tmp->id != NBT_TAG_STRING) return 0;
     uint32_t etx = getIDFromEntityDataName(tmp->data.nbt_string);
-    struct entity* ent = newEntity(nextEntityID++, (float) x + .5, (float) y, (float) z + .5, etx, 0., 0.);
+    struct entity* ent = entity_new(nextEntityID++, (float) x + .5, (float) y, (float) z + .5, etx, 0., 0.);
     world_spawn_entity(world, ent);
     if (player->gamemode != 1 && --slot->count <= 0) {
         slot = NULL;
@@ -591,7 +592,7 @@ void onItemUse_bow(struct world* world, struct player* player, uint8_t slot_inde
     if (velocity > 1.) velocity = 1.;
     if (velocity >= .1) {
         int sp = ammo != NULL && ammo->item == ITM_SPECTRAL_ARROW;
-        struct entity* arrow = newEntity(nextEntityID++, player->entity->x, player->entity->y + 1.52, player->entity->z, sp ? ENT_SPECTRALARROW : ENT_ARROW, player->entity->yaw, player->entity->pitch);
+        struct entity* arrow = entity_new(nextEntityID++, player->entity->x, player->entity->y + 1.52, player->entity->z, sp ? ENT_SPECTRALARROW : ENT_ARROW, player->entity->yaw, player->entity->pitch);
         //player->entity->pitch = 0.;
         //player->entity->yaw = 0.;
         float x = -sinf(player->entity->yaw / 360. * 2 * M_PI) * cosf(player->entity->pitch / 360. * 2 * M_PI);

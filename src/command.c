@@ -8,14 +8,14 @@
 #include <avuna/string.h>
 #include <stdlib.h>
 
-void command_gamemode(struct player* player, char** args, size_t args_count) {
+void command_gamemode(struct server* server, struct player* player, char** args, size_t args_count) {
     if (player != NULL) return;
     if (args_count == 0 || args_count > 2) {
         sendMessageToPlayer(player, "Usage: /gamemode <gamemode> [player]", "red");
         return;
     }
     struct player* target = player;
-    if (args_count == 2) target = player_get_by_name(args[1]);
+    if (args_count == 2) target = player_get_by_name(player->server, args[1]);
     if (target == NULL) {
         sendMessageToPlayer(player, "[ERROR] No such player found.", "red");
         return;
@@ -31,14 +31,14 @@ void command_gamemode(struct player* player, char** args, size_t args_count) {
     sendMessageToPlayer(NULL, "Done.", "default");
 }
 
-void command_tp(struct player* player, char** args, size_t args_count) {
+void command_tp(struct server* server, struct player* player, char** args, size_t args_count) {
     if (player != NULL) return;
     if (args_count == 0 || args_count > 4) {
         sendMessageToPlayer(player, "Usage: /tp <to> OR /tp <from> <to> or <x> <y> <z> or <player> <x> <y> <z>", "red");
         return;
     }
     if (args_count >= 3) {
-        struct player* from = args_count == 3 ? player : player_get_by_name(args[0]);
+        struct player* from = args_count == 3 ? player : player_get_by_name(server, args[0]);
         if (from == NULL) {
             sendMessageToPlayer(player, "[ERROR] No such player found.", "red");
             return;
@@ -46,8 +46,8 @@ void command_tp(struct player* player, char** args, size_t args_count) {
         int32_t ai = args_count == 4 ? 1 : 0;
         player_teleport(from, strtol(args[ai++], NULL, 10), strtol(args[ai++], NULL, 10), strtol(args[ai++], NULL, 10));
     } else {
-        struct player* from = args_count == 1 ? player : player_get_by_name(args[0]);
-        struct player* to = args_count == 1 ? player_get_by_name(args[0]) : player_get_by_name(args[1]);
+        struct player* from = args_count == 1 ? player : player_get_by_name(server, args[0]);
+        struct player* to = args_count == 1 ? player_get_by_name(server, args[0]) : player_get_by_name(server, args[1]);
         if (from == NULL || to == NULL) {
             sendMessageToPlayer(player, "[ERROR] No such player found.", "red");
             return;
@@ -60,13 +60,13 @@ void command_tp(struct player* player, char** args, size_t args_count) {
     }
 }
 
-void command_kick(struct player* player, char** args, size_t args_count) {
+void command_kick(struct server* server, struct player* player, char** args, size_t args_count) {
     if (player != NULL) return;
     if (args_count == 0 || args_count > 2) {
         sendMessageToPlayer(player, "Usage: /kick <player> OR /kick <player> \"<reason>\"", "red");
         return;
     }
-    struct player* target = player_get_by_name(args[0]);
+    struct player* target = player_get_by_name(server, args[0]);
     if (target == NULL) {
         sendMessageToPlayer(player, "[ERROR] No such player found.", "red");
         return;
@@ -75,7 +75,7 @@ void command_kick(struct player* player, char** args, size_t args_count) {
     player_kick(target, reason);
 }
 
-void command_say(struct player* player, char** args, size_t args_count) {
+void command_say(struct server* server, struct player* player, char** args, size_t args_count) {
     if (player != NULL) return;
     if (args_count != 1) {
         sendMessageToPlayer(player, "Usage: /say \"<message>\"", "red");
@@ -84,19 +84,20 @@ void command_say(struct player* player, char** args, size_t args_count) {
     broadcastf("light_purple", "CONSOLE: %s", args[0]);
 }
 
-void command_motd(struct player* player, char** args, size_t args_count) {
+void command_motd(struct server* server, struct player* player, char** args, size_t args_count) {
     if (player != NULL) return;
     if (args_count != 1) {
         sendMessageToPlayer(NULL, "Usage: /motd \"<message>\"", "red");
         return;
     }
     sendMessageToPlayer(NULL, "Done.", "default");
-    xfree (motd);
-    motd = xstrdup(args[0], 0);
+    server->motd = prealloc(global_pool, server->motd, strlen(args[0]) + 1);
+    server->motd[strlen(args[0])] = 0;
+    memcpy(server->motd, args[0], strlen(args[0]) + 1);
 }
 
-void command_list(struct player* player, char** args, size_t args_count) {
-    char* plist = xmalloc(players->entry_count * 18 + 30);
+void command_list(struct server* server, struct player* player, char** args, size_t args_count) {
+    char* plist = pmalloc();
     char* cptr = plist;
     BEGIN_HASHMAP_ITERATION (players);
     if (cptr > plist) {

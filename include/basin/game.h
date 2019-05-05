@@ -8,25 +8,23 @@
 
 void player_openInventory(struct player* player, struct inventory* inv);
 
-void flush_outgoing(struct player* player);
+float game_rand_float();
 
-float randFloat();
-
-void playSound(struct world* world, int32_t soundID, int32_t soundCategory, float x, float y, float z, float volume, float pitch);
+void playSound(struct world* world, int32_t soundID, int32_t soundCategory, double x, double y, double z, float volume, float pitch);
 
 void dropPlayerItem(struct player* player, struct slot* drop);
 
 void dropEntityItem_explode(struct entity* entity, struct slot* drop);
 
-void dropBlockDrop(struct world* world, struct slot* slot, int32_t x, int32_t y, int32_t z);
+void game_drop_block(struct world* world, struct slot* slot, int32_t x, int32_t y, int32_t z);
 
 void dropBlockDrops(struct world* world, block blk, struct player* breaker, int32_t x, int32_t y, int32_t z);
 
-void loadPlayer(struct player* to, struct player* from);
+void game_load_player(struct player* to, struct player* from);
 
-void loadEntity(struct player* to, struct entity* from);
+void game_load_entity(struct player* to, struct entity* from);
 
-void onInventoryUpdate(struct player* player, struct inventory* inv, int slot);
+void game_update_inventory(struct player* player, struct inventory* inventory, int slot);
 
 void world_tick(struct world* world);
 
@@ -39,7 +37,7 @@ void broadcast(char* text, char* color);
 void broadcastf(char* color, char* fmt, ...);
 
 #define BEGIN_BROADCAST(players) pthread_rwlock_rdlock(&(players)->rwlock); ITER_MAP(players) { struct player* bc_player = (struct player*)value; {
-#define BEGIN_BROADCAST_DIST(distfrom, dist) pthread_rwlock_rdlock(&(players)->rwlock); ITER_MAP(distfrom->world->players) { struct player* bc_player = (struct player*)value; if(entity_distsq(bc_player->entity, distfrom) < dist * dist) {
+#define BEGIN_BROADCAST_DIST(distfrom, dist) pthread_rwlock_rdlock(&(distfrom->world->players)->rwlock); ITER_MAP(distfrom->world->players) { struct player* bc_player = (struct player*)value; if(entity_distsq(bc_player->entity, distfrom) < dist * dist) {
 #define BEGIN_BROADCAST_DISTXYZ(x, y, z, players, dist) pthread_rwlock_rdlock(&(players)->rwlock); ITER_MAP(players) { struct player* bc_player = (struct player*)value; if (entity_distsq_block(bc_player->entity, x, y, z) < dist * dist) {
 #define BEGIN_BROADCAST_EXCEPT(players, except) pthread_rwlock_rdlock(&(players)->rwlock); ITER_MAP(players) { struct player* bc_player = (struct player*)value; if (bc_player != except) {
 #define BEGIN_BROADCAST_EXCEPT_DIST(except, distfrom, dist) pthread_rwlock_rdlock(&(distfrom->world->players)->rwlock); ITER_MAP(distfrom->world->players) { struct player* bc_player = (struct player*)value; if (bc_player != except && entity_distsq(bc_player->entity, distfrom) < dist * dist) {

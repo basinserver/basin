@@ -3,6 +3,8 @@
 
 #include <basin/world.h>
 #include <basin/item.h>
+#include <avuna/hash.h>
+#include <avuna/pmem.h>
 #include <stdint.h>
 #include <stdlib.h>
 
@@ -131,8 +133,7 @@ struct entity_info {
     float maxHealth;
     float width;
     float height;
-    char** flags;
-    size_t flag_count;
+    struct hashset* flags;
     uint32_t spawn_packet;
     int32_t spawn_packet_id;
     struct entity_loot* loots;
@@ -141,23 +142,19 @@ struct entity_info {
     void (*onDeath)(struct world* world, struct entity* entity, struct entity* causer); // causer may be NULL
     void (*onAttacked)(struct world* world, struct entity* entity, struct entity* attacker); // attacker may be NULL
     uint32_t (*onAITick)(struct world* world, struct entity* entity); // returns a tick delay before next AI tick, 0 = never tick again, 1 = 1 tick
-    int (*onTick)(struct world* world, struct entity* entity); // if return != 0, then the tick is cancelled (for when the entity has been despawned)
+    void (*onTick)(struct world* world, struct entity* entity);
     uint32_t (*initAI)(struct world* world, struct entity* entity); // returns a tick delay before next AI tick, 0 = never tick again, 1 = 1 tick
     void (*onSpawned)(struct world* world, struct entity* entity);
     void (*onInteract)(struct world* world, struct entity* entity, struct player* interacter, struct slot* item, int16_t slot_index);
 };
 
-void swingArm(struct entity* entity);
-
-struct collection* entity_infos;
+struct mempool* entities_pool;
+struct list* entity_infos;
+struct hashmap* entity_infos_by_name;
 
 void init_entities();
 
-uint32_t getIDFromEntityDataName(const char* dataname);
-
-struct entity_info* getEntityInfo(uint32_t id);
-
-void add_entity_info(uint32_t eid, struct entity_info* bm);
+struct entity_info* entity_get_info(uint32_t id);
 
 struct potioneffect {
     char effectID;
@@ -165,8 +162,6 @@ struct potioneffect {
     int32_t duration;
     char particles;
 };
-
-int hasFlag(struct entity_info* ei, char* flag);
 
 union entity_data {
     struct entity_player {
@@ -392,6 +387,7 @@ union entity_data {
 
 struct entity {
     struct mempool* pool;
+    struct entity_info* info;
     int32_t id;
     double x;
     double y;
@@ -436,7 +432,12 @@ struct entity {
     struct aicontext* ai;
     struct entity* attacking;
     struct hashmap* attackers;
+    uint8_t despawn;
 };
+
+struct entity* entity_new(struct world* world, int32_t id, double x, double y, double z, uint32_t type, float yaw, float pitch);
+
+void entity_animation(struct entity* entity, int animation_id);
 
 int damageEntityWithItem(struct entity* attacked, struct entity* attacker, uint8_t slot_index, struct slot* item);
 
@@ -444,13 +445,13 @@ int damageEntity(struct entity* attacked, float damage, int armorable);
 
 void healEntity(struct entity* healed, float amount);
 
-void readMetadata(struct entity* ent, unsigned char* meta, size_t size);
+void entitymeta_read(struct entity* ent, uint8_t* meta, size_t size);
 
-void writeMetadata(struct entity* ent, unsigned char** data, size_t* size);
+void entitymeta_write(struct entity* entity, uint8_t** data, size_t* size, struct mempool* pool);
 
-void updateMetadata(struct entity* ent);
+void entity_broadcast_metadata(struct entity* entity);
 
-void jump(struct entity* entity);
+void entity_jump(struct entity* entity);
 
 int entity_inFluid(struct entity* entity, uint16_t blk, float ydown, int meta_check);
 
@@ -462,16 +463,10 @@ double entity_distsq_block(struct entity* ent1, double x, double y, double z);
 
 double entity_dist_block(struct entity* ent1, double x, double y, double z);
 
-struct entity* newEntity(int32_t id, double x, double y, double z, uint32_t type, float yaw, float pitch);
+void entity_collision_bounding_box(struct entity* entity, struct boundingbox* bb);
 
-void getEntityCollision(struct entity* ent, struct boundingbox* bb);
-
-int moveEntity(struct entity* entity, double* mx, double* my, double* mz, float shrink);
-
-int tick_itemstack(struct world* world, struct entity* entity);
+int entity_move(struct entity* entity, double* motionX, double* motionY, double* motionZ, float shrink);
 
 void tick_entity(struct world* world, struct entity* entity);
-
-void freeEntity(struct entity* entity);
 
 #endif /* BASIN_ENTITY_H_ */

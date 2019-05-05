@@ -92,7 +92,7 @@ void lookHelper_tick(struct entity* entity) {
     if (entity->ai == NULL || entity->ai->lookHelper_speedPitch == 0. || entity->ai->lookHelper_speedYaw == 0.) return;
     double dx = entity->ai->lookHelper_x - entity->x;
     struct boundingbox bb;
-    getEntityCollision(entity, &bb);
+    entity_collision_bounding_box(entity, &bb);
     double dy = entity->ai->lookHelper_y - entity->y - ((bb.maxY - bb.minY) * .9); // TODO: real eye height
     double dz = entity->ai->lookHelper_z - entity->z;
     double horiz_dist = sqrt(dx * dx + dz * dz);
@@ -233,13 +233,13 @@ int32_t ai_attackmelee(struct world* world, struct entity* entity, struct aitask
     entity->ai->lookHelper_speedPitch = 30.;
     entity->ai->lookHelper_x = entity->attacking->x;
     struct boundingbox bb;
-    getEntityCollision(entity->attacking, &bb);
+    entity_collision_bounding_box(entity->attacking, &bb);
     entity->ai->lookHelper_y = entity->attacking->y + ((bb.maxY - bb.minY) * .9); // TODO: real eye height
     entity->ai->lookHelper_z = entity->attacking->z;
     double dist = entity_distsq(entity->attacking, entity);
     amd->delayCounter--;
 //TODO: cansee
-    if ((amd->longMemory || 1) && amd->delayCounter <= 0 && ((amd->targetX == 0. && amd->targetY == 0. && amd->targetZ == 0.) || entity_distsq_block(entity->attacking, amd->targetX, amd->targetY, amd->targetZ) >= 1. || randFloat() < .05)) {
+    if ((amd->longMemory || 1) && amd->delayCounter <= 0 && ((amd->targetX == 0. && amd->targetY == 0. && amd->targetZ == 0.) || entity_distsq_block(entity->attacking, amd->targetX, amd->targetY, amd->targetZ) >= 1. || game_rand_float() < .05)) {
         amd->targetX = entity->attacking->x;
         amd->targetY = entity->attacking->y;
         amd->targetZ = entity->attacking->z;
@@ -248,12 +248,12 @@ int32_t ai_attackmelee(struct world* world, struct entity* entity, struct aitask
         //TODO: set path
     }
     if (--amd->attackTick <= 0) amd->attackTick = 0;
-    struct entity_info* ei = getEntityInfo(entity->type);
-    struct entity_info* ei2 = getEntityInfo(entity->attacking->type);
+    struct entity_info* ei = entity_get_info(entity->type);
+    struct entity_info* ei2 = entity_get_info(entity->attacking->type);
     float reach = ei->width * 2. * ei->width * 2. + ei2->width;
     if (dist <= reach && amd->attackTick <= 0) {
         amd->attackTick = 20;
-        swingArm(entity);
+        entity_animation(entity);
         damageEntityWithItem(entity->attacking, entity, -1, NULL);
     }
     return 0;
@@ -424,8 +424,8 @@ int32_t ai_skeletonriders(struct world* world, struct entity* entity, struct ait
 }
 
 int32_t ai_swimming(struct world* world, struct entity* entity, struct aitask* ai) {
-//if (randFloat() < .8) {
-    jump(entity);
+//if (game_rand_float() < .8) {
+    entity_jump(entity);
 //}
     return 0;
 }
@@ -474,9 +474,9 @@ int32_t ai_zombieattack(struct world* world, struct entity* entity, struct aitas
 
 int ai_shouldattackmelee(struct world* world, struct entity* entity, struct aitask* ai) {
     if (entity->attacking == NULL || entity->attacking->health <= 0. || (entity->type == ENT_PLAYER && (entity->data.player.player->gamemode == 1 || entity->data.player.player->gamemode == 3))) return 0;
-    struct entity_info* ei = getEntityInfo(entity->type);
-    struct entity_info* ei2 = getEntityInfo(entity->attacking->type);
-    if (ei == NULL || ei2 == NULL || !hasFlag(ei2, "livingbase")) return 0;
+    struct entity_info* ei = entity_get_info(entity->type);
+    struct entity_info* ei2 = entity_get_info(entity->attacking->type);
+    if (ei == NULL || ei2 == NULL || !entity_has_flag(ei2, "livingbase")) return 0;
     return entity->attacking != NULL;
     //float reach = ei->width * 2. * ei->width * 2. + ei2->width;
     //return reach >= entity_distsq(entity->attacking, entity);
@@ -601,14 +601,14 @@ int ai_shouldnearestattackabletarget(struct world* world, struct entity* entity,
     struct entity* ce = NULL;
     BEGIN_HASHMAP_ITERATION(world->entities);
     struct entity* ie = value;
-    if (!hasFlag(getEntityInfo(ie->type), "livingbase") || ie == entity) continue;
+    if (!entity_has_flag(entity_get_info(ie->type), "livingbase") || ie == entity) continue;
     double dsq = entity_distsq(entity, value);
     if (ie->type == ENT_PLAYER) {
         struct player* pl = ie->data.player.player;
         if (pl->gamemode == 1 || pl->gamemode == 3 || pl->invulnerable) continue;
-        int sk = hasFlag(getEntityInfo(entity->type), "skeleton");
-        int zo = hasFlag(getEntityInfo(entity->type), "zombie");
-        int cr = hasFlag(getEntityInfo(entity->type), "creeper");
+        int sk = entity_has_flag(entity_get_info(entity->type), "skeleton");
+        int zo = entity_has_flag(entity_get_info(entity->type), "zombie");
+        int cr = entity_has_flag(entity_get_info(entity->type), "creeper");
         if (sk || zo || cr) {
             struct slot* hs = inventory_get(pl, pl->inventory, 5);
             if (hs != NULL) {

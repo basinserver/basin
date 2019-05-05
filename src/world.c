@@ -155,7 +155,7 @@ void world_chunkload_thread(struct world* world) {
                 world_unload_chunk(request->world, chunk);
             }
         }
-        pprefree(world->pool, request);
+        pprefree(world->chunk_request_pool, request);
 /*
         BEGIN_HASHMAP_ITERATION (players)
         struct player* player = value;
@@ -350,7 +350,7 @@ void world_explode(struct world* world, struct chunk* ch, double x, double y, do
                 dx /= d;
                 dy /= d;
                 dz /= d;
-                float modified_strength = strength * (.7f + randFloat() * .6f);
+                float modified_strength = strength * (.7f + game_rand_float() * .6f);
                 double x2 = x;
                 double y2 = y;
                 double z2 = z;
@@ -772,7 +772,9 @@ struct world* world_new(struct server* server) {
     world->ticksInSecond = 0;
     world->seed = 9876543;
     perlin_init(&world->perlin, world->seed);
-    world->chunk_requests = queue_new(0, 1, world->pool);
+    world->chunk_request_pool = mempool_new();
+    pchild(world->pool, world->chunk_request_pool);
+    world->chunk_requests = queue_new(0, 1, world->chunk_request_pool);
     return world;
 }
 
@@ -853,11 +855,12 @@ void world_tick(struct world* world) {
         pthread_cond_wait(&world->tick_cond, &world->tick_mut);
         pthread_mutex_unlock(&world->tick_mut);
         beginProfilerSection("world_tick");
-        if (tick_counter % 20 == 0) {
+        if (world->tick_counter % 20 == 0) {
             world->tps = world->ticksInSecond;
             world->ticksInSecond = 0;
         }
-        world->ticksInSecond++;
+        ++world->tick_counter;
+        ++world->ticksInSecond;
         world_pretick(world);
         beginProfilerSection("player_receive_packet");
         pthread_rwlock_rdlock(&world->players->rwlock);
@@ -1015,7 +1018,7 @@ void world_spawn_entity(struct world* world, struct entity* entity) {
         entity->attackers = hashmap_new(4, entity->pool);
     }
     hashmap_putint(world->entities, entity->id, entity);
-    struct entity_info* info = getEntityInfo(entity->type);
+    struct entity_info* info = entity_get_info(entity->type);
     if (info != NULL) {
         if (info->initAI != NULL) {
             entity->ai = pcalloc(entity->pool, sizeof(struct aicontext));
@@ -1092,6 +1095,7 @@ void world_despawn_entity(struct world* world, struct entity* entity) {
     }
     entity->attackers = NULL;
     entity->attacking = NULL;
+    entity->despawn = 1;
     //TODO: do we need remove ourselves from entity->attacking->attackers?
 }
 

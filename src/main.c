@@ -50,7 +50,7 @@ void main_tick() {
     pthread_rwlock_unlock(&playersToLoad->data_mutex);
     pthread_cond_broadcast (&chunk_wake);
     BEGIN_HASHMAP_ITERATION (players)
-    flush_outgoing (value);
+    connection_flush (value);
     END_HASHMAP_ITERATION (players)
     if (tick_counter % 20 == 0) {
         pthread_rwlock_wrlock(&defunctPlayers->data_mutex);
@@ -347,7 +347,6 @@ int main(int argc, char* argv[]) {
         errlog(delog, "Only one server block is supported at this time.");
         return -1;
     }
-    globalChunkQueue = queue_new(0, 1, global_pool);
     init_materials();
     acclog(delog, "Materials Initialized");
     init_blocks();
