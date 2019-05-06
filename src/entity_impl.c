@@ -1,7 +1,8 @@
-
+#include <basin/server.h>
 #include <basin/entity_impl.h>
 #include <basin/entity.h>
 #include <basin/game.h>
+#include <basin/packet.h>
 #include <avuna/pmem.h>
 #include <math.h>
 #include <string.h>
@@ -21,7 +22,7 @@ void onSpawned_minecart(struct world* world, struct entity* entity) {
 void onTick_tnt(struct world* world, struct entity* entity) {
     if (entity->data.tnt.fuse-- <= 0) {
         world_despawn_entity(world, entity);
-        world_explode(world, NULL, entity->x, entity->y + .5, entity->z, 4f);
+        world_explode(world, NULL, entity->x, entity->y + .5, entity->z, .4f);
     }
 }
 
@@ -108,11 +109,12 @@ void tick_arrow(struct world* world, struct entity* entity) {
         struct entity* ehit = NULL;
         struct entity* shooter = world_get_entity(world, entity->objectData - 1);
         double bd = 999.;
-        BEGIN_HASHMAP_ITERATION(world->entities)
+        BEGIN_HASHMAP_ITERATION(world->entities);
         struct entity* e2 = value;
         double rd = entity_distsq_block(e2, entity->x + entity->motX, entity->y + entity->motY, entity->z + entity->motZ);
-        if (rd > 4) continue;
-        //printf("4d %f\n", rd);
+        if (rd > 4) {
+            //printf("4d %f\n", rd);
+        }
         if (e2 != entity && e2 != shooter && hasFlag(getEntityInfo(e2->type), "livingbase")) {		//todo: ticksInAir >= 5?
             struct boundingbox eb;
             getEntityCollision(e2, &eb);
@@ -135,7 +137,7 @@ void tick_arrow(struct world* world, struct entity* entity) {
                 }
             }
         }
-        END_HASHMAP_ITERATION(world->entities)
+        END_HASHMAP_ITERATION(world->entities);
         if (ehit != NULL) {
             float speed = sqrtf(entity->motX * entity->motX + entity->motY * entity->motY + entity->motZ * entity->motZ);
             int damage = ceil(speed * entity->data.arrow.damage);
@@ -152,7 +154,7 @@ void tick_arrow(struct world* world, struct entity* entity) {
             if (ehit->type != ENT_ENDERMAN) {
                 world_despawn_entity(world, entity);
                 freeEntity(entity);
-                return 1;
+                return;
             }
         } else if (hf >= 0) {
             entity->x = hx;
@@ -185,7 +187,7 @@ void tick_arrow(struct world* world, struct entity* entity) {
         if (entity->data.arrow.ticksInGround == 1200) {
             world_despawn_entity(world, entity);
             freeEntity(entity);
-            return 1;
+            return;
         }
     }
 
@@ -209,20 +211,24 @@ void tick_arrow(struct world* world, struct entity* entity) {
             entity->yaw = entity->last_yaw + (entity->yaw - entity->last_yaw) * .2;
         }
     }
-    return 0;
+    return;
 }
 
 void tick_itemstack(struct world* world, struct entity* entity) {
     if (entity->data.itemstack.delayBeforeCanPickup > 0) {
         entity->data.itemstack.delayBeforeCanPickup--;
-        return 0;
     }
     if (entity->age >= 6000) {
-        world_despawn_entity(world, entity);
+        world_despawn_entity(world, entity); 
+        /* 
+        TODO: Make this a configurable option and improve the mechanics of despawning.
+        All nametagged entities (as well as wolves) must be excluded.
+        */
         freeEntity(entity);
-        return 1;
     }
-    if (tick_counter % 10 != 0) return 0;
+    if (world->tick_counter % 10 != 0) {
+        
+    }
     struct boundingbox cebb;
     getEntityCollision(entity, &cebb);
     cebb.minX -= .625;
@@ -231,46 +237,48 @@ void tick_itemstack(struct world* world, struct entity* entity) {
     cebb.minZ -= .625;
     cebb.maxZ += .625;
     struct boundingbox oebb;
-//int32_t chunk_x = ((int32_t) entity->x) >> 4;
-//int32_t chunk_z = ((int32_t) entity->z) >> 4;
-//for (int32_t icx = chunk_x - 1; icx <= chunk_x + 1; icx++)
-//for (int32_t icz = chunk_z - 1; icz <= chunk_z + 1; icz++) {
-//struct chunk* ch = world_get_chunk(entity->world, icx, icz);
-//if (ch != NULL) {
-    BEGIN_HASHMAP_ITERATION(entity->world->entities)
-    struct entity* oe = (struct entity*) value;
-    if (oe == entity || entity_distsq(entity, oe) > 16. * 16.) continue;
-    if (oe->type == ENT_PLAYER && oe->health > 0.) {
-        getEntityCollision(oe, &oebb);
-        //printf("%f, %f, %f vs %f, %f, %f\n", entity->x, entity->y, entity->z, oe->x, oe->y, oe->z);
-        if (boundingbox_intersects(&oebb, &cebb)) {
-            int os = entity->data.itemstack.slot->count;
-            pthread_mutex_lock(&oe->data.player.player->inventory->mut);
-            int r = inventory_add_player(oe->data.player.player, oe->data.player.player->inventory, entity->data.itemstack.slot, 1);
-            pthread_mutex_unlock(&oe->data.player.player->inventory->mut);
-            if (r <= 0) {
-                BEGIN_BROADCAST_DIST(entity, 32.)
-                struct packet* pkt = xmalloc(sizeof(struct packet));
-                pkt->id = PKT_PLAY_CLIENT_COLLECTITEM;
-                pkt->data.play_client.collectitem.collected_entity_id = entity->id;
-                pkt->data.play_client.collectitem.collector_entity_id = oe->id;
-                pkt->data.play_client.collectitem.pickup_item_count = os - r;
-                add_queue(bc_player->outgoing_packets, pkt);
-                END_BROADCAST(entity->world->players)
-                world_despawn_entity(world, entity);
-                freeEntity(entity);
-                return 1;
+    /*
+    int32_t chunk_x = ((int32_t) entity->x) >> 4;
+    int32_t chunk_z = ((int32_t) entity->z) >> 4;
+    for (int32_t icx = chunk_x - 1; icx <= chunk_x + 1; icx++)
+    for (int32_t icz = chunk_z - 1; icz <= chunk_z + 1; icz++) {
+    struct chunk* ch = world_get_chunk(entity->world, icx, icz);
+    */
+    if (ch != NULL) {
+        BEGIN_HASHMAP_ITERATION(entity->world->entities);
+        struct entity* oe = (struct entity*) value;
+        if (oe == entity || entity_distsq(entity, oe) > 16. * 16.) {
+
+        }
+        if (oe->type == ENT_PLAYER && oe->health > 0.) {
+            getEntityCollision(oe, &oebb);
+            //printf("%f, %f, %f vs %f, %f, %f\n", entity->x, entity->y, entity->z, oe->x, oe->y, oe->z);
+            if (boundingbox_intersects(&oebb, &cebb)) {
+                int os = entity->data.itemstack.slot->count;
+                pthread_mutex_lock(&oe->data.player.player->inventory->mut);
+                int r = inventory_add_player(oe->data.player.player, oe->data.player.player->inventory, entity->data.itemstack.slot, 1);
+                pthread_mutex_unlock(&oe->data.player.player->inventory->mut);
+                if (r <= 0) {
+                    BEGIN_BROADCAST_DIST(entity, 32.);
+                    struct packet* pkt = xmalloc(sizeof(struct packet));
+                    pkt->id = PKT_PLAY_CLIENT_COLLECTITEM;
+                    pkt->data.play_client.collectitem.collected_entity_id = entity->id;
+                    pkt->data.play_client.collectitem.collector_entity_id = oe->id;
+                    pkt->data.play_client.collectitem.pickup_item_count = os - r;
+                    add_queue(bc_player->outgoing_packets, pkt);
+                    END_BROADCAST(entity->world->players);
+                    world_despawn_entity(world, entity);
+                    freeEntity(entity);
             } else {
-                BEGIN_BROADCAST_DIST(entity, 128.)
-                struct packet* pkt = xmalloc(sizeof(struct packet));
-                pkt->id = PKT_PLAY_CLIENT_ENTITYMETADATA;
-                pkt->data.play_client.entitymetadata.entity_id = entity->id;
-                writeMetadata(entity, &pkt->data.play_client.entitymetadata.metadata.metadata, &pkt->data.play_client.entitymetadata.metadata.metadata_size);
-                add_queue(bc_player->outgoing_packets, pkt);
-                END_BROADCAST(entity->world->players)
-                BREAK_HASHMAP_ITERATION(entity->world->entities)
+                    BEGIN_BROADCAST_DIST(entity, 128.);
+                    struct packet* pkt = xmalloc(sizeof(struct packet));
+                    pkt->id = PKT_PLAY_CLIENT_ENTITYMETADATA;
+                    pkt->data.play_client.entitymetadata.entity_id = entity->id;
+                    writeMetadata(entity, &pkt->data.play_client.entitymetadata.metadata.metadata, &pkt->data.play_client.entitymetadata.metadata.metadata_size);
+                    add_queue(bc_player->outgoing_packets, pkt);
+                    END_BROADCAST(entity->world->players);
+                    BREAK_HASHMAP_ITERATION(entity->world->entities);
             }
-            break;
         }
     } else if (oe->type == ENT_ITEM) {
         if (oe->data.itemstack.slot->item == entity->data.itemstack.slot->item && oe->data.itemstack.slot->damage == entity->data.itemstack.slot->damage && oe->data.itemstack.slot->count + entity->data.itemstack.slot->count <= slot_max_size(entity->data.itemstack.slot)) {
@@ -284,17 +292,16 @@ void tick_itemstack(struct world* world, struct entity* entity) {
                 world_despawn_entity(world, entity);
                 oe->data.itemstack.slot->count += entity->data.itemstack.slot->count;
                 freeEntity(entity);
-                BEGIN_BROADCAST_DIST(oe, 128.)
+                BEGIN_BROADCAST_DIST(oe, 128.);
                 struct packet* pkt = xmalloc(sizeof(struct packet));
                 pkt->id = PKT_PLAY_CLIENT_ENTITYMETADATA;
                 pkt->data.play_client.entitymetadata.entity_id = oe->id;
                 writeMetadata(oe, &pkt->data.play_client.entitymetadata.metadata.metadata, &pkt->data.play_client.entitymetadata.metadata.metadata_size);
                 add_queue(bc_player->outgoing_packets, pkt);
                 END_BROADCAST(oe->world->players)
-                return 1;
             }
         }
     }
-    END_HASHMAP_ITERATION(entity->world->entities)
-    return 0;
+    END_HASHMAP_ITERATION(entity->world->entities);
+    return;
 }

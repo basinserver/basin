@@ -1,5 +1,5 @@
 #include <avuna/util.h>
-#include "light.h"
+#include <basin/light.h>
 
 /*
 void light_proc(struct world* world, struct chunk* chunk, int32_t x, int32_t y, int32_t z, uint8_t light) {

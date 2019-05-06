@@ -1,4 +1,4 @@
-#include "wake_thread.h"
+#include <basin/wake_thread.h>
 #include <basin/connection.h>
 #include <avuna/netmgr.h>
 #include <avuna/queue.h>

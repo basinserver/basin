@@ -51,6 +51,6 @@ void broadcastf(char* color, char* fmt, ...);
  #define BEGIN_BROADCAST_EXCEPT(players, except) if(players->mc) pthread_rwlock_rdlock(&players->data_mutex); for (size_t i = 0; i < players->size; i++) {struct player* bc_player = (struct player*) players->data[i];if (bc_player != NULL && bc_player != except) {
  #define END_BROADCAST_MT(players) }} if(players->mc) pthread_rwlock_unlock(&players->data_mutex);
  #define END_BROADCAST }}
- */
+*/
 
 #endif /* BASIN_GAME_H_ */

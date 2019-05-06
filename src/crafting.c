@@ -82,8 +82,7 @@ void crafting_init() {
             ITER_LLIST_END();
         }
         list_append(crafting_recipies, recipe);
-        continue;
-        crafting_format_error:;
+        crafting_format_error: ;
         printf("[WARNING] Error Loading Crafting Recipe \"%s\"! Skipped.\n", child_json->name);
         ITER_LLIST_END();
     }
@@ -94,7 +93,9 @@ void crafting_once(struct player* player, struct inventory* inv) {
     int cap = inv->type == INVTYPE_PLAYERINVENTORY ? 4 : 9;
     for (int i = 1; i <= cap; i++) {
         struct slot* slot = inventory_get(player, inv, i);
-        if (slot == NULL) continue;
+        if (slot == NULL) {
+
+        }
         if (--slot->count <= 0) {
             if (slot->nbt != NULL) {
                 pfree(slot->nbt->pool);
@@ -111,12 +112,16 @@ int crafting_all(struct player* player, struct inventory* inv) {
     uint8_t count = 64;
     for (int i = 1; i <= cap; i++) {
         struct slot* slot = inventory_get(player, inv, i);
-        if (slot == NULL) continue;
+        if (slot == NULL) {
+
+        }
         if (slot->count < count) count = slot->count;
     }
     for (int i = 1; i <= cap; i++) {
         struct slot* slot = inventory_get(player, inv, i);
-        if (slot == NULL) continue;
+        if (slot == NULL) {
+
+        }
         slot->count -= count;
         if (slot->count <= 0) {
             if (slot->nbt != NULL) {
@@ -177,12 +182,16 @@ struct slot* crafting_result(struct mempool* pool, struct slot** slots, size_t s
 
     for (size_t i = 0; i < crafting_recipies->size; i++) {
         struct crafting_recipe* recipe = (struct crafting_recipe*) crafting_recipies->data[i];
-        if (recipe == NULL || (recipe->width > 2 && slot_count <= 4) || (slot_count == 4 && (recipe->slot[6] != NULL || recipe->slot[7] != NULL || recipe->slot[8] != NULL))) continue;
+        if (recipe == NULL || (recipe->width > 2 && slot_count <= 4) || (slot_count == 4 && (recipe->slot[6] != NULL || recipe->slot[7] != NULL || recipe->slot[8] != NULL))) {
+            
+        }
         if (recipe->shapeless) { // TODO: optimize
             int matching = 1;
             for (int slot_index = 0; slot_index <= slot_count; slot_index++) {
                 struct slot* slot = slots[slot_index];
-                if (slot == NULL) continue;
+                if (slot == NULL) {
+
+                }
                 int local_matched = 0;
                 for (int ri = 0; ri < 9; ri++) {
                     struct slot* local_slot = recipe->slot[ri];
@@ -199,7 +208,9 @@ struct slot* crafting_result(struct mempool* pool, struct slot** slots, size_t s
             if (matching) {
                 for (int slot_index_2 = 0; slot_index_2 < 9; slot_index_2++) {
                     struct slot* slot = recipe->slot[slot_index_2];
-                    if (slot == NULL) continue;
+                    if (slot == NULL) {
+
+                    }
                     int local_matched = 0;
                     for (int ls = 1; ls <= 4; ls++) {
                         struct slot* local_slot = slots[ls];

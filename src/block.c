@@ -448,10 +448,12 @@ void onBlockInteract_workbench(struct world* world, block blk, int32_t x, int32_
 block onBlockPlaced_chest(struct world* world, block blk, int32_t x, int32_t y, int32_t z, block replaced) {
     int16_t meta = blk & 0x0f;
     if (meta < 2 || meta > 5) meta = 2;
+    struct mempool* pool = mempool_new();
     struct tile_entity* te = tile_new("minecraft:chest", x, y, z);
     te->data.chest.lock = NULL;
     te->data.chest.inv = xmalloc(sizeof(struct inventory));
-    inventory_new(te->data.chest.inv, INVTYPE_CHEST, 2, 27);
+    struct mempool* pool = mempool_new();
+    inventory_new(pool, te->data.chest.inv, INVTYPE_CHEST, 2, 27);
     te->data.chest.inv->tile = te;
     te->data.chest.inv->title = xstrdup("{\"text\": \"Chest\"}", 0);
     world_set_tile(world, x, y, z, te);

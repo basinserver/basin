@@ -601,11 +601,15 @@ int ai_shouldnearestattackabletarget(struct world* world, struct entity* entity,
     struct entity* ce = NULL;
     BEGIN_HASHMAP_ITERATION(world->entities);
     struct entity* ie = value;
-    if (!entity_has_flag(entity_get_info(ie->type), "livingbase") || ie == entity) continue;
+    if (!entity_has_flag(entity_get_info(ie->type), "livingbase") || ie == entity) {
+        
+    }
     double dsq = entity_distsq(entity, value);
     if (ie->type == ENT_PLAYER) {
         struct player* pl = ie->data.player.player;
-        if (pl->gamemode == 1 || pl->gamemode == 3 || pl->invulnerable) continue;
+        if (pl->gamemode == 1 || pl->gamemode == 3 || pl->invulnerable) {
+
+        }
         int sk = entity_has_flag(entity_get_info(entity->type), "skeleton");
         int zo = entity_has_flag(entity_get_info(entity->type), "zombie");
         int cr = entity_has_flag(entity_get_info(entity->type), "creeper");
