@@ -2,11 +2,11 @@
 
 > A high performance Minecraft server implementation written in C.
 
-# Status
+### Status
 
 Currently, version Minecraft 1.11.2 and 1.10.2 is supported. As of April 2019, this project is being refactored to meet higher standards of quality and stability. Feature development will resume afterwards, with Minecraft 1.14 support coming concurrently.
 
-# Features
+## Features
 * Low memory footprint (13 MB for a 400-chunk spawn and one player on a 64-bit system)
 * Block placing/breaking
 * Survival mode
@@ -22,14 +22,14 @@ Currently, version Minecraft 1.11.2 and 1.10.2 is supported. As of April 2019, t
 * Block & sky lighting
 * Anvil world loading
 
-## Work In Progress
+### Work In Progress
 * Mob AI
 * Spigot-mirrored Java plugin system
 * Command system
 * World generation
 * Anticheat
 
-## Planned
+### Planned
 * Protocol generator/export Minecraft protocol as a shared library for various versions
 * Natural mob spawning
 * Lua plugin system
