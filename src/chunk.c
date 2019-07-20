@@ -22,6 +22,7 @@ struct tile_entity* chunk_get_tile(struct chunk* chunk, uint8_t x, uint8_t y, ui
 
 
 void chunk_set_tile(struct chunk* chunk, struct tile_entity* tile, uint8_t x, uint8_t y, uint8_t z) {
+    pchild(chunk->pool, tile->pool);
     if (y > 255 || y < 0 || chunk->tileEntities == NULL || x > 15 | z > 15) return;
     uint64_t key = (uint64_t) x << 16 | (uint64_t) y << 8 | (uint64_t) z;
     struct tile_entity* current_tile = hashmap_getint(chunk->tileEntities, key);

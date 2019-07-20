@@ -2,6 +2,7 @@
 #include <basin/entity_impl.h>
 #include <basin/entity.h>
 #include <basin/game.h>
+#include <basin/raytrace.h>
 #include <avuna/pmem.h>
 #include <math.h>
 #include <string.h>
@@ -104,7 +105,7 @@ void tick_arrow(struct world* world, struct entity* entity) {
         double hx = 0.;
         double hy = 0.;
         double hz = 0.;
-        int hf = world_rayTrace(entity->world, entity->x, entity->y, entity->z, entity->x + entity->motX, entity->y + entity->motY, entity->z + entity->motZ, 0, 1, 0, &hx, &hy, &hz);
+        int hf = raytrace(entity->world, entity->x, entity->y, entity->z, entity->x + entity->motX, entity->y + entity->motY, entity->z + entity->motZ, 0, 1, 0, &hx, &hy, &hz);
         struct entity* ehit = NULL;
         struct entity* shooter = world_get_entity(world, entity->objectData - 1);
         double bd = 999.;
@@ -125,7 +126,7 @@ void tick_arrow(struct world* world, struct entity* entity) {
             double rx = 0.;
             double ry = 0.;
             double rz = 0.;
-            int face = world_blockRayTrace(&eb, 0, 0, 0, entity->x, entity->y, entity->z, entity->x + entity->motX, entity->y + entity->motY, entity->z + entity->motZ, &rx, &ry, &rz);
+            int face = raytrace_block(&eb, 0, 0, 0, entity->x, entity->y, entity->z, entity->x + entity->motX, entity->y + entity->motY, entity->z + entity->motZ, &rx, &ry, &rz);
             if (face >= 0) {
                 double dist = (entity->x + entity->motX - rx) * (entity->x + entity->motX - rx) + (entity->y + entity->motY - ry) * (entity->y + entity->motY - ry) + (entity->z + entity->motZ - rz) * (entity->z + entity->motZ - rz);		//entity_distsq_block(entity, rx, ry, rz);
                 //printf("%f\n", dist);
@@ -147,7 +148,8 @@ void tick_arrow(struct world* world, struct entity* entity) {
                     float hspeed = sqrtf(entity->motX * entity->motX + entity->motZ * entity->motZ);
                     if (hspeed > 0.) applyVelocity(ehit, entity->motX * entity->data.arrow.knockback * .6 / hspeed, .1, entity->motZ * entity->data.arrow.knockback * .6 / hspeed);
                 }
-            }				//TODO: else bounce
+            }
+            //TODO: else bounce
             //TODO: arrow sound
             if (ehit->type != ENT_ENDERMAN) {
                 world_despawn_entity(world, entity);

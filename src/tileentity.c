@@ -129,7 +129,6 @@ struct tile_entity* tile_parse(struct mempool* parent, struct nbt_tag* tag) {
                 if (tmp == NULL || tmp->id != NBT_TAG_COMPOUND) {
                     slot->nbt = NULL;
                 } else {
-                    slot->nbt = pmalloc(sizeof(struct nbt_tag));
                     slot->nbt = nbt_clone(tile->pool, tmp);
                 }
                 tile->data.furnace.inv->slots[index] = slot;
@@ -141,9 +140,7 @@ struct tile_entity* tile_parse(struct mempool* parent, struct nbt_tag* tag) {
     return tile;
 }
 
-struct tile_entity* tile_new(struct mempool* parent, char* id, int32_t x, uint8_t y, int32_t z) {
-    struct mempool* pool = mempool_new();
-    pchild(parent, pool);
+struct tile_entity* tile_new(struct mempool* pool, char* id, int32_t x, uint8_t y, int32_t z) {
     struct tile_entity* tile = pmalloc(pool, sizeof(struct tile_entity));
     tile->pool = pool;
     tile->id = str_dup(id, 0, tile->pool);

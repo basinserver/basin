@@ -962,31 +962,31 @@ void entity_push_out_of_blocks(struct entity* ent) {
     float fbx = 0f;
     float fby = 0f;
     float fbz = 0f;
-    if (dx < ld && !isNormalCube(getBlockInfo(world_get_block(ent->world, bx - 1, by, bz)))) {
+    if (dx < ld && !block_is_normal_cube(getBlockInfo(world_get_block(ent->world, bx - 1, by, bz)))) {
         ld = dx;
         fbx = -1f;
         fby = 0f;
         fbz = 0f;
     }
-    if ((1. - dx) < ld && !isNormalCube(getBlockInfo(world_get_block(ent->world, bx + 1, by, bz)))) {
+    if ((1. - dx) < ld && !block_is_normal_cube(getBlockInfo(world_get_block(ent->world, bx + 1, by, bz)))) {
         ld = 1. - dx;
         fbx = 1f;
         fby = 0f;
         fbz = 0f;
     }
-    if (dz < ld && !isNormalCube(getBlockInfo(world_get_block(ent->world, bx, by, bz - 1)))) {
+    if (dz < ld && !block_is_normal_cube(getBlockInfo(world_get_block(ent->world, bx, by, bz - 1)))) {
         ld = dx;
         fbx = 0f;
         fby = 0f;
         fbz = -1f;
     }
-    if ((1. - dz) < ld && !isNormalCube(getBlockInfo(world_get_block(ent->world, bx, by, bz + 1)))) {
+    if ((1. - dz) < ld && !block_is_normal_cube(getBlockInfo(world_get_block(ent->world, bx, by, bz + 1)))) {
         ld = 1. - dz;
         fbx = 0f;
         fby = 0f;
         fbz = 1f;
     }
-    if ((1. - dy) < ld && !isNormalCube(getBlockInfo(world_get_block(ent->world, bx, by + 1, bz)))) {
+    if ((1. - dy) < ld && !block_is_normal_cube(getBlockInfo(world_get_block(ent->world, bx, by + 1, bz)))) {
         ld = 1. - dy;
         fbx = 0f;
         fby = 1f;

@@ -502,7 +502,7 @@ struct block_material {
         uint8_t opaque;
 };
 
-struct block_material* getBlockMaterial(char* name);
+struct block_material* get_block_material(char* name);
 
 struct block_info* getBlockInfo(block b);
 
@@ -542,17 +542,17 @@ struct block_info {
 
 int falling_canFallThrough(block b);
 
-int isNormalCube(struct block_info* bi);
+int block_is_normal_cube(struct block_info* info);
 
 void init_materials();
 
 void init_blocks();
 
-size_t getBlockSize();
+size_t get_block_count();
 
-void add_block_material(struct block_material* bm);
+void add_block_material(struct block_material* material);
 
-void add_block_info(block blk, struct block_info* bm);
+void add_block_info(block blk, struct block_info* info);
 
 void onBlockInteract_workbench(struct world* world, block blk, int32_t x, int32_t y, int32_t z, struct player* player, uint8_t face, float curPosX, float curPosY, float curPosZ);
 
@@ -560,7 +560,7 @@ void onBlockInteract_chest(struct world* world, block blk, int32_t x, int32_t y,
 
 void onBlockInteract_furnace(struct world* world, block blk, int32_t x, int32_t y, int32_t z, struct player* player, uint8_t face, float curPosX, float curPosY, float curPosZ);
 
-void update_furnace(struct world* world, struct tile_entity* te);
+void update_furnace(struct world* world, struct tile_entity* tile);
 
 int onBlockDestroyed_chest(struct world* world, block blk, int32_t x, int32_t y, int32_t z, block replacedBy);
 

@@ -11,13 +11,16 @@
 #include <basin/block.h>
 #include <avuna/json.h>
 #include <avuna/string.h>
+#include <avuna/list.h>
+#include <avuna/hash.h>
 #include <unistd.h>
 #include <math.h>
 #include <fcntl.h>
 #include <errno.h>
+#include <avuna/util.h>
 
-struct collection* block_infos;
-struct collection* block_materials;
+struct list* block_infos;
+struct hashmap* block_materials;
 
 uint8_t getFaceFromPlayer(struct player* player) {
     uint32_t h = (uint32_t) floor(player->entity->yaw / 90. + .5) & 3;
@@ -106,7 +109,7 @@ int canBePlaced_torch(struct world* world, block blk, int32_t x, int32_t y, int3
     if (rori == YN) {
         if (bi->lightOpacity == 255) return 1;
         if (b >> 4 == BLK_FENCE >> 4 || b >> 4 == BLK_NETHERFENCE >> 4 || b >> 4 == BLK_SPRUCEFENCE >> 4 || b >> 4 == BLK_BIRCHFENCE >> 4 || b >> 4 == BLK_JUNGLEFENCE >> 4 || b >> 4 == BLK_DARKOAKFENCE >> 4 || b >> 4 == BLK_ACACIAFENCE >> 4 || b >> 4 == BLK_GLASS >> 4 || b >> 4 == BLK_COBBLEWALL_NORMAL >> 4 || b >> 4 == BLK_STAINEDGLASS_WHITE >> 4) return 1;
-    } else if (isNormalCube(bi)) return 1;
+    } else if (block_is_normal_cube(bi)) return 1;
     return 0;
 }
 
@@ -119,7 +122,7 @@ block onBlockPlacedPlayer_lever(struct player* player, struct world* world, bloc
     else if (face == YN) return blk | (f == EAST || f == WEST ? 0x00 : 0x07);
     else if (face == YP) return blk | (f == NORTH || f == SOUTH ? 0x05 : 0x06);
     offsetCoordByFace(&x, &y, &z, face);
-    return isNormalCube(getBlockInfo(world_get_block(world, x, y, z))) ? blk : 0;
+    return block_is_normal_cube(getBlockInfo(world_get_block(world, x, y, z))) ? blk : 0;
 }
 
 //TODO: burnout on redstone torches
@@ -216,7 +219,7 @@ void onBlockUpdate_tnt(struct world* world, block blk, int32_t x, int32_t y, int
     uint8_t maxPower = getPropogatedPower_block(world, world_get_chunk(world, x >> 4, z >> 4), x, y, z, -1);
     if (maxPower > 0) {
         world_set_block(world, 0, x, y, z);
-        struct entity* e = entity_new(nextEntityID++, (double) x + .5, (double) y, (double) z + .5, ENT_PRIMEDTNT, 0., 0.);
+        struct entity* e = entity_new(world, world->server->next_entity_id++, (double) x + .5, (double) y, (double) z + .5, ENT_PRIMEDTNT, 0., 0.);
         e->data.tnt.fuse = 80;
         e->objectData = blk >> 4;
         float ra = game_rand_float() * M_PI * 2.;
@@ -308,10 +311,10 @@ void onBlockUpdate_trapdoor(struct world* world, block blk, int32_t x, int32_t y
 
 block onBlockPlacedPlayer_trapdoor(struct player* player, struct world* world, block blk, int32_t x, int32_t y, int32_t z, uint8_t face) {
     if (face == YP || face == YN) {
-        if (isNormalCube(getBlockInfo(world_get_block(world, x + 1, y, z)))) face = XP;
-        else if (isNormalCube(getBlockInfo(world_get_block(world, x - 1, y, z)))) face = XN;
-        else if (isNormalCube(getBlockInfo(world_get_block(world, x, y, z + 1)))) face = ZP;
-        else if (isNormalCube(getBlockInfo(world_get_block(world, x, y, z - 1)))) face = ZN;
+        if (block_is_normal_cube(getBlockInfo(world_get_block(world, x + 1, y, z)))) face = XP;
+        else if (block_is_normal_cube(getBlockInfo(world_get_block(world, x - 1, y, z)))) face = XN;
+        else if (block_is_normal_cube(getBlockInfo(world_get_block(world, x, y, z + 1)))) face = ZP;
+        else if (block_is_normal_cube(getBlockInfo(world_get_block(world, x, y, z - 1)))) face = ZN;
     }
     if (face == XN) blk |= 2;
     else if (face == XP) blk |= 3;
@@ -321,10 +324,10 @@ block onBlockPlacedPlayer_trapdoor(struct player* player, struct world* world, b
 
 int canBePlaced_trapdoor(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
     uint8_t ori = blk & 0b0011;
-    if (ori == 2 && isNormalCube(getBlockInfo(world_get_block(world, x + 1, y, z)))) return 1;
-    else if (ori == 3 && isNormalCube(getBlockInfo(world_get_block(world, x - 1, y, z)))) return 1;
-    else if (ori == 0 && isNormalCube(getBlockInfo(world_get_block(world, x, y, z + 1)))) return 1;
-    else if (ori == 1 && isNormalCube(getBlockInfo(world_get_block(world, x, y, z - 1)))) return 1;
+    if (ori == 2 && block_is_normal_cube(getBlockInfo(world_get_block(world, x + 1, y, z)))) return 1;
+    else if (ori == 3 && block_is_normal_cube(getBlockInfo(world_get_block(world, x - 1, y, z)))) return 1;
+    else if (ori == 0 && block_is_normal_cube(getBlockInfo(world_get_block(world, x, y, z + 1)))) return 1;
+    else if (ori == 1 && block_is_normal_cube(getBlockInfo(world_get_block(world, x, y, z - 1)))) return 1;
     return 0;
 }
 
@@ -354,25 +357,25 @@ block onBlockPlacedPlayer_button(struct player* player, struct world* world, blo
     else if (face == YN) return blk | 0x00;
     else if (face == YP) return blk | 0x05;
     offsetCoordByFace(&x, &y, &z, face);
-    return isNormalCube(getBlockInfo(world_get_block(world, x, y, z))) ? blk : 0;
+    return block_is_normal_cube(getBlockInfo(world_get_block(world, x, y, z))) ? blk : 0;
 }
 
 int canBePlaced_redstone(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
     block b = world_get_block(world, x, y - 1, z);
     struct block_info* bi = getBlockInfo(b);
-    return isNormalCube(bi);
+    return block_is_normal_cube(bi);
 }
 
 int canBePlaced_bed(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
     block b = world_get_block(world, x, y - 1, z);
     struct block_info* bi = getBlockInfo(b);
-    return isNormalCube(bi);
+    return block_is_normal_cube(bi);
 }
 
 void onBlockUpdate_bed(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
     block b = world_get_block(world, x, y - 1, z);
     struct block_info* bi = getBlockInfo(b);
-    if (!isNormalCube(bi)) goto delete;
+    if (!block_is_normal_cube(bi)) goto delete;
     int facing = blk & 0b0011;
     int head = blk & 0b1000;
     uint8_t rf = 0;
@@ -400,14 +403,14 @@ void onBlockUpdate_bed(struct world* world, block blk, int32_t x, int32_t y, int
 int canBePlaced_door(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
     block b = world_get_block(world, x, y - 1, z);
     struct block_info* bi = getBlockInfo(b);
-    return (b >> 4 == blk >> 4 && !(b & 0b1000) && (blk & 0b1000)) || isNormalCube(bi);
+    return (b >> 4 == blk >> 4 && !(b & 0b1000) && (blk & 0b1000)) || block_is_normal_cube(bi);
 }
 
 void onBlockUpdate_door(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
     block b = world_get_block(world, x, y - 1, z);
     struct block_info* bi = getBlockInfo(b);
     int upper = blk & 0b1000;
-    if (!upper && !isNormalCube(bi)) goto delete;
+    if (!upper && !block_is_normal_cube(bi)) goto delete;
     b = world_get_block(world, x, y + (upper ? -1 : 1), z);
     int upperD = upper ? (blk & 0x0f) : (b & 0x0f);
     if (b >> 4 == blk >> 4) {
@@ -439,22 +442,18 @@ void onBlockInteract_woodendoor(struct world* world, block blk, int32_t x, int32
 }
 
 void onBlockInteract_workbench(struct world* world, block blk, int32_t x, int32_t y, int32_t z, struct player* player, uint8_t face, float curPosX, float curPosY, float curPosZ) {
-    struct inventory* wb = xmalloc(sizeof(struct inventory));
-    inventory_new(wb, INVTYPE_WORKBENCH, 1, 10);
-    wb->title = xstrdup("{\"text\": \"Crafting Table\"}", 0);
+    struct inventory* wb = inventory_new(psub(player->pool), INVTYPE_WORKBENCH, 1, 10, "{\"text\": \"Crafting Table\"}");
     player_openInventory(player, wb);
 }
 
 block onBlockPlaced_chest(struct world* world, block blk, int32_t x, int32_t y, int32_t z, block replaced) {
     int16_t meta = blk & 0x0f;
     if (meta < 2 || meta > 5) meta = 2;
-    struct tile_entity* te = tile_new("minecraft:chest", x, y, z);
-    te->data.chest.lock = NULL;
-    te->data.chest.inv = xmalloc(sizeof(struct inventory));
-    inventory_new(te->data.chest.inv, INVTYPE_CHEST, 2, 27);
-    te->data.chest.inv->tile = te;
-    te->data.chest.inv->title = xstrdup("{\"text\": \"Chest\"}", 0);
-    world_set_tile(world, x, y, z, te);
+    struct tile_entity* tile = tile_new(mempool_new(), "minecraft:chest", x, y, z);
+    tile->data.chest.lock = NULL;
+    tile->data.chest.inv = inventory_new(tile->pool, INVTYPE_CHEST, 2, 27, "{\"text\": \"Chest\"}");
+    tile->data.chest.inv->tile = tile;
+    world_set_tile(world, x, y, z, tile);
     return (blk & ~0x0f) | meta;
 }
 
@@ -462,13 +461,11 @@ block onBlockPlaced_furnace(struct world* world, block blk, int32_t x, int32_t y
     if ((replaced >> 4) == (BLK_FURNACE_1 >> 4) || (replaced >> 4) == (BLK_FURNACE >> 4)) return blk;
     int16_t meta = blk & 0x0f;
     if (meta < 2 || meta > 5) meta = 2;
-    struct tile_entity* te = tile_new("minecraft:furnace", x, y, z);
-    te->data.furnace.lock = NULL;
-    te->data.furnace.inv = xmalloc(sizeof(struct inventory));
-    inventory_new(te->data.furnace.inv, INVTYPE_FURNACE, 3, 3);
-    te->data.furnace.inv->tile = te;
-    te->data.furnace.inv->title = xstrdup("{\"text\": \"Furnace\"}", 0);
-    world_set_tile(world, x, y, z, te);
+    struct tile_entity* tile = tile_new(mempool_new(), "minecraft:furnace", x, y, z);
+    tile->data.furnace.lock = NULL;
+    tile->data.furnace.inv = inventory_new(tile->pool, INVTYPE_FURNACE, 3, 3, "{\"text\": \"Furnace\"}");
+    tile->data.furnace.inv->tile = tile;
+    world_set_tile(world, x, y, z, tile);
     return (blk & ~0x0f) | meta;
 }
 
@@ -484,147 +481,141 @@ int onBlockDestroyed_chest(struct world* world, block blk, int32_t x, int32_t y,
 }
 
 void onBlockInteract_chest(struct world* world, block blk, int32_t x, int32_t y, int32_t z, struct player* player, uint8_t face, float curPosX, float curPosY, float curPosZ) {
-    struct tile_entity* te = world_get_tile(world, x, y, z);
-    if (te == NULL || !streq_nocase(te->id, "minecraft:chest")) {
+    struct tile_entity* tile = world_get_tile(world, x, y, z);
+    if (tile == NULL || !str_eq(tile->id, "minecraft:chest")) {
         onBlockPlaced_chest(world, blk, x, y, z, 0);
-        te = world_get_tile(world, x, y, z);
+        tile = world_get_tile(world, x, y, z);
     }
-//TODO: impl locks, loot
-    player_openInventory(player, te->data.chest.inv);
+    //TODO: impl locks, loot
+    player_openInventory(player, tile->data.chest.inv);
     BEGIN_BROADCAST_DIST(player->entity, 128.);
-    struct packet* pkt = xmalloc(sizeof(struct packet));
-    pkt->id = PKT_PLAY_CLIENT_BLOCKACTION;
+    struct packet* pkt = packet_new(mempool_new(), PKT_PLAY_CLIENT_BLOCKACTION);
     pkt->data.play_client.blockaction.location.x = x;
     pkt->data.play_client.blockaction.location.y = y;
     pkt->data.play_client.blockaction.location.z = z;
     pkt->data.play_client.blockaction.action_id = 1;
-    pkt->data.play_client.blockaction.action_param = te->data.chest.inv->watching_players->entry_count;
+    pkt->data.play_client.blockaction.action_param = tile->data.chest.inv->watching_players->entry_count;
     pkt->data.play_client.blockaction.block_type = blk >> 4;
-    add_queue(bc_player->outgoing_packets, pkt);
+    queue_push(bc_player->outgoing_packets, pkt);
     END_BROADCAST(player->world->players)
 }
 
 int onBlockDestroyed_furnace(struct world* world, block blk, int32_t x, int32_t y, int32_t z, block replacedBy) {
     if ((replacedBy >> 4) == (BLK_FURNACE_1 >> 4) || (replacedBy >> 4) == (BLK_FURNACE >> 4)) return 0;
-    struct tile_entity* te = world_get_tile(world, x, y, z);
-    if (te == NULL) return 0;
-    for (size_t i = 0; i < te->data.furnace.inv->slot_count; i++) {
-        struct slot* sl = inventory_get(NULL, te->data.furnace.inv, i);
-        game_drop_block(world, sl, x, y, z);
+    struct tile_entity* tile = world_get_tile(world, x, y, z);
+    if (tile == NULL) return 0;
+    for (size_t i = 0; i < tile->data.furnace.inv->slot_count; i++) {
+        struct slot* slot = inventory_get(NULL, tile->data.furnace.inv, i);
+        game_drop_block(world, slot, x, y, z);
     }
     world_set_tile(world, x, y, z, NULL);
     return 0;
 }
 
 void onBlockInteract_furnace(struct world* world, block blk, int32_t x, int32_t y, int32_t z, struct player* player, uint8_t face, float curPosX, float curPosY, float curPosZ) {
-    struct tile_entity* te = world_get_tile(world, x, y, z);
-    if (te == NULL || !streq_nocase(te->id, "minecraft:furnace")) {
+    struct tile_entity* tile = world_get_tile(world, x, y, z);
+    if (tile == NULL || !str_eq(tile->id, "minecraft:furnace")) {
         onBlockPlaced_furnace(world, blk, x, y, z, 0);
-        te = world_get_tile(world, x, y, z);
+        tile = world_get_tile(world, x, y, z);
     }
-//TODO: impl locks, loot
-    player_openInventory(player, te->data.furnace.inv);
-    struct packet* pkt = xmalloc(sizeof(struct packet));
-    pkt->id = PKT_PLAY_CLIENT_WINDOWPROPERTY;
-    pkt->data.play_client.windowproperty.window_id = te->data.furnace.inv->window;
+    //TODO: impl locks, loot
+    player_openInventory(player, tile->data.furnace.inv);
+    struct packet* pkt = packet_new(mempool_new(), PKT_PLAY_CLIENT_WINDOWPROPERTY);
+    pkt->data.play_client.windowproperty.window_id = tile->data.furnace.inv->window;
     pkt->data.play_client.windowproperty.property = 1;
-    pkt->data.play_client.windowproperty.value = te->data.furnace.lastBurnMax;
-    add_queue(player->outgoing_packets, pkt);
-    pkt = xmalloc(sizeof(struct packet));
-    pkt->id = PKT_PLAY_CLIENT_WINDOWPROPERTY;
-    pkt->data.play_client.windowproperty.window_id = te->data.furnace.inv->window;
+    pkt->data.play_client.windowproperty.value = tile->data.furnace.lastBurnMax;
+    queue_push(player->outgoing_packets, pkt);
+    pkt = packet_new(mempool_new(), PKT_PLAY_CLIENT_WINDOWPROPERTY);
+    pkt->data.play_client.windowproperty.window_id = tile->data.furnace.inv->window;
     pkt->data.play_client.windowproperty.property = 3;
     pkt->data.play_client.windowproperty.value = 200;
-    add_queue(player->outgoing_packets, pkt);
+    queue_push(player->outgoing_packets, pkt);
 }
 
-void update_furnace(struct world* world, struct tile_entity* te) {
-    struct slot* si = inventory_get(NULL, te->data.furnace.inv, 0);
-    struct slot* fu = inventory_get(NULL, te->data.furnace.inv, 1);
-    struct slot* aso = inventory_get(NULL, te->data.furnace.inv, 2);
-    struct slot* so = smelting_output(si);
-    int16_t st = smelting_burnTime(fu);
+void update_furnace(struct world* world, struct tile_entity* tile) {
+    struct slot* input_slot = inventory_get(NULL, tile->data.furnace.inv, 0);
+    struct slot* fuel_slot = inventory_get(NULL, tile->data.furnace.inv, 1);
+    struct slot* actual_output_slot = inventory_get(NULL, tile->data.furnace.inv, 2);
+    struct slot* output_slot = smelting_output(input_slot);
+    int16_t burn_time = smelting_burnTime(fuel_slot);
     int burning = 0;
-    if (so != NULL && ((slot_stackable(so, aso) && (aso->count + so->count) <= slot_max_size(so)) || aso == NULL) && (te->data.furnace.burnTime > 0 || st > 0)) {
+    if (output_slot != NULL && ((slot_stackable(output_slot, actual_output_slot) && (actual_output_slot->count + output_slot->count) <= slot_max_size(output_slot)) || actual_output_slot == NULL) && (tile->data.furnace.burnTime > 0 || burn_time > 0)) {
         burning = 1;
-        if (!te->tick) {
-            te->tick = &tetick_furnace;
-            world_tile_set_tickable(world, te);
-            world_set_block(world, BLK_FURNACE_1 | (world_get_block(world, te->x, te->y, te->z) & 0x0f), te->x, te->y, te->z);
+        if (!tile->tick) {
+            tile->tick = &tetick_furnace;
+            world_tile_set_tickable(world, tile);
+            world_set_block(world, BLK_FURNACE_1 | (world_get_block(world, tile->x, tile->y, tile->z) & 0x0f), tile->x, tile->y, tile->z);
         }
-        //printf("bt = %i\n", tile->data.furnace.burn_time);
-        if (te->data.furnace.burnTime <= 0 && st > 0 && fu != NULL) {
-            te->data.furnace.burnTime += st + 1;
-            if (--fu->count == 0) fu = NULL;
-            inventory_set_slot(NULL, te->data.furnace.inv, 1, fu, 1);
-            te->data.furnace.lastBurnMax = st;
-            BEGIN_BROADCAST(te->data.furnace.inv->watching_players)
-            struct packet* pkt = xmalloc(sizeof(struct packet));
-            pkt->id = PKT_PLAY_CLIENT_WINDOWPROPERTY;
-            pkt->data.play_client.windowproperty.window_id = te->data.furnace.inv->window;
-            pkt->data.play_client.windowproperty.property = 1;
-            pkt->data.play_client.windowproperty.value = te->data.furnace.lastBurnMax;
-            add_queue(bc_player->outgoing_packets, pkt);
-            END_BROADCAST(te->data.furnace.inv->watching_players)
-        }
-        if (te->data.furnace.cookTime <= 0) {
-            //printf("start cookin\n");
-            te->data.furnace.cookTime++;
-        } else if (te->data.furnace.cookTime < 200) {
-            //printf("cookin %i/%i\n", tile->data.furnace.cookTime, 200);
-            te->data.furnace.cookTime++;
-        } else if (te->data.furnace.cookTime == 200) {
-            te->data.furnace.cookTime = 0;
-            //printf("donecookin\n");
-            if (aso == NULL) inventory_set_slot(NULL, te->data.furnace.inv, 2, so, 1);
-            else {
-                aso->count++;
-                inventory_set_slot(NULL, te->data.furnace.inv, 2, aso, 1);
+        if (tile->data.furnace.burnTime <= 0 && burn_time > 0 && fuel_slot != NULL) {
+            tile->data.furnace.burnTime += burn_time + 1;
+            if (--fuel_slot->count == 0) fuel_slot = NULL;
+            inventory_set_slot(NULL, tile->data.furnace.inv, 1, fuel_slot, 1);
+            tile->data.furnace.lastBurnMax = burn_time;
+            BEGIN_BROADCAST(tile->data.furnace.inv->watching_players){
+                struct packet* pkt = packet_new(mempool_new(), PKT_PLAY_CLIENT_WINDOWPROPERTY);
+                pkt->data.play_client.windowproperty.window_id = tile->data.furnace.inv->window;
+                pkt->data.play_client.windowproperty.property = 1;
+                pkt->data.play_client.windowproperty.value = tile->data.furnace.lastBurnMax;
+                queue_push(bc_player->outgoing_packets, pkt);
+                END_BROADCAST(tile->data.furnace.inv->watching_players)
             }
-            if (--si->count == 0) si = NULL;
-            inventory_set_slot(NULL, te->data.furnace.inv, 0, si, 1);
-            te->data.furnace.burnTime++; // freebie for accounting
         }
-    } else te->data.furnace.cookTime = 0;
-    if (te->data.furnace.burnTime > 0) {
-        te->data.furnace.burnTime--;
+        if (tile->data.furnace.cookTime <= 0) {
+            tile->data.furnace.cookTime++;
+        } else if (tile->data.furnace.cookTime < 200) {
+            tile->data.furnace.cookTime++;
+        } else if (tile->data.furnace.cookTime == 200) {
+            tile->data.furnace.cookTime = 0;
+            if (actual_output_slot == NULL) inventory_set_slot(NULL, tile->data.furnace.inv, 2, output_slot, 1);
+            else {
+                actual_output_slot->count++;
+                inventory_set_slot(NULL, tile->data.furnace.inv, 2, actual_output_slot, 1);
+            }
+            if (--input_slot->count == 0) input_slot = NULL;
+            inventory_set_slot(NULL, tile->data.furnace.inv, 0, input_slot, 1);
+            tile->data.furnace.burnTime++; // freebie for accounting
+        }
+    } else tile->data.furnace.cookTime = 0;
+    if (tile->data.furnace.burnTime > 0) {
+        tile->data.furnace.burnTime--;
     } else {
-        if (te->tick) {
-            BEGIN_BROADCAST(te->data.furnace.inv->watching_players)
-            struct packet* pkt = xmalloc(sizeof(struct packet));
-            pkt->id = PKT_PLAY_CLIENT_WINDOWPROPERTY;
-            pkt->data.play_client.windowproperty.window_id = te->data.furnace.inv->window;
-            pkt->data.play_client.windowproperty.property = 0;
-            pkt->data.play_client.windowproperty.value = 0;
-            add_queue(bc_player->outgoing_packets, pkt);
-            pkt = xmalloc(sizeof(struct packet));
-            pkt->id = PKT_PLAY_CLIENT_WINDOWPROPERTY;
-            pkt->data.play_client.windowproperty.window_id = te->data.furnace.inv->window;
-            pkt->data.play_client.windowproperty.property = 2;
-            pkt->data.play_client.windowproperty.value = 0;
-            add_queue(bc_player->outgoing_packets, pkt);
-            END_BROADCAST(te->data.furnace.inv->watching_players)
-            world_tile_unset_tickable(world, te);
-            te->tick = NULL;
-            world_set_block(world, BLK_FURNACE | (world_get_block(world, te->x, te->y, te->z) & 0x0f), te->x, te->y, te->z);
+        if (tile->tick) {
+            BEGIN_BROADCAST(tile->data.furnace.inv->watching_players){
+                struct packet* pkt = packet_new(mempool_new(), PKT_PLAY_CLIENT_WINDOWPROPERTY);
+                pkt->id = PKT_PLAY_CLIENT_WINDOWPROPERTY;
+                pkt->data.play_client.windowproperty.window_id = tile->data.furnace.inv->window;
+                pkt->data.play_client.windowproperty.property = 0;
+                pkt->data.play_client.windowproperty.value = 0;
+                queue_push(bc_player->outgoing_packets, pkt);
+                pkt = packet_new(mempool_new(), PKT_PLAY_CLIENT_WINDOWPROPERTY);
+                pkt->id = PKT_PLAY_CLIENT_WINDOWPROPERTY;
+                pkt->data.play_client.windowproperty.window_id = tile->data.furnace.inv->window;
+                pkt->data.play_client.windowproperty.property = 2;
+                pkt->data.play_client.windowproperty.value = 0;
+                queue_push(bc_player->outgoing_packets, pkt);
+                END_BROADCAST(tile->data.furnace.inv->watching_players)
+            }
+            world_tile_unset_tickable(world, tile);
+            tile->tick = NULL;
+            world_set_block(world, BLK_FURNACE | (world_get_block(world, tile->x, tile->y, tile->z) & 0x0f), tile->x, tile->y, tile->z);
         }
-        te->data.furnace.cookTime = 0;
+        tile->data.furnace.cookTime = 0;
     }
-    if (burning && tick_counter % 5 == 0) {
-        BEGIN_BROADCAST(te->data.furnace.inv->watching_players)
-        struct packet* pkt = xmalloc(sizeof(struct packet));
-        pkt->id = PKT_PLAY_CLIENT_WINDOWPROPERTY;
-        pkt->data.play_client.windowproperty.window_id = te->data.furnace.inv->window;
-        pkt->data.play_client.windowproperty.property = 0;
-        pkt->data.play_client.windowproperty.value = te->data.furnace.burnTime;
-        add_queue(bc_player->outgoing_packets, pkt);
-        pkt = xmalloc(sizeof(struct packet));
-        pkt->id = PKT_PLAY_CLIENT_WINDOWPROPERTY;
-        pkt->data.play_client.windowproperty.window_id = te->data.furnace.inv->window;
-        pkt->data.play_client.windowproperty.property = 2;
-        pkt->data.play_client.windowproperty.value = te->data.furnace.cookTime;
-        add_queue(bc_player->outgoing_packets, pkt);
-        END_BROADCAST(te->data.furnace.inv->watching_players)
+    if (burning && world->server->tick_counter % 5 == 0) {
+        BEGIN_BROADCAST(tile->data.furnace.inv->watching_players) {
+            struct packet* pkt = packet_new(mempool_new(), PKT_PLAY_CLIENT_WINDOWPROPERTY);
+            pkt->data.play_client.windowproperty.window_id = tile->data.furnace.inv->window;
+            pkt->data.play_client.windowproperty.property = 0;
+            pkt->data.play_client.windowproperty.value = tile->data.furnace.burnTime;
+            queue_push(bc_player->outgoing_packets, pkt);
+            pkt = packet_new(mempool_new(), PKT_PLAY_CLIENT_WINDOWPROPERTY);
+            pkt->id = PKT_PLAY_CLIENT_WINDOWPROPERTY;
+            pkt->data.play_client.windowproperty.window_id = tile->data.furnace.inv->window;
+            pkt->data.play_client.windowproperty.property = 2;
+            pkt->data.play_client.windowproperty.value = tile->data.furnace.cookTime;
+            queue_push(bc_player->outgoing_packets, pkt);
+            END_BROADCAST(tile->data.furnace.inv->watching_players)
+        }
     }
 }
 
@@ -710,8 +701,8 @@ void dropItems_tallgrass(struct world* world, block blk, int32_t x, int32_t y, i
 }
 
 int falling_canFallThrough(block b) {
-    struct block_info* bi = getBlockInfo(b);
-    return bi == NULL || streq_nocase(bi->material->name, "fire") || streq_nocase(bi->material->name, "air") || streq_nocase(bi->material->name, "water") || streq_nocase(bi->material->name, "lava");
+    struct block_info* block_info = getBlockInfo(b);
+    return block_info == NULL || str_eq(block_info->material->name, "fire") || str_eq(block_info->material->name, "air") || str_eq(block_info->material->name, "water") || str_eq(block_info->material->name, "lava");
 }
 
 void onBlockUpdate_falling(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
@@ -723,7 +714,7 @@ void onBlockUpdate_falling(struct world* world, block blk, int32_t x, int32_t y,
 int scheduledTick_falling(struct world* world, block blk, int32_t x, int32_t y, int32_t z) {
     if (y > 0 && falling_canFallThrough(world_get_block(world, x, y - 1, z))) {
         world_set_block(world, 0, x, y, z);
-        struct entity* e = entity_new(nextEntityID++, (double) x + .5, (double) y, (double) z + .5, ENT_FALLINGBLOCK, 0., 0.);
+        struct entity* e = entity_new(world, world->server->next_entity_id++, (double) x + .5, (double) y, (double) z + .5, ENT_FALLINGBLOCK, 0., 0.);
         e->data.fallingblock.b = blk;
         e->objectData = blk >> 4;
         world_spawn_entity(world, e);
@@ -783,7 +774,7 @@ int canBePlaced_ladder(struct world* world, block blk, int32_t x, int32_t y, int
     else if (m == 4) b = world_get_block(world, x + 1, y, z);
     else if (m == 5) b = world_get_block(world, x - 1, y, z);
     else b = world_get_block(world, x, y, z + 1);
-    return isNormalCube(getBlockInfo(b));
+    return block_is_normal_cube(getBlockInfo(b));
 }
 
 block onBlockPlacedPlayer_ladder(struct player* player, struct world* world, block blk, int32_t x, int32_t y, int32_t z, uint8_t face) {
@@ -791,10 +782,10 @@ block onBlockPlacedPlayer_ladder(struct player* player, struct world* world, blo
     int zng = 0;
     int xng = 0;
     int xpg = 0;
-    if ((zpg = isNormalCube(getBlockInfo(world_get_block(world, x, y, z - 1)))) && face == ZP) return (blk & ~0xf) | 3;
-    else if ((zng = isNormalCube(getBlockInfo(world_get_block(world, x, y, z + 1)))) && face == ZN) return (blk & ~0xf) | 2;
-    else if ((xpg = isNormalCube(getBlockInfo(world_get_block(world, x + 1, y, z)))) && face == XN) return (blk & ~0xf) | 4;
-    else if ((xng = isNormalCube(getBlockInfo(world_get_block(world, x - 1, y, z)))) && face == XP) return (blk & ~0xf) | 5;
+    if ((zpg = block_is_normal_cube(getBlockInfo(world_get_block(world, x, y, z - 1)))) && face == ZP) return (blk & ~0xf) | 3;
+    else if ((zng = block_is_normal_cube(getBlockInfo(world_get_block(world, x, y, z + 1)))) && face == ZN) return (blk & ~0xf) | 2;
+    else if ((xpg = block_is_normal_cube(getBlockInfo(world_get_block(world, x + 1, y, z)))) && face == XN) return (blk & ~0xf) | 4;
+    else if ((xng = block_is_normal_cube(getBlockInfo(world_get_block(world, x - 1, y, z)))) && face == XP) return (blk & ~0xf) | 5;
     else if (zpg) return (blk & ~0xf) | 2;
     else if (zng) return (blk & ~0xf) | 3;
     else if (xng) return (blk & ~0xf) | 4;
@@ -1114,7 +1105,7 @@ void randomTick_farmland(struct world* world, struct chunk* ch, block blk, int32
     uint8_t hasWaterOrRain = 0; // TODO: true if raining
     if (!hasWaterOrRain) for (int32_t sx = x - 4; sx <= x + 4; sx++) {
         for (int32_t sz = z - 4; sz <= z + 4; sz++) {
-            if (streq_nocase(getBlockInfo(world_get_block_guess(world, ch, sx, y, sz))->material->name, "water")) {
+            if (str_eq(getBlockInfo(world_get_block_guess(world, ch, sx, y, sz))->material->name, "water")) {
                 hasWaterOrRain = 1;
                 goto postWater;
             }
@@ -1154,7 +1145,7 @@ int tree_canGrowInto(block b) {
     struct block_info* bi = getBlockInfo(b);
     if (bi == NULL) return 1;
     char* mn = bi->material->name;
-    return b == BLK_GRASS || b == BLK_DIRT || (b >> 4) == (BLK_LOG_OAK >> 4) || (b >> 4) == (BLK_LOG_ACACIA >> 4) || (b >> 4) == (BLK_SAPLING_OAK >> 4) || b == BLK_VINE || streq_nocase(mn, "air") || streq_nocase(mn, "leaves");
+    return b == BLK_GRASS || b == BLK_DIRT || (b >> 4) == (BLK_LOG_OAK >> 4) || (b >> 4) == (BLK_LOG_ACACIA >> 4) || (b >> 4) == (BLK_SAPLING_OAK >> 4) || b == BLK_VINE || str_eq(mn, "air") || str_eq(mn, "leaves");
 }
 
 void tree_addHangingVine(struct world* world, struct chunk* chunk, block b, int32_t x, int32_t y, int32_t z) {
@@ -1167,7 +1158,7 @@ void tree_addHangingVine(struct world* world, struct chunk* chunk, block b, int3
 
 int tree_checkAndPlaceLeaf(struct world* world, struct chunk* chunk, block b, int32_t x, int32_t y, int32_t z) {
     struct block_info* bi = getBlockInfo(world_get_block_guess(world, chunk, x, y, z));
-    if (bi == NULL || streq_nocase(bi->material->name, "air") || streq_nocase(bi->material->name, "leaves")) {
+    if (bi == NULL || str_eq(bi->material->name, "air") || str_eq(bi->material->name, "leaves")) {
         world_set_block_guess(world, chunk, b, x, y, z);
         return 1;
     }
@@ -1245,7 +1236,7 @@ void randomTick_sapling(struct world* world, struct chunk* chunk, block blk, int
                             l2--;
                         }
                         struct block_info* bi = getBlockInfo(world_get_block_guess(world, chunk, i3, i2, j1));
-                        if (bi != NULL && (streq_nocase(bi->material->name, "air") || streq_nocase(bi->material->name, "leaves") || streq_nocase(bi->material->name, "vine") || streq_nocase(bi->material->name, "plants"))) {
+                        if (bi != NULL && (str_eq(bi->material->name, "air") || str_eq(bi->material->name, "leaves") || str_eq(bi->material->name, "vine") || str_eq(bi->material->name, "plants"))) {
                             world_set_block_guess(world, chunk, log, i3, i2, j1);
                             k1 = i2;
                         }
@@ -1338,7 +1329,7 @@ void randomTick_sapling(struct world* world, struct chunk* chunk, block blk, int
                             int tz2 = tz - z;
                             if (abs(tx2) != width || abs(tz2) != width || (rand() % 2 == 0 && dist_from_top != 0)) {
                                 struct block_info* bi = getBlockInfo(world_get_block_guess(world, chunk, tx, ty, tz));
-                                if (bi != NULL && (streq_nocase(bi->material->name, "air") || streq_nocase(bi->material->name, "leaves") || streq_nocase(bi->material->name, "vine"))) {
+                                if (bi != NULL && (str_eq(bi->material->name, "air") || str_eq(bi->material->name, "leaves") || str_eq(bi->material->name, "vine"))) {
                                     world_set_block_guess(world, chunk, leaf, tx, ty, tz);
                                 }
                             }
@@ -1348,7 +1339,7 @@ void randomTick_sapling(struct world* world, struct chunk* chunk, block blk, int
                 if (type != 4) {
                     for (int th = 0; th < height - (type == 1 ? (rand() % 3) : 0); th++) {
                         struct block_info* bi = getBlockInfo(world_get_block_guess(world, chunk, x, y + th, z));
-                        if (bi != NULL && (streq_nocase(bi->material->name, "air") || streq_nocase(bi->material->name, "leaves") || streq_nocase(bi->material->name, "vine") || streq_nocase(bi->material->name, "plants"))) {
+                        if (bi != NULL && (str_eq(bi->material->name, "air") || str_eq(bi->material->name, "leaves") || str_eq(bi->material->name, "vine") || str_eq(bi->material->name, "plants"))) {
                             world_set_block_guess(world, chunk, log, x, y + th, z);
                             if (vines && th > 0) {
                                 if (rand() % 3 > 0 && world_get_block_guess(world, chunk, x - 1, y + th, z) == 0) world_set_block_guess(world, chunk, BLK_VINE | 0x8, x - 1, y + th, z);
@@ -1365,7 +1356,7 @@ void randomTick_sapling(struct world* world, struct chunk* chunk, block blk, int
                             for (int tx = x - width; tx <= x + width; tx++) {
                                 for (int tz = z - width; tz <= z + width; tz++) {
                                     struct block_info* bi = getBlockInfo(world_get_block_guess(world, chunk, tx, ty, tz));
-                                    if (bi != NULL && streq_nocase(bi->material->name, "leaves")) {
+                                    if (bi != NULL && str_eq(bi->material->name, "leaves")) {
                                         if (rand() % 4 == 0 && world_get_block_guess(world, chunk, tx - 1, ty, tz) == 0) tree_addHangingVine(world, chunk, BLK_VINE | 0x8, tx - 1, ty, tz);
                                         if (rand() % 4 == 0 && world_get_block_guess(world, chunk, tx + 1, ty, tz) == 0) tree_addHangingVine(world, chunk, BLK_VINE | 0x2, tx + 1, ty, tz);
                                         if (rand() % 4 == 0 && world_get_block_guess(world, chunk, tx, ty, tz - 1) == 0) tree_addHangingVine(world, chunk, BLK_VINE | 0x1, tx + 1, ty, tz - 1);
@@ -1429,14 +1420,14 @@ int fluid_isUnblocked(int water, block b, struct block_info* bi) {
     uint16_t ba = b >> 4;
     if (ba == BLK_DOOROAK >> 4 || ba == BLK_DOORIRON >> 4 || ba == BLK_SIGN >> 4 || ba == BLK_LADDER >> 4 || ba == BLK_REEDS >> 4) return 0;
     if (bi == NULL) return 0;
-    if (!streq_nocase(bi->material->name, "portal") && !streq_nocase(bi->material->name, "structure_void") ? bi->material->blocksMovement : 1) return 0;
+    if (!str_eq(bi->material->name, "portal") && !str_eq(bi->material->name, "structure_void") ? bi->material->blocksMovement : 1) return 0;
     return 1;
 }
 
 int fluid_canFlowInto(int water, block b) {
     struct block_info* bi = getBlockInfo(b);
     if (bi == NULL) return 1;
-    if (!((water ? !streq_nocase(bi->material->name, "water") : 1) && !streq_nocase(bi->material->name, "lava"))) return 0;
+    if (!((water ? !str_eq(bi->material->name, "water") : 1) && !str_eq(bi->material->name, "lava"))) return 0;
     return fluid_isUnblocked(water, b, bi);
 }
 
@@ -1475,7 +1466,7 @@ int lava_checkForMixing(struct world* world, struct chunk* ch, block blk, int32_
 void fluid_doFlowInto(int water, struct world* world, struct chunk* ch, int32_t x, uint8_t y, int32_t z, int level, block b) {
 // potentially triggerMixEffects
     struct block_info* bi = getBlockInfo(b);
-    if (bi != NULL && !streq_nocase(bi->material->name, "air") && !streq_nocase(bi->material->name, "lava")) {
+    if (bi != NULL && !str_eq(bi->material->name, "air") && !str_eq(bi->material->name, "lava")) {
         dropBlockDrops(world, b, NULL, x, y, z);
     }
     world_set_block_guess(world, ch, (water ? BLK_WATER : BLK_LAVA) | level, x, y, z);
@@ -1661,203 +1652,189 @@ const char* nameToIDMap[] = { "minecraft:air", "minecraft:stone", "minecraft:gra
 
 item getItemFromName(const char* name) {
     for (size_t i = 0; i < (sizeof(nameToIDMap) / sizeof(char*)); i++) {
-        if (streq_nocase(nameToIDMap[i], name)) return i;
+        if (str_eq(nameToIDMap[i], name)) return i;
     }
     return -1;
 }
 
-struct block_material* getBlockMaterial(char* name) {
-    for (size_t i = 0; i < block_materials->size; i++) {
-        struct block_material* bm = (struct block_material*) block_materials->data[i];
-        if (bm == NULL) continue;
-        if (streq_nocase(bm->name, name)) return bm;
-    }
-    return NULL;
+struct block_material* get_block_material(char* name) {
+    return hashmap_get(block_materials, name);
 }
 
-size_t getBlockSize() {
+size_t get_block_count() {
     return block_infos->size;
 }
 
-void add_block_material(struct block_material* bm) {
-    add_collection(block_materials, bm);
+void add_block_material(struct block_material* material) {
+    hashmap_put(block_materials, material->name, material);
 }
 
-void add_block_info(block blk, struct block_info* bm) {
-    ensure_collection(block_infos, blk + 1);
-    block_infos->data[blk] = bm;
+void add_block_info(block blk, struct block_info* info) {
+    list_ensure_capacity(block_infos, blk + 1);
+    block_infos->data[blk] = info;
     if (block_infos->size < blk) block_infos->size = blk;
     block_infos->count++;
 }
 
+struct mempool* block_pool;
+
 void init_materials() {
-    block_materials = new_collection(64, 0);
-    char* jsf = xmalloc(4097);
-    size_t jsfs = 4096;
-    size_t jsr = 0;
-    int fd = open("materials.json", O_RDONLY);
-    ssize_t r = 0;
-    while ((r = read(fd, jsf + jsr, jsfs - jsr)) > 0) {
-        jsr += r;
-        if (jsfs - jsr < 512) {
-            jsfs += 4096;
-            jsf = xrealloc(jsf, jsfs + 1);
-        }
+    if (block_pool == NULL) {
+        block_pool = mempool_new();
     }
-    jsf[jsr] = 0;
-    if (r < 0) {
-        printf("Error reading material information: %s\n", strerror(errno));
+    block_materials = hashmap_new(64, block_pool);
+    char* json_file = (char*) read_file_fully(block_pool, "materials.json", NULL);
+    if (json_file == NULL) {
+        errlog(delog, "Error reading material data: %s\n", strerror(errno));
+        return;
     }
-    close(fd);
-    struct json_object json;
-    json_parse(&json, jsf);
-    for (size_t i = 0; i < json.child_count; i++) {
-        struct json_object* ur = json.children[i];
-        struct block_material* bm = xcalloc(sizeof(struct block_material));
-        bm->name = xstrdup(ur->name, 0);
-        struct json_object* tmp = json_get(ur, "flammable");
-        if (tmp == NULL || (tmp->type != JSON_TRUE && tmp->type != JSON_FALSE)) goto cerr;
-        bm->flammable = tmp->type == JSON_TRUE;
-        tmp = json_get(ur, "replaceable");
-        if (tmp == NULL || (tmp->type != JSON_TRUE && tmp->type != JSON_FALSE)) goto cerr;
-        bm->replacable = tmp->type == JSON_TRUE;
-        tmp = json_get(ur, "requiresnotool");
-        if (tmp == NULL || (tmp->type != JSON_TRUE && tmp->type != JSON_FALSE)) goto cerr;
-        bm->requiresnotool = tmp->type == JSON_TRUE;
-        tmp = json_get(ur, "mobility");
-        if (tmp == NULL || tmp->type != JSON_NUMBER) goto cerr;
-        bm->mobility = (uint8_t) tmp->data.number;
-        tmp = json_get(ur, "adventure_exempt");
-        if (tmp == NULL || (tmp->type != JSON_TRUE && tmp->type != JSON_FALSE)) goto cerr;
-        bm->adventure_exempt = tmp->type == JSON_TRUE;
-        tmp = json_get(ur, "liquid");
-        if (tmp == NULL || (tmp->type != JSON_TRUE && tmp->type != JSON_FALSE)) goto cerr;
-        bm->liquid = tmp->type == JSON_TRUE;
-        tmp = json_get(ur, "solid");
-        if (tmp == NULL || (tmp->type != JSON_TRUE && tmp->type != JSON_FALSE)) goto cerr;
-        bm->solid = tmp->type == JSON_TRUE;
-        tmp = json_get(ur, "blocksLight");
-        if (tmp == NULL || (tmp->type != JSON_TRUE && tmp->type != JSON_FALSE)) goto cerr;
-        bm->blocksLight = tmp->type == JSON_TRUE;
-        tmp = json_get(ur, "blocksMovement");
-        if (tmp == NULL || (tmp->type != JSON_TRUE && tmp->type != JSON_FALSE)) goto cerr;
-        bm->blocksMovement = tmp->type == JSON_TRUE;
-        tmp = json_get(ur, "opaque");
-        if (tmp == NULL || (tmp->type != JSON_TRUE && tmp->type != JSON_FALSE)) goto cerr;
-        bm->opaque = tmp->type == JSON_TRUE;
-        add_block_material(bm);
+    struct json_object* json = NULL;
+    json_parse(block_pool, &json, json_file);
+    pprefree(block_pool, json_file);
+
+    ITER_LLIST(json->children_list, value) {
+        struct json_object* material_json = value;
+        struct block_material* material = pcalloc(block_pool, sizeof(struct block_material));
+        material->name = str_dup(material_json->name, 0, block_pool);
+        struct json_object* tmp = json_get(material_json, "flammable");
+        if (tmp == NULL || (tmp->type != JSON_TRUE && tmp->type != JSON_FALSE)) goto format_error_material;
+        material->flammable = tmp->type == JSON_TRUE;
+        tmp = json_get(material_json, "replaceable");
+        if (tmp == NULL || (tmp->type != JSON_TRUE && tmp->type != JSON_FALSE)) goto format_error_material;
+        material->replacable = tmp->type == JSON_TRUE;
+        tmp = json_get(material_json, "requiresnotool");
+        if (tmp == NULL || (tmp->type != JSON_TRUE && tmp->type != JSON_FALSE)) goto format_error_material;
+        material->requiresnotool = tmp->type == JSON_TRUE;
+        tmp = json_get(material_json, "mobility");
+        if (tmp == NULL || tmp->type != JSON_NUMBER) goto format_error_material;
+        material->mobility = (uint8_t) tmp->data.number;
+        tmp = json_get(material_json, "adventure_exempt");
+        if (tmp == NULL || (tmp->type != JSON_TRUE && tmp->type != JSON_FALSE)) goto format_error_material;
+        material->adventure_exempt = tmp->type == JSON_TRUE;
+        tmp = json_get(material_json, "liquid");
+        if (tmp == NULL || (tmp->type != JSON_TRUE && tmp->type != JSON_FALSE)) goto format_error_material;
+        material->liquid = tmp->type == JSON_TRUE;
+        tmp = json_get(material_json, "solid");
+        if (tmp == NULL || (tmp->type != JSON_TRUE && tmp->type != JSON_FALSE)) goto format_error_material;
+        material->solid = tmp->type == JSON_TRUE;
+        tmp = json_get(material_json, "blocksLight");
+        if (tmp == NULL || (tmp->type != JSON_TRUE && tmp->type != JSON_FALSE)) goto format_error_material;
+        material->blocksLight = tmp->type == JSON_TRUE;
+        tmp = json_get(material_json, "blocksMovement");
+        if (tmp == NULL || (tmp->type != JSON_TRUE && tmp->type != JSON_FALSE)) goto format_error_material;
+        material->blocksMovement = tmp->type == JSON_TRUE;
+        tmp = json_get(material_json, "opaque");
+        if (tmp == NULL || (tmp->type != JSON_TRUE && tmp->type != JSON_FALSE)) goto format_error_material;
+        material->opaque = tmp->type == JSON_TRUE;
+        add_block_material(material);
         continue;
-        cerr: ;
-        printf("[WARNING] Error Loading Material \"%s\"! Skipped.\n", ur->name);
+        format_error_material:;
+        printf("[WARNING] Error Loading Material \"%s\"! Skipped.\n", material_json->name);
+        ITER_LLIST_END();
     }
-    freeJSON(&json);
-    xfree(jsf);
+    pfree(json->pool);
 }
 
-int isNormalCube(struct block_info* bi) {
-    return bi == NULL ? 0 : (bi->material->opaque && bi->fullCube && !bi->canProvidePower);
+int block_is_normal_cube(struct block_info* info) {
+    return info == NULL ? 0 : (info->material->opaque && info->fullCube && !info->canProvidePower);
 }
 
 void init_blocks() {
-    block_infos = new_collection(128, 0);
-    char* jsf = xmalloc(4097);
-    size_t jsfs = 4096;
-    size_t jsr = 0;
-    int fd = open("blocks.json", O_RDONLY);
-    ssize_t r = 0;
-    while ((r = read(fd, jsf + jsr, jsfs - jsr)) > 0) {
-        jsr += r;
-        if (jsfs - jsr < 512) {
-            jsfs += 4096;
-            jsf = xrealloc(jsf, jsfs + 1);
-        }
+    if (block_pool == NULL) {
+        block_pool = mempool_new();
     }
-    jsf[jsr] = 0;
-    if (r < 0) {
-        printf("Error reading block information: %s\n", strerror(errno));
+    block_infos = list_new(128, block_pool);
+    char* json_file = (char*) read_file_fully(block_pool, "blocks.json", NULL);
+    if (json_file == NULL) {
+        errlog(delog, "Error reading block data: %s\n", strerror(errno));
+        return;
     }
-    close(fd);
-    struct json_object json;
-    json_parse(&json, jsf);
-    for (size_t i = 0; i < json.child_count; i++) {
-        struct json_object* ur = json.children[i];
-        struct block_info* bi = xcalloc(sizeof(struct block_info));
-        struct json_object* tmp = json_get(ur, "id");
-        if (tmp == NULL || tmp->type != JSON_NUMBER) goto cerr;
+    struct json_object* json = NULL;
+    json_parse(block_pool, &json, json_file);
+    pprefree(block_pool, json_file);
+
+    ITER_LLIST(json->children_list, value) {
+        struct json_object* block_json = value;
+        struct block_info* info = pcalloc(block_pool, sizeof(struct block_info));
+        struct json_object* tmp = json_get(block_json, "id");
+        if (tmp == NULL || tmp->type != JSON_NUMBER) goto format_error_block;
         block id = (block) tmp->data.number;
-        if (id < 0) goto cerr;
-        struct json_object* colls = json_get(ur, "collision");
-        if (colls == NULL || colls->type != JSON_OBJECT) goto cerr;
-        bi->boundingBox_count = colls->child_count;
-        bi->boundingBoxes = colls->child_count == 0 ? NULL : xmalloc(sizeof(struct boundingbox) * colls->child_count);
-        for (size_t x = 0; x < colls->child_count; x++) {
-            struct json_object* coll = colls->children[x];
-            struct boundingbox* bb = &bi->boundingBoxes[x];
+        if (id < 0) goto format_error_block;
+        struct json_object* colls = json_get(block_json, "collision");
+        if (colls == NULL || colls->type != JSON_OBJECT) goto format_error_block;
+        info->boundingBox_count = colls->children_list->size;
+        info->boundingBoxes = info->boundingBox_count == 0 ? NULL : pmalloc(block_pool, sizeof(struct boundingbox) * info->boundingBox_count);
+        size_t x = 0;
+        ITER_LLIST(json->children_list, collision_json) {
+            struct json_object* coll = collision_json;
+            struct boundingbox* box = &info->boundingBoxes[x];
             tmp = json_get(coll, "minX");
-            if (tmp == NULL || tmp->type != JSON_NUMBER) goto cerr;
-            bb->minX = (double) tmp->data.number;
+            if (tmp == NULL || tmp->type != JSON_NUMBER) goto format_error_block;
+            box->minX = tmp->data.number;
             tmp = json_get(coll, "maxX");
-            if (tmp == NULL || tmp->type != JSON_NUMBER) goto cerr;
-            bb->maxX = (double) tmp->data.number;
+            if (tmp == NULL || tmp->type != JSON_NUMBER) goto format_error_block;
+            box->maxX = tmp->data.number;
             tmp = json_get(coll, "minY");
-            if (tmp == NULL || tmp->type != JSON_NUMBER) goto cerr;
-            bb->minY = (double) tmp->data.number;
+            if (tmp == NULL || tmp->type != JSON_NUMBER) goto format_error_block;
+            box->minY = tmp->data.number;
             tmp = json_get(coll, "maxY");
-            if (tmp == NULL || tmp->type != JSON_NUMBER) goto cerr;
-            bb->maxY = (double) tmp->data.number;
+            if (tmp == NULL || tmp->type != JSON_NUMBER) goto format_error_block;
+            box->maxY = tmp->data.number;
             tmp = json_get(coll, "minZ");
-            if (tmp == NULL || tmp->type != JSON_NUMBER) goto cerr;
-            bb->minZ = (double) tmp->data.number;
+            if (tmp == NULL || tmp->type != JSON_NUMBER) goto format_error_block;
+            box->minZ = tmp->data.number;
             tmp = json_get(coll, "maxZ");
-            if (tmp == NULL || tmp->type != JSON_NUMBER) goto cerr;
-            bb->maxZ = (double) tmp->data.number;
+            if (tmp == NULL || tmp->type != JSON_NUMBER) goto format_error_block;
+            box->maxZ = tmp->data.number;
+            ++x;
+            ITER_LLIST_END();
         }
-        tmp = json_get(ur, "dropItem");
-        if (tmp == NULL || tmp->type != JSON_NUMBER) goto cerr;
-        bi->drop = (item) tmp->data.number;
-        tmp = json_get(ur, "dropDamage");
-        if (tmp == NULL || tmp->type != JSON_NUMBER) goto cerr;
-        bi->drop_damage = (int16_t) tmp->data.number;
-        tmp = json_get(ur, "dropAmountMin");
-        if (tmp == NULL || tmp->type != JSON_NUMBER) goto cerr;
-        bi->drop_min = (uint8_t) tmp->data.number;
-        tmp = json_get(ur, "dropAmountMax");
-        if (tmp == NULL || tmp->type != JSON_NUMBER) goto cerr;
-        bi->drop_max = (uint8_t) tmp->data.number;
-        tmp = json_get(ur, "hardness");
-        if (tmp == NULL || tmp->type != JSON_NUMBER) goto cerr;
-        bi->hardness = (float) tmp->data.number;
-        tmp = json_get(ur, "material");
-        if (tmp == NULL || tmp->type != JSON_STRING) goto cerr;
-        bi->material = getBlockMaterial(tmp->data.string);
-        tmp = json_get(ur, "slipperiness");
-        if (tmp == NULL || tmp->type != JSON_NUMBER) goto cerr;
-        bi->slipperiness = (float) tmp->data.number;
-        tmp = json_get(ur, "isFullCube");
-        if (tmp == NULL || (tmp->type != JSON_TRUE && tmp->type != JSON_FALSE)) goto cerr;
-        bi->fullCube = tmp->type == JSON_TRUE;
-        tmp = json_get(ur, "canProvidePower");
-        if (tmp == NULL || (tmp->type != JSON_TRUE && tmp->type != JSON_FALSE)) goto cerr;
-        bi->canProvidePower = tmp->type == JSON_TRUE;
-        tmp = json_get(ur, "lightOpacity");
-        if (tmp == NULL || tmp->type != JSON_NUMBER) goto cerr;
-        bi->lightOpacity = (uint8_t) tmp->data.number;
-        tmp = json_get(ur, "lightEmission");
-        if (tmp == NULL || tmp->type != JSON_NUMBER) goto cerr;
-        bi->lightEmission = (uint8_t) tmp->data.number;
-        tmp = json_get(ur, "resistance");
+        tmp = json_get(block_json, "dropItem");
+        if (tmp == NULL || tmp->type != JSON_NUMBER) goto format_error_block;
+        info->drop = (item) tmp->data.number;
+        tmp = json_get(block_json, "dropDamage");
+        if (tmp == NULL || tmp->type != JSON_NUMBER) goto format_error_block;
+        info->drop_damage = (int16_t) tmp->data.number;
+        tmp = json_get(block_json, "dropAmountMin");
+        if (tmp == NULL || tmp->type != JSON_NUMBER) goto format_error_block;
+        info->drop_min = (uint8_t) tmp->data.number;
+        tmp = json_get(block_json, "dropAmountMax");
+        if (tmp == NULL || tmp->type != JSON_NUMBER) goto format_error_block;
+        info->drop_max = (uint8_t) tmp->data.number;
+        tmp = json_get(block_json, "hardness");
+        if (tmp == NULL || tmp->type != JSON_NUMBER) goto format_error_block;
+        info->hardness = (float) tmp->data.number;
+        tmp = json_get(block_json, "material");
+        if (tmp == NULL || tmp->type != JSON_STRING) goto format_error_block;
+        info->material = get_block_material(tmp->data.string);
+        tmp = json_get(block_json, "slipperiness");
+        if (tmp == NULL || tmp->type != JSON_NUMBER) goto format_error_block;
+        info->slipperiness = (float) tmp->data.number;
+        tmp = json_get(block_json, "isFullCube");
+        if (tmp == NULL || (tmp->type != JSON_TRUE && tmp->type != JSON_FALSE)) goto format_error_block;
+        info->fullCube = tmp->type == JSON_TRUE;
+        tmp = json_get(block_json, "canProvidePower");
+        if (tmp == NULL || (tmp->type != JSON_TRUE && tmp->type != JSON_FALSE)) goto format_error_block;
+        info->canProvidePower = tmp->type == JSON_TRUE;
+        tmp = json_get(block_json, "lightOpacity");
+        if (tmp == NULL || tmp->type != JSON_NUMBER) goto format_error_block;
+        info->lightOpacity = (uint8_t) tmp->data.number;
+        tmp = json_get(block_json, "lightEmission");
+        if (tmp == NULL || tmp->type != JSON_NUMBER) goto format_error_block;
+        info->lightEmission = (uint8_t) tmp->data.number;
+        tmp = json_get(block_json, "resistance");
         if (tmp == NULL || tmp->type != JSON_NUMBER) {
-            bi->resistance = bi->hardness * 5;
+            info->resistance = info->hardness * 5;
         } else {
-            bi->resistance = (float) tmp->data.number * 3;
+            info->resistance = (float) tmp->data.number * 3;
         }
-        add_block_info(id, bi);
+        add_block_info(id, info);
         continue;
-        cerr: ;
-        printf("[WARNING] Error Loading Block \"%s\"! Skipped.\n", ur->name);
+        format_error_block: ;
+        printf("[WARNING] Error Loading Block \"%s\"! Skipped.\n", block_json->name);
+        ITER_LLIST_END();
     }
-    freeJSON(&json);
-    xfree(jsf);
+    pfree(json->pool);
     struct block_info* tmp = getBlockInfo(BLK_CHEST);
     tmp->onBlockInteract = &onBlockInteract_chest;
     tmp->onBlockDestroyed = &onBlockDestroyed_chest;

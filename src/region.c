@@ -183,7 +183,7 @@ struct chunk* region_load_chunk(struct region* region, int8_t local_chunk_x, int
             struct chunk_section* section = pcalloc(chunk->pool, sizeof(struct chunk_section));
             section->palette = pcalloc(chunk->pool, 256 * sizeof(block));
             section->palette_count = 0;
-            block inverse_palette[getBlockSize()];
+            block inverse_palette[get_block_count()];
             block last = 0;
             for (int i = 0; i < 4096; i++) {
                 if (blocks[i] != last) {

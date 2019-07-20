@@ -68,7 +68,7 @@ int onItemInteract_painting(struct world* world, struct player* player, uint8_t 
         if (face == WEST) ent->data.painting.direction = 1;
         if (face == EAST) ent->data.painting.direction = 3;
         block b = world_get_block(world, x, y, z);
-        if (!isNormalCube(getBlockInfo(b))) return 0;
+        if (!block_is_normal_cube(getBlockInfo(b))) return 0;
         b = world_get_block(world, ox, oy, oz);
         if (b != 0) return 0;
         int32_t p = -1;
@@ -79,31 +79,31 @@ int onItemInteract_painting(struct world* world, struct player* player, uint8_t 
             }
             if (p >= 7) {
                 b = world_get_block(world, x + (face == ZP ? 1 : (face == ZN ? -1 : 0)), y, z + (face == XP ? 1 : (face == XN ? -1 : 0)));
-                if (!isNormalCube(getBlockInfo(b))) continue;
+                if (!block_is_normal_cube(getBlockInfo(b))) continue;
                 b = world_get_block(world, ox + (face == ZP ? 1 : (face == ZN ? -1 : 0)), oy, oz + (face == XP ? 1 : (face == XN ? -1 : 0)));
                 if (b != 0) return 0;
             }
             if (p >= 12) {
                 b = world_get_block(world, x, y + 1, z);
-                if (!isNormalCube(getBlockInfo(b))) continue;
+                if (!block_is_normal_cube(getBlockInfo(b))) continue;
                 b = world_get_block(world, ox, oy + 1, oz);
                 if (b != 0) return 0;
             }
             if (p >= 14) {
                 b = world_get_block(world, x + (face == ZP ? 1 : (face == ZN ? -1 : 0)), y + 1, z + (face == XP ? 1 : (face == XN ? -1 : 0)));
-                if (!isNormalCube(getBlockInfo(b))) continue;
+                if (!block_is_normal_cube(getBlockInfo(b))) continue;
                 b = world_get_block(world, ox + (face == ZP ? 1 : (face == ZN ? -1 : 0)), oy + 1, oz + (face == XP ? 1 : (face == XN ? -1 : 0)));
                 if (b != 0) return 0;
             }
             if (p >= 20) {
                 b = world_get_block(world, x + (face == ZP ? 1 : (face == ZN ? -1 : 0)) * 2, y, z + (face == XP ? 1 : (face == XN ? -1 : 0)) * 2);
-                if (!isNormalCube(getBlockInfo(b))) continue;
+                if (!block_is_normal_cube(getBlockInfo(b))) continue;
                 b = world_get_block(world, x - (face == ZP ? 1 : (face == ZN ? -1 : 0)), y, z - (face == XP ? 1 : (face == XN ? -1 : 0)));
-                if (!isNormalCube(getBlockInfo(b))) continue;
+                if (!block_is_normal_cube(getBlockInfo(b))) continue;
                 b = world_get_block(world, x + (face == ZP ? 1 : (face == ZN ? -1 : 0)) * 2, y + 1, z + (face == XP ? 1 : (face == XN ? -1 : 0))) * 2;
-                if (!isNormalCube(getBlockInfo(b))) continue;
+                if (!block_is_normal_cube(getBlockInfo(b))) continue;
                 b = world_get_block(world, x - (face == ZP ? 1 : (face == ZN ? -1 : 0)), y + 1, z - (face == XP ? 1 : (face == XN ? -1 : 0)));
-                if (!isNormalCube(getBlockInfo(b))) continue;
+                if (!block_is_normal_cube(getBlockInfo(b))) continue;
                 b = world_get_block(world, ox + (face == ZP ? 1 : (face == ZN ? -1 : 0)) * 2, oy, oz + (face == XP ? 1 : (face == XN ? -1 : 0)) * 2);
                 if (b != 0) return 0;
                 b = world_get_block(world, ox - (face == ZP ? 1 : (face == ZN ? -1 : 0)), oy, oz - (face == XP ? 1 : (face == XN ? -1 : 0)));
@@ -116,13 +116,13 @@ int onItemInteract_painting(struct world* world, struct player* player, uint8_t 
             if (p >= 21) {
                 for (int32_t i = 2; i <= (p < 24 ? 2 : 3); i++) {
                     b = world_get_block(world, x + (face == ZP ? 1 : (face == ZN ? -1 : 0)) * 2, y + i, z + (face == XP ? 1 : (face == XN ? -1 : 0)) * 2);
-                    if (!isNormalCube(getBlockInfo(b))) continue;
+                    if (!block_is_normal_cube(getBlockInfo(b))) continue;
                     b = world_get_block(world, x + (face == ZP ? 1 : (face == ZN ? -1 : 0)), y + i, z + (face == XP ? 1 : (face == XN ? -1 : 0)));
-                    if (!isNormalCube(getBlockInfo(b))) continue;
+                    if (!block_is_normal_cube(getBlockInfo(b))) continue;
                     b = world_get_block(world, x * 2, y + i, z);
-                    if (!isNormalCube(getBlockInfo(b))) continue;
+                    if (!block_is_normal_cube(getBlockInfo(b))) continue;
                     b = world_get_block(world, x - (face == ZP ? 1 : (face == ZN ? -1 : 0)), y + i, z - (face == XP ? 1 : (face == XN ? -1 : 0)));
-                    if (!isNormalCube(getBlockInfo(b))) continue;
+                    if (!block_is_normal_cube(getBlockInfo(b))) continue;
                     b = world_get_block(world, ox + (face == ZP ? 1 : (face == ZN ? -1 : 0)) * 2, oy + i, oz + (face == XP ? 1 : (face == XN ? -1 : 0)) * 2);
                     if (b != 0) return 0;
                     b = world_get_block(world, ox + (face == ZP ? 1 : (face == ZN ? -1 : 0)), oy + i, oz + (face == XP ? 1 : (face == XN ? -1 : 0)));
@@ -461,7 +461,7 @@ int onItemInteract_bonemeal(struct world* world, struct player* player, uint8_t 
                 bx += rand() % 3 - 1;
                 by += (rand() % 3 - 1) * (rand() % 3) / 2;
                 bz += rand() % 3 - 1;
-                if (bb != BLK_GRASS || isNormalCube(bi)) break;
+                if (bb != BLK_GRASS || block_is_normal_cube(bi)) break;
                 j++;
             }
         }

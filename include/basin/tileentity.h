@@ -150,7 +150,7 @@ void tetick_furnace(struct world* world, struct tile_entity* te);
 
 struct tile_entity* tile_parse(struct mempool* parent, struct nbt_tag* tag);
 
-struct tile_entity* tile_new(struct mempool* parent, char* id, int32_t x, uint8_t y, int32_t z);
+struct tile_entity* tile_new(struct mempool* pool, char* id, int32_t x, uint8_t y, int32_t z);
 
 struct nbt_tag* tile_serialize(struct mempool* parent, struct tile_entity* tile, int forClient);
 
