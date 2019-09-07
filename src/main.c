@@ -417,12 +417,12 @@ int main(int argc, char* argv[]) {
     }
     //TODO: start wake thread
     char line[4096];
-    while (sr > 0) {
+    while (servers->count > 0 && sr > 0) {
         if (readLine(STDIN_FILENO, line, 4096) < 0) {
             sleep(1);
             continue;
         }
-        callCommand(NULL, line);
+        command_call(servers->data[0], NULL, line);
     }
     return 0;
 }

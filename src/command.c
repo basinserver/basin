@@ -97,22 +97,23 @@ void command_motd(struct server* server, struct player* player, char** args, siz
 }
 
 void command_list(struct server* server, struct player* player, char** args, size_t args_count) {
-    char* plist = pmalloc();
-    char* cptr = plist;
-    BEGIN_HASHMAP_ITERATION (players);
-    if (cptr > plist) {
-        *cptr++ = ',';
-        *cptr++ = ' ';
+    char message[4096];
+    message[0] = 0;
+    pthread_rwlock_rdlock(&server->players_by_entity_id->rwlock);
+    ITER_MAP(server->players_by_entity_id) {
+        if (message[0] != 0) {
+            strncat(message, ", ", 4096);
+        }
+        struct player* iter_player = (struct player*) value;
+        strncat(message, iter_player->name, 4096);
+        ITER_MAP_END();
     }
-    struct player* player = (struct player*) value;
-    cptr = xstrncat(cptr, 16, player->name);
-    END_HASHMAP_ITERATION (players);
-    snprintf(cptr, 32, " (%lu players_by_entity_id total)", players->entry_count);
-    player_send_message(player, "gray", "%s", plist);
-    xfree(plist);
+    snprintf(message + strlen(message), 4096 - strlen(message), " (%lu players total)", server->players_by_entity_id->entry_count);
+    pthread_rwlock_unlock(&server->players_by_entity_id->rwlock);
+    player_send_message(player, "gray", "%s", message);
 }
 
-void command_spawn(struct player* player, char** args, size_t args_count) {
+void command_spawn(struct server* server, struct player* player, char** args, size_t args_count) {
     if (!player) {
         player_send_message(player, "red", "Must be run as player");
         return;
@@ -130,23 +131,23 @@ void command_spawn(struct player* player, char** args, size_t args_count) {
                     (double) player->world->spawnpos.z + .5);
 }
 
-void command_printprofile(struct player* player, char** args, size_t args_count) {
+void command_printprofile(struct server* server, struct player* player, char** args, size_t args_count) {
     if (player != NULL) return;
     printProfiler();
 }
 
-void command_clearprofile(struct player* player, char** args, size_t args_count) {
+void command_clearprofile(struct server* server, struct player* player, char** args, size_t args_count) {
     if (player != NULL) return;
     clearProfiler();
 }
 
-void command_kill(struct player* player, char** args, size_t args_count) {
+void command_kill(struct server* server, struct player* player, char** args, size_t args_count) {
     if (!player) {
         if (args_count != 1) {
             player_send_message(player, "red", "Usage: /kill <player>");
             return;
         }
-        player = player_get_by_name(args[0]);
+        player = player_get_by_name(server, args[0]);
         if (player == NULL) {
             player_send_message(player, "red", "[ERROR] No such player found.");
             return;
@@ -155,90 +156,92 @@ void command_kill(struct player* player, char** args, size_t args_count) {
     damageEntity(player->entity, player->entity->maxHealth * 10., 0);
 }
 
-void command_tps(struct player* player, char** args, size_t args_count) {
-    player_broadcast("light_purple", "%f tps", player->world->tps);
+void command_tps(struct server* server, struct player* player, char** args, size_t args_count) {
+    player_broadcast(server->players_by_entity_id, "light_purple", "%f tps", player == NULL ? server->overworld->tps : player->world->tps);
 }
 
 void init_base_commands() {
-    registerCommand("gamemode", &command_gamemode);
-    registerCommand("gm", &command_gamemode);
-    registerCommand("tp", &command_tp);
-    registerCommand("spawn", &command_spawn);
-    registerCommand("kick", &command_kick);
-    registerCommand("say", &command_say);
-    registerCommand("printprofile", &command_printprofile);
-    registerCommand("pp", &command_printprofile);
-    registerCommand("clearprofile", &command_clearprofile);
-    registerCommand("cp", &command_clearprofile);
-    registerCommand("motd", &command_motd);
-    registerCommand("list", &command_list);
-    registerCommand("ls", &command_list);
-    registerCommand("who", &command_list);
-    registerCommand("kill", &command_kill);
-    registerCommand("tps", &command_tps);
+    command_register("gamemode", &command_gamemode);
+    command_register("gm", &command_gamemode);
+    command_register("tp", &command_tp);
+    command_register("spawn", &command_spawn);
+    command_register("kick", &command_kick);
+    command_register("say", &command_say);
+    command_register("printprofile", &command_printprofile);
+    command_register("pp", &command_printprofile);
+    command_register("clearprofile", &command_clearprofile);
+    command_register("cp", &command_clearprofile);
+    command_register("motd", &command_motd);
+    command_register("list", &command_list);
+    command_register("ls", &command_list);
+    command_register("who", &command_list);
+    command_register("kill", &command_kill);
+    command_register("tps", &command_tps);
 }
-
-typedef void (*command_callback)(struct player* player, char** args, size_t args_count);
 
 struct command {
         char* command;
         command_callback callback;
 };
 
-struct collection* registered_commands;
+struct hashmap* registered_commands;
 
-void registerCommand(char* command, command_callback callback) {
-    if (registered_commands == NULL) registered_commands = new_collection(16, 0);
-    struct command* com = xmalloc(sizeof(struct command));
-    com->command = xstrdup(command, 0);
-    com->callback = callback;
-    add_collection(registered_commands, com);
+void command_register(char* called_by, command_callback callback) {
+    if (registered_commands == NULL) {
+        registered_commands = hashmap_thread_new(16, global_pool);
+    }
+    struct command* command = pmalloc(registered_commands->pool, sizeof(struct command));
+    command->command = str_dup(called_by, 0, registered_commands->pool);
+    command->callback = callback;
+    hashmap_put(registered_commands, command->command, command);
 }
 
-void callCommand(struct player* player, struct mempool* pool, char* command) {
-    if (registered_commands == NULL) return;
-    size_t sl = strlen(command);
+void command_call(struct server* server, struct player* player, char* command) {
+    if (registered_commands == NULL) {
+        return;
+    }
+    size_t command_length = strlen(command);
     size_t arg_count = 0;
-    int iq = 0;
-    int eq = 0;
-    for (size_t i = 0; i < sl; i++) {
-        int cl = 0;
-        if (command[i] == ' ' && !iq) {
+    int in_quote = 0;
+    int escaped = 0;
+    for (size_t i = 0; i < command_length; i++) {
+        int add_character = 0;
+        if (command[i] == ' ' && !in_quote) {
             command[i] = 0;
             arg_count++;
-        } else if (command[i] == '\"' && !eq) {
-            iq = !iq;
-            eq = 0;
-            cl = 1;
+        } else if (command[i] == '\"' && !escaped) {
+            in_quote = !in_quote;
+            escaped = 0;
+            add_character = 1;
         } else if (command[i] == '\\') {
-            eq = !eq;
-            cl = eq;
-        } else eq = 0;
-        if (cl) {
-            memmove(command + i, command + i + 1, sl - i);
+            escaped = !escaped;
+            add_character = escaped;
+        } else escaped = 0;
+        if (add_character) {
+            memmove(command + i, command + i + 1, command_length - i);
             i--;
-            sl--;
+            command_length--;
         }
     }
     char* args[arg_count];
-    char* rc = command;
+    char* real_command = command;
     size_t i = strlen(command) + 1;
     command += i;
     size_t i2 = 0;
-    while (i < sl) {
+    while (i < command_length) {
         args[i2] = command;
         i += strlen(command) + 1;
         command += strlen(command) + 1;
-        args[i2] = trim(args[i2]);
+        args[i2] = str_trim(args[i2]);
         i2++;
     }
-    for (size_t i3 = 0; i3 < registered_commands->size; i3++) {
-        struct command* com = (struct command*) registered_commands->data[i3];
-        if (com == NULL) continue;
-        if (streq_nocase(com->command, rc)) {
-            (*com->callback)(player, args, arg_count);
-            return;
-        }
+    if (arg_count == 0) {
+        return;
     }
-    player_send_message(player, "red", "[ERROR] Invalid Command!");
+    struct command* com = (struct command*) hashmap_get(registered_commands, args[0]);
+    if (com == NULL) {
+        player_send_message(player, "red", "[ERROR] Command \"/%s\" not found!", args[0]);
+        return;
+    }
+    (*com->callback)(server, player, args, arg_count);
 }

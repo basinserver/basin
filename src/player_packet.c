@@ -27,7 +27,7 @@ void player_packet_handle_chatmessage(struct player* player, struct mempool* poo
     char* msg = packet->message;
     if (ac_chat(player, msg)) return;
     if (str_prefixes(msg, "/")) {
-        callCommand(player, pool, msg + 1);
+        command_call(player->server, player, pool, msg + 1);
     } else {
         size_t max_size = strlen(msg) + 128;
         char* broadcast_str = pmalloc(pool, max_size);
