@@ -32,9 +32,9 @@ void sendMessageToPlayer(struct player* player, char* text, char* color);
 
 void sendMsgToPlayerf(struct player* player, char* color, char* fmt, ...);
 
-void broadcast(char* text, char* color);
+void broadcast(struct hashmap* players, char* text, char* color);
 
-void broadcastf(char* color, char* fmt, ...);
+void broadcastf(struct hashmap* players, char* color, char* fmt, ...);
 
 #define BEGIN_BROADCAST(players) pthread_rwlock_rdlock(&(players)->rwlock); ITER_MAP(players) { struct player* bc_player = (struct player*)value; {
 #define BEGIN_BROADCAST_DIST(distfrom, dist) pthread_rwlock_rdlock(&(distfrom->world->players)->rwlock); ITER_MAP(distfrom->world->players) { struct player* bc_player = (struct player*)value; if(entity_distsq(bc_player->entity, distfrom) < dist * dist) {

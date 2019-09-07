@@ -37,7 +37,7 @@ void game_load_player(struct player* to, struct player* from) {
     packet->data.play_client.spawnplayer.z = from->entity->z;
     packet->data.play_client.spawnplayer.yaw = (uint8_t) ((from->entity->yaw / 360.) * 256.);
     packet->data.play_client.spawnplayer.pitch = (uint8_t) ((from->entity->pitch / 360.) * 256.);
-    entitymeta_write(from->entity, &packet->data.play_client.spawnplayer.metadata.metadata, &packet->data.play_client.spawnplayer.metadata.metadata_size);
+    entitymeta_write(from->entity, &packet->data.play_client.spawnplayer.metadata.metadata, &packet->data.play_client.spawnplayer.metadata.metadata_size, packet->pool);
     queue_push(to->outgoing_packets, packet);
     game_entity_equipment(to, from->entity, 0, from->inventory->slots[from->currentItem + 36]);
     game_entity_equipment(to, from->entity, 5, from->inventory->slots[5]);
@@ -74,7 +74,7 @@ void game_load_entity(struct player* to, struct entity* from) {
         queue_push(to->outgoing_packets, packet);
         packet = packet_new(mempool_new(), PKT_PLAY_CLIENT_ENTITYMETADATA);
         packet->data.play_client.entitymetadata.entity_id = from->id;
-        entitymeta_write(from, &packet->data.play_client.entitymetadata.metadata.metadata, &packet->data.play_client.entitymetadata.metadata.metadata_size);
+        entitymeta_write(from, &packet->data.play_client.entitymetadata.metadata.metadata, &packet->data.play_client.entitymetadata.metadata.metadata_size, packet->pool);
         queue_push(to->outgoing_packets, packet);
     } else if (from->type == ENT_PLAYER) {
         return;
@@ -116,7 +116,7 @@ void game_load_entity(struct player* to, struct entity* from) {
         packet->data.play_client.spawnmob.velocity_x = (int16_t)(from->motX * 8000.);
         packet->data.play_client.spawnmob.velocity_y = (int16_t)(from->motY * 8000.);
         packet->data.play_client.spawnmob.velocity_z = (int16_t)(from->motZ * 8000.);
-        entitymeta_write(from, &packet->data.play_client.spawnmob.metadata.metadata, &packet->data.play_client.spawnmob.metadata.metadata_size);
+        entitymeta_write(from, &packet->data.play_client.spawnmob.metadata.metadata, &packet->data.play_client.spawnmob.metadata.metadata_size, packet->pool);
         queue_push(to->outgoing_packets, packet);
     }
     hashmap_putint(to->loaded_entities, (uint64_t) from->id, from);
@@ -170,69 +170,68 @@ float game_rand_float() {
 }
 
 void game_drop_block(struct world* world, struct slot* slot, int32_t x, int32_t y, int32_t z) {
-    struct entity* item = entity_new(world->server->next_entity_id++, (double) x + .5, (double) y + .5, (double) z + .5, ENT_ITEM, game_rand_float() * 360., 0.);
-    item->data.itemstack.slot = xmalloc(sizeof(struct slot));
+    struct entity* item = entity_new(world, world->server->next_entity_id++, (double) x + .5, (double) y + .5, (double) z + .5, ENT_ITEM, game_rand_float() * 360., 0.);
+    item->data.itemstack.slot = pmalloc(item->pool, sizeof(struct slot));
     item->objectData = 1;
     item->motX = game_rand_float() * .2 - .1;
     item->motY = .2;
     item->motZ = game_rand_float() * .2 - .1;
     item->data.itemstack.delayBeforeCanPickup = 0;
-    slot_duplicate(slot, item->data.itemstack.slot);
+    slot_duplicate(item->pool, slot, item->data.itemstack.slot);
     world_spawn_entity(world, item);
     BEGIN_BROADCAST_DIST(item, 128.)
-                        game_load_entity(bc_player, item);
+        game_load_entity(bc_player, item);
     END_BROADCAST(item->world->players)
 }
 
 void dropPlayerItem(struct player* player, struct slot* drop) {
-    struct entity* item = entity_new(nextEntityID++, player->entity->x, player->entity->y + 1.32, player->entity->z, ENT_ITEM, 0., 0.);
-    item->data.itemstack.slot = xmalloc(sizeof(struct slot));
+    struct entity* item = entity_new(player->world, player->world->server->next_entity_id++, player->entity->x, player->entity->y + 1.32, player->entity->z, ENT_ITEM, 0., 0.);
+    item->data.itemstack.slot = pmalloc(item->pool, sizeof(struct slot));
     item->objectData = 1;
     item->motX = -sin(player->entity->yaw * M_PI / 180.) * cos(player->entity->pitch * M_PI / 180.) * .3;
     item->motZ = cos(player->entity->yaw * M_PI / 180.) * cos(player->entity->pitch * M_PI / 180.) * .3;
     item->motY = -sin(player->entity->pitch * M_PI / 180.) * .3 + .1;
-    float nos = game_rand_float() * M_PI * 2.;
-    float mag = .02 * game_rand_float();
-    item->motX += cos(nos) * mag;
+    float noise = game_rand_float() * M_PI * 2.;
+    float magnitude = .02 * game_rand_float();
+    item->motX += cosf(noise) * magnitude;
     item->motY += (game_rand_float() - game_rand_float()) * .1;
-    item->motZ += sin(nos) * mag;
+    item->motZ += sinf(noise) * magnitude;
     item->data.itemstack.delayBeforeCanPickup = 20;
-    slot_duplicate(drop, item->data.itemstack.slot);
+    slot_duplicate(item->pool, drop, item->data.itemstack.slot);
     world_spawn_entity(player->world, item);
     BEGIN_BROADCAST_DIST(player->entity, 128.)
-                        game_load_entity(bc_player, item);
+        game_load_entity(bc_player, item);
     END_BROADCAST(player->world->players)
 }
 
 void playSound(struct world* world, int32_t soundID, int32_t soundCategory, double x, double y, double z, float volume, float pitch) {
     BEGIN_BROADCAST_DISTXYZ(x, y, z, world->players, 64.)
-    struct packet* pkt = xmalloc(sizeof(struct packet));
-    pkt->id = PKT_PLAY_CLIENT_SOUNDEFFECT;
-    pkt->data.play_client.soundeffect.sound_id = 316;
-    pkt->data.play_client.soundeffect.sound_category = 8; //?
-    pkt->data.play_client.soundeffect.effect_position_x = (int32_t)(x * 8.);
-    pkt->data.play_client.soundeffect.effect_position_y = (int32_t)(y * 8.);
-    pkt->data.play_client.soundeffect.effect_position_z = (int32_t)(z * 8.);
-    pkt->data.play_client.soundeffect.volume = 1.;
-    pkt->data.play_client.soundeffect.pitch = 1.;
-    add_queue(bc_player->outgoing_packets, pkt);
+        struct packet* pkt = packet_new(mempool_new(), PKT_PLAY_CLIENT_SOUNDEFFECT);
+        pkt->data.play_client.soundeffect.sound_id = 316;
+        pkt->data.play_client.soundeffect.sound_category = 8; //?
+        pkt->data.play_client.soundeffect.effect_position_x = (int32_t)(x * 8.);
+        pkt->data.play_client.soundeffect.effect_position_y = (int32_t)(y * 8.);
+        pkt->data.play_client.soundeffect.effect_position_z = (int32_t)(z * 8.);
+        pkt->data.play_client.soundeffect.volume = 1.;
+        pkt->data.play_client.soundeffect.pitch = 1.;
+        queue_push(bc_player->outgoing_packets, pkt);
     END_BROADCAST(world->players)
 }
 
 void dropEntityItem_explode(struct entity* entity, struct slot* drop) {
-    struct entity* item = entity_new(nextEntityID++, entity->x, entity->y + 1.32, entity->z, ENT_ITEM, 0., 0.);
-    item->data.itemstack.slot = xmalloc(sizeof(struct slot));
+    struct entity* item = entity_new(entity->world, entity->world->server->next_entity_id++, entity->x, entity->y + 1.32, entity->z, ENT_ITEM, 0., 0.);
+    item->data.itemstack.slot = pmalloc(item->pool, sizeof(struct slot));
     item->objectData = 1;
     float f1 = game_rand_float() * .5;
     float f2 = game_rand_float() * M_PI * 2.;
-    item->motX = -sin(f2) * f1;
-    item->motZ = cos(f2) * f1;
+    item->motX = -sinf(f2) * f1;
+    item->motZ = cosf(f2) * f1;
     item->motY = .2;
     item->data.itemstack.delayBeforeCanPickup = 20;
-    slot_duplicate(drop, item->data.itemstack.slot);
+    slot_duplicate(item->pool, drop, item->data.itemstack.slot);
     world_spawn_entity(entity->world, item);
     BEGIN_BROADCAST_DIST(entity, 128.)
-                        game_load_entity(bc_player, item);
+        game_load_entity(bc_player, item);
     END_BROADCAST(entity->world->players)
 }
 
@@ -259,8 +258,7 @@ void dropBlockDrops(struct world* world, block blk, struct player* breaker, int3
 }
 
 void player_openInventory(struct player* player, struct inventory* inv) {
-    struct packet* pkt = xmalloc(sizeof(struct packet));
-    pkt->id = PKT_PLAY_CLIENT_OPENWINDOW;
+    struct packet* pkt = packet_new(mempool_new(), PKT_PLAY_CLIENT_OPENWINDOW);
     pkt->data.play_client.openwindow.window_id = inv->window;
     char* type = "";
     if (inv->type == INVTYPE_WORKBENCH) {
@@ -270,23 +268,25 @@ void player_openInventory(struct player* player, struct inventory* inv) {
     } else if (inv->type == INVTYPE_FURNACE) {
         type = "minecraft:furnace";
     }
-    pkt->data.play_client.openwindow.window_type = xstrdup(type, 0);
-    pkt->data.play_client.openwindow.window_title = xstrdup(inv->title, 0);
+    pkt->data.play_client.openwindow.window_type = str_dup(type, 0, pkt->pool);
+    pkt->data.play_client.openwindow.window_title = str_dup(inv->title, 0, pkt->pool);
     pkt->data.play_client.openwindow.number_of_slots = inv->type == INVTYPE_WORKBENCH ? 0 : inv->slot_count;
-    if (inv->type == INVTYPE_HORSE) pkt->data.play_client.openwindow.entity_id = 0; //TODO
-    add_queue(player->outgoing_packets, pkt);
+    if (inv->type == INVTYPE_HORSE) {
+        pkt->data.play_client.openwindow.entity_id = 0; //TODO
+    }
+    queue_push(player->outgoing_packets, pkt);
     player->open_inventory = inv;
-    put_hashmap(inv->watching_players, player->entity->id, player);
+    hashmap_putint(inv->watching_players, player->entity->id, player);
     if (inv->slot_count > 0) {
-        pkt = xmalloc(sizeof(struct packet));
+        pkt = packet_new(mempool_new(), PKT_PLAY_CLIENT_WINDOWITEMS);
         pkt->id = PKT_PLAY_CLIENT_WINDOWITEMS;
         pkt->data.play_client.windowitems.window_id = inv->window;
         pkt->data.play_client.windowitems.count = inv->slot_count;
-        pkt->data.play_client.windowitems.slot_data = xmalloc(sizeof(struct slot) * inv->slot_count);
+        pkt->data.play_client.windowitems.slot_data = pmalloc(pkt->pool, sizeof(struct slot) * inv->slot_count);
         for (size_t i = 0; i < inv->slot_count; i++) {
-            slot_duplicate(inv->slots[i], &pkt->data.play_client.windowitems.slot_data[i]);
+            slot_duplicate(pkt->pool, inv->slots[i], &pkt->data.play_client.windowitems.slot_data[i]);
         }
-        add_queue(player->outgoing_packets, pkt);
+        queue_push(player->outgoing_packets, pkt);
     }
 }
 
@@ -294,55 +294,49 @@ void sendMessageToPlayer(struct player* player, char* text, char* color) {
     if (player == NULL) {
         printf("%s\n", text);
     } else {
-        size_t s = strlen(text) + 512;
-        char* rsx = xstrdup(text, 512);
-        char* rs = xmalloc(s);
-        snprintf(rs, s, "{\"text\": \"%s\", \"color\": \"%s\"}", replace(replace(rsx, "\\", "\\\\"), "\"", "\\\""), color);
-        //printf("<CHAT> %s\n", text);
-        struct packet* pkt = xmalloc(sizeof(struct packet));
-        pkt->id = PKT_PLAY_CLIENT_CHATMESSAGE;
+        struct mempool* pool = mempool_new();
+        size_t length = strlen(text);
+        char* text_modified = str_dup(text, 0, pool);
+        text_modified = str_replace(str_replace(text_modified, "\\", "\\\\", pool), "\"", "\\\"", pool);
+        char* jsonified = pmalloc(pool, strlen(text_modified) + 128);
+        snprintf(jsonified, length, "{\"text\": \"%s\", \"color\": \"%s\"}", text_modified, color);
+        struct packet* pkt = packet_new(pool, PKT_PLAY_CLIENT_CHATMESSAGE);
         pkt->data.play_client.chatmessage.position = 0;
-        pkt->data.play_client.chatmessage.json_data = xstrdup(rs, 0);
-        add_queue(player->outgoing_packets, pkt);
-        xfree(rsx);
+        pkt->data.play_client.chatmessage.json_data = jsonified;
+        queue_push(player->outgoing_packets, pkt);
     }
 }
 
 void sendMsgToPlayerf(struct player* player, char* color, char* fmt, ...) {
     va_list args;
     va_start(args, fmt);
-    size_t len = varstrlen(fmt, args);
-    char* bct = xmalloc(len);
-    vsnprintf(bct, len, fmt, args);
+    char buffer[4096];
+    vsnprintf(buffer, 4096, fmt, args);
     va_end(args);
-    sendMessageToPlayer(player, bct, color);
-    xfree(bct);
+    sendMessageToPlayer(player, buffer, color);
 }
 
-void broadcast(char* text, char* color) {
-    size_t s = strlen(text) + 512;
-    char* rsx = xstrdup(text, 512);
-    char* rs = xmalloc(s);
-    snprintf(rs, s, "{\"text\": \"%s\", \"color\": \"%s\"}", replace(replace(rsx, "\\", "\\\\"), "\"", "\\\""), color);
+void broadcast(struct hashmap* players, char* text, char* color) {
+    struct mempool* pool = mempool_new();
+    size_t length = strlen(text);
+    char* text_modified = str_dup(text, 0, pool);
+    text_modified = str_replace(str_replace(text_modified, "\\", "\\\\", pool), "\"", "\\\"", pool);
+    char* jsonified = pmalloc(pool, strlen(text_modified) + 128);
     printf("<CHAT> %s\n", text);
     BEGIN_BROADCAST (players)
-    struct packet* pkt = xmalloc(sizeof(struct packet));
-    pkt->id = PKT_PLAY_CLIENT_CHATMESSAGE;
-    pkt->data.play_client.chatmessage.position = 0;
-    pkt->data.play_client.chatmessage.json_data = xstrdup(rs, 0);
-    add_queue(bc_player->outgoing_packets, pkt);
+        struct packet* pkt = packet_new(mempool_new(), PKT_PLAY_CLIENT_CHATMESSAGE);
+        pkt->data.play_client.chatmessage.position = 0;
+        pkt->data.play_client.chatmessage.json_data = str_dup(jsonified, 0, pkt->pool);
+        queue_push(bc_player->outgoing_packets, pkt);
     END_BROADCAST (players)
-    xfree(rs);
-    xfree(rsx);
+    pfree(pool);
 }
 
-void broadcastf(char* color, char* fmt, ...) {
+void broadcastf(struct hashmap* players, char* color, char* fmt, ...) {
     va_list args;
     va_start(args, fmt);
-    size_t len = varstrlen(fmt, args);
-    char* bct = xmalloc(len);
-    vsnprintf(bct, len, fmt, args);
+    char buffer[4096];
+    vsnprintf(buffer, 4096, fmt, args);
     va_end(args);
-    broadcast(bct, color);
-    xfree(bct);
+    broadcast(players, buffer, color);
 }
