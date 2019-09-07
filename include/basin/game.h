@@ -26,15 +26,9 @@ void game_load_entity(struct player* to, struct entity* from);
 
 void game_update_inventory(struct player* player, struct inventory* inventory, int slot);
 
-void world_tick(struct world* world);
+void player_send_message(struct player* player, char* color, char* fmt, ...);
 
-void sendMessageToPlayer(struct player* player, char* text, char* color);
-
-void sendMsgToPlayerf(struct player* player, char* color, char* fmt, ...);
-
-void broadcast(struct hashmap* players, char* text, char* color);
-
-void broadcastf(struct hashmap* players, char* color, char* fmt, ...);
+void player_broadcast(struct hashmap* players, char* color, char* fmt, ...);
 
 #define BEGIN_BROADCAST(players) pthread_rwlock_rdlock(&(players)->rwlock); ITER_MAP(players) { struct player* bc_player = (struct player*)value; {
 #define BEGIN_BROADCAST_DIST(distfrom, dist) pthread_rwlock_rdlock(&(distfrom->world->players)->rwlock); ITER_MAP(distfrom->world->players) { struct player* bc_player = (struct player*)value; if(entity_distsq(bc_player->entity, distfrom) < dist * dist) {

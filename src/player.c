@@ -445,7 +445,7 @@ void player_kick(struct player* player, char* message) {
     snprintf(pkt->data.play_client.disconnect.reason, sl + 128, "{\"text\": \"%s\", \"color\": \"red\"}", message);
     queue_push(player->outgoing_packets, pkt);
     if (player->conn != NULL) player->conn->disconnect = 1;
-    broadcastf("red", "Kicked Player %s for reason: %s", player->name, message);
+    player_broadcast("red", "Kicked Player %s for reason: %s", player->name, message);
 }
 
 float player_getAttackStrength(struct player* player, float adjust) {

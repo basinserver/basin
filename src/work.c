@@ -106,7 +106,7 @@ int connection_read(struct netmgr_connection* netmgr_conn, uint8_t* read_buf, si
 void connection_on_closed(struct netmgr_connection* netmgr_conn) {
     struct connection* conn = netmgr_conn->extra;
     if (conn->player != NULL) {
-        broadcastf("yellow", "%s has left the server!", conn->player->name);
+        player_broadcast("yellow", "%s has left the server!", conn->player->name);
         conn->player->conn = NULL;
     }
     pfree(conn->pool);

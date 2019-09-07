@@ -163,7 +163,7 @@ int work_joinServer(struct connection* conn, char* username, char* uuid_string) 
     }
     netmgr_trigger_write(conn->managed_conn);
     add_collection(playersToLoad, player);
-    broadcastf("yellow", "%s has joined the server!", player->name);
+    player_broadcast("yellow", "%s has joined the server!", player->name);
     const char* ip_string = NULL;
     char tip[48];
     if (conn->addr.in6.sin6_family == AF_INET) {

@@ -11,13 +11,13 @@
 void command_gamemode(struct server* server, struct player* player, char** args, size_t args_count) {
     if (player != NULL) return;
     if (args_count == 0 || args_count > 2) {
-        sendMessageToPlayer(player, "Usage: /gamemode <gamemode> [player]", "red");
+        player_send_message(player, "red", "Usage: /gamemode <gamemode> [player]");
         return;
     }
     struct player* target = player;
     if (args_count == 2) target = player_get_by_name(player->server, args[1]);
     if (target == NULL) {
-        sendMessageToPlayer(player, "[ERROR] No such player found.", "red");
+        player_send_message(player, "red", "[ERROR] No such player found.");
         return;
     }
     if (str_eq(args[0], "0") || str_eq(args[0], "survival")) {
@@ -25,22 +25,22 @@ void command_gamemode(struct server* server, struct player* player, char** args,
     } else if (str_eq(args[0], "1") || str_eq(args[0], "creative")) {
         player_set_gamemode(target, 1);
     } else {
-        sendMessageToPlayer(target, "[ERROR] No such gamemode found.", "red");
+        player_send_message(target, "red", "[ERROR] No such gamemode found.");
         return;
     }
-    sendMessageToPlayer(NULL, "Done.", "default");
+    player_send_message(NULL, "default", "Done.");
 }
 
 void command_tp(struct server* server, struct player* player, char** args, size_t args_count) {
     if (player != NULL) return;
     if (args_count == 0 || args_count > 4) {
-        sendMessageToPlayer(player, "Usage: /tp <to> OR /tp <from> <to> or <x> <y> <z> or <player> <x> <y> <z>", "red");
+        player_send_message(player, "red", "Usage: /tp <to> OR /tp <from> <to> or <x> <y> <z> or <player> <x> <y> <z>");
         return;
     }
     if (args_count >= 3) {
         struct player* from = args_count == 3 ? player : player_get_by_name(server, args[0]);
         if (from == NULL) {
-            sendMessageToPlayer(player, "[ERROR] No such player found.", "red");
+            player_send_message(player, "red", "[ERROR] No such player found.");
             return;
         }
         int32_t ai = args_count == 4 ? 1 : 0;
@@ -49,11 +49,11 @@ void command_tp(struct server* server, struct player* player, char** args, size_
         struct player* from = args_count == 1 ? player : player_get_by_name(server, args[0]);
         struct player* to = args_count == 1 ? player_get_by_name(server, args[0]) : player_get_by_name(server, args[1]);
         if (from == NULL || to == NULL) {
-            sendMessageToPlayer(player, "[ERROR] No such player found.", "red");
+            player_send_message(player, "red", "[ERROR] No such player found.");
             return;
         }
         if (from->world != to->world) {
-            sendMessageToPlayer(player, "[ERROR] Players in different worlds!", "red");
+            player_send_message(player, "red", "[ERROR] Players in different worlds!");
             return;
         }
         player_teleport(from, to->entity->x, to->entity->y, to->entity->z);
@@ -63,12 +63,12 @@ void command_tp(struct server* server, struct player* player, char** args, size_
 void command_kick(struct server* server, struct player* player, char** args, size_t args_count) {
     if (player != NULL) return;
     if (args_count == 0 || args_count > 2) {
-        sendMessageToPlayer(player, "Usage: /kick <player> OR /kick <player> \"<reason>\"", "red");
+        player_send_message(player, "red", "Usage: /kick <player> OR /kick <player> \"<reason>\"");
         return;
     }
     struct player* target = player_get_by_name(server, args[0]);
     if (target == NULL) {
-        sendMessageToPlayer(player, "[ERROR] No such player found.", "red");
+        player_send_message(player, "red", "[ERROR] No such player found.");
         return;
     }
     char* reason = args_count == 1 ? "You have been kicked" : args[1];
@@ -78,19 +78,19 @@ void command_kick(struct server* server, struct player* player, char** args, siz
 void command_say(struct server* server, struct player* player, char** args, size_t args_count) {
     if (player != NULL) return;
     if (args_count != 1) {
-        sendMessageToPlayer(player, "Usage: /say \"<message>\"", "red");
+        player_send_message(player, "red", "Usage: /say \"<message>\"");
         return;
     }
-    broadcastf("light_purple", "CONSOLE: %s", args[0]);
+    player_broadcast("light_purple", "CONSOLE: %s", args[0]);
 }
 
 void command_motd(struct server* server, struct player* player, char** args, size_t args_count) {
     if (player != NULL) return;
     if (args_count != 1) {
-        sendMessageToPlayer(NULL, "Usage: /motd \"<message>\"", "red");
+        player_send_message(NULL, "red", "Usage: /motd \"<message>\"");
         return;
     }
-    sendMessageToPlayer(NULL, "Done.", "default");
+    player_send_message(NULL, "default", "Done.");
     server->motd = prealloc(global_pool, server->motd, strlen(args[0]) + 1);
     server->motd[strlen(args[0])] = 0;
     memcpy(server->motd, args[0], strlen(args[0]) + 1);
@@ -108,22 +108,22 @@ void command_list(struct server* server, struct player* player, char** args, siz
     cptr = xstrncat(cptr, 16, player->name);
     END_HASHMAP_ITERATION (players);
     snprintf(cptr, 32, " (%lu players_by_entity_id total)", players->entry_count);
-    sendMessageToPlayer(player, plist, "gray");
+    player_send_message(player, "gray", "%s", plist);
     xfree(plist);
 }
 
 void command_spawn(struct player* player, char** args, size_t args_count) {
     if (!player) {
-        sendMsgToPlayerf(player, "red", "Must be run as player");
+        player_send_message(player, "red", "Must be run as player");
         return;
     }
 
     if (player->entity->health < player->entity->maxHealth) {
-        sendMsgToPlayerf(player, "red", "You must have full health to teleport to spawn!");
+        player_send_message(player, "red", "You must have full health to teleport to spawn!");
         return;
     }
     if (args_count > 0) {
-        sendMessageToPlayer(player, "red", "Usage: /spawn");
+        player_send_message(player, "Usage: /spawn", "red");
         return;
     }
     player_teleport(player, (double) player->world->spawnpos.x + .5, (double) player->world->spawnpos.y,
@@ -143,12 +143,12 @@ void command_clearprofile(struct player* player, char** args, size_t args_count)
 void command_kill(struct player* player, char** args, size_t args_count) {
     if (!player) {
         if (args_count != 1) {
-            sendMsgToPlayerf(player, "red", "Usage: /kill <player>");
+            player_send_message(player, "red", "Usage: /kill <player>");
             return;
         }
         player = player_get_by_name(args[0]);
         if (player == NULL) {
-            sendMessageToPlayer(player, "[ERROR] No such player found.", "red");
+            player_send_message(player, "red", "[ERROR] No such player found.");
             return;
         }
     }
@@ -156,7 +156,7 @@ void command_kill(struct player* player, char** args, size_t args_count) {
 }
 
 void command_tps(struct player* player, char** args, size_t args_count) {
-    broadcastf("light_purple", "%f tps", player->world->tps);
+    player_broadcast("light_purple", "%f tps", player->world->tps);
 }
 
 void init_base_commands() {
@@ -240,5 +240,5 @@ void callCommand(struct player* player, struct mempool* pool, char* command) {
             return;
         }
     }
-    sendMessageToPlayer(player, "[ERROR] Invalid Command!", "red");
+    player_send_message(player, "red", "[ERROR] Invalid Command!");
 }

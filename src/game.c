@@ -290,7 +290,12 @@ void player_openInventory(struct player* player, struct inventory* inv) {
     }
 }
 
-void sendMessageToPlayer(struct player* player, char* text, char* color) {
+void player_send_message(struct player* player, char* color, char* fmt, ...) {
+    va_list args;
+    va_start(args, fmt);
+    char text[4096];
+    vsnprintf(text, 4096, fmt, args);
+    va_end(args);
     if (player == NULL) {
         printf("%s\n", text);
     } else {
@@ -307,21 +312,17 @@ void sendMessageToPlayer(struct player* player, char* text, char* color) {
     }
 }
 
-void sendMsgToPlayerf(struct player* player, char* color, char* fmt, ...) {
+void player_broadcast(struct hashmap* players, char* color, char* fmt, ...) {
     va_list args;
     va_start(args, fmt);
-    char buffer[4096];
-    vsnprintf(buffer, 4096, fmt, args);
-    va_end(args);
-    sendMessageToPlayer(player, buffer, color);
-}
-
-void broadcast(struct hashmap* players, char* text, char* color) {
+    char text[4096];
+    vsnprintf(text, 4096, fmt, args);
     struct mempool* pool = mempool_new();
     size_t length = strlen(text);
     char* text_modified = str_dup(text, 0, pool);
     text_modified = str_replace(str_replace(text_modified, "\\", "\\\\", pool), "\"", "\\\"", pool);
     char* jsonified = pmalloc(pool, strlen(text_modified) + 128);
+    snprintf(jsonified, length, "{\"text\": \"%s\", \"color\": \"%s\"}", text_modified, color);
     printf("<CHAT> %s\n", text);
     BEGIN_BROADCAST (players)
         struct packet* pkt = packet_new(mempool_new(), PKT_PLAY_CLIENT_CHATMESSAGE);
@@ -330,13 +331,4 @@ void broadcast(struct hashmap* players, char* text, char* color) {
         queue_push(bc_player->outgoing_packets, pkt);
     END_BROADCAST (players)
     pfree(pool);
-}
-
-void broadcastf(struct hashmap* players, char* color, char* fmt, ...) {
-    va_list args;
-    va_start(args, fmt);
-    char buffer[4096];
-    vsnprintf(buffer, 4096, fmt, args);
-    va_end(args);
-    broadcast(players, buffer, color);
 }
