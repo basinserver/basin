@@ -29,6 +29,7 @@ struct ai_nearestattackabletarget_data {
 void initai_zombie(struct world* world, struct entity* entity);
 
 struct aitask {
+    struct mempool* pool;
     int32_t (*ai_tick)(struct world* world, struct entity* entity, struct aitask* ai);
     int (*ai_should)(struct world* world, struct entity* entity, struct aitask* ai);
     void (*ai_cancel)(struct world* world, struct entity* entity, struct aitask* ai);
@@ -68,21 +69,12 @@ struct aipath_point {
     float total_dist;
     float next_dist;
     float target_dist;
-    struct aipath_point* previous;
     float cost;
     uint8_t visited;
     float priority;
 };
 
-struct aipath {
-    struct aipath_point** points;
-    size_t points_size;
-    size_t points_count;
-};
-
-struct aipath* findPath(int32_t sx, int32_t sy, int32_t sz, int32_t ex, int32_t ey, int32_t ez);
-
-void freePath(struct aipath* path);
+struct list* aipath_find(struct mempool* pool, int32_t sx, int32_t sy, int32_t sz, int32_t ex, int32_t ey, int32_t ez);
 
 struct aicontext {
     struct hashmap* tasks;

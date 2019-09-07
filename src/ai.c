@@ -2,13 +2,14 @@
 #include <basin/entity.h>
 #include <basin/world.h>
 #include <basin/game.h>
+#include <avuna/list.h>
 #include <avuna/hash.h>
+#include <avuna/string.h>
 #include <math.h>
 
 void initai_zombie(struct world* world, struct entity* entity) {
-    ai_initTask(entity, 4, &ai_swimming, &ai_shouldswimming, NULL);
-    struct ai_nearestattackabletarget_data
-    *and = xcalloc(sizeof(struct ai_nearestattackabletarget_data));
+    struct aitask* task = ai_initTask(entity, 4, &ai_swimming, &ai_shouldswimming, NULL);
+    struct ai_nearestattackabletarget_data* and = pcalloc(task->pool, sizeof(struct ai_nearestattackabletarget_data));
     and->chance = 10;
     and->type = ENT_PLAYER;
     and->checkSight = 1;
@@ -16,7 +17,7 @@ void initai_zombie(struct world* world, struct entity* entity) {
     and->targetSearchDelay = 0;
     and->targetDist = 16.;
     ai_initTask(entity, 1, &ai_nearestattackabletarget, &ai_shouldnearestattackabletarget, and);
-    and = xcalloc(sizeof(struct ai_nearestattackabletarget_data));
+    and = pcalloc(task->pool, sizeof(struct ai_nearestattackabletarget_data));
     and->chance = 10;
     and->type = ENT_VILLAGER;
     and->checkSight = 0;
@@ -24,7 +25,7 @@ void initai_zombie(struct world* world, struct entity* entity) {
     and->targetSearchDelay = 0;
     and->targetDist = 16.;
     ai_initTask(entity, 1, &ai_nearestattackabletarget, &ai_shouldnearestattackabletarget, and);
-    and = xcalloc(sizeof(struct ai_nearestattackabletarget_data));
+    and = pcalloc(task->pool, sizeof(struct ai_nearestattackabletarget_data));
     and->chance = 10;
     and->type = ENT_VILLAGERGOLEM;
     and->checkSight = 1;
@@ -32,7 +33,7 @@ void initai_zombie(struct world* world, struct entity* entity) {
     and->targetSearchDelay = 0;
     and->targetDist = 16.;
     ai_initTask(entity, 1, &ai_nearestattackabletarget, &ai_shouldnearestattackabletarget, and);
-    struct ai_attackmelee_data* amd = xcalloc(sizeof(struct ai_attackmelee_data));
+    struct ai_attackmelee_data* amd = pcalloc(task->pool, sizeof(struct ai_attackmelee_data));
     amd->attackInterval = 20;
     amd->speed = 1.;
     amd->longMemory = 0;
@@ -46,7 +47,10 @@ void ai_stdcancel(struct world* world, struct entity* entity, struct aitask* ai)
 }
 
 struct aitask* ai_initTask(struct entity* entity, uint16_t mutex, int32_t (*ai_tick)(struct world* world, struct entity* entity, struct aitask* ai), int (*ai_should)(struct world* world, struct entity* entity, struct aitask* ai), void* data) {
-    struct aitask* ai = xmalloc(sizeof(struct aitask));
+    struct mempool* ai_pool = mempool_new();
+    pchild(entity->pool, ai_pool);
+    struct aitask* ai = pcalloc(ai_pool, sizeof(struct aitask));
+    ai->pool = ai_pool;
     ai->ai_running = 0;
     ai->ai_waiting = 0;
     ai->mutex = mutex;
@@ -54,30 +58,31 @@ struct aitask* ai_initTask(struct entity* entity, uint16_t mutex, int32_t (*ai_t
     ai->ai_tick = ai_tick;
     ai->ai_cancel = &ai_stdcancel;
     ai->data = data;
-    put_hashmap(entity->ai->tasks, (uint64_t) ai, ai);
+    hashmap_putptr(entity->ai->tasks, ai, ai);
     return ai;
 }
 
 int32_t ai_handletasks(struct world* world, struct entity* entity) {
     if (entity->ai == NULL) return 0;
     int32_t mw = 0;
-    BEGIN_HASHMAP_ITERATION(entity->ai->tasks);
-    struct aitask* ai = value;
-    if (ai->ai_running) {
-        if (ai->ai_waiting == -1) (*ai->ai_cancel)(world, entity, ai);
-        else if (ai->ai_waiting > 0) ai->ai_waiting--;
-        else if (ai->ai_tick != NULL) {
-            if (!(*ai->ai_should)(world, entity, ai)) (*ai->ai_cancel)(world, entity, ai);
-            else ai->ai_waiting = (*ai->ai_tick)(world, entity, ai);
+    ITER_MAP(entity->ai->tasks) {
+        struct aitask* ai = value;
+        if (ai->ai_running) {
+            if (ai->ai_waiting == -1) (*ai->ai_cancel)(world, entity, ai);
+            else if (ai->ai_waiting > 0) ai->ai_waiting--;
+            else if (ai->ai_tick != NULL) {
+                if (!(*ai->ai_should)(world, entity, ai)) (*ai->ai_cancel)(world, entity, ai);
+                else ai->ai_waiting = (*ai->ai_tick)(world, entity, ai);
+            }
+        } else if (ai->ai_should != NULL && !(ai->mutex & entity->ai->mutex) && (*ai->ai_should)(world, entity, ai)) {
+            ai->ai_waiting = 0;
+            entity->ai->mutex |= ai->mutex;
+            ai->ai_waiting = (*ai->ai_tick)(world, entity, ai);
+            ai->ai_running = 1;
         }
-    } else if (ai->ai_should != NULL && !(ai->mutex & entity->ai->mutex) && (*ai->ai_should)(world, entity, ai)) {
-        ai->ai_waiting = 0;
-        entity->ai->mutex |= ai->mutex;
-        ai->ai_waiting = (*ai->ai_tick)(world, entity, ai);
-        ai->ai_running = 1;
+        if (ai->ai_waiting > mw) mw = ai->ai_waiting;
+        ITER_MAP_END();
     }
-    if (ai->ai_waiting > mw) mw = ai->ai_waiting;
-    END_HASHMAP_ITERATION(entity->ai->tasks);
     return mw;
 }
 
@@ -116,78 +121,73 @@ float aipath_manhattan(struct aipath_point* p1, struct aipath_point* p2) {
     return fabs(p1->x - p2->x) + fabs(p1->y - p2->y) + fabs(p1->y - p2->y);
 }
 
-void aipath_sortback(struct aipath* path, int32_t index) {
-    struct aipath_point* pp = path->points[index];
-    int i = 0;
-    for (float ld = pp->target_dist; index > 0; index = i) {
+void aipath_sortback(struct list* path, int32_t index) {
+    struct aipath_point* point = path->data[index];
+    int32_t i = 0;
+    for (float lowest_distance = point->target_dist; index > 0; index = i) {
         i = (index - 1) >> 1;
-        struct aipath_point* pp2 = path->points[i];
-        if (ld >= pp2->target_dist) break;
-        path->points[index] = pp2;
-        pp2->index = index;
+        struct aipath_point* point2 = path->data[i];
+        if (lowest_distance >= point2->target_dist) break;
+        path->data[index] = point2;
+        point2->index = index;
     }
-    path->points[index] = pp;
-    pp->index = index;
+    path->data[index] = point;
+    point->index = index;
 }
 
-void aipath_sortforward(struct aipath* path, int32_t index) {
-    struct aipath_point* pp = path->points[index];
+void aipath_sortforward(struct list* path, int32_t index) {
+    struct aipath_point* pp = path->data[index];
     float ld = pp->target_dist;
     while (1) {
         int i = 1 + (index << 1);
         int j = i + 1;
-        if (i >= path->points_count) break;
-        struct aipath_point* pp2 = path->points[i];
+        if (i >= path->count) break;
+        struct aipath_point* pp2 = path->data[i];
         float ld2 = pp2->target_dist;
         struct aipath_point* pp3 = NULL;
         float ld3 = 0.;
-        if (j >= path->points_count) ld3 = (float) 0x7f800000; // positive infinity
-        else {
-            pp3 = path->points[j];
+        if (j >= path->count)  {
+            ld3 = (float) 0x7f800000; // positive infinity
+        } else {
+            pp3 = path->data[j];
             ld3 = pp3->target_dist;
         }
         if (ld2 < ld3) {
             if (ld2 >= ld) break;
-            path->points[index] = pp2;
+            path->data[index] = pp2;
             pp2->index = index;
             index = i;
         } else {
             if (ld3 >= ld) break;
-            path->points[index] = pp3;
+            path->data[index] = pp3;
             pp3->index = index;
             index = j;
         }
     }
-    path->points[index] = pp;
+    path->data[index] = pp;
     pp->index = index;
 }
 
-struct aipath_point* aipath_addpoint(struct aipath* path, struct aipath_point* point) {
-    if (path->points_count == path->points_size) {
-        path->points_size *= 2;
-        path->points = xrealloc(path->points, path->points_size * sizeof(struct aipath_point));
-        memset(path->points + (path->points_size / 2), 0, (path->points_size / 2) * sizeof(struct aipath_point));
-    }
-    struct aipath_point* np = xmalloc(sizeof(struct aipath_point));
-    memcpy(np, point, sizeof(struct aipath_point));
-    path->points[path->points_count] = np;
-    np->index = path->points_count;
-    aipath_sortback(path, np->index);
-    path->points_count++;
-    return np;
+struct aipath_point* aipath_addpoint(struct list* path, struct aipath_point* point) {
+    struct aipath_point* new_point = pmalloc(path->pool, sizeof(struct aipath_point));
+    memcpy(new_point, point, sizeof(struct aipath_point));
+    new_point->index = path->count;
+    list_append(path, new_point);
+    aipath_sortback(path, new_point->index);
+    return new_point;
 }
 
-struct aipath_point* aipath_dequeue(struct aipath* path) {
-    if (path->points_count == 0) return NULL;
-    struct aipath_point* pp = path->points[0];
-    path->points[0] = path->points[--path->points_count];
-    path->points[path->points_count] = NULL;
-    if (path->points_count > 0) aipath_sortforward(path, 0);
-    pp->index = -1;
-    return pp;
+struct aipath_point* aipath_dequeue(struct list* path) {
+    if (path->count == 0) return NULL;
+    struct aipath_point* point = path->data[0];
+    --path->count;
+    path->data[0] = path->data[--path->size];
+    if (path->count > 0) aipath_sortforward(path, 0);
+    point->index = -1;
+    return point;
 }
 
-struct aipath* findPath(int32_t sx, int32_t sy, int32_t sz, int32_t ex, int32_t ey, int32_t ez) {
+struct list* aipath_find(struct mempool* pool, int32_t sx, int32_t sy, int32_t sz, int32_t ex, int32_t ey, int32_t ez) {
     struct aipath_point end;
     memset(&end, 0, sizeof(struct aipath_point));
     end.x = ex;
@@ -198,33 +198,26 @@ struct aipath* findPath(int32_t sx, int32_t sy, int32_t sz, int32_t ex, int32_t 
     start.x = sx;
     start.y = sy;
     start.z = sz;
-    struct aipath* path = xmalloc(sizeof(struct aipath));
-    path->points_count = 0;
-    path->points_size = 128;
-    path->points = xcalloc(sizeof(struct aipath_point) * path->points_size);
+    struct list* path = list_new(32, pool);
     start.x = sx;
     start.y = sy;
     start.z = sz;
-    start.next_dist = aipath_manhattan(path->points[0], &end);
+    start.next_dist = aipath_manhattan(&start, &end);
     start.target_dist = start.next_dist;
-    struct aipath_point* cp = aipath_addpoint(path, &start);
+    struct aipath_point* current_point = aipath_addpoint(path, &start);
     int i = 0;
-    while (path->points_count > 0) {
+    while (path->count > 0) {
         if (++i >= 200) break;
-        struct aipath_point* pp2 = aipath_dequeue(path);
-        if (pp2->x == end.x && pp2->y == end.y && pp2->z == end.z) {
-            cp = pp2;
+        struct aipath_point* point2 = aipath_dequeue(path);
+        if (point2->x == end.x && point2->y == end.y && point2->z == end.z) {
+            current_point = point2;
             break;
         }
-        if (aipath_manhattan(pp2, &end) < aipath_manhattan(cp, &end)) cp = pp2;
-        pp2->visited = 1;
+        if (aipath_manhattan(point2, &end) < aipath_manhattan(current_point, &end)) current_point = point2;
+        point2->visited = 1;
 
     }
     return path;
-}
-
-void freePath(struct aipath* path) {
-
 }
 
 int32_t ai_attackmelee(struct world* world, struct entity* entity, struct aitask* ai) {
@@ -238,13 +231,13 @@ int32_t ai_attackmelee(struct world* world, struct entity* entity, struct aitask
     entity->ai->lookHelper_z = entity->attacking->z;
     double dist = entity_distsq(entity->attacking, entity);
     amd->delayCounter--;
-//TODO: cansee
+    //TODO: cansee
     if ((amd->longMemory || 1) && amd->delayCounter <= 0 && ((amd->targetX == 0. && amd->targetY == 0. && amd->targetZ == 0.) || entity_distsq_block(entity->attacking, amd->targetX, amd->targetY, amd->targetZ) >= 1. || game_rand_float() < .05)) {
         amd->targetX = entity->attacking->x;
         amd->targetY = entity->attacking->y;
         amd->targetZ = entity->attacking->z;
         if (dist > 1024.) amd->delayCounter += 10;
-        else if (dist > 256.) amd->delayCounter += 5.;
+        else if (dist > 256.) amd->delayCounter += 5;
         //TODO: set path
     }
     if (--amd->attackTick <= 0) amd->attackTick = 0;
@@ -253,7 +246,7 @@ int32_t ai_attackmelee(struct world* world, struct entity* entity, struct aitask
     float reach = ei->width * 2. * ei->width * 2. + ei2->width;
     if (dist <= reach && amd->attackTick <= 0) {
         amd->attackTick = 20;
-        entity_animation(entity);
+        entity_animation(entity, 1);
         damageEntityWithItem(entity->attacking, entity, -1, NULL);
     }
     return 0;
@@ -474,9 +467,9 @@ int32_t ai_zombieattack(struct world* world, struct entity* entity, struct aitas
 
 int ai_shouldattackmelee(struct world* world, struct entity* entity, struct aitask* ai) {
     if (entity->attacking == NULL || entity->attacking->health <= 0. || (entity->type == ENT_PLAYER && (entity->data.player.player->gamemode == 1 || entity->data.player.player->gamemode == 3))) return 0;
-    struct entity_info* ei = entity_get_info(entity->type);
-    struct entity_info* ei2 = entity_get_info(entity->attacking->type);
-    if (ei == NULL || ei2 == NULL || !entity_has_flag(ei2, "livingbase")) return 0;
+    struct entity_info* info1 = entity_get_info(entity->type);
+    struct entity_info* info2 = entity_get_info(entity->attacking->type);
+    if (info1 == NULL || info2 == NULL || !hashset_has(info2->flags, "livingbase")) return 0;
     return entity->attacking != NULL;
     //float reach = ei->width * 2. * ei->width * 2. + ei2->width;
     //return reach >= entity_distsq(entity->attacking, entity);
@@ -597,38 +590,44 @@ int ai_shouldmovetowardstarget(struct world* world, struct entity* entity, struc
 int ai_shouldnearestattackabletarget(struct world* world, struct entity* entity, struct aitask* ai) {
     struct ai_nearestattackabletarget_data* data = ai->data;
     if (data->chance > 0 && rand() % data->chance != 0) return 0;
-    double cd = data->targetDist * data->targetDist;
-    struct entity* ce = NULL;
-    BEGIN_HASHMAP_ITERATION(world->entities);
-    struct entity* ie = value;
-    if (!entity_has_flag(entity_get_info(ie->type), "livingbase") || ie == entity) continue;
-    double dsq = entity_distsq(entity, value);
-    if (ie->type == ENT_PLAYER) {
-        struct player* pl = ie->data.player.player;
-        if (pl->gamemode == 1 || pl->gamemode == 3 || pl->invulnerable) continue;
-        int sk = entity_has_flag(entity_get_info(entity->type), "skeleton");
-        int zo = entity_has_flag(entity_get_info(entity->type), "zombie");
-        int cr = entity_has_flag(entity_get_info(entity->type), "creeper");
-        if (sk || zo || cr) {
-            struct slot* hs = inventory_get(pl, pl->inventory, 5);
-            if (hs != NULL) {
-                if (sk && hs->damage == 0) dsq *= 2.;
-                else if (zo && hs->damage == 2) dsq *= 2.;
-                else if (cr && hs->damage == 4) dsq *= 2.;
+    double current_distance = data->targetDist * data->targetDist;
+    struct entity* current_entity = NULL;
+    pthread_rwlock_rdlock(&world->entities->rwlock);
+    ITER_MAP(world->entities) {
+        struct entity* iter_entity = value;
+        if (!hashset_has(entity_get_info(iter_entity->type)->flags, "livingbase") || iter_entity == entity) continue;
+        double distance_squared = entity_distsq(entity, value);
+        if (iter_entity->type == ENT_PLAYER) {
+            struct player* pl = iter_entity->data.player.player;
+            if (pl->gamemode == 1 || pl->gamemode == 3 || pl->invulnerable) continue;
+            struct hashset* flags = entity_get_info(entity->type)->flags;
+            int is_skeleton = hashset_has(flags, "skeleton");
+            int is_zombie = hashset_has(flags, "zombie");
+            int is_creeper = hashset_has(flags, "creeper");
+            if (is_skeleton || is_zombie || is_creeper) {
+                struct slot* holding_slot = inventory_get(pl, pl->inventory, 5);
+                if (holding_slot != NULL) {
+                    if (is_skeleton && holding_slot->damage == 0) distance_squared *= 2.;
+                    else if (is_zombie && holding_slot->damage == 2) distance_squared *= 2.;
+                    else if (is_creeper && holding_slot->damage == 4) distance_squared *= 2.;
+                }
             }
         }
+        if (distance_squared < current_distance) {
+            //TODO check teams, sight
+            current_distance = distance_squared;
+            current_entity = value;
+        }
+        ITER_MAP_END()
     }
-    if (dsq < cd) {
-        //TODO check teams, sight
-        cd = dsq;
-        ce = value;
+    pthread_rwlock_unlock(&world->entities->rwlock);
+    if (entity->attacking != NULL && current_entity != entity->attacking) {
+        hashmap_putint(entity->attacking->attackers, entity->id, NULL);
     }
-    END_HASHMAP_ITERATION(world->entities);
-    if (entity->attacking != NULL && ce != entity->attacking) put_hashmap(entity->attacking->attackers, entity->id, NULL);
-    if (ce != NULL && entity->attacking != ce) {
-        put_hashmap(ce->attackers, entity->id, entity);
+    if (current_entity != NULL && entity->attacking != current_entity) {
+        hashmap_putint(current_entity->attackers, entity->id, entity);
     }
-    entity->attacking = ce;
+    entity->attacking = current_entity;
     return 0;
 }
 
